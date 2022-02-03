@@ -1,4 +1,4 @@
-package com.nscharrenberg.um.multiagentsurveillance.controllers;
+package com.nscharrenberg.um.multiagentsurveillance.gui.javafx.controllers;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;

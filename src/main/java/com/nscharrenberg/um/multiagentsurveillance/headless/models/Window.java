@@ -1,4 +1,4 @@
 package com.nscharrenberg.um.multiagentsurveillance.headless.models;
 
-public class Window {
+public class Window extends Collision {
 }

@@ -1,4 +1,4 @@
 package com.nscharrenberg.um.multiagentsurveillance.headless.models;
 
-public class ShadowTile {
+public class ShadowTile extends Tile {
 }

@@ -5,6 +5,6 @@ module com.nscharrenberg.um.multiagentsurveillance {
 
     opens com.nscharrenberg.um.multiagentsurveillance to javafx.fxml;
     exports com.nscharrenberg.um.multiagentsurveillance;
-    exports com.nscharrenberg.um.multiagentsurveillance.controllers;
-    opens com.nscharrenberg.um.multiagentsurveillance.controllers to javafx.fxml;
+    exports com.nscharrenberg.um.multiagentsurveillance.gui.javafx.controllers;
+    opens com.nscharrenberg.um.multiagentsurveillance.gui.javafx.controllers to javafx.fxml;
 }

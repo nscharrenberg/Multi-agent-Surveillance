@@ -5,6 +5,8 @@ public class Player {
     private Angle direction;
     private double speed;
 
+    // TODO: Keep track of the state the player is in (moving, standing still, climbing, on_target)
+
     public Player(Tile position, Angle direction, double speed) {
         this.position = position;
         this.direction = direction;

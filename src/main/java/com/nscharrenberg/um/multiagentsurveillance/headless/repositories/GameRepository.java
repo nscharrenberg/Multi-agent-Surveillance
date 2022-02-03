@@ -1,8 +1,6 @@
 package com.nscharrenberg.um.multiagentsurveillance.headless.repositories;
 
-import com.nscharrenberg.um.multiagentsurveillance.headless.models.Area;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.GameMode;
-import com.nscharrenberg.um.multiagentsurveillance.headless.models.Tile;
 
 public class GameRepository {
     private String name;
@@ -16,11 +14,6 @@ public class GameRepository {
     private double springSpeedIntruders;
     private double baseSpeedGuards;
     private double timeStep;
-    private Area<Tile> intruderSpawnArea;
-    private Area<Tile> guardSpawnArea;
-
-    // Temp variable, will probably not be needed in the near future.
-    private Area<Tile> targetArea;
 
     public String getName() {
         return name;
@@ -108,29 +101,5 @@ public class GameRepository {
 
     public void setTimeStep(double timeStep) {
         this.timeStep = timeStep;
-    }
-
-    public Area<Tile> getIntruderSpawnArea() {
-        return intruderSpawnArea;
-    }
-
-    public void setIntruderSpawnArea(Area<Tile> intruderSpawnArea) {
-        this.intruderSpawnArea = intruderSpawnArea;
-    }
-
-    public Area<Tile> getGuardSpawnArea() {
-        return guardSpawnArea;
-    }
-
-    public void setGuardSpawnArea(Area<Tile> guardSpawnArea) {
-        this.guardSpawnArea = guardSpawnArea;
-    }
-
-    public Area<Tile> getTargetArea() {
-        return targetArea;
-    }
-
-    public void setTargetArea(Area<Tile> targetArea) {
-        this.targetArea = targetArea;
     }
 }

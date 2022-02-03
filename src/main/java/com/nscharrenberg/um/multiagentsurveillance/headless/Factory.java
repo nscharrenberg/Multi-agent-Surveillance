@@ -17,14 +17,26 @@ public class Factory {
     }
 
     public static IGameRepository getGameRepository() {
+        if (gameRepository == null) {
+            reset();
+        }
+
         return gameRepository;
     }
 
     public static IMapRepository getMapRepository() {
+        if (mapRepository == null) {
+            reset();
+        }
+
         return mapRepository;
     }
 
     public static IPlayerRepository getPlayerRepository() {
+        if (playerRepository == null) {
+            reset();
+        }
+
         return playerRepository;
     }
 

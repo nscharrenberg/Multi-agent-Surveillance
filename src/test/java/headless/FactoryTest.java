@@ -8,7 +8,7 @@ import org.junit.jupiter.api.Test;
 
 public class FactoryTest {
 
-    @DisplayName("Factory Reset Succesful")
+    @DisplayName("Factory Reset Successful")
     @Test
     void testFactoryResetSuccess() {
         Factory.getGameRepository().setGameMode(GameMode.NO_COMMUNICATION);

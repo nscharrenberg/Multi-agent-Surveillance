@@ -12,6 +12,9 @@ public class Intruder extends Player {
         // TODO: Read sprint speed from Configuration
         this.sprintSpeed = 20;
         this.target = target;
+
+
+
     }
 
     public Area<Tile> getTarget() {

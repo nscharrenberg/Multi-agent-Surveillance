@@ -5,8 +5,8 @@ public class Window extends Collision {
     private boolean isBlinded;
     private boolean isBroken;
 
-    public Window(Area<Tile> area) {
-        super(area);
+    public Window(Tile tile) {
+        super(tile);
     }
 
     public boolean isBroken() {

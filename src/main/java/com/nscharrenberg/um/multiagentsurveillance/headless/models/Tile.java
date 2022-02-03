@@ -1,8 +1,26 @@
 package com.nscharrenberg.um.multiagentsurveillance.headless.models;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Tile {
     private int x;
     private int y;
+    private List<Item> items;
+
+    public Tile() {
+        items = new ArrayList<>();
+    }
+
+    public Tile(List<Item> items) {
+        this.items = items;
+    }
+
+    public Tile(int x, int y, List<Item> items) {
+        this.x = x;
+        this.y = y;
+        this.items = items;
+    }
 
     public int getX() {
         return x;
@@ -18,5 +36,13 @@ public class Tile {
 
     public void setY(int y) {
         this.y = y;
+    }
+
+    public List<Item> getItems() {
+        return items;
+    }
+
+    public void setItems(List<Item> items) {
+        this.items = items;
     }
 }

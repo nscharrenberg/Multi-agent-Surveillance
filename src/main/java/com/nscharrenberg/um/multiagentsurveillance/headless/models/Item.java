@@ -1,17 +1,17 @@
 package com.nscharrenberg.um.multiagentsurveillance.headless.models;
 
-public class Item {
-    private Area<Tile> area;
+public abstract class Item {
+    private Tile tile;
 
-    public Item(Area<Tile> area) {
-        this.area = area;
+    public Item(Tile tile) {
+        this.tile = tile;
     }
 
-    public Area<Tile> getArea() {
-        return area;
+    public Tile getTile() {
+        return tile;
     }
 
-    public void setArea(Area<Tile> area) {
-        this.area = area;
+    public void setTile(Tile tile) {
+        this.tile = tile;
     }
 }

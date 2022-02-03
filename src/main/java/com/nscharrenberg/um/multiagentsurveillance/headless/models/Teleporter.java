@@ -5,8 +5,8 @@ public class Teleporter extends Item {
     private Tile destination;
     private Angle direction;
 
-    public Teleporter(Area<Tile> area, Area<Tile> source, Tile destination, Angle direction) {
-        super(area);
+    public Teleporter(Tile tile, Area<Tile> source, Tile destination, Angle direction) {
+        super(tile);
         this.source = source;
         this.destination = destination;
         this.direction = direction;

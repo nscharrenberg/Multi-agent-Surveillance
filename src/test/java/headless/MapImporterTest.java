@@ -1,5 +1,6 @@
 package headless;
 
+import com.nscharrenberg.um.multiagentsurveillance.headless.Factory;
 import com.nscharrenberg.um.multiagentsurveillance.headless.utils.files.MapImporter;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
@@ -22,11 +23,11 @@ public class MapImporterTest {
 
         String path = file.getAbsolutePath();
 
-        System.out.println(path);
-
         try {
             MapImporter.load(path);
-            Assertions.assertTrue(true);
+
+            Assertions.assertEquals(80, Factory.getGameRepository().getHeight());
+            Assertions.assertEquals(120, Factory.getGameRepository().getWidth());
         } catch (IOException e) {
             Assertions.fail();
         }

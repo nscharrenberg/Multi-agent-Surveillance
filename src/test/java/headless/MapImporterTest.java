@@ -1,6 +1,7 @@
 package headless;
 
 import com.nscharrenberg.um.multiagentsurveillance.headless.Factory;
+import com.nscharrenberg.um.multiagentsurveillance.headless.models.GameMode;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Tile;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.TileArea;
 import com.nscharrenberg.um.multiagentsurveillance.headless.utils.files.MapImporter;
@@ -29,35 +30,99 @@ public class MapImporterTest {
         try {
             importer.load(path);
 
-            // Test if Height & Width are imported properly
+            Assertions.assertEquals("test scenario", Factory.getGameRepository().getName());
             Assertions.assertEquals(80, Factory.getGameRepository().getHeight());
+            Assertions.assertEquals(0.1, Factory.getGameRepository().getScaling());
             Assertions.assertEquals(120, Factory.getGameRepository().getWidth());
+            Assertions.assertEquals(3, Factory.getGameRepository().getGuardCount());
+            Assertions.assertEquals(0, Factory.getGameRepository().getIntruderCount());
+            Assertions.assertEquals(14, Factory.getGameRepository().getBaseSpeedGuards());
+            Assertions.assertEquals(14, Factory.getGameRepository().getBaseSpeedIntruders());
+            Assertions.assertEquals(20, Factory.getGameRepository().getSpringSpeedIntruders());
 
-            // Test if the target area is imported properly
-            TileArea targetArea = Factory.getMapRepository().getTargetArea();
-            List<Tile> bounds = targetArea.getBounds();
-
-            if (bounds.isEmpty()) {
-                Assertions.fail();
-            }
-            
-            // Top Left
-            Assertions.assertEquals(20, bounds.get(0).getX());
-            Assertions.assertEquals(40, bounds.get(0).getY());
-
-            // Bottom Left
-            Assertions.assertEquals(20, bounds.get(1).getX());
-            Assertions.assertEquals(45, bounds.get(1).getY());
-
-            // Top Right
-            Assertions.assertEquals(25, bounds.get(2).getX());
-            Assertions.assertEquals(40, bounds.get(2).getY());
-
-            // Bottom Right
-            Assertions.assertEquals(25, bounds.get(3).getX());
-            Assertions.assertEquals(45, bounds.get(3).getY());
+            checkIfTargetAreaCorrect();
+            checkIfGuardSpawnAreaCorrect();
+            checkIfIntruderSpawnAreaCorrect();
         } catch (IOException e) {
             Assertions.fail();
         }
+    }
+
+    void checkIfTargetAreaCorrect() {
+        // Test if the target area is imported properly
+        TileArea targetArea = Factory.getMapRepository().getTargetArea();
+        List<Tile> bounds = targetArea.getBounds();
+
+        if (bounds.isEmpty()) {
+            Assertions.fail();
+        }
+
+        // Top Left
+        Assertions.assertEquals(20, bounds.get(0).getX());
+        Assertions.assertEquals(40, bounds.get(0).getY());
+
+        // Bottom Left
+        Assertions.assertEquals(20, bounds.get(1).getX());
+        Assertions.assertEquals(45, bounds.get(1).getY());
+
+        // Top Right
+        Assertions.assertEquals(25, bounds.get(2).getX());
+        Assertions.assertEquals(40, bounds.get(2).getY());
+
+        // Bottom Right
+        Assertions.assertEquals(25, bounds.get(3).getX());
+        Assertions.assertEquals(45, bounds.get(3).getY());
+    }
+
+    void checkIfGuardSpawnAreaCorrect() {
+        // Test if the guard spawn area is imported properly
+        TileArea targetArea = Factory.getMapRepository().getGuardSpawnArea();
+        List<Tile> bounds = targetArea.getBounds();
+
+        if (bounds.isEmpty()) {
+            Assertions.fail();
+        }
+
+        // Top Left
+        Assertions.assertEquals(2, bounds.get(0).getX());
+        Assertions.assertEquals(2, bounds.get(0).getY());
+
+        // Bottom Left
+        Assertions.assertEquals(2, bounds.get(1).getX());
+        Assertions.assertEquals(10, bounds.get(1).getY());
+
+        // Top Right
+        Assertions.assertEquals(20, bounds.get(2).getX());
+        Assertions.assertEquals(2, bounds.get(2).getY());
+
+        // Bottom Right
+        Assertions.assertEquals(20, bounds.get(3).getX());
+        Assertions.assertEquals(10, bounds.get(3).getY());
+    }
+
+    void checkIfIntruderSpawnAreaCorrect() {
+        // Test if the intruder spawn area is imported properly
+        TileArea targetArea = Factory.getMapRepository().getIntruderSpawnArea();
+        List<Tile> bounds = targetArea.getBounds();
+
+        if (bounds.isEmpty()) {
+            Assertions.fail();
+        }
+
+        // Top Left
+        Assertions.assertEquals(2, bounds.get(0).getX());
+        Assertions.assertEquals(2, bounds.get(0).getY());
+
+        // Bottom Left
+        Assertions.assertEquals(2, bounds.get(1).getX());
+        Assertions.assertEquals(10, bounds.get(1).getY());
+
+        // Top Right
+        Assertions.assertEquals(20, bounds.get(2).getX());
+        Assertions.assertEquals(2, bounds.get(2).getY());
+
+        // Bottom Right
+        Assertions.assertEquals(20, bounds.get(3).getX());
+        Assertions.assertEquals(10, bounds.get(3).getY());
     }
 }

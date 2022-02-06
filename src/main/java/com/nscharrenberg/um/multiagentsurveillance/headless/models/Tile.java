@@ -22,6 +22,12 @@ public class Tile {
         this.items = items;
     }
 
+    public Tile(int x, int y) {
+        super();
+        this.x = x;
+        this.y = y;
+    }
+
     public int getX() {
         return x;
     }

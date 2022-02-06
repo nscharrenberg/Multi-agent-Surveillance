@@ -17,10 +17,10 @@ public class VisionTest {
     @Test
     void testRawVisionTiles() {
 
-        CharacterVision cvup = new CharacterVision(2, Angle.DOWN);
-        CharacterVision cvright = new CharacterVision(3, Angle.DOWN);
+        CharacterVision cvup = new CharacterVision(2, Angle.UP);
+        CharacterVision cvright = new CharacterVision(3, Angle.RIGHT);
         CharacterVision cvdown = new CharacterVision(3, Angle.DOWN);
-        CharacterVision cvleft = new CharacterVision(4, Angle.DOWN);
+        CharacterVision cvleft = new CharacterVision(4, Angle.LEFT);
 
         /* Display tiles */
 //        ArrayList<Tile> tiles = cvdown.getRawVision(new Tile(4,4, null));

@@ -3,6 +3,7 @@ package com.nscharrenberg.um.multiagentsurveillance.headless.utils.files;
 import com.nscharrenberg.um.multiagentsurveillance.headless.Factory;
 import com.nscharrenberg.um.multiagentsurveillance.headless.exceptions.BoardNotBuildException;
 import com.nscharrenberg.um.multiagentsurveillance.headless.exceptions.InvalidTileException;
+import com.nscharrenberg.um.multiagentsurveillance.headless.exceptions.ItemAlreadyOnTileException;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Tile;
 
 import java.io.*;
@@ -46,7 +47,11 @@ public class MapImporter {
 
         if (isMap(id)) {
             // TODO: Map Logic
-            addToMap(id, value);
+            try {
+                addToMap(id, value);
+            } catch (BoardNotBuildException | ItemAlreadyOnTileException | InvalidTileException e) {
+                e.printStackTrace();
+            }
             return;
         }
 
@@ -112,16 +117,36 @@ public class MapImporter {
     private void initTiles() {
         Factory.getMapRepository().getBoard().clear();
 
-        for (int i = 0; i < Factory.getGameRepository().getHeight(); i++) {
-            for (int j = 0; j < Factory.getGameRepository().getWidth(); j++) {
+        for (int i = 0; i <= Factory.getGameRepository().getHeight(); i++) {
+            for (int j = 0; j <= Factory.getGameRepository().getWidth(); j++) {
                 Factory.getMapRepository().getBoard().add(new Tile(i, j));
             }
         }
     }
 
 
-    private void addToMap(String id, String value) {
+    private void addToMap(String id, String value) throws BoardNotBuildException, ItemAlreadyOnTileException, InvalidTileException {
+        if (Factory.getMapRepository().getBoard().isEmpty()) {
+            throw new BoardNotBuildException();
+        }
 
+        // Delimit by " " when multiple parameters are passed in one-line
+        String[] items = value.split(" ");
+
+        if (id.equals(FileItems.WALL.getKey())) {
+            int x1 = Integer.parseInt(items[0]);
+            int y1 = Integer.parseInt(items[1]);
+            int x2 = Integer.parseInt(items[2]);
+            int y2 = Integer.parseInt(items[3]);
+
+            Factory.getMapRepository().addWall(x1, y1, x2, y2);
+        } else if (id.equals(FileItems.TELEPORT.getKey())) {
+
+        } else if (id.equals(FileItems.SHADED.getKey())) {
+
+        } else if (id.equals(FileItems.TEXTURE.getKey())) {
+
+        }
     }
 
     /**

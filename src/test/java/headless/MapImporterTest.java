@@ -1,9 +1,7 @@
 package headless;
 
 import com.nscharrenberg.um.multiagentsurveillance.headless.Factory;
-import com.nscharrenberg.um.multiagentsurveillance.headless.models.GameMode;
-import com.nscharrenberg.um.multiagentsurveillance.headless.models.Tile;
-import com.nscharrenberg.um.multiagentsurveillance.headless.models.TileArea;
+import com.nscharrenberg.um.multiagentsurveillance.headless.models.*;
 import com.nscharrenberg.um.multiagentsurveillance.headless.utils.files.MapImporter;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
@@ -12,6 +10,7 @@ import org.junit.jupiter.api.Test;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
+import java.util.Optional;
 
 public class MapImporterTest {
     @DisplayName("Map Import Successful")
@@ -32,8 +31,8 @@ public class MapImporterTest {
 
             Assertions.assertEquals("test scenario", Factory.getGameRepository().getName());
             Assertions.assertEquals(80, Factory.getGameRepository().getHeight());
-            Assertions.assertEquals(0.1, Factory.getGameRepository().getScaling());
             Assertions.assertEquals(120, Factory.getGameRepository().getWidth());
+            Assertions.assertEquals(0.1, Factory.getGameRepository().getScaling());
             Assertions.assertEquals(3, Factory.getGameRepository().getGuardCount());
             Assertions.assertEquals(0, Factory.getGameRepository().getIntruderCount());
             Assertions.assertEquals(14, Factory.getGameRepository().getBaseSpeedGuards());
@@ -43,8 +42,29 @@ public class MapImporterTest {
             checkIfTargetAreaCorrect();
             checkIfGuardSpawnAreaCorrect();
             checkIfIntruderSpawnAreaCorrect();
+            checkIfWallsBuildCorrectly();
         } catch (IOException e) {
             Assertions.fail();
+        }
+    }
+
+    void checkIfWallsBuildCorrectly() {
+        // Test if the target area is imported properly
+        TileArea board = Factory.getMapRepository().getBoardAsArea();
+        List<Tile> wallArea = board.subset(50, 0, 51, 20);
+
+        if (wallArea.isEmpty()) {
+            Assertions.fail();
+        }
+
+        for (Tile tile : wallArea) {
+            Optional<Item> wallItem = tile.getItems().stream().filter(item -> item instanceof Wall).findFirst();
+
+            if (wallItem.isEmpty()) {
+                Assertions.fail();
+            }
+
+            Assertions.assertInstanceOf(Wall.class, wallItem.get());
         }
     }
 

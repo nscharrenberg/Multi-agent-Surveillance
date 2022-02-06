@@ -3,8 +3,10 @@ package com.nscharrenberg.um.multiagentsurveillance.headless.repositories;
 import com.nscharrenberg.um.multiagentsurveillance.headless.contracts.repositories.IMapRepository;
 import com.nscharrenberg.um.multiagentsurveillance.headless.exceptions.BoardNotBuildException;
 import com.nscharrenberg.um.multiagentsurveillance.headless.exceptions.InvalidTileException;
+import com.nscharrenberg.um.multiagentsurveillance.headless.exceptions.ItemAlreadyOnTileException;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Tile;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.TileArea;
+import com.nscharrenberg.um.multiagentsurveillance.headless.models.Wall;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,6 +22,7 @@ public class MapRepository implements IMapRepository {
         this.board = new ArrayList<>();
     }
 
+    @Override
     public TileArea getBoardAsArea() {
         return new TileArea(board);
     }
@@ -63,6 +66,28 @@ public class MapRepository implements IMapRepository {
         }
 
         targetArea = found;
+    }
+
+    @Override
+    public void addWall(int x1, int y1, int x2, int y2) throws InvalidTileException, BoardNotBuildException, ItemAlreadyOnTileException {
+        boardInitCheck();
+
+        TileArea area = findTileAreaByBoundaries(x1, y1, x2, y2);
+
+        for (Tile tile : area.getRegion()) {
+            Wall wall = new Wall(tile);
+            tile.add(wall);
+        }
+    }
+
+    @Override
+    public void addWall(int x, int y) throws InvalidTileException, BoardNotBuildException, ItemAlreadyOnTileException {
+        boardInitCheck();
+
+        Tile found = findTileByCoordinates(x, y);
+
+        Wall wall = new Wall(found);
+        found.add(wall);
     }
 
     @Override

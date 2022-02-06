@@ -24,21 +24,38 @@ public class MapImporterTest {
 
         String path = file.getAbsolutePath();
 
-        try {
-            MapImporter.load(path);
+        MapImporter importer = new MapImporter();
 
+        try {
+            importer.load(path);
+
+            // Test if Height & Width are imported properly
             Assertions.assertEquals(80, Factory.getGameRepository().getHeight());
             Assertions.assertEquals(120, Factory.getGameRepository().getWidth());
 
+            // Test if the target area is imported properly
             TileArea targetArea = Factory.getMapRepository().getTargetArea();
             List<Tile> bounds = targetArea.getBounds();
 
             if (bounds.isEmpty()) {
                 Assertions.fail();
             }
+            
+            // Top Left
+            Assertions.assertEquals(20, bounds.get(0).getX());
+            Assertions.assertEquals(40, bounds.get(0).getY());
 
-            Assertions.assertEquals(bounds.get(0).getX(), 20);
-            Assertions.assertEquals(bounds.get(0).getY(), 40);
+            // Bottom Left
+            Assertions.assertEquals(20, bounds.get(1).getX());
+            Assertions.assertEquals(45, bounds.get(1).getY());
+
+            // Top Right
+            Assertions.assertEquals(25, bounds.get(2).getX());
+            Assertions.assertEquals(40, bounds.get(2).getY());
+
+            // Bottom Right
+            Assertions.assertEquals(25, bounds.get(3).getX());
+            Assertions.assertEquals(45, bounds.get(3).getY());
         } catch (IOException e) {
             Assertions.fail();
         }

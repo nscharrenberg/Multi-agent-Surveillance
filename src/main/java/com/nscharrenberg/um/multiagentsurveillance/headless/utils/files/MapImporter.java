@@ -10,7 +10,9 @@ import java.nio.charset.StandardCharsets;
 import java.util.Scanner;
 
 public class MapImporter {
-    public static void load(String path) throws IOException {
+    private boolean tilesInitialized = false;
+
+    public void load(String path) throws IOException {
         // Reset the game state
         Factory.reset();
 
@@ -25,7 +27,7 @@ public class MapImporter {
         }
     }
 
-    private static void parseLine(String currentLine) {
+    private void parseLine(String currentLine) {
         // Delimit line by "="
         String[] split = currentLine.split("=");
 
@@ -34,24 +36,24 @@ public class MapImporter {
         String value = split[1].trim();
 
         if (isConfiguration(id)) {
-            addToConfig(id, value);
-            return;
-        }
-
-        if (isMap(id)) {
-            // TODO: Map Logic
             try {
-                addToMap(id, value);
+                addToConfig(id, value);
             } catch (InvalidTileException | BoardNotBuildException e) {
                 e.printStackTrace();
             }
             return;
         }
 
+        if (isMap(id)) {
+            // TODO: Map Logic
+            addToMap(id, value);
+            return;
+        }
+
         // Invalid Item - For now skip the item
     }
 
-    private static void addToConfig(String id, String value) {
+    private void addToConfig(String id, String value) throws InvalidTileException, BoardNotBuildException {
         if (id.equals(FileItems.NAME.getKey())) {
             Factory.getGameRepository().setName(value);
         } else if (id.equals(FileItems.HEIGHT.getKey())) {
@@ -72,41 +74,54 @@ public class MapImporter {
             Factory.getGameRepository().setSpringSpeedIntruders(Double.parseDouble(value));
         } else if (id.equals(FileItems.TIME_STEP.getKey())) {
             Factory.getGameRepository().setTimeStep(Double.parseDouble(value));
+        } else {
+            if (!this.tilesInitialized && Factory.getGameRepository().getHeight() > 0 && Factory.getGameRepository().getWidth() > 0) {
+                initTiles();
+
+                this.tilesInitialized = true;
+            }
+
+            // Delimit by " " when multiple parameters are passed in one-line
+            String[] items = value.split(" ");
+
+            if (id.equals(FileItems.TARGET_AREA.getKey())) {
+                int x1 = Integer.parseInt(items[0]);
+                int y1 = Integer.parseInt(items[1]);
+                int x2 = Integer.parseInt(items[2]);
+                int y2 = Integer.parseInt(items[3]);
+
+                Factory.getMapRepository().addTargetArea(x1, y1, x2, y2);
+            } else if (id.equals(FileItems.SPAWN_AREA_INTRUDERS.getKey())) {
+                int x1 = Integer.parseInt(items[0]);
+                int y1 = Integer.parseInt(items[1]);
+                int x2 = Integer.parseInt(items[2]);
+                int y2 = Integer.parseInt(items[3]);
+
+                Factory.getMapRepository().addIntruderSpawnArea(x1, y1, x2, y2);
+            } else if (id.equals(FileItems.SPAWN_AREA_GUARDS.getKey())) {
+                int x1 = Integer.parseInt(items[0]);
+                int y1 = Integer.parseInt(items[1]);
+                int x2 = Integer.parseInt(items[2]);
+                int y2 = Integer.parseInt(items[3]);
+
+                Factory.getMapRepository().addGuardSpawnArea(x1, y1, x2, y2);
+            }
         }
     }
 
-    private static void addToMap(String id, String value) throws InvalidTileException, BoardNotBuildException {
+    private void initTiles() {
+        Factory.getMapRepository().getBoard().clear();
+
         for (int i = 0; i < Factory.getGameRepository().getHeight(); i++) {
-            for (int j = 0; j < Factory.getGameRepository().getWidth(); i++) {
+            for (int j = 0; j < Factory.getGameRepository().getWidth(); j++) {
                 Factory.getMapRepository().getBoard().add(new Tile(i, j));
             }
         }
+    }
 
-//        // Delimit by " " when multiple parameters are passed in one-line
-//        String[] items = value.split(" ");
-//
-//        if (id.equals(FileItems.TARGET_AREA.getKey())) {
-//            int x1 = Integer.parseInt(items[0]);
-//            int y1 = Integer.parseInt(items[1]);
-//            int x2 = Integer.parseInt(items[2]);
-//            int y2 = Integer.parseInt(items[3]);
-//
-//            Factory.getMapRepository().addTargetArea(x1, y1, x2, y2);
-//        } else if (id.equals(FileItems.SPAWN_AREA_INTRUDERS.getKey())) {
-//            int x1 = Integer.parseInt(items[0]);
-//            int y1 = Integer.parseInt(items[1]);
-//            int x2 = Integer.parseInt(items[2]);
-//            int y2 = Integer.parseInt(items[3]);
-//
-//            Factory.getMapRepository().addIntruderSpawnArea(x1, y1, x2, y2);
-//        } else if (id.equals(FileItems.SPAWN_AREA_GUARDS.getKey())) {
-//            int x1 = Integer.parseInt(items[0]);
-//            int y1 = Integer.parseInt(items[1]);
-//            int x2 = Integer.parseInt(items[2]);
-//            int y2 = Integer.parseInt(items[3]);
-//
-//            Factory.getMapRepository().addGuardSpawnArea(x1, y1, x2, y2);
-//        }
+
+    private void addToMap(String id, String value) {
+
     }
 
     /**
@@ -114,7 +129,7 @@ public class MapImporter {
      * @param id - file item ID
      * @return - Whether the given id is a configuration
      */
-    private static boolean isConfiguration(String id) {
+    private boolean isConfiguration(String id) {
         return id.equals(FileItems.NAME.getKey())
                         || id.equals(FileItems.GAME_MODE.getKey())
                         || id.equals(FileItems.HEIGHT.getKey())
@@ -136,12 +151,10 @@ public class MapImporter {
      * @param id - file item ID
      * @return - Whether the given id is a map generation
      */
-    private static boolean isMap(String id) {
+    private boolean isMap(String id) {
         return id.equals(FileItems.WALL.getKey())
                         || id.equals(FileItems.TELEPORT.getKey())
                         || id.equals(FileItems.SHADED.getKey())
                         || id.equals(FileItems.TEXTURE.getKey());
     }
-
-    private MapImporter() {}
 }

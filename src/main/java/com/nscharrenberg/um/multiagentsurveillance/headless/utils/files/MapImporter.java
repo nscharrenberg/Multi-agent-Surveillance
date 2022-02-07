@@ -43,20 +43,13 @@ public class MapImporter {
             } catch (InvalidTileException | BoardNotBuildException e) {
                 e.printStackTrace();
             }
-            return;
-        }
-
-        if (isMap(id)) {
-            // TODO: Map Logic
+        } else if (isMap(id)) {
             try {
                 addToMap(id, value);
             } catch (BoardNotBuildException | ItemAlreadyOnTileException | InvalidTileException e) {
                 e.printStackTrace();
             }
-            return;
         }
-
-        // Invalid Item - For now skip the item
     }
 
     private void addToConfig(String id, String value) throws InvalidTileException, BoardNotBuildException {
@@ -168,7 +161,7 @@ public class MapImporter {
 
             Factory.getMapRepository().addShaded(x1, y1, x2, y2);
         } else if (id.equals(FileItems.TEXTURE.getKey())) {
-
+            // TODO: Implement once we know what it is
         }
     }
 

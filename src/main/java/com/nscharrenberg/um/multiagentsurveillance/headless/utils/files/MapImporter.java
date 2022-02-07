@@ -161,7 +161,12 @@ public class MapImporter {
 
             Factory.getMapRepository().addTeleporter(x1, y1, x2, y2, destX, destY, roundedAngle);
         } else if (id.equals(FileItems.SHADED.getKey())) {
+            int x1 = Integer.parseInt(items[0]);
+            int y1 = Integer.parseInt(items[1]);
+            int x2 = Integer.parseInt(items[2]);
+            int y2 = Integer.parseInt(items[3]);
 
+            Factory.getMapRepository().addShaded(x1, y1, x2, y2);
         } else if (id.equals(FileItems.TEXTURE.getKey())) {
 
         }

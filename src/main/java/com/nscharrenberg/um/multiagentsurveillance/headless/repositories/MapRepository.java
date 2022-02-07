@@ -1,5 +1,6 @@
 package com.nscharrenberg.um.multiagentsurveillance.headless.repositories;
 
+import com.nscharrenberg.um.multiagentsurveillance.headless.Factory;
 import com.nscharrenberg.um.multiagentsurveillance.headless.contracts.repositories.IMapRepository;
 import com.nscharrenberg.um.multiagentsurveillance.headless.exceptions.BoardNotBuildException;
 import com.nscharrenberg.um.multiagentsurveillance.headless.exceptions.InvalidTileException;
@@ -79,6 +80,33 @@ public class MapRepository implements IMapRepository {
         for (Tile tile : found.getRegion()) {
             tile.add(teleporter);
         }
+    }
+
+    @Override
+    public void addShaded(int x1, int y1, int x2, int y2) throws InvalidTileException, BoardNotBuildException, ItemAlreadyOnTileException {
+        boardInitCheck();
+
+        TileArea area = findTileAreaByBoundaries(x1, y1, x2, y2);
+
+        for (Tile tile : area.getRegion()) {
+            addShaded(tile.getX(), tile.getY());
+        }
+    }
+
+    @Override
+    public void addShaded(int x1, int y1) throws InvalidTileException, BoardNotBuildException {
+        boardInitCheck();
+
+        Tile found = findTileByCoordinates(x1, y1);
+        int index = Factory.getMapRepository().getBoard().indexOf(found);
+
+        ShadowTile shadedTile = new ShadowTile(found.getX(), found.getY(), found.getItems());
+
+        for (Item item : shadedTile.getItems()) {
+            item.setTile(shadedTile);
+        }
+
+        Factory.getMapRepository().getBoard().set(index, shadedTile);
     }
 
     @Override

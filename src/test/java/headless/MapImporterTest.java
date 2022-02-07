@@ -49,6 +49,9 @@ public class MapImporterTest {
             checkIfWallsBuildCorrectly(0, 0, 120, 1, 2 * 121);
 
             checkIfTeleporterBuildCorrectly(20, 70, 25, 75, 90, 50, Angle.UP, 6 * 6);
+
+            checkIfShaded(10, 20, 20, 40, 11 * 21, true);
+            checkIfShaded(21, 20, 22, 40, 2 * 21, false);
         } catch (IOException e) {
             Assertions.fail();
         }
@@ -88,6 +91,26 @@ public class MapImporterTest {
             }
 
             Assertions.assertInstanceOf(Teleporter.class, source.get());
+        }
+    }
+
+    void checkIfShaded(int x1, int y1, int x2, int y2, int expected, boolean shaded) {
+        // Test if the target area is imported properly
+        TileArea board = Factory.getMapRepository().getBoardAsArea();
+        List<Tile> shadedArea = board.subset(x1, y1, x2, y2);
+
+        if (shadedArea.isEmpty()) {
+            Assertions.fail();
+        }
+
+        Assertions.assertEquals(expected, shadedArea.size());
+
+        for (Tile tile : shadedArea) {
+            if (shaded) {
+                Assertions.assertInstanceOf(ShadowTile.class, tile);
+            } else {
+                Assertions.assertInstanceOf(Tile.class, tile);
+            }
         }
     }
 

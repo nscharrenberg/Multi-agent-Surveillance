@@ -18,6 +18,10 @@ public interface IMapRepository {
 
     void addTeleporter(int x1, int y1, int x2, int y2, int destX, int destY, Angle direction) throws InvalidTileException, BoardNotBuildException, ItemAlreadyOnTileException;
 
+    void addShaded(int x1, int y1, int x2, int y2) throws InvalidTileException, BoardNotBuildException, ItemAlreadyOnTileException;
+
+    void addShaded(int x1, int y1) throws InvalidTileException, BoardNotBuildException;
+
     void addWall(int x1, int y1, int x2, int y2) throws InvalidTileException, BoardNotBuildException, ItemAlreadyOnTileException;
 
     void addWall(int x, int y) throws InvalidTileException, BoardNotBuildException, ItemAlreadyOnTileException;

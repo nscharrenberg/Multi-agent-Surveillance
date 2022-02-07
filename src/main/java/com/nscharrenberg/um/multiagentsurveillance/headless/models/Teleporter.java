@@ -1,31 +1,21 @@
 package com.nscharrenberg.um.multiagentsurveillance.headless.models;
 
 public class Teleporter extends Item {
-    private Area<Tile> source;
-    private Tile destination;
+    private TileArea source;
     private Angle direction;
 
-    public Teleporter(Tile tile, Area<Tile> source, Tile destination, Angle direction) {
-        super(tile);
+    public Teleporter(TileArea source, Tile destination, Angle direction) {
+        super(destination);
         this.source = source;
-        this.destination = destination;
         this.direction = direction;
     }
 
-    public Area<Tile> getSource() {
+    public TileArea getSource() {
         return source;
     }
 
-    public void setSource(Area<Tile> source) {
+    public void setSource(TileArea source) {
         this.source = source;
-    }
-
-    public Tile getDestination() {
-        return destination;
-    }
-
-    public void setDestination(Tile destination) {
-        this.destination = destination;
     }
 
     public Angle getDirection() {

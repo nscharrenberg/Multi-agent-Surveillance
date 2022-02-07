@@ -4,6 +4,7 @@ import com.nscharrenberg.um.multiagentsurveillance.headless.Factory;
 import com.nscharrenberg.um.multiagentsurveillance.headless.exceptions.BoardNotBuildException;
 import com.nscharrenberg.um.multiagentsurveillance.headless.exceptions.InvalidTileException;
 import com.nscharrenberg.um.multiagentsurveillance.headless.exceptions.ItemAlreadyOnTileException;
+import com.nscharrenberg.um.multiagentsurveillance.headless.models.Angle;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Tile;
 
 import java.io.*;
@@ -141,7 +142,24 @@ public class MapImporter {
 
             Factory.getMapRepository().addWall(x1, y1, x2, y2);
         } else if (id.equals(FileItems.TELEPORT.getKey())) {
+            int x1 = Integer.parseInt(items[0]);
+            int y1 = Integer.parseInt(items[1]);
+            int x2 = Integer.parseInt(items[2]);
+            int y2 = Integer.parseInt(items[3]);
+            int destX = Integer.parseInt(items[4]);
+            int destY = Integer.parseInt(items[5]);
+            int angle = Integer.parseInt(items[0]);
+            Angle roundedAngle = Angle.UP;
 
+            if (angle > 45 && angle <= 135) {
+                roundedAngle = Angle.RIGHT;
+            } else if (angle > 135 && angle <= 225) {
+                roundedAngle = Angle.DOWN;
+            } else if (angle > 225 && angle <= 315) {
+                roundedAngle = Angle.LEFT;
+            }
+
+            Factory.getMapRepository().addTeleporter(x1, y1, x2, y2, destX, destY, roundedAngle);
         } else if (id.equals(FileItems.SHADED.getKey())) {
 
         } else if (id.equals(FileItems.TEXTURE.getKey())) {

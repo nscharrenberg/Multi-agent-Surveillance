@@ -47,8 +47,47 @@ public class MapImporterTest {
             checkIfWallsBuildCorrectly(0, 79, 120, 80, 121 * 2);
             checkIfWallsBuildCorrectly(119, 0, 120, 80, 2 * 81);
             checkIfWallsBuildCorrectly(0, 0, 120, 1, 2 * 121);
+
+            checkIfTeleporterBuildCorrectly(20, 70, 25, 75, 90, 50, Angle.UP, 6 * 6);
         } catch (IOException e) {
             Assertions.fail();
+        }
+    }
+
+    void checkIfTeleporterBuildCorrectly(int x1, int y1, int x2, int y2, int destX, int destY, Angle direction, int expected) {
+        // Test if the target area is imported properly
+        TileArea board = Factory.getMapRepository().getBoardAsArea();
+        List<Tile> sourceArea = board.subset(x1, y1, x2, y2);
+        Optional<Tile> destinationOptional = board.getByCoordinates(destX, destY);
+
+        if (sourceArea.isEmpty() || destinationOptional.isEmpty()) {
+            Assertions.fail();
+        }
+
+        Tile destination = destinationOptional.get();
+
+        Assertions.assertEquals(expected, sourceArea.size());
+        Assertions.assertEquals(destX, destination.getX());
+        Assertions.assertEquals(destY, destination.getY());
+
+        Optional<Item> teleportItem = destination.getItems().stream().filter(item -> item instanceof Teleporter).findFirst();
+
+        if (teleportItem.isEmpty()) {
+            Assertions.fail();
+        }
+
+        Assertions.assertInstanceOf(Teleporter.class, teleportItem.get());
+        Teleporter destinationTeleporter = (Teleporter) teleportItem.get();
+        Assertions.assertEquals(direction, destinationTeleporter.getDirection());
+
+        for (Tile tile : sourceArea) {
+            Optional<Item> source = tile.getItems().stream().filter(item -> item instanceof Teleporter).findFirst();
+
+            if (source.isEmpty()) {
+                Assertions.fail();
+            }
+
+            Assertions.assertInstanceOf(Teleporter.class, source.get());
         }
     }
 

@@ -4,9 +4,7 @@ import com.nscharrenberg.um.multiagentsurveillance.headless.contracts.repositori
 import com.nscharrenberg.um.multiagentsurveillance.headless.exceptions.BoardNotBuildException;
 import com.nscharrenberg.um.multiagentsurveillance.headless.exceptions.InvalidTileException;
 import com.nscharrenberg.um.multiagentsurveillance.headless.exceptions.ItemAlreadyOnTileException;
-import com.nscharrenberg.um.multiagentsurveillance.headless.models.Tile;
-import com.nscharrenberg.um.multiagentsurveillance.headless.models.TileArea;
-import com.nscharrenberg.um.multiagentsurveillance.headless.models.Wall;
+import com.nscharrenberg.um.multiagentsurveillance.headless.models.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -66,6 +64,21 @@ public class MapRepository implements IMapRepository {
         }
 
         targetArea = found;
+    }
+
+    @Override
+    public void addTeleporter(int x1, int y1, int x2, int y2, int destX, int destY, Angle direction) throws InvalidTileException, BoardNotBuildException, ItemAlreadyOnTileException {
+        boardInitCheck();
+
+        TileArea found = findTileAreaByBoundaries(x1, y1, x2, y2);
+        Tile destination = findTileByCoordinates(destX, destY);
+
+        Teleporter teleporter = new Teleporter(found, destination, direction);
+        destination.add(teleporter);
+
+        for (Tile tile : found.getRegion()) {
+            tile.add(teleporter);
+        }
     }
 
     @Override

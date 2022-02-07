@@ -94,10 +94,15 @@ public class MapRepository implements IMapRepository {
     }
 
     @Override
-    public void addShaded(int x1, int y1) throws InvalidTileException, BoardNotBuildException {
+    public void addShaded(int x1, int y1) throws InvalidTileException, BoardNotBuildException, ItemAlreadyOnTileException {
         boardInitCheck();
 
         Tile found = findTileByCoordinates(x1, y1);
+
+        if (found instanceof ShadowTile) {
+            throw new ItemAlreadyOnTileException();
+        }
+
         int index = Factory.getMapRepository().getBoard().indexOf(found);
 
         ShadowTile shadedTile = new ShadowTile(found.getX(), found.getY(), found.getItems());

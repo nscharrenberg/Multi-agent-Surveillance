@@ -14,6 +14,11 @@ import java.util.Scanner;
 public class MapImporter {
     private boolean tilesInitialized = false;
 
+    /**
+     * Load a file into the game
+     * @param path - the file path
+     * @throws IOException - Thrown when the file could not be found or is unable to read the file
+     */
     public void load(String path) throws IOException {
         // Reset the game state
         Factory.reset();
@@ -29,6 +34,10 @@ public class MapImporter {
         }
     }
 
+    /**
+     * Parses a line from the imported file
+     * @param currentLine - the line to be parsed
+     */
     private void parseLine(String currentLine) {
         // Delimit line by "="
         String[] split = currentLine.split("=");
@@ -52,6 +61,13 @@ public class MapImporter {
         }
     }
 
+    /**
+     * Add Configuration items to the repository
+     * @param id - the item type to be added
+     * @param value - the value of the item to be added
+     * @throws BoardNotBuildException - Thrown when the board has not been build (no tiles exist)
+     * @throws InvalidTileException - Thrown when the tile is outside the board.
+     */
     private void addToConfig(String id, String value) throws InvalidTileException, BoardNotBuildException {
         if (id.equals(FileItems.NAME.getKey())) {
             Factory.getGameRepository().setName(value);
@@ -108,6 +124,9 @@ public class MapImporter {
         }
     }
 
+    /**
+     * Initialize the tiles based on the width and height
+     */
     private void initTiles() {
         Factory.getMapRepository().getBoard().clear();
 
@@ -118,7 +137,14 @@ public class MapImporter {
         }
     }
 
-
+    /**
+     * Adds map item to the repository
+     * @param id - the item type to be added
+     * @param value - the value of the item to be added
+     * @throws BoardNotBuildException - Thrown when the board has not been build (no tiles exist)
+     * @throws ItemAlreadyOnTileException - Thrown when the item is already present on the given tile.
+     * @throws InvalidTileException - Thrown when the tile is outside the board.
+     */
     private void addToMap(String id, String value) throws BoardNotBuildException, ItemAlreadyOnTileException, InvalidTileException {
         if (Factory.getMapRepository().getBoard().isEmpty()) {
             throw new BoardNotBuildException();

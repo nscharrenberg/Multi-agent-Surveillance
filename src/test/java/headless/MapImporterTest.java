@@ -42,20 +42,26 @@ public class MapImporterTest {
             checkIfTargetAreaCorrect();
             checkIfGuardSpawnAreaCorrect();
             checkIfIntruderSpawnAreaCorrect();
-            checkIfWallsBuildCorrectly();
+            checkIfWallsBuildCorrectly(50, 0, 51, 20, 2 * 21);
+            checkIfWallsBuildCorrectly(0, 0, 1, 80, 2 * 81);
+            checkIfWallsBuildCorrectly(0, 79, 120, 80, 121 * 2);
+            checkIfWallsBuildCorrectly(119, 0, 120, 80, 2 * 81);
+            checkIfWallsBuildCorrectly(0, 0, 120, 1, 2 * 121);
         } catch (IOException e) {
             Assertions.fail();
         }
     }
 
-    void checkIfWallsBuildCorrectly() {
+    void checkIfWallsBuildCorrectly(int x1, int y1, int x2, int y2, int expected) {
         // Test if the target area is imported properly
         TileArea board = Factory.getMapRepository().getBoardAsArea();
-        List<Tile> wallArea = board.subset(50, 0, 51, 20);
+        List<Tile> wallArea = board.subset(x1, y1, x2, y2);
 
         if (wallArea.isEmpty()) {
             Assertions.fail();
         }
+
+        Assertions.assertEquals(expected, wallArea.size());
 
         for (Tile tile : wallArea) {
             Optional<Item> wallItem = tile.getItems().stream().filter(item -> item instanceof Wall).findFirst();

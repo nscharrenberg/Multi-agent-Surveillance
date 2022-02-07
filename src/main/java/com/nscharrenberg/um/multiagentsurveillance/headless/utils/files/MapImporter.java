@@ -117,8 +117,8 @@ public class MapImporter {
     private void initTiles() {
         Factory.getMapRepository().getBoard().clear();
 
-        for (int i = 0; i <= Factory.getGameRepository().getHeight(); i++) {
-            for (int j = 0; j <= Factory.getGameRepository().getWidth(); j++) {
+        for (int i = 0; i <= Factory.getGameRepository().getWidth(); i++) {
+            for (int j = 0; j <= Factory.getGameRepository().getHeight(); j++) {
                 Factory.getMapRepository().getBoard().add(new Tile(i, j));
             }
         }

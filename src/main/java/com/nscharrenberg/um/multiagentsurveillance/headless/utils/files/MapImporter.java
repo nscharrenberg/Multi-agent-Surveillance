@@ -6,6 +6,7 @@ import com.nscharrenberg.um.multiagentsurveillance.headless.exceptions.InvalidTi
 import com.nscharrenberg.um.multiagentsurveillance.headless.exceptions.ItemAlreadyOnTileException;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Angle;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Tile;
+import com.nscharrenberg.um.multiagentsurveillance.headless.utils.AngleConverter;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
@@ -168,15 +169,7 @@ public class MapImporter {
             int destX = Integer.parseInt(items[4]);
             int destY = Integer.parseInt(items[5]);
             int angle = Integer.parseInt(items[0]);
-            Angle roundedAngle = Angle.UP;
-
-            if (angle > 45 && angle <= 135) {
-                roundedAngle = Angle.RIGHT;
-            } else if (angle > 135 && angle <= 225) {
-                roundedAngle = Angle.DOWN;
-            } else if (angle > 225 && angle <= 315) {
-                roundedAngle = Angle.LEFT;
-            }
+            Angle roundedAngle = AngleConverter.convert(angle);
 
             Factory.getMapRepository().addTeleporter(x1, y1, x2, y2, destX, destY, roundedAngle);
         } else if (id.equals(FileItems.SHADED.getKey())) {

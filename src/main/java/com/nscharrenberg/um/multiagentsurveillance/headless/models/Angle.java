@@ -4,5 +4,5 @@ public enum Angle {
     UP,
     DOWN,
     LEFT,
-    RIGHT
+    RIGHT;
 }

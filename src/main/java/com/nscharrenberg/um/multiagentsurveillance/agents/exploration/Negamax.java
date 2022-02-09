@@ -12,6 +12,8 @@ import java.util.Optional;
 
 public class Negamax {
 
+    //Set up the minimum node
+    private Node result;
 
     //TODO parameters: State of the board, Agent
     public List<Angle> calculateExplorationPath(TileArea state, Player agent){
@@ -25,34 +27,34 @@ public class Negamax {
 
         //Looping until the whole area will be explored
         while(state.getRegion().size() != state.getExploredArea().size()) {
-            // Creating a root of the tree
-            Node root = new Node(agent.getTile());
 
             //TODO Clone state and agent
             //Save the state before pushing to the exploration tree
             TileArea loopState = cloneState.clone();
             Player loopAgent = cloneAgent.clone();
 
-            // Creating a tree
-            Node finalMove = explorationTree(loopState, loopAgent, root, 0, agent.getView() + 1);
+            // Creating a root of the tree
+            result = new Node(loopAgent.getTile());
+            explorationTree(loopState, loopAgent, result, 0, agent.getView() + 1);
 
             //If the agent is stacked, we performs extensive exploration tree, to get out from the stack area
-            if(finalMove.getExplorationCost() == 0){
+            if(result.getExplorationCost() == 0){
                 //TODO Clone state and agent
                 loopState = cloneState.clone();
                 loopAgent = cloneAgent.clone();
-                finalMove = explorationTree(loopState, loopAgent, root, 0, state.getTheFurthestPointOfKnownArea().size());
+                result = new Node(loopAgent.getTile());
+                explorationTree(loopState, loopAgent, result, 0, state.getTheFurthestPointOfKnownArea().size());
             }
             //Checking on bugs in the exploration tree
-            if(finalMove == null || finalMove.isRoot())
+            if(result == null || result.isRoot())
                 throw new RuntimeException("The move is null OR it tries to execute Root Node");
 
 
             //Save list of moves
             List<Angle> moveSequence = new ArrayList<>();
-            while (!finalMove.getParent().isRoot()) {
-                moveSequence.add(finalMove.getAction());
-                finalMove = finalMove.getParent();
+            while (!result.getParent().isRoot()) {
+                moveSequence.add(result.getAction());
+                result = result.getParent();
             }
 
             //Save list of moves for the final result
@@ -73,16 +75,11 @@ public class Negamax {
         return allMoveSequence;
     }
 
-
-    public Node explorationTree(TileArea state, Player agent, Node node, int depth, int base) {
+    public void explorationTree(TileArea state, Player agent, Node node, int depth, int base) {
 
         //Base case
         if(base == depth)
-            return node;
-
-        //Base case for the rotation
-        if(node.getRotationCount() == 3)
-            return node;
+            return;
 
         // Creating children for the node
         List<Node> children = createChildren(state, agent, node);
@@ -91,8 +88,9 @@ public class Negamax {
         if(children.size() < 3 || children.size() > 4)
             throw new RuntimeException("Children size of the node is out of bounds");
 
-        //Set up the minimum node
-        Node comparedNode = new Node(Double.MAX_VALUE, Double.MIN_VALUE);
+        //Base case for the rotation
+        if(node.getRotationCount() == 3 && children.size() == 3)
+            return;
 
 
         // Simulating moves of children
@@ -106,28 +104,29 @@ public class Negamax {
             Player cloneAgent = agent.clone();
 
             /*
-            1)Check if the action performs in known area(state)
-            2)Calculate the size of unknown area(agent)
+            1) if(node.getRotationCount() == 3 && action.isRotation())
+                    continue;
 
-            3)Execute the move without outcome, but put unknown area which agent explored as known area.
+            2)Check if the action performs in known area(state)
+
+            3)Calculate the size of unknown area(agent)
+
+            4)Execute the move without outcome, but put unknown area which agent explored as known area.
             Solution -> state = known area without updating, agent = update the known area
 
-            4)childNode.addExplorationCost(size of unknown area(agent)) childNode.addMovementCost()
-            5)if action was rotation childNode.addRotationCount()
-            6)if action was forward depth++
+            5)childNode.addExplorationCost(size of unknown area(agent) - 1) childNode.addMovementCost()
+            6)if action was rotation childNode.addRotationCount()
+            7)if action was forward depth++ and childNode.removeRotationCount()
              */
 
             //Create a new branch
-            Node evalNode = explorationTree(cloneState, cloneAgent, childNode, depth, base);
+            explorationTree(cloneState, cloneAgent, childNode, depth, base);
 
             //TODO experiments with ==>  Priority Move -> Exploration ||OR|| Exploration -> Move
-            if(evalNode.getMovementCost() < comparedNode.getMovementCost()) {
-                if (evalNode.getExplorationCost() > comparedNode.getExplorationCost()) {
-                    comparedNode = evalNode;
-                }
-            }
+            if(childNode.getMovementCost() > result.getMovementCost())
+                if (childNode.getExplorationCost() >= result.getExplorationCost())
+                    result = childNode;
         }
-        return comparedNode;
     }
 
 

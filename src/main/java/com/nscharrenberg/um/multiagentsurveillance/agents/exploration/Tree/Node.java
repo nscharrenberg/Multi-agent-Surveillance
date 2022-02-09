@@ -17,11 +17,6 @@ public class Node {
     private double movementCost;
     private double rotationCount;
 
-    //Compared node
-    public Node(double max, double min){
-        this.explorationCost = min;
-        this.movementCost = max;
-    }
 
     public Node(Tile position) {
         this.root = true;
@@ -34,10 +29,15 @@ public class Node {
         this.action = action;
         this.explorationCost += parent.explorationCost;
         this.movementCost += parent.movementCost;
+        this.rotationCount = parent.rotationCount;
     }
 
     public double getRotationCount() {
         return rotationCount;
+    }
+
+    public void removeRotationCount(){
+        this.rotationCount = 0;
     }
 
     public void addRotationCount() {

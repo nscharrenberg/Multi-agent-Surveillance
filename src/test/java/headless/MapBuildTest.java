@@ -183,4 +183,67 @@ public class MapBuildTest {
         Assertions.assertEquals(guard, tile.getItems().get(0));
         Assertions.assertEquals(move, ((Player) tile.getItems().get(0)).getDirection());
     }
+
+
+    @DisplayName("Teleport Success")
+    @Test
+    void testTeleporter() throws ItemAlreadyOnTileException, InvalidTileException, BoardNotBuildException, CollisionException, ItemNotOnTileException {
+        // Source
+        int x1 = 5;
+        int y1 = 2;
+        int x2 = 6;
+        int y2 = 3;
+
+        Angle facingDirection = Angle.LEFT;
+
+        // Destination
+        int destX = 20;
+        int destY = 10;
+
+        Factory.getMapRepository().addTeleporter(x1, y1, x2, y2, destX, destY, facingDirection);
+
+        // Player Spawn
+        int x = 4;
+        int y = 2;
+
+        Optional<Tile> tileOpt = Factory.getMapRepository().getBoardAsArea().getByCoordinates(x, y);
+
+        if (tileOpt.isEmpty()) {
+            Assertions.fail("Tiles could not be found");
+        }
+
+        Tile tile = tileOpt.get();
+
+        Guard guard = new Guard(tile, Angle.RIGHT);
+        tile.add(guard);
+
+        Angle move = Angle.RIGHT;
+
+        // build wall
+        int teleportSourceX = tile.getX() + move.getxIncrement();
+        int teleportSourceY = tile.getY() + move.getyIncrement();
+
+        Optional<Tile> nextTileOpt = Factory.getMapRepository().getBoardAsArea().getByCoordinates(teleportSourceX, teleportSourceY);
+
+        if (nextTileOpt.isEmpty()) {
+            Assertions.fail("Tiles could not be found");
+        }
+
+        Tile nextTile = nextTileOpt.get();
+
+        Assertions.assertInstanceOf(Teleporter.class, nextTile.getItems().get(0));
+
+        Factory.getMapRepository().move(guard, move);
+
+        Optional<Tile> sourceTileOpt = Factory.getMapRepository().getBoardAsArea().getByCoordinates(destX, destY);
+
+        if (sourceTileOpt.isEmpty()) {
+            Assertions.fail("Tiles could not be found");
+        }
+
+        Tile sourceTile = sourceTileOpt.get();
+
+        Assertions.assertEquals(sourceTile, guard.getTile());
+        Assertions.assertNotEquals(nextTile, guard.getTile());
+    }
 }

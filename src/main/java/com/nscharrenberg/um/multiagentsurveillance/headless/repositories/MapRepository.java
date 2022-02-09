@@ -41,17 +41,31 @@ public class MapRepository implements IMapRepository {
 
         Tile nextPosition = nextPositionOpt.get();
 
-        Optional<Item> collisionFound = nextPosition.getItems().stream().filter(item -> item instanceof Collision && item != player).findFirst();
+        Optional<Item> collisionFound = nextPosition.getItems().stream().filter(item -> item instanceof Collision).findFirst();
 
         if (collisionFound.isPresent()) {
             throw new CollisionException();
         }
 
+        Optional<Item> teleporterFoundOpt = nextPosition.getItems().stream().filter(item -> item instanceof Teleporter).findFirst();
+
         // remove player from tile
         currentPosition.remove(player);
 
+        // Teleport to destination instead of the source tile
+        if (teleporterFoundOpt.isPresent()) {
+            Teleporter teleporter = (Teleporter) teleporterFoundOpt.get();
+
+            teleporter.getTile().add(player);
+            player.setTile(teleporter.getTile());
+            player.setDirection(teleporter.getDirection());
+
+            return;
+        }
+
         // add player to tile
         nextPosition.add(player);
+        player.setTile(nextPosition);
     }
 
     @Override

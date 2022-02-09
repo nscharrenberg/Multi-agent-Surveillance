@@ -15,10 +15,11 @@ public class Node {
     private List<Node> children = new ArrayList<>();
     private double explorationCost;
     private double movementCost;
+    private double rotationCount;
 
-    //Max_Value node
-    public Node(double max){
-        this.explorationCost = max;
+    //Compared node
+    public Node(double max, double min){
+        this.explorationCost = min;
         this.movementCost = max;
     }
 
@@ -35,12 +36,20 @@ public class Node {
         this.movementCost += parent.movementCost;
     }
 
+    public double getRotationCount() {
+        return rotationCount;
+    }
+
+    public void addRotationCount() {
+        this.rotationCount += 1;
+    }
+
     public double getMovementCost() {
         return movementCost;
     }
 
-    public void addMovementCost(double movementCost) {
-        this.movementCost += movementCost;
+    public void addMovementCost() {
+        this.movementCost += 1;
     }
 
     public double getExplorationCost() {

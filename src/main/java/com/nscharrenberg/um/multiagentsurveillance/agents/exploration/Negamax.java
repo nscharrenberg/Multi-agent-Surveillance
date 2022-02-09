@@ -17,25 +17,35 @@ public class Negamax {
     public List<Angle> calculateExplorationPath(TileArea state, Player agent){
 
         //TODO Clone state and agent
+        //Save the current state of the game
         TileArea cloneState = state.clone();
         Player cloneAgent = agent.clone();
 
         List<Angle> allMoveSequence = new ArrayList<>();
 
+        //Looping until the whole area will be explored
         while(state.getRegion().size() != state.getExploredArea().size()) {
             // Creating a root of the tree
             Node root = new Node(agent.getTile());
 
             //TODO Clone state and agent
-            TileArea loopState = state.clone();
-            Player loopAgent = agent.clone();
+            //Save the state before pushing to the exploration tree
+            TileArea loopState = cloneState.clone();
+            Player loopAgent = cloneAgent.clone();
 
             // Creating a tree
-            Node finalMove = explorationTree(state, agent, root, 0, agent.getView() + 1);
+            Node finalMove = explorationTree(loopState, loopAgent, root, 0, agent.getView() + 1);
 
             //If the agent is stacked, we performs extensive exploration tree, to get out from the stack area
-            if(finalMove.getExplorationCost() == 0)
-                finalMove = explorationTree(state, agent, root, 0, state.getTheFurthestPointOfKnownArea().size());
+            if(finalMove.getExplorationCost() == 0){
+                //TODO Clone state and agent
+                loopState = cloneState.clone();
+                loopAgent = cloneAgent.clone();
+                finalMove = explorationTree(loopState, loopAgent, root, 0, state.getTheFurthestPointOfKnownArea().size());
+            }
+            //Checking on bugs in the exploration tree
+            if(finalMove == null || finalMove.isRoot())
+                throw new RuntimeException("The move is null OR it tries to execute Root Node");
 
 
             //Save list of moves
@@ -48,12 +58,10 @@ public class Negamax {
             //Save list of moves for the final result
             allMoveSequence.addAll(moveSequence);
 
-            //Set up to initial state which was before the tree
-            state = loopState;
-            agent = loopAgent;
 
             //TODO Executing move sequence with outcomes
             for (int i = moveSequence.size() - 1; i >= 0; i--) {
+                //TODO IMPORTANT execute the move with the cloneState and cloneAgent
                 /*
                 1)Execute move with the view. (Don't forget set the normal view of the agent)
                 2)Add tiles to the Explored Area
@@ -62,67 +70,71 @@ public class Negamax {
 
         }
 
-        //Set up to initial state of the game
-        state = cloneState;
-        agent = cloneAgent;
-
         return allMoveSequence;
     }
 
 
     public Node explorationTree(TileArea state, Player agent, Node node, int depth, int base) {
 
-        //Base case: Size of the map == Size of explored area
+        //Base case
         if(base == depth)
+            return node;
+
+        //Base case for the rotation
+        if(node.getRotationCount() == 3)
             return node;
 
         // Creating children for the node
         List<Node> children = createChildren(state, agent, node);
 
-        if(children.size() == 0)
-            throw new RuntimeException("Children size of the node is equal to 0");
+        //Checking for children, we always should have at least 3 or at most 4
+        if(children.size() < 3 || children.size() > 4)
+            throw new RuntimeException("Children size of the node is out of bounds");
 
         //Set up the minimum node
-        Node minValue = new Node(Double.MAX_VALUE);
+        Node comparedNode = new Node(Double.MAX_VALUE, Double.MIN_VALUE);
 
-        //TODO Clone state and agent
-        TileArea cloneState = state.clone();
-        Player cloneAgent = agent.clone();
 
         // Simulating moves of children
         for (int i = 0; i < children.size(); i++) {
             Node childNode = children.get(i);
 
             //TODO Executing move without outcome and calculate the cost of the move
-            state = cloneState;
-            agent = cloneAgent;
+            //Set the state of the game which was before iterations
+            //TODO Clone state and agent
+            TileArea cloneState = state.clone();
+            Player cloneAgent = agent.clone();
 
             /*
-            1)Check if the action performs in known area
-            2)Execute the move without view. Solution -> Set view of the agent 0
-            3)Define the size of known area
-            4)childNode.addExplorationCost(size of known area) childNode.addMovementCost(1)
-            5)if action was forward depth++
+            1)Check if the action performs in known area(state)
+            2)Calculate the size of unknown area(agent)
+
+            3)Execute the move without outcome, but put unknown area which agent explored as known area.
+            Solution -> state = known area without updating, agent = update the known area
+
+            4)childNode.addExplorationCost(size of unknown area(agent)) childNode.addMovementCost()
+            5)if action was rotation childNode.addRotationCount()
+            6)if action was forward depth++
              */
 
             //Create a new branch
-            Node evalNode = explorationTree(state, agent, childNode, depth, base);
+            Node evalNode = explorationTree(cloneState, cloneAgent, childNode, depth, base);
 
             //TODO experiments with ==>  Priority Move -> Exploration ||OR|| Exploration -> Move
-            if(evalNode.getMovementCost() < minValue.getMovementCost()) {
-                if (evalNode.getExplorationCost() < minValue.getExplorationCost()) {
-                    minValue = evalNode;
+            if(evalNode.getMovementCost() < comparedNode.getMovementCost()) {
+                if (evalNode.getExplorationCost() > comparedNode.getExplorationCost()) {
+                    comparedNode = evalNode;
                 }
             }
         }
-        return minValue;
+        return comparedNode;
     }
 
 
 
     private List<Node> createChildren(TileArea state, Player agent, Node node){
 
-        //return action without going forward to unknown area
+        //return action WITHOUT going forward to unknown area(state)
         List<Angle> listOfLegalMoves = agent.getAllPossibleMoves(state, agent);
 
         for (int i = 0; i < listOfLegalMoves.size(); i++) {

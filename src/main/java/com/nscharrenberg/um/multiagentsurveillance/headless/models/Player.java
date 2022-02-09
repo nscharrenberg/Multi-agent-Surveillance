@@ -1,5 +1,7 @@
 package com.nscharrenberg.um.multiagentsurveillance.headless.models;
 
+import java.util.List;
+
 public abstract class Player extends Collision {
     private Angle direction;
     private double speed;
@@ -42,5 +44,12 @@ public abstract class Player extends Collision {
 
     public void setObservation(Area<Tile> observation) {
         this.observation = observation;
+    }
+
+
+    //TODO get all possible moves
+    public List<Angle> getAllPossibleMoves(TileArea state, Player player){
+
+        return null;
     }
 }

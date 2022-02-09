@@ -16,6 +16,20 @@ public interface IMapRepository {
     TileArea getBoardAsArea();
 
     /**
+     * Builds an empty board with tiles based on the GameRepositories provided width and height
+     * @throws IllegalArgumentException - Thrown when width or height is 0
+     */
+    void buildEmptyBoard() throws IllegalArgumentException;
+
+    /**
+     * Builds an empty board with tiles based on the given width and height
+     * @param width - The given width
+     * @param height - the given height
+     * @throws IllegalArgumentException - Thrown when width or height is 0
+     */
+    void buildEmptyBoard(int width, int height) throws IllegalArgumentException;
+
+    /**
      * Finds the tile on the board by its coordinates
      * @param x - the x coordinate
      * @param y - the y coordinate

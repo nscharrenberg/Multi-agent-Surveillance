@@ -27,6 +27,24 @@ public class MapRepository implements IMapRepository {
     }
 
     @Override
+    public void buildEmptyBoard() throws IllegalArgumentException {
+        buildEmptyBoard(Factory.getGameRepository().getWidth(), Factory.getGameRepository().getHeight());
+    }
+
+    @Override
+    public void buildEmptyBoard(int width, int height) throws IllegalArgumentException {
+        if (width == 0 || height == 0) {
+            throw new IllegalArgumentException("Unable to build a board with a width or height of 0");
+        }
+
+        for (int i = 0; i <= width; i++) {
+            for (int j = 0; j <= height; j++) {
+                Factory.getMapRepository().getBoard().add(new Tile(i, j));
+            }
+        }
+    }
+
+    @Override
     public Tile findTileByCoordinates(int x, int y) throws BoardNotBuildException, InvalidTileException {
         boardInitCheck();
 

@@ -31,13 +31,6 @@ public class MapRepository implements IMapRepository {
 
         Tile currentPosition = player.getTile();
 
-        Optional<Item> collisionFound = currentPosition.getItems().stream().filter(item -> item instanceof Collision && item != player).findFirst();
-
-        if (collisionFound.isPresent()) {
-            throw new CollisionException();
-        }
-
-        // find new tile
         int nextX = player.getTile().getX() + direction.getxIncrement();
         int nextY = player.getTile().getY() + direction.getyIncrement();
         Optional<Tile> nextPositionOpt = Factory.getMapRepository().getBoardAsArea().getByCoordinates(nextX, nextY);
@@ -47,6 +40,12 @@ public class MapRepository implements IMapRepository {
         }
 
         Tile nextPosition = nextPositionOpt.get();
+
+        Optional<Item> collisionFound = nextPosition.getItems().stream().filter(item -> item instanceof Collision && item != player).findFirst();
+
+        if (collisionFound.isPresent()) {
+            throw new CollisionException();
+        }
 
         // remove player from tile
         currentPosition.remove(player);

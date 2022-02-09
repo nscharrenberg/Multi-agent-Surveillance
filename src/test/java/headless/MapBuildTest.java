@@ -142,4 +142,45 @@ public class MapBuildTest {
         Assertions.assertEquals(guard, nextTile.getItems().get(0));
         Assertions.assertEquals(guard.getTile(), nextTile.getItems().get(0).getTile());
     }
+
+    @DisplayName("Move Guard Success")
+    @Test
+    void testMoveGuardIntoWall() throws ItemAlreadyOnTileException, InvalidTileException, BoardNotBuildException, CollisionException, ItemNotOnTileException {
+        int x = 20;
+        int y = 10;
+
+        Optional<Tile> tileOpt = Factory.getMapRepository().getBoardAsArea().getByCoordinates(x, y);
+
+        if (tileOpt.isEmpty()) {
+            Assertions.fail("Tiles could not be found");
+        }
+
+        Tile tile = tileOpt.get();
+
+        Guard guard = new Guard(tile, Angle.UP);
+        tile.add(guard);
+
+        // Check if player exists
+        Assertions.assertEquals(guard.getTile().getItems(), tile.getItems());
+        Assertions.assertEquals(1, tile.getItems().size());
+        Assertions.assertEquals(guard, tile.getItems().get(0));
+
+        Angle move = Angle.UP;
+
+        // build wall
+        int wallX = tile.getX() + move.getxIncrement();
+        int wallY = tile.getY() + move.getyIncrement();
+
+        Factory.getMapRepository().addWall(wallX, wallY);
+
+        // Move the player into the wall
+        Assertions.assertThrows(CollisionException.class, () -> {
+            Factory.getMapRepository().move(guard, move);
+        });
+
+        Assertions.assertEquals(move, guard.getDirection());
+        Assertions.assertEquals(guard.getTile(), tile);
+        Assertions.assertEquals(guard, tile.getItems().get(0));
+        Assertions.assertEquals(move, ((Player) tile.getItems().get(0)).getDirection());
+    }
 }

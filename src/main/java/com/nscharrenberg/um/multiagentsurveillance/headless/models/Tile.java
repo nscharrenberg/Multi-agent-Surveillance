@@ -65,7 +65,7 @@ public class Tile {
             throw new ItemAlreadyOnTileException();
         }
 
-        if (item.getTile().equals(this)) {
+        if (item.getTile() != null && item.getTile().equals(this)) {
             item.setTile(this);
         }
 

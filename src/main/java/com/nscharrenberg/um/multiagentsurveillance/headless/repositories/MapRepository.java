@@ -2,9 +2,7 @@ package com.nscharrenberg.um.multiagentsurveillance.headless.repositories;
 
 import com.nscharrenberg.um.multiagentsurveillance.headless.Factory;
 import com.nscharrenberg.um.multiagentsurveillance.headless.contracts.repositories.IMapRepository;
-import com.nscharrenberg.um.multiagentsurveillance.headless.exceptions.BoardNotBuildException;
-import com.nscharrenberg.um.multiagentsurveillance.headless.exceptions.InvalidTileException;
-import com.nscharrenberg.um.multiagentsurveillance.headless.exceptions.ItemAlreadyOnTileException;
+import com.nscharrenberg.um.multiagentsurveillance.headless.exceptions.*;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.*;
 
 import java.util.ArrayList;
@@ -19,6 +17,42 @@ public class MapRepository implements IMapRepository {
 
     public MapRepository() {
         this.board = new ArrayList<>();
+    }
+
+    @Override
+    public void move(Player player, Angle direction) throws CollisionException, InvalidTileException, ItemNotOnTileException, ItemAlreadyOnTileException {
+        Angle currentDirection = player.getDirection();
+
+        // Rotate the player when it's not facing the same direction as it wants to go to.
+        if (!currentDirection.equals(direction)) {
+            player.setDirection(direction);
+            return;
+        }
+
+        Tile currentPosition = player.getTile();
+
+        Optional<Item> collisionFound = currentPosition.getItems().stream().filter(item -> item instanceof Collision && item != player).findFirst();
+
+        if (collisionFound.isPresent()) {
+            throw new CollisionException();
+        }
+
+        // find new tile
+        int nextX = player.getTile().getX() + direction.getxIncrement();
+        int nextY = player.getTile().getY() + direction.getyIncrement();
+        Optional<Tile> nextPositionOpt = Factory.getMapRepository().getBoardAsArea().getByCoordinates(nextX, nextY);
+
+        if (nextPositionOpt.isEmpty()) {
+            throw new InvalidTileException(nextX, nextY);
+        }
+
+        Tile nextPosition = nextPositionOpt.get();
+
+        // remove player from tile
+        currentPosition.remove(player);
+
+        // add player to tile
+        nextPosition.add(player);
     }
 
     @Override

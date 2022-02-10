@@ -2,9 +2,7 @@ package com.nscharrenberg.um.multiagentsurveillance.headless.repositories;
 
 import com.nscharrenberg.um.multiagentsurveillance.headless.Factory;
 import com.nscharrenberg.um.multiagentsurveillance.headless.contracts.repositories.IMapRepository;
-import com.nscharrenberg.um.multiagentsurveillance.headless.exceptions.BoardNotBuildException;
-import com.nscharrenberg.um.multiagentsurveillance.headless.exceptions.InvalidTileException;
-import com.nscharrenberg.um.multiagentsurveillance.headless.exceptions.ItemAlreadyOnTileException;
+import com.nscharrenberg.um.multiagentsurveillance.headless.exceptions.*;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.*;
 
 import java.util.ArrayList;

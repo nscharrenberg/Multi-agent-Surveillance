@@ -15,7 +15,7 @@ import java.util.List;
 import java.util.Optional;
 
 public class PlayerRepository implements IPlayerRepository {
-    private SecureRandom rand;
+    private SecureRandom random;
     private List<Intruder> intruders;
     private List<Guard> guards;
 
@@ -24,9 +24,9 @@ public class PlayerRepository implements IPlayerRepository {
         this.guards = new ArrayList<>();
 
         try {
-            this.rand = SecureRandom.getInstanceStrong();
+            this.random = SecureRandom.getInstanceStrong();
         } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
+            System.out.println("Error while generating Random Class");
         }
     }
 
@@ -56,7 +56,7 @@ public class PlayerRepository implements IPlayerRepository {
         boolean tileAssigned = false;
 
         while (!tileAssigned) {
-            int index = rand.nextInt(spawnArea.size());
+            int index = random.nextInt(spawnArea.size());
             Tile tile = spawnArea.get(index);
 
             boolean invalid = false;

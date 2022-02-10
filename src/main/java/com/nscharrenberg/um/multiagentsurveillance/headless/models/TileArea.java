@@ -1,9 +1,6 @@
 package com.nscharrenberg.um.multiagentsurveillance.headless.models;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 public class TileArea extends Area<Tile> {
 
@@ -11,7 +8,7 @@ public class TileArea extends Area<Tile> {
         super();
     }
 
-    public TileArea(List<Tile> region) {
+    public TileArea(HashMap<Integer, HashMap<Integer, Tile>> region) {
         super(region);
     }
 
@@ -26,63 +23,49 @@ public class TileArea extends Area<Tile> {
     }
 
     @Override
-    public List<Tile> subset(int x1, int y1, int x2, int y2) {
-        List<Tile> subset = region.stream().filter(tile -> tile.getX() >= x1 && tile.getX() <= x2 && tile.getY() >= y1 && tile.getY() <= y2).toList();
+    public HashMap<Integer, HashMap<Integer, Tile>> subset(int x1, int y1, int x2, int y2) {
+        HashMap<Integer, HashMap<Integer, Tile>> generatedSubset = new HashMap<>();
 
-        if (subset.isEmpty()) {
-            return new ArrayList<>();
+        for (Map.Entry<Integer, HashMap<Integer, Tile>> rowEntry : region.entrySet()) {
+            if (rowEntry.getKey() >= x1 && rowEntry.getKey() <= x2) {
+                for (Map.Entry<Integer, Tile> colEntry : rowEntry.getValue().entrySet()) {
+                    if (colEntry.getKey() >= y1 && colEntry.getKey() <= y2) {
+
+                        if (!generatedSubset.containsKey(rowEntry.getKey())) {
+                            generatedSubset.put(rowEntry.getKey(), new HashMap<>());
+                        }
+
+                        generatedSubset.get(rowEntry.getKey()).put(colEntry.getKey(), colEntry.getValue());
+                    }
+                }
+            }
         }
 
-        return subset;
+        if (generatedSubset.isEmpty()) {
+            return new HashMap<>();
+        }
+
+        return generatedSubset;
     }
 
     @Override
     public Optional<Tile> getByCoordinates(int x, int y) {
-        return region.stream().filter(tile -> tile.getX() == x && tile.getY() == y).findFirst();
+        return Optional.of(region.get(x).get(y));
     }
 
     @Override
     public List<Tile> getBounds() {
-        Optional<Tile> leftBound = region.stream().min(Comparator.comparing(Tile::getX));
-        Optional<Tile> rightBound = region.stream().max(Comparator.comparing(Tile::getX));
-        Optional<Tile> topBound = region.stream().min(Comparator.comparing(Tile::getY));
-        Optional<Tile> bottomBound = region.stream().max(Comparator.comparing(Tile::getY));
+        int left = 0;
+        int right = region.size();
+        int top = 0;
+        int bottom = region.get(0).size();
 
-        if (leftBound.isEmpty() || rightBound.isEmpty() || topBound.isEmpty() || bottomBound.isEmpty()) {
-            return new ArrayList<>();
-        }
+       ArrayList<Tile> generatedSubset = new ArrayList<>();
+       generatedSubset.add(region.get(left).get(top));
+       generatedSubset.add(region.get(left).get(bottom));
+       generatedSubset.add(region.get(right).get(top));
+       generatedSubset.add(region.get(right).get(bottom));
 
-        if (leftBound.get().getX() == rightBound.get().getX()) {
-            List<Tile> boundRegion = new ArrayList<>();
-            boundRegion.add(topBound.get());
-            boundRegion.add(bottomBound.get());
-
-            return boundRegion;
-        }
-
-        if (topBound.get().getY() == bottomBound.get().getY()) {
-            List<Tile> boundRegion = new ArrayList<>();
-            boundRegion.add(leftBound.get());
-            boundRegion.add(rightBound.get());
-
-            return boundRegion;
-        }
-
-        Optional<Tile> topLeft = region.stream().filter(tile -> tile.getX() == leftBound.get().getX() && tile.getY() == topBound.get().getY()).findFirst();
-        Optional<Tile> topRight = region.stream().filter(tile -> tile.getX() == rightBound.get().getX() && tile.getY() == topBound.get().getY()).findFirst();
-        Optional<Tile> bottomLeft = region.stream().filter(tile -> tile.getX() == leftBound.get().getX() && tile.getY() == bottomBound.get().getY()).findFirst();
-        Optional<Tile> bottomRight = region.stream().filter(tile -> tile.getX() == rightBound.get().getX() && tile.getY() == bottomBound.get().getY()).findFirst();
-
-        if (topLeft.isEmpty() || topRight.isEmpty() || bottomLeft.isEmpty() || bottomRight.isEmpty()) {
-            return new ArrayList<>();
-        }
-
-        List<Tile> boundRegion = new ArrayList<>();
-        boundRegion.add(topLeft.get());
-        boundRegion.add(bottomLeft.get());
-        boundRegion.add(topRight.get());
-        boundRegion.add(bottomRight.get());
-
-        return boundRegion;
+        return generatedSubset;
     }
 }

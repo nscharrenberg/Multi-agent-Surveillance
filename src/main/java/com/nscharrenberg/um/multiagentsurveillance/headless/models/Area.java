@@ -1,26 +1,26 @@
 package com.nscharrenberg.um.multiagentsurveillance.headless.models;
 
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 
 // Collection of objects
 public abstract class Area<T> {
-    protected List<T> region;
+    protected HashMap<Integer, HashMap<Integer, T>> region;
 
     public Area() {
-        this.region = new ArrayList<>();
+        this.region = new HashMap<>();
     }
 
-    public Area(List<T> region) {
+    public Area(HashMap<Integer, HashMap<Integer, T>> region) {
         this.region = region;
     }
 
-    public List<T> getRegion() {
+    public HashMap<Integer, HashMap<Integer, T>> getRegion() {
         return region;
     }
 
-    public void setRegion(List<T> region) {
+    public void setRegion(HashMap<Integer, HashMap<Integer, T>> region) {
         this.region = region;
     }
 
@@ -32,7 +32,7 @@ public abstract class Area<T> {
 
     public abstract boolean within(int x, int y);
 
-    public abstract List<T> subset(int x1, int y1, int x2, int y2);
+    public abstract HashMap<Integer, HashMap<Integer, T>> subset(int x1, int y1, int x2, int y2);
 
     public abstract Optional<T> getByCoordinates(int x, int y);
 

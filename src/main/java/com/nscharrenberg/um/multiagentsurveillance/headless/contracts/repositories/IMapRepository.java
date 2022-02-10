@@ -6,9 +6,6 @@ import com.nscharrenberg.um.multiagentsurveillance.headless.models.*;
 import java.util.List;
 
 public interface IMapRepository {
-
-    void move(Player player, Angle direction) throws CollisionException, InvalidTileException, ItemNotOnTileException, ItemAlreadyOnTileException;
-
     /**
      * Convert the board to a TileArea
      * @return TileArea representation of the board

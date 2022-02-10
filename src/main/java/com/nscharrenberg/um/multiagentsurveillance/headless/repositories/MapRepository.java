@@ -20,55 +20,6 @@ public class MapRepository implements IMapRepository {
     }
 
     @Override
-    public void move(Player player, Angle direction) throws CollisionException, InvalidTileException, ItemNotOnTileException, ItemAlreadyOnTileException {
-        Angle currentDirection = player.getDirection();
-
-        // Rotate the player when it's not facing the same direction as it wants to go to.
-        if (!currentDirection.equals(direction)) {
-            player.setDirection(direction);
-            return;
-        }
-
-        Tile currentPosition = player.getTile();
-
-        int nextX = player.getTile().getX() + direction.getxIncrement();
-        int nextY = player.getTile().getY() + direction.getyIncrement();
-        Optional<Tile> nextPositionOpt = Factory.getMapRepository().getBoardAsArea().getByCoordinates(nextX, nextY);
-
-        if (nextPositionOpt.isEmpty()) {
-            throw new InvalidTileException(nextX, nextY);
-        }
-
-        Tile nextPosition = nextPositionOpt.get();
-
-        Optional<Item> collisionFound = nextPosition.getItems().stream().filter(item -> item instanceof Collision).findFirst();
-
-        if (collisionFound.isPresent()) {
-            throw new CollisionException();
-        }
-
-        Optional<Item> teleporterFoundOpt = nextPosition.getItems().stream().filter(item -> item instanceof Teleporter).findFirst();
-
-        // remove player from tile
-        currentPosition.remove(player);
-
-        // Teleport to destination instead of the source tile
-        if (teleporterFoundOpt.isPresent()) {
-            Teleporter teleporter = (Teleporter) teleporterFoundOpt.get();
-
-            teleporter.getTile().add(player);
-            player.setTile(teleporter.getTile());
-            player.setDirection(teleporter.getDirection());
-
-            return;
-        }
-
-        // add player to tile
-        nextPosition.add(player);
-        player.setTile(nextPosition);
-    }
-
-    @Override
     public TileArea getBoardAsArea() {
         return new TileArea(board);
     }

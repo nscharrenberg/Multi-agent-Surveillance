@@ -116,13 +116,13 @@ public class MapBuildTest {
         Angle move = Angle.DOWN;
 
         // Rotate the player
-        Factory.getMapRepository().move(guard, move);
+        Factory.getPlayerRepository().move(guard, move);
 
         Assertions.assertEquals(move, guard.getDirection());
         Assertions.assertEquals(move, ((Player) tile.getItems().get(0)).getDirection());
 
         // Move the player 1 tile down
-        Factory.getMapRepository().move(guard, move);
+        Factory.getPlayerRepository().move(guard, move);
 
         Assertions.assertEquals(move, guard.getDirection());
         Assertions.assertNotEquals(tile, guard.getTile());
@@ -175,7 +175,7 @@ public class MapBuildTest {
 
         // Move the player into the wall
         Assertions.assertThrows(CollisionException.class, () -> {
-            Factory.getMapRepository().move(guard, move);
+            Factory.getPlayerRepository().move(guard, move);
         });
 
         Assertions.assertEquals(move, guard.getDirection());
@@ -233,7 +233,7 @@ public class MapBuildTest {
 
         Assertions.assertInstanceOf(Teleporter.class, nextTile.getItems().get(0));
 
-        Factory.getMapRepository().move(guard, move);
+        Factory.getPlayerRepository().move(guard, move);
 
         Optional<Tile> sourceTileOpt = Factory.getMapRepository().getBoardAsArea().getByCoordinates(destX, destY);
 

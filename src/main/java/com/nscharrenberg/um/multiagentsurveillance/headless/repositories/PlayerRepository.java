@@ -11,6 +11,7 @@ import com.nscharrenberg.um.multiagentsurveillance.headless.models.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Random;
 
 public class PlayerRepository implements IPlayerRepository {
     private List<Intruder> intruders;
@@ -19,6 +20,58 @@ public class PlayerRepository implements IPlayerRepository {
     public PlayerRepository() {
         this.intruders = new ArrayList<>();
         this.guards = new ArrayList<>();
+    }
+
+    @Override
+    public void spawn(Player player) {
+        if (player instanceof Intruder) {
+            spawnIntruder(player);
+            return;
+        }
+
+        spawnGuard(player);
+    }
+
+    private void spawnGuard(Player guard) {
+        TileArea guardSpawnArea = Factory.getMapRepository().getGuardSpawnArea();
+        spawn(guard, guardSpawnArea);
+    }
+
+    private void spawnIntruder(Player intruder) {
+        TileArea guardSpawnArea = Factory.getMapRepository().getIntruderSpawnArea();
+        spawn(intruder, guardSpawnArea);
+    }
+
+    private void spawn(Player player, TileArea playerSpawnArea) {
+        List<Tile> spawnArea = playerSpawnArea.getRegion();
+
+        Random rand = new Random();
+
+        boolean tileAssigned = false;
+
+        while (!tileAssigned) {
+            int index = rand.nextInt(spawnArea.size());
+            Tile tile = spawnArea.get(index);
+
+            boolean invalid = false;
+
+            for (Item item : tile.getItems()) {
+                if (item instanceof Collision) {
+                    invalid = true;
+                    break;
+                }
+            }
+
+            if (!invalid) {
+                try {
+                    tile.add(player);
+                    player.setTile(tile);
+                    tileAssigned = true;
+                } catch (ItemAlreadyOnTileException e) {
+                    System.out.println("Player Already on tile - this shouldn't happen");
+                }
+            }
+        }
     }
 
     @Override

@@ -14,6 +14,12 @@ import java.util.List;
 public interface IPlayerRepository {
 
     /**
+     * Spawn a player to their corresponding spawn area
+     * @param player - the player to be spawned
+     */
+    void spawn(Player player);
+
+    /**
      * Rotate or Move a player to a new tile
      * @param player - the player to move
      * @param direction - the direction to move to

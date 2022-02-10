@@ -8,18 +8,26 @@ import com.nscharrenberg.um.multiagentsurveillance.headless.exceptions.ItemAlrea
 import com.nscharrenberg.um.multiagentsurveillance.headless.exceptions.ItemNotOnTileException;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.*;
 
+import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.Random;
 
 public class PlayerRepository implements IPlayerRepository {
+    private SecureRandom rand;
     private List<Intruder> intruders;
     private List<Guard> guards;
 
     public PlayerRepository() {
         this.intruders = new ArrayList<>();
         this.guards = new ArrayList<>();
+
+        try {
+            this.rand = SecureRandom.getInstanceStrong();
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -44,8 +52,6 @@ public class PlayerRepository implements IPlayerRepository {
 
     private void spawn(Player player, TileArea playerSpawnArea) {
         List<Tile> spawnArea = playerSpawnArea.getRegion();
-
-        Random rand = new Random();
 
         boolean tileAssigned = false;
 

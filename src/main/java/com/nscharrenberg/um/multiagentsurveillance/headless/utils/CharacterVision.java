@@ -25,7 +25,7 @@ public class CharacterVision {
         observation.add(position);
 
         // TODO: handle out of bounds tiles
-        if(this.direction == Angle.UP) {
+        if(this.direction == Angle.DOWN) {
             for(int k=0; k < length; k++) {
                 for(int r=0; r < s; r++) {
                     observation.add(new Tile((px+length)-k-r, (py+length)-k, null));
@@ -41,7 +41,7 @@ public class CharacterVision {
                 s -= 2;
             }
         }
-        else if(this.direction == Angle.DOWN) {
+        else if(this.direction == Angle.UP) {
             for(int k=0; k < length; k++) {
                 for(int r=0; r < s; r++) {
                     observation.add(new Tile((px-length)+k+r, (py-length)+k, null));
@@ -64,11 +64,15 @@ public class CharacterVision {
 
     }
 
-    // TODO: properly rework method to check for item collision (currently just filters non empty tiles)
+    // TODO: properly rework method to check for item collision
     public ArrayList<Tile> getRealVision(ArrayList<Tile> rawvision) {
         ArrayList<Tile> finalvision = new ArrayList<>();
 
         for (Tile t : rawvision) {
+            // Trim out of bounds tiles
+            if(t.getX() < 0 || t.getY() < 0 || t.getX() > 48 || t.getY() > 24) {
+                //got to check map values
+            }
             if(t.getItems().size() == 0) {
                 // dummy method, will rework to proper item recognition later
                 finalvision.add(t);

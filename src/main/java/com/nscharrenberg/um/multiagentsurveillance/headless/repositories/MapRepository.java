@@ -5,23 +5,21 @@ import com.nscharrenberg.um.multiagentsurveillance.headless.contracts.repositori
 import com.nscharrenberg.um.multiagentsurveillance.headless.exceptions.*;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.*;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 public class MapRepository implements IMapRepository {
-    private List<Tile> board;
+    private TileArea board;
     private TileArea targetArea;
     private TileArea guardSpawnArea;
     private TileArea intruderSpawnArea;
 
     public MapRepository() {
-        this.board = new ArrayList<>();
+        this.board = new TileArea();
     }
 
     @Override
     public TileArea getBoardAsArea() {
-        return new TileArea(board);
+        return this.board;
     }
 
     @Override
@@ -37,7 +35,11 @@ public class MapRepository implements IMapRepository {
 
         for (int i = 0; i <= width; i++) {
             for (int j = 0; j <= height; j++) {
-                Factory.getMapRepository().getBoard().add(new Tile(i, j));
+                if (!Factory.getMapRepository().getBoardAsArea().getRegion().containsKey(i)) {
+                    Factory.getMapRepository().getBoard().getRegion().put(i, new HashMap<>());
+                }
+
+                Factory.getMapRepository().getBoard().getRegion().get(i).put(j, new Tile(i, j));
             }
         }
     }
@@ -46,7 +48,7 @@ public class MapRepository implements IMapRepository {
     public Tile findTileByCoordinates(int x, int y) throws BoardNotBuildException, InvalidTileException {
         boardInitCheck();
 
-        Optional<Tile> found = this.board.stream().filter(tile -> tile.getX() == x && tile.getY() == y).findFirst();
+        Optional<Tile> found = this.board.getByCoordinates(x, y);
 
         if (found.isEmpty()) {
             throw new InvalidTileException(x, y);
@@ -59,9 +61,7 @@ public class MapRepository implements IMapRepository {
     public TileArea findTileAreaByBoundaries(int x1, int y1, int x2, int y2) throws BoardNotBuildException, InvalidTileException {
         boardInitCheck();
 
-        TileArea boardArea = getBoardAsArea();
-
-        List<Tile> foundArea = boardArea.subset(x1, y1, x2, y2);
+        HashMap<Integer, HashMap<Integer, Tile>> foundArea = board.subset(x1, y1, x2, y2);
 
         if (foundArea.isEmpty()) {
             throw new InvalidTileException(x1, y1, x2, y2);
@@ -93,9 +93,13 @@ public class MapRepository implements IMapRepository {
         Teleporter teleporter = new Teleporter(found, destination, direction);
         destination.add(teleporter);
 
-        for (Tile tile : found.getRegion()) {
-            tile.add(teleporter);
+        for (Map.Entry<Integer, HashMap<Integer, Tile>> rowEntry : found.getRegion().entrySet()) {
+            for (Map.Entry<Integer, Tile> colEntry : rowEntry.getValue().entrySet()) {
+                colEntry.getValue().add(teleporter);
+            }
         }
+
+        teleporter.setSource(found);
     }
 
     @Override
@@ -104,8 +108,10 @@ public class MapRepository implements IMapRepository {
 
         TileArea area = findTileAreaByBoundaries(x1, y1, x2, y2);
 
-        for (Tile tile : area.getRegion()) {
-            addShaded(tile.getX(), tile.getY());
+        for (Map.Entry<Integer, HashMap<Integer, Tile>> rowEntry : area.getRegion().entrySet()) {
+            for (Map.Entry<Integer, Tile> colEntry : rowEntry.getValue().entrySet()) {
+                addShaded(rowEntry.getKey(), colEntry.getKey());
+            }
         }
     }
 
@@ -119,15 +125,13 @@ public class MapRepository implements IMapRepository {
             throw new ItemAlreadyOnTileException();
         }
 
-        int index = Factory.getMapRepository().getBoard().indexOf(found);
-
         ShadowTile shadedTile = new ShadowTile(found.getX(), found.getY(), found.getItems());
 
         for (Item item : shadedTile.getItems()) {
             item.setTile(shadedTile);
         }
 
-        Factory.getMapRepository().getBoard().set(index, shadedTile);
+        Factory.getMapRepository().getBoard().getRegion().get(x1).put(y1, shadedTile);
     }
 
     @Override
@@ -136,9 +140,11 @@ public class MapRepository implements IMapRepository {
 
         TileArea area = findTileAreaByBoundaries(x1, y1, x2, y2);
 
-        for (Tile tile : area.getRegion()) {
-            Wall wall = new Wall(tile);
-            tile.add(wall);
+        for (Map.Entry<Integer, HashMap<Integer, Tile>> rowEntry : area.getRegion().entrySet()) {
+            for (Map.Entry<Integer, Tile> colEntry : rowEntry.getValue().entrySet()) {
+                Wall wall = new Wall(colEntry.getValue());
+                colEntry.getValue().add(wall);
+            }
         }
     }
 
@@ -179,13 +185,18 @@ public class MapRepository implements IMapRepository {
     }
 
     @Override
-    public List<Tile> getBoard() {
+    public TileArea getBoard() {
         return board;
     }
 
     @Override
-    public void setBoard(List<Tile> board) {
+    public void setBoard(TileArea board) {
         this.board = board;
+    }
+
+    @Override
+    public void setBoard(HashMap<Integer, HashMap<Integer, Tile>> board) {
+        this.board = new TileArea(board);
     }
 
     @Override

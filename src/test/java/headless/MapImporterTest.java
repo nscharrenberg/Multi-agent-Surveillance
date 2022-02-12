@@ -9,7 +9,9 @@ import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 public class MapImporterTest {
@@ -42,25 +44,25 @@ public class MapImporterTest {
             checkIfTargetAreaCorrect();
             checkIfGuardSpawnAreaCorrect();
             checkIfIntruderSpawnAreaCorrect();
-            checkIfWallsBuildCorrectly(50, 0, 51, 20, 2 * 21);
-            checkIfWallsBuildCorrectly(0, 0, 1, 80, 2 * 81);
-            checkIfWallsBuildCorrectly(0, 79, 120, 80, 121 * 2);
-            checkIfWallsBuildCorrectly(119, 0, 120, 80, 2 * 81);
-            checkIfWallsBuildCorrectly(0, 0, 120, 1, 2 * 121);
+            checkIfWallsBuildCorrectly(50, 0, 51, 20, 2, 21);
+            checkIfWallsBuildCorrectly(0, 0, 1, 80, 2, 81);
+            checkIfWallsBuildCorrectly(0, 79, 120, 80, 121, 2);
+            checkIfWallsBuildCorrectly(119, 0, 120, 80, 2, 81);
+            checkIfWallsBuildCorrectly(0, 0, 120, 1, 121, 2);
 
-            checkIfTeleporterBuildCorrectly(20, 70, 25, 75, 90, 50, Angle.UP, 6 * 6);
+            checkIfTeleporterBuildCorrectly(20, 70, 25, 75, 90, 50, Angle.UP, 6, 6);
 
-            checkIfShaded(10, 20, 20, 40, 11 * 21, true);
-            checkIfShaded(21, 20, 22, 40, 2 * 21, false);
+            checkIfShaded(10, 20, 20, 40, 11, 21, true);
+            checkIfShaded(21, 20, 22, 40, 2, 21, false);
         } catch (IOException e) {
             Assertions.fail();
         }
     }
 
-    void checkIfTeleporterBuildCorrectly(int x1, int y1, int x2, int y2, int destX, int destY, Angle direction, int expected) {
+    void checkIfTeleporterBuildCorrectly(int x1, int y1, int x2, int y2, int destX, int destY, Angle direction, int expectedWidht, int expectedHeight) {
         // Test if the target area is imported properly
         TileArea board = Factory.getMapRepository().getBoardAsArea();
-        List<Tile> sourceArea = board.subset(x1, y1, x2, y2);
+        HashMap<Integer, HashMap<Integer, Tile>> sourceArea = board.subset(x1, y1, x2, y2);
         Optional<Tile> destinationOptional = board.getByCoordinates(destX, destY);
 
         if (sourceArea.isEmpty() || destinationOptional.isEmpty()) {
@@ -69,7 +71,9 @@ public class MapImporterTest {
 
         Tile destination = destinationOptional.get();
 
-        Assertions.assertEquals(expected, sourceArea.size());
+        Assertions.assertEquals(expectedWidht, sourceArea.size());
+        Assertions.assertEquals(expectedHeight, sourceArea.entrySet().stream().findFirst().get().getValue().size());
+
         Assertions.assertEquals(destX, destination.getX());
         Assertions.assertEquals(destY, destination.getY());
 
@@ -83,56 +87,67 @@ public class MapImporterTest {
         Teleporter destinationTeleporter = (Teleporter) teleportItem.get();
         Assertions.assertEquals(direction, destinationTeleporter.getDirection());
 
-        for (Tile tile : sourceArea) {
-            Optional<Item> source = tile.getItems().stream().filter(item -> item instanceof Teleporter).findFirst();
+        for (Map.Entry<Integer, HashMap<Integer, Tile>> rowentry : sourceArea.entrySet()) {
+            for (Map.Entry<Integer, Tile> colEntry : rowentry.getValue().entrySet()) {
+                Tile tile = colEntry.getValue();
+                Optional<Item> source = tile.getItems().stream().filter(item -> item instanceof Teleporter).findFirst();
 
-            if (source.isEmpty()) {
-                Assertions.fail();
+                if (source.isEmpty()) {
+                    Assertions.fail();
+                }
+
+                Assertions.assertInstanceOf(Teleporter.class, source.get());
             }
-
-            Assertions.assertInstanceOf(Teleporter.class, source.get());
         }
     }
 
-    void checkIfShaded(int x1, int y1, int x2, int y2, int expected, boolean shaded) {
+    void checkIfShaded(int x1, int y1, int x2, int y2, int expectedWidth, int expectedHeight, boolean shaded) {
         // Test if the target area is imported properly
         TileArea board = Factory.getMapRepository().getBoardAsArea();
-        List<Tile> shadedArea = board.subset(x1, y1, x2, y2);
+        HashMap<Integer, HashMap<Integer, Tile>> shadedArea = board.subset(x1, y1, x2, y2);
 
         if (shadedArea.isEmpty()) {
             Assertions.fail();
         }
 
-        Assertions.assertEquals(expected, shadedArea.size());
+        Assertions.assertEquals(expectedWidth, shadedArea.size());
+        Assertions.assertEquals(expectedHeight, shadedArea.entrySet().stream().findFirst().get().getValue().size());
 
-        for (Tile tile : shadedArea) {
-            if (shaded) {
-                Assertions.assertInstanceOf(ShadowTile.class, tile);
-            } else {
-                Assertions.assertInstanceOf(Tile.class, tile);
+        for (Map.Entry<Integer, HashMap<Integer, Tile>> rowentry : shadedArea.entrySet()) {
+            for (Map.Entry<Integer, Tile> colEntry : rowentry.getValue().entrySet()) {
+                Tile tile = colEntry.getValue();
+                if (shaded) {
+                    Assertions.assertInstanceOf(ShadowTile.class, tile);
+                } else {
+                    Assertions.assertInstanceOf(Tile.class, tile);
+                }
             }
         }
     }
 
-    void checkIfWallsBuildCorrectly(int x1, int y1, int x2, int y2, int expected) {
+    void checkIfWallsBuildCorrectly(int x1, int y1, int x2, int y2, int expectedWidth, int expectedHeight) {
         // Test if the target area is imported properly
         TileArea board = Factory.getMapRepository().getBoardAsArea();
-        List<Tile> wallArea = board.subset(x1, y1, x2, y2);
+        HashMap<Integer, HashMap<Integer, Tile>> wallArea = board.subset(x1, y1, x2, y2);
 
         if (wallArea.isEmpty()) {
             Assertions.fail();
         }
 
-        Assertions.assertEquals(expected, wallArea.size());
+        Assertions.assertEquals(expectedWidth, wallArea.size());
+        Assertions.assertEquals(expectedHeight, wallArea.entrySet().stream().findFirst().get().getValue().size());
 
-        for (Tile tile : wallArea) {
-            Optional<Item> wallItem = tile.getItems().stream().filter(item -> item instanceof Wall).findFirst();
+        for (Map.Entry<Integer, HashMap<Integer, Tile>> rowentry : wallArea.entrySet()) {
+            for (Map.Entry<Integer, Tile> colEntry : rowentry.getValue().entrySet()) {
+                Tile tile = colEntry.getValue();
+                Optional<Item> wallItem = tile.getItems().stream().filter(item -> item instanceof Wall).findFirst();
 
-            if (wallItem.isEmpty()) {
-                Assertions.fail();
+                if (wallItem.isEmpty()) {
+                    Assertions.fail();
+                }
+
+                Assertions.assertInstanceOf(Wall.class, wallItem.get());
             }
-
-            Assertions.assertInstanceOf(Wall.class, wallItem.get());
         }
     }
 

@@ -55,10 +55,30 @@ public class TileArea extends Area<Tile> {
 
     @Override
     public List<Tile> getBounds() {
-        int left = 0;
-        int right = region.size();
-        int top = 0;
-        int bottom = region.get(0).size();
+        Integer left = null;
+        Integer right = null;
+        Integer top = null;
+        Integer bottom = null;
+
+        for (Map.Entry<Integer, HashMap<Integer, Tile>> rowEntry : region.entrySet()) {
+            if (left == null || rowEntry.getKey() < left) {
+                left = rowEntry.getKey();
+            }
+
+            if (right == null || rowEntry.getKey() > right) {
+                right = rowEntry.getKey();
+            }
+
+            for (Map.Entry<Integer, Tile> colEntry : rowEntry.getValue().entrySet()) {
+                if (top == null || colEntry.getKey() < top) {
+                    top = colEntry.getKey();
+                }
+
+                if (bottom == null || colEntry.getKey() > bottom) {
+                    bottom = colEntry.getKey();
+                }
+            }
+        }
 
        ArrayList<Tile> generatedSubset = new ArrayList<>();
        generatedSubset.add(region.get(left).get(top));
@@ -67,5 +87,39 @@ public class TileArea extends Area<Tile> {
        generatedSubset.add(region.get(right).get(bottom));
 
         return generatedSubset;
+    }
+
+    @Override
+    public int width() {
+        return this.region.size();
+    }
+
+    @Override
+    public int height() {
+        if (this.region.size() <= 0) {
+            return 0;
+        }
+
+        return this.region.get(0).size();
+    }
+
+    @Override
+    public HashMap<Integer, Tile> getRow(int row) {
+        return this.region.get(row);
+    }
+
+    @Override
+    public HashMap<Integer, Tile> getCol(int col) {
+        HashMap<Integer, Tile> result = new HashMap<>();
+
+        for (Map.Entry<Integer, HashMap<Integer, Tile>> rowEntry : this.region.entrySet()) {
+            for (Map.Entry<Integer, Tile> colEntry : rowEntry.getValue().entrySet()) {
+                if (colEntry.getKey() == col) {
+                    result.put(rowEntry.getKey(), colEntry.getValue());
+                }
+            }
+        }
+
+        return result;
     }
 }

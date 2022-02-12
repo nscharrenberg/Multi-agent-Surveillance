@@ -11,6 +11,7 @@ import com.nscharrenberg.um.multiagentsurveillance.headless.models.*;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 
@@ -51,13 +52,16 @@ public class PlayerRepository implements IPlayerRepository {
     }
 
     private void spawn(Player player, TileArea playerSpawnArea) {
-        List<Tile> spawnArea = playerSpawnArea.getRegion();
+        HashMap<Integer, HashMap<Integer, Tile>> spawnArea = playerSpawnArea.getRegion();
 
         boolean tileAssigned = false;
 
         while (!tileAssigned) {
-            int index = random.nextInt(spawnArea.size());
-            Tile tile = spawnArea.get(index);
+            int rowIndex = random.nextInt(playerSpawnArea.width());
+            HashMap<Integer, Tile> row = spawnArea.get(rowIndex);
+
+            int colIndex = random.nextInt(playerSpawnArea.height());
+            Tile tile = row.get(colIndex);
 
             boolean invalid = false;
 

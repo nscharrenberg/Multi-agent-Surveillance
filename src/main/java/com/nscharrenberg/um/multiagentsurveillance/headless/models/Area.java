@@ -37,4 +37,12 @@ public abstract class Area<T> {
     public abstract Optional<T> getByCoordinates(int x, int y);
 
     public abstract List<T> getBounds();
+
+    public abstract int width();
+
+    public abstract int height();
+
+    public abstract HashMap<Integer, Tile> getRow(int col);
+
+    public abstract HashMap<Integer, Tile> getCol(int col);
 }

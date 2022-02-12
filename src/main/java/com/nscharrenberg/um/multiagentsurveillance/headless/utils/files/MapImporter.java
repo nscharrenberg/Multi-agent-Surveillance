@@ -6,6 +6,7 @@ import com.nscharrenberg.um.multiagentsurveillance.headless.exceptions.InvalidTi
 import com.nscharrenberg.um.multiagentsurveillance.headless.exceptions.ItemAlreadyOnTileException;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Angle;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Tile;
+import com.nscharrenberg.um.multiagentsurveillance.headless.models.TileArea;
 import com.nscharrenberg.um.multiagentsurveillance.headless.utils.AngleConverter;
 
 import java.io.*;
@@ -129,7 +130,7 @@ public class MapImporter {
      * Initialize the tiles based on the width and height
      */
     private void initTiles() {
-        Factory.getMapRepository().getBoard().clear();
+        Factory.getMapRepository().setBoard(new TileArea());
         Factory.getMapRepository().buildEmptyBoard();
     }
 

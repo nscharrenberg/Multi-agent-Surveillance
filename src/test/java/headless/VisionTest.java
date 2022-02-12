@@ -5,6 +5,7 @@ import com.nscharrenberg.um.multiagentsurveillance.headless.models.Angle;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.GameMode;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Tile;
 import com.nscharrenberg.um.multiagentsurveillance.headless.utils.CharacterVision;
+import com.nscharrenberg.um.multiagentsurveillance.headless.utils.Geometrics;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -13,7 +14,7 @@ import java.util.ArrayList;
 
 public class VisionTest {
 
-    @DisplayName("Raw Vision successful")
+    @DisplayName("Raw Vision Test")
     @Test
     void testRawVisionTiles() {
 
@@ -35,5 +36,6 @@ public class VisionTest {
         Assertions.assertEquals(25, cvleft.getRawVision(new Tile(7,5,null)).size());
 
     }
+
 }
 

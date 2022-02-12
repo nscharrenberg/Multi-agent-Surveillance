@@ -64,23 +64,24 @@ public class CharacterVision {
 
     }
 
-    // TODO: properly rework method to check for item collision
-    public ArrayList<Tile> getRealVision(ArrayList<Tile> rawvision) {
-        ArrayList<Tile> finalvision = new ArrayList<>();
-
-        for (Tile t : rawvision) {
-            // Trim out of bounds tiles
-            if(t.getX() < 0 || t.getY() < 0 || t.getX() > 48 || t.getY() > 24) {
-                //got to check map values
-            }
-            if(t.getItems().size() == 0) {
-                // dummy method, will rework to proper item recognition later
-                finalvision.add(t);
-            }
-        }
-
-        return finalvision;
-    }
+    // Ignore for now
+//    // TODO: properly rework method to check for item collision
+//    public ArrayList<Tile> getRealVision(ArrayList<Tile> rawvision) {
+//        ArrayList<Tile> finalvision = new ArrayList<>();
+//
+//        for (Tile t : rawvision) {
+//            // Trim out of bounds tiles
+//            if(t.getX() < 0 || t.getY() < 0 || t.getX() > 48 || t.getY() > 24) {
+//                //got to check map values
+//            }
+//            if(t.getItems().size() == 0) {
+//                // dummy method, will rework to proper item recognition later
+//                finalvision.add(t);
+//            }
+//        }
+//
+//        return finalvision;
+//    }
 
     public int getLength() {
         return length;

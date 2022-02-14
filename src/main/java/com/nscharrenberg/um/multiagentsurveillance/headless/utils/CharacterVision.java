@@ -61,7 +61,6 @@ public class CharacterVision {
         }
 
         return observation;
-
     }
 
     // Ignore for now

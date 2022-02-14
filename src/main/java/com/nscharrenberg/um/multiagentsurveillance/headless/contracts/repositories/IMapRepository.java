@@ -3,7 +3,7 @@ package com.nscharrenberg.um.multiagentsurveillance.headless.contracts.repositor
 import com.nscharrenberg.um.multiagentsurveillance.headless.exceptions.*;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.*;
 
-import java.util.List;
+import java.util.HashMap;
 
 public interface IMapRepository {
     /**
@@ -140,9 +140,11 @@ public interface IMapRepository {
      */
     void addIntruderSpawnArea(int x1, int y1, int x2, int y2) throws BoardNotBuildException, InvalidTileException;
 
-    List<Tile> getBoard();
+    TileArea getBoard();
 
-    void setBoard(List<Tile> board);
+    void setBoard(TileArea board);
+
+    void setBoard(HashMap<Integer, HashMap<Integer, Tile>> board);
 
     TileArea getTargetArea();
 

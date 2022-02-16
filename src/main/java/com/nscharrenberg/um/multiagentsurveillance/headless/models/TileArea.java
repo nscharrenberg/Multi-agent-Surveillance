@@ -96,11 +96,13 @@ public class TileArea extends Area<Tile> {
 
     @Override
     public int height() {
-        if (this.region.size() <= 0) {
+        Optional<Map.Entry<Integer, HashMap<Integer, Tile>>> found = this.getRegion().entrySet().stream().findFirst();
+
+        if (this.region.size() <= 0 || found.isEmpty()) {
             return 0;
         }
 
-        return this.region.get(this.getRegion().entrySet().stream().findFirst().get().getKey()).size();
+        return this.region.get(found.get().getKey()).size();
     }
 
     @Override
@@ -130,7 +132,10 @@ public class TileArea extends Area<Tile> {
             }
         }
 
-        return new AbstractMap.SimpleEntry<>(new AbstractMap.SimpleEntry<>(lowerBoundRow, upperBoundRow), new AbstractMap.SimpleEntry<>(lowerBoundCol, upperBoundCol));
+        return new AbstractMap.SimpleEntry<>(
+                new AbstractMap.SimpleEntry<>(lowerBoundRow, upperBoundRow),
+                new AbstractMap.SimpleEntry<>(lowerBoundCol, upperBoundCol)
+        );
     }
 
     @Override

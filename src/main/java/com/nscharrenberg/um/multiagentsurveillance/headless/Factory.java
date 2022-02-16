@@ -28,6 +28,10 @@ public class Factory {
         return playerRepository;
     }
 
+    public static void init() {
+        reset();
+    }
+
     public static void reset() {
         gameRepository = new GameRepository();
         mapRepository = new MapRepository();

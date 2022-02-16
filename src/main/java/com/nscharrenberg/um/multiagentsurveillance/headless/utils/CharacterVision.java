@@ -18,6 +18,76 @@ public class CharacterVision{
         gm = new Geometrics();
     }
 
+    // Basic method for line vision + adjacent tiles
+    private ArrayList<Tile> getLineVision(Tile position) {
+        ArrayList<Tile> vision = new ArrayList<Tile>();
+        int px = position.getX();
+        int py = position.getY();
+
+        // Add left and right tiles
+        if (this.direction == Angle.UP || this.direction == Angle.DOWN) {
+            vision.add(new Tile(px+1,py,null));
+            vision.add(new Tile(px-1,py,null));
+        } else if(this.direction == Angle.RIGHT || this.direction == Angle.LEFT) {
+            vision.add(new Tile(px,py+1,null));
+            vision.add(new Tile(px,py-1,null));
+        }
+
+        // Add tiles in vision line
+        switch(direction) {
+            case UP:
+                for(int i = 0; i < this.length; i++) {
+                    vision.add(new Tile(px,py-i,null));
+                }
+            case DOWN:
+                for(int i = 0; i < this.length; i++) {
+                    vision.add(new Tile(px,py+i,null));
+                }
+            case RIGHT:
+                for(int i = 0; i < this.length; i++) {
+                    vision.add(new Tile(px+i, py,null));
+                }
+            case LEFT:
+                for(int i = 0; i < this.length; i++) {
+                    vision.add(new Tile(px-i, py,null));
+                }
+        }
+
+        return vision;
+    }
+
+    private ArrayList<Tile> getRealVision(TileArea board, ArrayList<Tile> rawvision, Tile position) {
+        ArrayList<Tile> finalvision = new ArrayList<>();
+        boolean validtile = true;
+
+        // Remove out of bound tiles first (maybe redundant if we use Optional)
+        rawvision.removeIf(tc -> (tc.getX() < 0 || tc.getY() < 0));
+        rawvision.removeIf(tc -> (tc.getX() > board.width() || tc.getY() > board.height()));
+
+        // Check remaining tiles for items
+        for (Tile t : rawvision) {
+            if (unobstructedTile(board, t)) {
+                for (Tile it : gm.getIntersectingTiles(position, t)) {
+                    if(!unobstructedTile(board,it)) {
+                        validtile = false;
+                        break;
+                    }
+                }
+            }
+
+            if(validtile)
+                finalvision.add(t);
+        }
+
+        return finalvision;
+    }
+
+    // TODO: Confirm if return parameter is what we want
+    public ArrayList<Tile> getVision(TileArea board, Tile position) {
+        return getRealVision(board, getLineVision(position), position);
+    }
+
+    // -------------- Advanced Vision Method --------------
     public ArrayList<Tile> getRawVision(Tile position) {
         int px = position.getX();
         int py = position.getY();
@@ -59,38 +129,6 @@ public class CharacterVision{
         }
 
         return observation;
-    }
-
-
-    private ArrayList<Tile> getRealVision(TileArea board, ArrayList<Tile> rawvision, Tile position) {
-        ArrayList<Tile> finalvision = new ArrayList<>();
-        boolean validtile = true;
-
-        // Remove out of bound tiles first (maybe redundant if we use Optional)
-        rawvision.removeIf(tc -> (tc.getX() < 0 || tc.getY() < 0));
-        rawvision.removeIf(tc -> (tc.getX() > board.width() || tc.getY() > board.height()));
-
-        // Check remaining tiles for items
-        for (Tile t : rawvision) {
-            if (unobstructedTile(board, t)) {
-                for (Tile it : gm.getIntersectingTiles(position, t)) {
-                    if(!unobstructedTile(board,it)) {
-                        validtile = false;
-                        break;
-                    }
-                }
-            }
-
-            if(validtile)
-                finalvision.add(t);
-        }
-
-        return finalvision;
-    }
-
-    // TODO: Confirm if return parameter is what we want
-    public ArrayList<Tile> getVision(TileArea board, Tile position) {
-        return getRealVision(board, getRawVision(position), position);
     }
 
     private boolean unobstructedTile(TileArea board, Tile t) {

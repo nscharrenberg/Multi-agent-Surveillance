@@ -14,8 +14,8 @@ import java.util.Map;
 import java.util.Optional;
 
 public class MapRepository implements IMapRepository {
-    private final IGameRepository gameRepository;
-    private final IPlayerRepository playerRepository;
+    private IGameRepository gameRepository;
+    private IPlayerRepository playerRepository;
 
     private TileArea board;
     private TileArea targetArea;
@@ -252,5 +252,25 @@ public class MapRepository implements IMapRepository {
         if (board.isEmpty()) {
             throw new BoardNotBuildException();
         }
+    }
+
+    @Override
+    public IGameRepository getGameRepository() {
+        return gameRepository;
+    }
+
+    @Override
+    public void setGameRepository(IGameRepository gameRepository) {
+        this.gameRepository = gameRepository;
+    }
+
+    @Override
+    public IPlayerRepository getPlayerRepository() {
+        return playerRepository;
+    }
+
+    @Override
+    public void setPlayerRepository(IPlayerRepository playerRepository) {
+        this.playerRepository = playerRepository;
     }
 }

@@ -5,6 +5,7 @@ import com.nscharrenberg.um.multiagentsurveillance.headless.exceptions.ItemNotOn
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class Tile {
     private int x;
@@ -62,7 +63,7 @@ public class Tile {
      */
     public void add(Item item) throws ItemAlreadyOnTileException {
         if (items.contains(item)) {
-            throw new ItemAlreadyOnTileException();
+            return;
         }
 
         if (item.getTile() != null && item.getTile().equals(this)) {
@@ -84,5 +85,18 @@ public class Tile {
 
         items.remove(item);
         item.setTile(null);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Tile tile = (Tile) o;
+        return x == tile.x && y == tile.y && Objects.equals(items, tile.items);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(x, y, items);
     }
 }

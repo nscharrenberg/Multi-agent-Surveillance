@@ -1,5 +1,7 @@
 package com.nscharrenberg.um.multiagentsurveillance.headless.models;
 
+import java.util.Objects;
+
 public abstract class Player extends Collision {
     private Angle direction;
     private double speed;
@@ -42,5 +44,18 @@ public abstract class Player extends Collision {
 
     public void setObservation(Area<Tile> observation) {
         this.observation = observation;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Player player = (Player) o;
+        return Double.compare(player.speed, speed) == 0 && direction == player.direction && Objects.equals(observation, player.observation);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(direction, speed, observation);
     }
 }

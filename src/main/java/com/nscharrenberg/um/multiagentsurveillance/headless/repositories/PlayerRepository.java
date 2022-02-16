@@ -1,6 +1,8 @@
 package com.nscharrenberg.um.multiagentsurveillance.headless.repositories;
 
 import com.nscharrenberg.um.multiagentsurveillance.headless.Factory;
+import com.nscharrenberg.um.multiagentsurveillance.headless.contracts.repositories.IGameRepository;
+import com.nscharrenberg.um.multiagentsurveillance.headless.contracts.repositories.IMapRepository;
 import com.nscharrenberg.um.multiagentsurveillance.headless.contracts.repositories.IPlayerRepository;
 import com.nscharrenberg.um.multiagentsurveillance.headless.exceptions.CollisionException;
 import com.nscharrenberg.um.multiagentsurveillance.headless.exceptions.InvalidTileException;
@@ -16,11 +18,31 @@ import java.util.List;
 import java.util.Optional;
 
 public class PlayerRepository implements IPlayerRepository {
+    private final IMapRepository mapRepository;
+    private final IGameRepository gameRepository;
+
     private SecureRandom random;
     private List<Intruder> intruders;
     private List<Guard> guards;
 
+    public PlayerRepository(IMapRepository mapRepository, IGameRepository gameRepository) {
+        this.mapRepository = mapRepository;
+        this.gameRepository = gameRepository;
+
+        this.intruders = new ArrayList<>();
+        this.guards = new ArrayList<>();
+
+        try {
+            this.random = SecureRandom.getInstanceStrong();
+        } catch (NoSuchAlgorithmException e) {
+            System.out.println("Error while generating Random Class");
+        }
+    }
+
     public PlayerRepository() {
+        this.mapRepository = Factory.getMapRepository();
+        this.gameRepository = Factory.getGameRepository();
+
         this.intruders = new ArrayList<>();
         this.guards = new ArrayList<>();
 
@@ -42,12 +64,12 @@ public class PlayerRepository implements IPlayerRepository {
     }
 
     private void spawnGuard(Player guard) {
-        TileArea guardSpawnArea = Factory.getMapRepository().getGuardSpawnArea();
+        TileArea guardSpawnArea = mapRepository.getGuardSpawnArea();
         spawn(guard, guardSpawnArea);
     }
 
     private void spawnIntruder(Player intruder) {
-        TileArea guardSpawnArea = Factory.getMapRepository().getIntruderSpawnArea();
+        TileArea guardSpawnArea = mapRepository.getIntruderSpawnArea();
         spawn(intruder, guardSpawnArea);
     }
 
@@ -98,7 +120,7 @@ public class PlayerRepository implements IPlayerRepository {
 
         int nextX = player.getTile().getX() + direction.getxIncrement();
         int nextY = player.getTile().getY() + direction.getyIncrement();
-        Optional<Tile> nextPositionOpt = Factory.getMapRepository().getBoardAsArea().getByCoordinates(nextX, nextY);
+        Optional<Tile> nextPositionOpt = mapRepository.getBoardAsArea().getByCoordinates(nextX, nextY);
 
         if (nextPositionOpt.isEmpty()) {
             throw new InvalidTileException(nextX, nextY);
@@ -145,7 +167,7 @@ public class PlayerRepository implements IPlayerRepository {
         int nextX = player.getTile().getX() + direction.getxIncrement();
         int nextY = player.getTile().getY() + direction.getyIncrement();
 
-        Optional<Tile> nextPositionOpt = Factory.getMapRepository().getBoardAsArea().getByCoordinates(nextX, nextY);
+        Optional<Tile> nextPositionOpt = mapRepository.getBoardAsArea().getByCoordinates(nextX, nextY);
 
         if (nextPositionOpt.isEmpty()) {
             return false;

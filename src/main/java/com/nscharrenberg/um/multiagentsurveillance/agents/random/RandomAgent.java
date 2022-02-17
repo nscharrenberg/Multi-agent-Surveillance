@@ -34,7 +34,7 @@ public class RandomAgent implements IAgent {
         try {
             this.random = SecureRandom.getInstanceStrong();
         } catch (NoSuchAlgorithmException e) {
-            System.out.println("Error while generating Random Class");
+            gameRepository.setRunning(false);
         }
     }
 
@@ -47,7 +47,7 @@ public class RandomAgent implements IAgent {
         try {
             this.random = SecureRandom.getInstanceStrong();
         } catch (NoSuchAlgorithmException e) {
-            System.out.println("Error while generating Random Class");
+            gameRepository.setRunning(false);
         }
     }
 
@@ -61,7 +61,8 @@ public class RandomAgent implements IAgent {
         try {
             playerRepository.move(agent, move);
         } catch (CollisionException | InvalidTileException | ItemNotOnTileException | ItemAlreadyOnTileException e) {
-            e.printStackTrace();
+            gameRepository.setRunning(false);
+            System.out.println(e.getMessage());
         }
     }
 

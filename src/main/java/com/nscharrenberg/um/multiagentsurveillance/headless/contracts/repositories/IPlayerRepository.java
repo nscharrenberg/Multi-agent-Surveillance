@@ -15,9 +15,9 @@ public interface IPlayerRepository {
 
     /**
      * Spawn a player to their corresponding spawn area
-     * @param player - the player to be spawned
+     * @param playerInstance - the player instance to be spawned
      */
-    void spawn(Player player);
+    void spawn(Class<?> playerInstance);
 
     /**
      * Rotate or Move a player to a new tile
@@ -44,5 +44,13 @@ public interface IPlayerRepository {
     void setIntruders(List<Intruder> intruders);
 
 
-    //void setGuards(List<Guard> guards);
+    void setGuards(List<Guard> guards);
+
+    IMapRepository getMapRepository();
+
+    IGameRepository getGameRepository();
+
+    void setMapRepository(IMapRepository mapRepository);
+
+    void setGameRepository(IGameRepository gameRepository);
 }

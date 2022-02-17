@@ -157,4 +157,12 @@ public interface IMapRepository {
     TileArea getIntruderSpawnArea();
 
     void setIntruderSpawnArea(TileArea intruderSpawnArea);
+
+    IGameRepository getGameRepository();
+
+    void setGameRepository(IGameRepository gameRepository);
+
+    IPlayerRepository getPlayerRepository();
+
+    void setPlayerRepository(IPlayerRepository playerRepository);
 }

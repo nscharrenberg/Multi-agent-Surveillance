@@ -46,4 +46,8 @@ public interface IGameRepository {
     double getTimeStep();
 
     void setTimeStep(double timeStep);
+
+    boolean isRunning();
+
+    void setRunning(boolean running);
 }

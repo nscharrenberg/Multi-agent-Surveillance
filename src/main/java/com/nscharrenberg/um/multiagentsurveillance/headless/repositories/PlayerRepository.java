@@ -22,6 +22,8 @@ public class PlayerRepository implements IPlayerRepository {
     private List<Intruder> intruders;
     private List<Guard> guards;
 
+    private Integer percentageDiscovered = 0;
+
     public PlayerRepository(IMapRepository mapRepository, IGameRepository gameRepository) {
         this.mapRepository = mapRepository;
         this.gameRepository = gameRepository;
@@ -160,6 +162,7 @@ public class PlayerRepository implements IPlayerRepository {
         // add player to tile
         nextPosition.add(player);
         player.setTile(nextPosition);
+
     }
 
     @Override
@@ -226,4 +229,6 @@ public class PlayerRepository implements IPlayerRepository {
     public void setGameRepository(IGameRepository gameRepository) {
         this.gameRepository = gameRepository;
     }
+
+
 }

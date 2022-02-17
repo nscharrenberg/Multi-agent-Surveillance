@@ -2,6 +2,7 @@ package com.nscharrenberg.um.multiagentsurveillance.headless.models;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 // Collection of objects
@@ -41,6 +42,8 @@ public abstract class Area<T> {
     public abstract int width();
 
     public abstract int height();
+
+    public abstract Map.Entry<Map.Entry<Integer, Integer>, Map.Entry<Integer, Integer>> bounds();
 
     public abstract HashMap<Integer, Tile> getRow(int col);
 

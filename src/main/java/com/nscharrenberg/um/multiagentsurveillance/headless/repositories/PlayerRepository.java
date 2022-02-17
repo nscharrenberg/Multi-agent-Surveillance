@@ -1,6 +1,8 @@
 package com.nscharrenberg.um.multiagentsurveillance.headless.repositories;
 
 import com.nscharrenberg.um.multiagentsurveillance.headless.Factory;
+import com.nscharrenberg.um.multiagentsurveillance.headless.contracts.repositories.IGameRepository;
+import com.nscharrenberg.um.multiagentsurveillance.headless.contracts.repositories.IMapRepository;
 import com.nscharrenberg.um.multiagentsurveillance.headless.contracts.repositories.IPlayerRepository;
 import com.nscharrenberg.um.multiagentsurveillance.headless.exceptions.CollisionException;
 import com.nscharrenberg.um.multiagentsurveillance.headless.exceptions.InvalidTileException;
@@ -10,17 +12,34 @@ import com.nscharrenberg.um.multiagentsurveillance.headless.models.*;
 
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 public class PlayerRepository implements IPlayerRepository {
+    private IMapRepository mapRepository;
+    private IGameRepository gameRepository;
+
     private SecureRandom random;
     private List<Intruder> intruders;
     private List<Guard> guards;
 
+    public PlayerRepository(IMapRepository mapRepository, IGameRepository gameRepository) {
+        this.mapRepository = mapRepository;
+        this.gameRepository = gameRepository;
+
+        this.intruders = new ArrayList<>();
+        this.guards = new ArrayList<>();
+
+        try {
+            this.random = SecureRandom.getInstanceStrong();
+        } catch (NoSuchAlgorithmException e) {
+            System.out.println("Error while generating Random Class");
+        }
+    }
+
     public PlayerRepository() {
+        this.mapRepository = Factory.getMapRepository();
+        this.gameRepository = Factory.getGameRepository();
+
         this.intruders = new ArrayList<>();
         this.guards = new ArrayList<>();
 
@@ -32,35 +51,36 @@ public class PlayerRepository implements IPlayerRepository {
     }
 
     @Override
-    public void spawn(Player player) {
-        if (player instanceof Intruder) {
-            spawnIntruder(player);
+    public void spawn(Class<?> playerInstance) {
+        if (playerInstance.equals(Intruder.class)) {
+            spawnIntruder();
             return;
         }
 
-        spawnGuard(player);
+        spawnGuard();
     }
 
-    private void spawnGuard(Player guard) {
-        TileArea guardSpawnArea = Factory.getMapRepository().getGuardSpawnArea();
-        spawn(guard, guardSpawnArea);
+    private void spawnGuard() {
+        TileArea guardSpawnArea = mapRepository.getGuardSpawnArea();
+        spawn(Guard.class, guardSpawnArea);
     }
 
-    private void spawnIntruder(Player intruder) {
-        TileArea guardSpawnArea = Factory.getMapRepository().getIntruderSpawnArea();
-        spawn(intruder, guardSpawnArea);
+    private void spawnIntruder() {
+        TileArea guardSpawnArea = mapRepository.getIntruderSpawnArea();
+        spawn(Intruder.class, guardSpawnArea);
     }
 
-    private void spawn(Player player, TileArea playerSpawnArea) {
+    private void spawn(Class<?> playerClass, TileArea playerSpawnArea) {
         HashMap<Integer, HashMap<Integer, Tile>> spawnArea = playerSpawnArea.getRegion();
 
         boolean tileAssigned = false;
+        Map.Entry<Map.Entry<Integer, Integer>, Map.Entry<Integer, Integer>> bounds = playerSpawnArea.bounds();
 
         while (!tileAssigned) {
-            int rowIndex = random.nextInt(playerSpawnArea.width());
+            int rowIndex = random.nextInt(bounds.getKey().getKey(), bounds.getKey().getValue());
             HashMap<Integer, Tile> row = spawnArea.get(rowIndex);
 
-            int colIndex = random.nextInt(playerSpawnArea.height());
+            int colIndex = random.nextInt(bounds.getValue().getKey(), bounds.getValue().getValue());
             Tile tile = row.get(colIndex);
 
             boolean invalid = false;
@@ -74,8 +94,17 @@ public class PlayerRepository implements IPlayerRepository {
 
             if (!invalid) {
                 try {
-                    tile.add(player);
-                    player.setTile(tile);
+
+                    if (playerClass.equals(Guard.class)) {
+                        Guard guard = new Guard(tile, Angle.UP);
+                        tile.add(guard);
+                        guards.add(guard);
+                    } else {
+                        Intruder intruder = new Intruder(tile, Angle.UP);
+                        tile.add(intruder);
+                        intruders.add(intruder);
+                    }
+
                     tileAssigned = true;
                 } catch (ItemAlreadyOnTileException e) {
                     System.out.println("Player Already on tile - this shouldn't happen");
@@ -98,7 +127,7 @@ public class PlayerRepository implements IPlayerRepository {
 
         int nextX = player.getTile().getX() + direction.getxIncrement();
         int nextY = player.getTile().getY() + direction.getyIncrement();
-        Optional<Tile> nextPositionOpt = Factory.getMapRepository().getBoardAsArea().getByCoordinates(nextX, nextY);
+        Optional<Tile> nextPositionOpt = mapRepository.getBoardAsArea().getByCoordinates(nextX, nextY);
 
         if (nextPositionOpt.isEmpty()) {
             throw new InvalidTileException(nextX, nextY);
@@ -145,7 +174,7 @@ public class PlayerRepository implements IPlayerRepository {
         int nextX = player.getTile().getX() + direction.getxIncrement();
         int nextY = player.getTile().getY() + direction.getyIncrement();
 
-        Optional<Tile> nextPositionOpt = Factory.getMapRepository().getBoardAsArea().getByCoordinates(nextX, nextY);
+        Optional<Tile> nextPositionOpt = mapRepository.getBoardAsArea().getByCoordinates(nextX, nextY);
 
         if (nextPositionOpt.isEmpty()) {
             return false;
@@ -176,5 +205,25 @@ public class PlayerRepository implements IPlayerRepository {
     @Override
     public void setGuards(List<Guard> guards) {
         this.guards = guards;
+    }
+
+    @Override
+    public IMapRepository getMapRepository() {
+        return mapRepository;
+    }
+
+    @Override
+    public IGameRepository getGameRepository() {
+        return gameRepository;
+    }
+
+    @Override
+    public void setMapRepository(IMapRepository mapRepository) {
+        this.mapRepository = mapRepository;
+    }
+
+    @Override
+    public void setGameRepository(IGameRepository gameRepository) {
+        this.gameRepository = gameRepository;
     }
 }

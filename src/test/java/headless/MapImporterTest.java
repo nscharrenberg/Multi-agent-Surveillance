@@ -1,20 +1,71 @@
 package headless;
 
 import com.nscharrenberg.um.multiagentsurveillance.headless.Factory;
+import com.nscharrenberg.um.multiagentsurveillance.headless.contracts.repositories.IGameRepository;
+import com.nscharrenberg.um.multiagentsurveillance.headless.contracts.repositories.IMapRepository;
+import com.nscharrenberg.um.multiagentsurveillance.headless.contracts.repositories.IPlayerRepository;
+import com.nscharrenberg.um.multiagentsurveillance.headless.exceptions.CollisionException;
+import com.nscharrenberg.um.multiagentsurveillance.headless.exceptions.InvalidTileException;
+import com.nscharrenberg.um.multiagentsurveillance.headless.exceptions.ItemAlreadyOnTileException;
+import com.nscharrenberg.um.multiagentsurveillance.headless.exceptions.ItemNotOnTileException;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.*;
 import com.nscharrenberg.um.multiagentsurveillance.headless.utils.files.MapImporter;
+import com.rits.cloning.Cloner;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.io.IOException;
+import java.security.SecureRandom;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
 public class MapImporterTest {
+    @DisplayName("Decoupled Repository Import Successful")
+    @Test
+    void testDecoupledRepositoriesSuccessful() {
+        File file = new File("src/test/resources/maps/testmap.txt");
+
+        if (!file.exists()) {
+            Assertions.fail("Resource not found");
+        }
+
+        String path = file.getAbsolutePath();
+
+        MapImporter importer = new MapImporter();
+
+        try {
+            importer.load(path);
+
+            Factory.getPlayerRepository().spawn(Guard.class);
+
+            Cloner cloner = new Cloner();
+            cloner.dontCloneInstanceOf(SecureRandom.class);
+            IMapRepository mapRepository = cloner.deepClone(Factory.getMapRepository());
+            IGameRepository gameRepository = cloner.deepClone(Factory.getGameRepository());
+            IPlayerRepository playerRepository = cloner.deepClone(Factory.getPlayerRepository());
+
+            mapRepository.setGameRepository(gameRepository);
+            mapRepository.setPlayerRepository(playerRepository);
+            playerRepository.setGameRepository(gameRepository);
+            playerRepository.setMapRepository(mapRepository);
+
+
+
+            Assertions.assertEquals(Factory.getPlayerRepository().getGuards().get(0), playerRepository.getGuards().get(0));
+
+            playerRepository.move(playerRepository.getGuards().get(0), Angle.DOWN);
+            playerRepository.move(playerRepository.getGuards().get(0), Angle.DOWN);
+
+            Assertions.assertNotEquals(Factory.getPlayerRepository().getGuards().get(0), playerRepository.getGuards().get(0));
+        } catch (IOException | CollisionException | ItemAlreadyOnTileException | InvalidTileException | ItemNotOnTileException e) {
+            Assertions.fail();
+        }
+    }
+
     @DisplayName("Map Import Successful")
     @Test
     void testMapImportSuccessful() {

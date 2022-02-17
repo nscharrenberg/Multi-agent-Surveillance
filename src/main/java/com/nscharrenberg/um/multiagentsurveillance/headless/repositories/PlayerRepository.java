@@ -160,6 +160,7 @@ public class PlayerRepository implements IPlayerRepository {
         // add player to tile
         nextPosition.add(player);
         player.setTile(nextPosition);
+
     }
 
     @Override
@@ -226,4 +227,6 @@ public class PlayerRepository implements IPlayerRepository {
     public void setGameRepository(IGameRepository gameRepository) {
         this.gameRepository = gameRepository;
     }
+
+
 }

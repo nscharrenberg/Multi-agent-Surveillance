@@ -22,8 +22,6 @@ public class PlayerRepository implements IPlayerRepository {
     private List<Intruder> intruders;
     private List<Guard> guards;
 
-    private Integer percentageDiscovered = 0;
-
     public PlayerRepository(IMapRepository mapRepository, IGameRepository gameRepository) {
         this.mapRepository = mapRepository;
         this.gameRepository = gameRepository;

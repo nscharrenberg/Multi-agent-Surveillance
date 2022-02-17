@@ -19,76 +19,82 @@ public class CharacterVision{
     }
 
     // Basic method for line vision + adjacent tiles
-    private ArrayList<Tile> getLineVision(Tile position) {
+    private ArrayList<Tile> getBasicVision(TileArea board, Tile position) {
         ArrayList<Tile> vision = new ArrayList<Tile>();
         int px = position.getX();
         int py = position.getY();
 
         // Add left and right tiles
         if (this.direction == Angle.UP || this.direction == Angle.DOWN) {
-            vision.add(new Tile(px+1,py,null));
-            vision.add(new Tile(px-1,py,null));
+            Tile adj1 = new Tile(px+1,py,null);
+            Tile adj2 = new Tile(px-1,py,null);
+            if(unobstructedTile(board, adj1))
+                vision.add(adj1);
+
+            if(unobstructedTile(board, adj2))
+                vision.add(adj2);
         } else if(this.direction == Angle.RIGHT || this.direction == Angle.LEFT) {
-            vision.add(new Tile(px,py+1,null));
-            vision.add(new Tile(px,py-1,null));
+            Tile adj1 = new Tile(px,py+1,null);
+            Tile adj2 = new Tile(px,py-1,null);
+            if(unobstructedTile(board, adj1))
+                vision.add(adj1);
+
+            if(unobstructedTile(board, adj2))
+                vision.add(adj2);
         }
 
         // Add tiles in vision line
+        Tile current;
         switch(direction) {
             case UP:
                 for(int i = 0; i < this.length; i++) {
-                    vision.add(new Tile(px,py-i,null));
+                    current = new Tile(px,py-i,null);
+                    if(unobstructedTile(board, current)) {
+                        vision.add(current);
+                    } else {
+                        break;
+                    }
                 }
             case DOWN:
                 for(int i = 0; i < this.length; i++) {
-                    vision.add(new Tile(px,py+i,null));
+                    current = new Tile(px,py+i,null);
+                    if(unobstructedTile(board, current)) {
+                        vision.add(current);
+                    } else {
+                        break;
+                    }
                 }
             case RIGHT:
                 for(int i = 0; i < this.length; i++) {
-                    vision.add(new Tile(px+i, py,null));
+                    current = new Tile(px+i, py,null);
+                    if(unobstructedTile(board, current)) {
+                        vision.add(current);
+                    } else {
+                        break;
+                    }
                 }
             case LEFT:
                 for(int i = 0; i < this.length; i++) {
-                    vision.add(new Tile(px-i, py,null));
+                    current = new Tile(px-i, py,null);
+                    if(unobstructedTile(board, current)) {
+                        vision.add(current);
+                    } else {
+                        break;
+                    }
                 }
         }
 
         return vision;
     }
 
-    private ArrayList<Tile> getRealVision(TileArea board, ArrayList<Tile> rawvision, Tile position) {
-        ArrayList<Tile> finalvision = new ArrayList<>();
-        boolean validtile = true;
-
-        // Remove out of bound tiles first (maybe redundant if we use Optional)
-        rawvision.removeIf(tc -> (tc.getX() < 0 || tc.getY() < 0));
-        rawvision.removeIf(tc -> (tc.getX() > board.width() || tc.getY() > board.height()));
-
-        // Check remaining tiles for items
-        for (Tile t : rawvision) {
-            if (unobstructedTile(board, t)) {
-                for (Tile it : gm.getIntersectingTiles(position, t)) {
-                    if(!unobstructedTile(board,it)) {
-                        validtile = false;
-                        break;
-                    }
-                }
-            }
-
-            if(validtile)
-                finalvision.add(t);
-        }
-
-        return finalvision;
-    }
-
     // TODO: Confirm if return parameter is what we want
     public ArrayList<Tile> getVision(TileArea board, Tile position) {
-        return getRealVision(board, getLineVision(position), position);
+        // getRealVision(board, getConeVision(position), position);
+        return getBasicVision(board, position);
     }
 
-    // -------------- Advanced Vision Method --------------
-    public ArrayList<Tile> getRawVision(Tile position) {
+    // -------------- Cone Vision Methods --------------
+    private ArrayList<Tile> getConeVision(Tile position) {
         int px = position.getX();
         int py = position.getY();
         int s = (2*length)+1; // value for cone width
@@ -130,6 +136,34 @@ public class CharacterVision{
 
         return observation;
     }
+
+    // Method for vision collision (only needed for cone vision)
+    private ArrayList<Tile> getRealVision(TileArea board, ArrayList<Tile> rawvision, Tile position) {
+        ArrayList<Tile> finalvision = new ArrayList<>();
+        boolean validtile = true;
+
+        // Remove out of bound tiles first (maybe redundant if we use Optional)
+        rawvision.removeIf(tc -> (tc.getX() < 0 || tc.getY() < 0));
+        rawvision.removeIf(tc -> (tc.getX() > board.width() || tc.getY() > board.height()));
+
+        // Check remaining tiles for items
+        for (Tile t : rawvision) {
+            if (unobstructedTile(board, t)) {
+                for (Tile it : gm.getIntersectingTiles(position, t)) {
+                    if(!unobstructedTile(board,it)) {
+                        validtile = false;
+                        break;
+                    }
+                }
+            }
+
+            if(validtile)
+                finalvision.add(t);
+        }
+
+        return finalvision;
+    }
+
 
     private boolean unobstructedTile(TileArea board, Tile t) {
         if(board.getByCoordinates(t.getX(), t.getY()).isPresent()) {

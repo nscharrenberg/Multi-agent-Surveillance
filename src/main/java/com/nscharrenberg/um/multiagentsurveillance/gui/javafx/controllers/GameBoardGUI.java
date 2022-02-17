@@ -17,13 +17,13 @@ import java.util.*;
 
 public class GameBoardGUI extends Application {
 
-    private final int FRAME_WIDTH = 1300;
-    private final int FRAME_HEIGHT = 650;
+    private final int FRAME_WIDTH = 1400;
+    private final int FRAME_HEIGHT = 900;
     private final int GRID_WIDTH;
     private final int GRID_HEIGHT;
-    private final int RECTANGLE_SIZE = 30;
+    private final int RECTANGLE_SIZE = 10;
     private Stage stage;
-
+    private Scene scene;
 
     private ArrayList<TileComponents> components = new ArrayList<TileComponents>(Arrays.asList(TileComponents.SHADED, TileComponents.WALL, TileComponents.DOOR, TileComponents.WINDOW, TileComponents.TELEPORTER,
             TileComponents.GUARD, TileComponents.INTRUDER));
@@ -62,19 +62,17 @@ public class GameBoardGUI extends Application {
 
         GridPane grid = createBoard(board);
         Group group = new Group(grid);
-        Scene sc = new Scene(group, FRAME_WIDTH, FRAME_HEIGHT);
+        scene = new Scene(group, FRAME_WIDTH, FRAME_HEIGHT);
 
         stage.setTitle(" Multi-Agent Surveillance ");
-        stage.setScene(sc);
+        stage.setScene(scene);
 
         stage.show();
     }
 
     public void updateGUI(){
         GridPane grid = createBoard(Factory.getMapRepository().getBoardAsArea());
-        Scene sc = new Scene(new Group(grid), FRAME_WIDTH, FRAME_HEIGHT);
-        stage.setScene(sc);
-        stage.show();
+        scene.setRoot(grid);
     }
 
     /**

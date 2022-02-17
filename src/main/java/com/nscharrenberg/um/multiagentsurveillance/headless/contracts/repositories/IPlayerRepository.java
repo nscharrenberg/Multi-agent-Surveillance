@@ -43,8 +43,9 @@ public interface IPlayerRepository {
 
     void setIntruders(List<Intruder> intruders);
 
-
     void setGuards(List<Guard> guards);
+
+    List<Guard> getGuards();
 
     IMapRepository getMapRepository();
 

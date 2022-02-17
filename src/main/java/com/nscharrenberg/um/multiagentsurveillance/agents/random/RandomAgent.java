@@ -34,7 +34,7 @@ public class RandomAgent implements IAgent {
         try {
             this.random = SecureRandom.getInstanceStrong();
         } catch (NoSuchAlgorithmException e) {
-            gameRepository.setRunning(false);
+//            gameRepository.setRunning(false);
         }
     }
 
@@ -47,7 +47,7 @@ public class RandomAgent implements IAgent {
         try {
             this.random = SecureRandom.getInstanceStrong();
         } catch (NoSuchAlgorithmException e) {
-            gameRepository.setRunning(false);
+//            gameRepository.setRunning(false);
         }
     }
 
@@ -61,7 +61,7 @@ public class RandomAgent implements IAgent {
         try {
             playerRepository.move(agent, move);
         } catch (CollisionException | InvalidTileException | ItemNotOnTileException | ItemAlreadyOnTileException e) {
-            gameRepository.setRunning(false);
+//            gameRepository.setRunning(false);
             System.out.println(e.getMessage());
         }
     }

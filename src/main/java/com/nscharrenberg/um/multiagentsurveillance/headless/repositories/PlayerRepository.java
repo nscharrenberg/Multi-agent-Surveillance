@@ -198,18 +198,14 @@ public class PlayerRepository implements IPlayerRepository {
         this.intruders = intruders;
     }
 
-
-    public void setGuards(List<Guard> guards) {
-
-    }
-
-    public List<Guard> getGuards() {
-        return guards;
-    }
-
     @Override
     public void setGuards(List<Guard> guards) {
         this.guards = guards;
+    }
+
+    @Override
+    public List<Guard> getGuards() {
+        return this.guards;
     }
 
     @Override

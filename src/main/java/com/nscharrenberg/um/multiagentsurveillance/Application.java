@@ -1,10 +1,7 @@
 package com.nscharrenberg.um.multiagentsurveillance;
 
-import com.nscharrenberg.um.multiagentsurveillance.gui.javafx.controllers.MainGUI;
-import com.nscharrenberg.um.multiagentsurveillance.headless.Factory;
+import com.nscharrenberg.um.multiagentsurveillance.gui.javafx.controllers.GameBoardGUI;
 import com.nscharrenberg.um.multiagentsurveillance.headless.utils.files.MapImporter;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Scene;
 import javafx.stage.Stage;
 
 import java.io.File;
@@ -18,8 +15,8 @@ public class Application extends javafx.application.Application {
         // Reset & Instantiate Factory Repositories
         Factory.reset();
 
-        MainGUI mainGUI = new MainGUI();
-        mainGUI.start(new Stage());
+        GameBoardGUI gameBoardGUI = new GameBoardGUI();
+        gameBoardGUI.start(new Stage());
 
 
 /*        FXMLLoader fxmlLoader = new FXMLLoader(Application.class.getResource("hello-view.fxml"));

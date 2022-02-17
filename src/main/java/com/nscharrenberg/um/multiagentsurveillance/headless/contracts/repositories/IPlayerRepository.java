@@ -5,10 +5,10 @@ import com.nscharrenberg.um.multiagentsurveillance.headless.exceptions.InvalidTi
 import com.nscharrenberg.um.multiagentsurveillance.headless.exceptions.ItemAlreadyOnTileException;
 import com.nscharrenberg.um.multiagentsurveillance.headless.exceptions.ItemNotOnTileException;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Angle;
+import com.nscharrenberg.um.multiagentsurveillance.headless.models.Guard;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Intruder;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Player;
 
-import java.security.Guard;
 import java.util.List;
 
 public interface IPlayerRepository {

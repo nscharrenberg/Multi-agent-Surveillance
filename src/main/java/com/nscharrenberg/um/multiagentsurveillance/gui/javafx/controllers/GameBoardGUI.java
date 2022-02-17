@@ -15,13 +15,14 @@ import javafx.scene.text.Font ;
 
 import java.util.*;
 
-public class MainGUI extends Application {
+public class GameBoardGUI extends Application {
 
     private final int FRAME_WIDTH = 1300;
     private final int FRAME_HEIGHT = 650;
     private final int GRID_WIDTH;
     private final int GRID_HEIGHT;
-    private final int RECTANGLE_SIZE = 10;
+    private final int RECTANGLE_SIZE = 30;
+    private Stage stage;
 
 
     private ArrayList<TileComponents> components = new ArrayList<TileComponents>(Arrays.asList(TileComponents.SHADED, TileComponents.WALL, TileComponents.DOOR, TileComponents.WINDOW, TileComponents.TELEPORTER,
@@ -48,7 +49,7 @@ public class MainGUI extends Application {
     private Double[] faceLEFT_Guard = {5.0, 15.0, 15.0, 25.0, 25.0, 25.0, 25.0, 5.0, 15.0, 5.0, 5.0, 15.0};
     private Double[] faceRIGHT_Guard = {25.0, 15.0, 15.0, 5.0, 5.0, 5.0, 5.0, 25.0, 25.0, 25.0, 25.0, 15.0};
 
-    public MainGUI(){
+    public GameBoardGUI(){
         GRID_WIDTH = Factory.getGameRepository().getWidth();
         GRID_HEIGHT = Factory.getGameRepository().getHeight();
     }
@@ -57,15 +58,23 @@ public class MainGUI extends Application {
     public void start(Stage st) {
 
         TileArea board = Factory.getMapRepository().getBoardAsArea();
+        stage = st;
 
         GridPane grid = createBoard(board);
         Group group = new Group(grid);
         Scene sc = new Scene(group, FRAME_WIDTH, FRAME_HEIGHT);
 
-        st.setTitle(" Multi-Agent Surveillance ");
-        st.setScene(sc);
+        stage.setTitle(" Multi-Agent Surveillance ");
+        stage.setScene(sc);
 
-        st.show();
+        stage.show();
+    }
+
+    public void updateGUI(){
+        GridPane grid = createBoard(Factory.getMapRepository().getBoardAsArea());
+        Scene sc = new Scene(new Group(grid), FRAME_WIDTH, FRAME_HEIGHT);
+        stage.setScene(sc);
+        stage.show();
     }
 
     /**

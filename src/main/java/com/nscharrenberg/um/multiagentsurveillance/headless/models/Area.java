@@ -48,4 +48,8 @@ public abstract class Area<T> {
     public abstract HashMap<Integer, Tile> getRow(int col);
 
     public abstract HashMap<Integer, Tile> getCol(int col);
+
+    public abstract void add(Tile tile);
+
+    public abstract void add(Tile tile, boolean overwrite);
 }

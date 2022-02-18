@@ -157,4 +157,24 @@ public class TileArea extends Area<Tile> {
 
         return result;
     }
+
+    @Override
+    public void add(Tile tile, boolean overwrite) {
+        Optional<Tile> existing = getByCoordinates(tile.getX(), tile.getY());
+
+        if (existing.isEmpty() && !region.containsKey(tile.getX())) {
+            region.put(tile.getX(), new HashMap<>());
+        }
+
+        if (existing.isPresent() && !overwrite) {
+            return;
+        }
+
+        region.get(tile.getX()).put(tile.getY(), tile);
+    }
+
+    @Override
+    public void add(Tile tile) {
+        add(tile, true);
+    }
 }

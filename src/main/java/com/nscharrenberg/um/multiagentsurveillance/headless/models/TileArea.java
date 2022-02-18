@@ -96,11 +96,46 @@ public class TileArea extends Area<Tile> {
 
     @Override
     public int height() {
-        if (this.region.size() <= 0) {
+        Optional<Map.Entry<Integer, HashMap<Integer, Tile>>> found = this.getRegion().entrySet().stream().findFirst();
+
+        if (this.region.size() <= 0 || found.isEmpty()) {
             return 0;
         }
 
-        return this.region.get(0).size();
+        return this.region.get(found.get().getKey()).size();
+    }
+
+    @Override
+    public Map.Entry<Map.Entry<Integer, Integer>, Map.Entry<Integer, Integer>> bounds() {
+        Integer lowerBoundRow = null;
+        Integer upperBoundRow = null;
+        Integer upperBoundCol = null;
+        Integer lowerBoundCol = null;
+
+        for (Map.Entry<Integer, HashMap<Integer, Tile>> rowEntry : region.entrySet()) {
+            if (lowerBoundRow == null || rowEntry.getKey() < lowerBoundRow) {
+                lowerBoundRow = rowEntry.getKey();
+            }
+
+            if (upperBoundRow == null || rowEntry.getKey() > upperBoundRow) {
+                upperBoundRow = rowEntry.getKey();
+            }
+
+            for (Map.Entry<Integer, Tile> colEntry : rowEntry.getValue().entrySet()) {
+                if (lowerBoundCol == null || colEntry.getKey() < lowerBoundCol) {
+                    lowerBoundCol = rowEntry.getKey();
+                }
+
+                if (upperBoundCol == null || colEntry.getKey() > upperBoundCol) {
+                    upperBoundCol = colEntry.getKey();
+                }
+            }
+        }
+
+        return new AbstractMap.SimpleEntry<>(
+                new AbstractMap.SimpleEntry<>(lowerBoundRow, upperBoundRow),
+                new AbstractMap.SimpleEntry<>(lowerBoundCol, upperBoundCol)
+        );
     }
 
     @Override

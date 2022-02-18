@@ -1,19 +1,38 @@
 package com.nscharrenberg.um.multiagentsurveillance.headless.repositories;
 
 import com.nscharrenberg.um.multiagentsurveillance.headless.Factory;
+import com.nscharrenberg.um.multiagentsurveillance.headless.contracts.repositories.IGameRepository;
 import com.nscharrenberg.um.multiagentsurveillance.headless.contracts.repositories.IMapRepository;
-import com.nscharrenberg.um.multiagentsurveillance.headless.exceptions.*;
+import com.nscharrenberg.um.multiagentsurveillance.headless.contracts.repositories.IPlayerRepository;
+import com.nscharrenberg.um.multiagentsurveillance.headless.exceptions.BoardNotBuildException;
+import com.nscharrenberg.um.multiagentsurveillance.headless.exceptions.InvalidTileException;
+import com.nscharrenberg.um.multiagentsurveillance.headless.exceptions.ItemAlreadyOnTileException;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.*;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
 
 public class MapRepository implements IMapRepository {
+    private IGameRepository gameRepository;
+    private IPlayerRepository playerRepository;
+
     private TileArea board;
     private TileArea targetArea;
     private TileArea guardSpawnArea;
     private TileArea intruderSpawnArea;
 
+    public MapRepository(IGameRepository gameRepository, IPlayerRepository playerRepository) {
+        this.playerRepository = playerRepository;
+        this.gameRepository = gameRepository;
+
+        this.board = new TileArea();
+    }
+
     public MapRepository() {
+        this.playerRepository = Factory.getPlayerRepository();
+        this.gameRepository = Factory.getGameRepository();
+
         this.board = new TileArea();
     }
 
@@ -24,7 +43,7 @@ public class MapRepository implements IMapRepository {
 
     @Override
     public void buildEmptyBoard() throws IllegalArgumentException {
-        buildEmptyBoard(Factory.getGameRepository().getWidth(), Factory.getGameRepository().getHeight());
+        buildEmptyBoard(gameRepository.getWidth(), gameRepository.getHeight());
     }
 
     @Override
@@ -35,11 +54,11 @@ public class MapRepository implements IMapRepository {
 
         for (int i = 0; i <= width; i++) {
             for (int j = 0; j <= height; j++) {
-                if (!Factory.getMapRepository().getBoardAsArea().getRegion().containsKey(i)) {
-                    Factory.getMapRepository().getBoard().getRegion().put(i, new HashMap<>());
+                if (!getBoardAsArea().getRegion().containsKey(i)) {
+                    getBoard().getRegion().put(i, new HashMap<>());
                 }
 
-                Factory.getMapRepository().getBoard().getRegion().get(i).put(j, new Tile(i, j));
+                getBoard().getRegion().get(i).put(j, new Tile(i, j));
             }
         }
     }
@@ -131,7 +150,7 @@ public class MapRepository implements IMapRepository {
             item.setTile(shadedTile);
         }
 
-        Factory.getMapRepository().getBoard().getRegion().get(x1).put(y1, shadedTile);
+        getBoard().getRegion().get(x1).put(y1, shadedTile);
     }
 
     @Override
@@ -233,5 +252,25 @@ public class MapRepository implements IMapRepository {
         if (board.isEmpty()) {
             throw new BoardNotBuildException();
         }
+    }
+
+    @Override
+    public IGameRepository getGameRepository() {
+        return gameRepository;
+    }
+
+    @Override
+    public void setGameRepository(IGameRepository gameRepository) {
+        this.gameRepository = gameRepository;
+    }
+
+    @Override
+    public IPlayerRepository getPlayerRepository() {
+        return playerRepository;
+    }
+
+    @Override
+    public void setPlayerRepository(IPlayerRepository playerRepository) {
+        this.playerRepository = playerRepository;
     }
 }

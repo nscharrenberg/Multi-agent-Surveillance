@@ -26,21 +26,11 @@ public class CharacterVision{
 
         // Add left and right tiles
         if (this.direction == Angle.UP || this.direction == Angle.DOWN) {
-            Tile adj1 = new Tile(px+1,py,null);
-            Tile adj2 = new Tile(px-1,py,null);
-            if(unobstructedTile(board, adj1))
-                vision.add(adj1);
-
-            if(unobstructedTile(board, adj2))
-                vision.add(adj2);
+            vision.add(new Tile(px+1,py,null));
+            vision.add(new Tile(px-1,py,null));
         } else if(this.direction == Angle.RIGHT || this.direction == Angle.LEFT) {
-            Tile adj1 = new Tile(px,py+1,null);
-            Tile adj2 = new Tile(px,py-1,null);
-            if(unobstructedTile(board, adj1))
-                vision.add(adj1);
-
-            if(unobstructedTile(board, adj2))
-                vision.add(adj2);
+            vision.add(new Tile(px,py+1,null));
+            vision.add(new Tile(px,py-1,null));
         }
 
         // Add tiles in vision line
@@ -49,38 +39,30 @@ public class CharacterVision{
             case UP:
                 for(int i = 0; i < this.length; i++) {
                     current = new Tile(px,py-i,null);
-                    if(unobstructedTile(board, current)) {
-                        vision.add(current);
-                    } else {
+                    vision.add(current);
+                    if(!unobstructedTile(board, current))
                         break;
-                    }
                 }
             case DOWN:
                 for(int i = 0; i < this.length; i++) {
                     current = new Tile(px,py+i,null);
-                    if(unobstructedTile(board, current)) {
-                        vision.add(current);
-                    } else {
+                    vision.add(current);
+                    if(!unobstructedTile(board, current))
                         break;
-                    }
                 }
             case RIGHT:
                 for(int i = 0; i < this.length; i++) {
                     current = new Tile(px+i, py,null);
-                    if(unobstructedTile(board, current)) {
-                        vision.add(current);
-                    } else {
+                    vision.add(current);
+                    if(!unobstructedTile(board, current))
                         break;
-                    }
                 }
             case LEFT:
                 for(int i = 0; i < this.length; i++) {
                     current = new Tile(px-i, py,null);
-                    if(unobstructedTile(board, current)) {
-                        vision.add(current);
-                    } else {
+                    vision.add(current);
+                    if(!unobstructedTile(board, current))
                         break;
-                    }
                 }
         }
 
@@ -174,11 +156,9 @@ public class CharacterVision{
                     }
                 }
             }
-        } else {
-            return false;
+            return true;
         }
-
-        return true;
+        return false;
     }
 
     public int getLength() {

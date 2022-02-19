@@ -71,6 +71,10 @@ public class PlayerRepository implements IPlayerRepository {
 
         float percentage = (discoveredAreaTileCount / totalTileCount) * 100;
         explorationPercentage = percentage;
+
+        // TODO: Remove this when UI elements are present
+        System.out.println("Explored: " + explorationPercentage + "%");
+
         return percentage;
     }
 
@@ -135,18 +139,20 @@ public class PlayerRepository implements IPlayerRepository {
             if (!invalid) {
                 try {
 
+                    Agent agent = null;
                     if (playerClass.equals(Guard.class)) {
                         Guard guard = new Guard(tile, Angle.UP);
                         tile.add(guard);
                         guards.add(guard);
-                        spawnAgent(guard, agentType);
+                        agent = spawnAgent(guard, agentType);
                     } else {
                         Intruder intruder = new Intruder(tile, Angle.UP);
                         tile.add(intruder);
                         intruders.add(intruder);
-                        spawnAgent(intruder, agentType);
+                        agent = spawnAgent(intruder, agentType);
                     }
 
+                    agent.addKnowledge(tile);
                     tileAssigned = true;
                 } catch (ItemAlreadyOnTileException e) {
                     System.out.println("Player Already on tile - this shouldn't happen");
@@ -155,7 +161,7 @@ public class PlayerRepository implements IPlayerRepository {
         }
     }
 
-    public void spawnAgent(Player player, Class<? extends Agent> agentClass) {
+    public Agent spawnAgent(Player player, Class<? extends Agent> agentClass) {
         Agent agent = null;
 
         if (agentClass.equals(RandomAgent.class)) {
@@ -163,6 +169,8 @@ public class PlayerRepository implements IPlayerRepository {
         }
 
         this.agents.add(agent);
+        player.setAgent(agent);
+        return agent;
     }
 
     @Override
@@ -205,6 +213,10 @@ public class PlayerRepository implements IPlayerRepository {
             teleporter.getTile().add(player);
             player.setTile(teleporter.getTile());
             player.setDirection(teleporter.getDirection());
+            player.getAgent().addKnowledge(player.getTile());
+            player.getAgent().addKnowledge(teleporter.getSource().getRegion());
+
+            calculateExplorationPercentage();
 
             return;
         }
@@ -212,7 +224,8 @@ public class PlayerRepository implements IPlayerRepository {
         // add player to tile
         nextPosition.add(player);
         player.setTile(nextPosition);
-
+        player.getAgent().addKnowledge(player.getTile());
+        calculateExplorationPercentage();
     }
 
     @Override

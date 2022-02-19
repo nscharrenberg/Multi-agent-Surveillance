@@ -5,20 +5,21 @@ import com.nscharrenberg.um.multiagentsurveillance.headless.exceptions.Collision
 import com.nscharrenberg.um.multiagentsurveillance.headless.exceptions.InvalidTileException;
 import com.nscharrenberg.um.multiagentsurveillance.headless.exceptions.ItemAlreadyOnTileException;
 import com.nscharrenberg.um.multiagentsurveillance.headless.exceptions.ItemNotOnTileException;
-import com.nscharrenberg.um.multiagentsurveillance.headless.models.Angle;
-import com.nscharrenberg.um.multiagentsurveillance.headless.models.Guard;
-import com.nscharrenberg.um.multiagentsurveillance.headless.models.Intruder;
-import com.nscharrenberg.um.multiagentsurveillance.headless.models.Player;
+import com.nscharrenberg.um.multiagentsurveillance.headless.models.*;
 
 import java.util.List;
 
 public interface IPlayerRepository {
+
+    float calculateExplorationPercentage();
 
     /**
      * Spawn a player to their corresponding spawn area
      * @param playerInstance - the player instance to be spawned
      */
     void spawn(Class<?> playerInstance);
+
+    void spawn(Class<? extends Player> playerClass, TileArea playerSpawnArea);
 
     /**
      * Rotate or Move a player to a new tile

@@ -45,13 +45,32 @@ public class PlayerRepository implements IPlayerRepository {
         }
     }
 
+    @Override
     public float calculateExplorationPercentage() {
-        float percentage = 0;
+        TileArea discoveredArea = new TileArea();
 
         for (Agent agent : agents) {
-            
+            discoveredArea = (TileArea) discoveredArea.merge(agent.getKnowledge());
         }
 
+        float totalTileCount = mapRepository.getBoard().height() * mapRepository.getBoard().width();
+        float discoveredAreaTileCount = 0;
+
+        // TODO: Could probably do with some optimization
+        for (Map.Entry<Integer, HashMap<Integer, Tile>> rowEntry : discoveredArea.getRegion().entrySet()) {
+            for (Map.Entry<Integer, Tile> colEntry : rowEntry.getValue().entrySet()) {
+                discoveredAreaTileCount += 1;
+            }
+        }
+
+        // no tiles = 100% (division by 0 not possible)
+        if (totalTileCount <= 0) {
+            explorationPercentage = 100;
+            return 100;
+        }
+
+        float percentage = (discoveredAreaTileCount / totalTileCount) * 100;
+        explorationPercentage = percentage;
         return percentage;
     }
 
@@ -90,17 +109,18 @@ public class PlayerRepository implements IPlayerRepository {
         spawn(Intruder.class, guardSpawnArea);
     }
 
-    private void spawn(Class<? extends Player> playerClass, TileArea playerSpawnArea) {
+    @Override
+    public void spawn(Class<? extends Player> playerClass, TileArea playerSpawnArea) {
         HashMap<Integer, HashMap<Integer, Tile>> spawnArea = playerSpawnArea.getRegion();
 
         boolean tileAssigned = false;
         Map.Entry<Map.Entry<Integer, Integer>, Map.Entry<Integer, Integer>> bounds = playerSpawnArea.bounds();
 
         while (!tileAssigned) {
-            int rowIndex = random.nextInt(bounds.getKey().getKey(), bounds.getKey().getValue());
+            int rowIndex = random.nextInt(bounds.getKey().getKey(), bounds.getKey().getValue()+1);
             HashMap<Integer, Tile> row = spawnArea.get(rowIndex);
 
-            int colIndex = random.nextInt(bounds.getValue().getKey(), bounds.getValue().getValue());
+            int colIndex = random.nextInt(bounds.getValue().getKey(), bounds.getValue().getValue()+1);
             Tile tile = row.get(colIndex);
 
             boolean invalid = false;

@@ -25,6 +25,7 @@ public class TileAreaTest {
         area1.add(tile1, tile2, tile3);
         area2.add(tile4, tile5, tile6);
 
+        // Check if areas are seperated
         Assertions.assertTrue(area1.within(tile1.getX(), tile1.getY()));
         Assertions.assertFalse(area1.within(tile4.getX(), tile4.getY()));
         Assertions.assertFalse(area2.within(tile1.getX(), tile1.getY()));
@@ -32,7 +33,14 @@ public class TileAreaTest {
 
         Area<Tile> merged = area1.merge(area2);
 
+        // Check if the merged area has both tiles
         Assertions.assertTrue(merged.within(tile1.getX(), tile1.getY()));
         Assertions.assertTrue(merged.within(tile4.getX(), tile4.getY()));
+
+        // Ensure the seperate areas are still seperated
+        Assertions.assertTrue(area1.within(tile1.getX(), tile1.getY()));
+        Assertions.assertFalse(area1.within(tile4.getX(), tile4.getY()));
+        Assertions.assertFalse(area2.within(tile1.getX(), tile1.getY()));
+        Assertions.assertTrue(area2.within(tile4.getX(), tile4.getY()));
     }
 }

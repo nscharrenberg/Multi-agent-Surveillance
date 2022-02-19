@@ -64,12 +64,10 @@ public abstract class Player extends Collision {
         return Objects.hash(direction, speed, observation);
     }
 
-    @Override
     public Agent getAgent() {
         return agent;
     }
 
-    @Override
     public void setAgent(Agent agent) {
         this.agent = agent;
     }

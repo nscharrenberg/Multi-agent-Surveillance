@@ -47,7 +47,6 @@ public class RandomAgent extends Agent {
         try {
             playerRepository.move(player, move);
         } catch (CollisionException | InvalidTileException | ItemNotOnTileException | ItemAlreadyOnTileException e) {
-            gameRepository.setRunning(false);
             System.out.println(e.getMessage());
         }
     }

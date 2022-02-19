@@ -213,10 +213,13 @@ public class PlayerRepository implements IPlayerRepository {
             teleporter.getTile().add(player);
             player.setTile(teleporter.getTile());
             player.setDirection(teleporter.getDirection());
-            player.getAgent().addKnowledge(player.getTile());
-            player.getAgent().addKnowledge(teleporter.getSource().getRegion());
 
-            calculateExplorationPercentage();
+            if (player.getAgent() != null) {
+                player.getAgent().addKnowledge(player.getTile());
+                player.getAgent().addKnowledge(teleporter.getSource().getRegion());
+
+                calculateExplorationPercentage();
+            }
 
             return;
         }
@@ -224,8 +227,11 @@ public class PlayerRepository implements IPlayerRepository {
         // add player to tile
         nextPosition.add(player);
         player.setTile(nextPosition);
-        player.getAgent().addKnowledge(player.getTile());
-        calculateExplorationPercentage();
+
+        if (player.getAgent() != null) {
+            player.getAgent().addKnowledge(player.getTile());
+            calculateExplorationPercentage();
+        }
     }
 
     @Override

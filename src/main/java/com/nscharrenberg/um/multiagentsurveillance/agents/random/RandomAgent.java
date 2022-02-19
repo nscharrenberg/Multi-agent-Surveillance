@@ -8,11 +8,11 @@ import com.nscharrenberg.um.multiagentsurveillance.headless.exceptions.Collision
 import com.nscharrenberg.um.multiagentsurveillance.headless.exceptions.InvalidTileException;
 import com.nscharrenberg.um.multiagentsurveillance.headless.exceptions.ItemAlreadyOnTileException;
 import com.nscharrenberg.um.multiagentsurveillance.headless.exceptions.ItemNotOnTileException;
-import com.nscharrenberg.um.multiagentsurveillance.headless.models.Angle;
-import com.nscharrenberg.um.multiagentsurveillance.headless.models.Player;
+import com.nscharrenberg.um.multiagentsurveillance.headless.models.*;
 
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
+import java.util.Optional;
 
 public class RandomAgent extends Agent {
     private SecureRandom random;
@@ -53,7 +53,29 @@ public class RandomAgent extends Agent {
 
     @Override
     public Angle decide() {
-        int pick = this.random.nextInt(Angle.values().length);
-        return Angle.values()[pick];
+        int value = this.random.nextInt(100);
+
+        Angle move = player.getDirection();
+
+        Optional<Tile> nextTileOpt = knowledge.getByCoordinates(player.getTile().getX() + move.getxIncrement(), player.getTile().getY() + player.getDirection().getyIncrement());
+
+        boolean nextBlocked = false;
+        if (nextTileOpt.isPresent()) {
+            Tile nextTile = nextTileOpt.get();
+
+            for (Item items : nextTile.getItems()) {
+                if (items instanceof Collision) {
+                    nextBlocked = true;
+                    break;
+                }
+            }
+        }
+
+        if (value <= 30 || nextBlocked) {
+            int pick = this.random.nextInt(Angle.values().length);
+            move = Angle.values()[pick];
+        }
+
+        return move;
     }
 }

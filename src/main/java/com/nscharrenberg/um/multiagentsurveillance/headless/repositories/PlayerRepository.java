@@ -270,13 +270,13 @@ public class PlayerRepository implements IPlayerRepository {
     }
 
     @Override
-    public List<Guard> getGuards() {
-        return guards;
+    public void setGuards(List<Guard> guards) {
+        this.guards = guards;
     }
 
     @Override
-    public void setGuards(List<Guard> guards) {
-        this.guards = guards;
+    public List<Guard> getGuards() {
+        return this.guards;
     }
 
     @Override

@@ -23,7 +23,7 @@ public class RandomAgent extends Agent {
         try {
             this.random = SecureRandom.getInstanceStrong();
         } catch (NoSuchAlgorithmException e) {
-            gameRepository.setRunning(false);
+//            gameRepository.setRunning(false);
         }
     }
 
@@ -33,7 +33,7 @@ public class RandomAgent extends Agent {
         try {
             this.random = SecureRandom.getInstanceStrong();
         } catch (NoSuchAlgorithmException e) {
-            gameRepository.setRunning(false);
+//            gameRepository.setRunning(false);
         }
     }
 

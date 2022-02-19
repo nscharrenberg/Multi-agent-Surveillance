@@ -206,6 +206,8 @@ public class TileArea extends Area<Tile> {
     @Override
     public Area<Tile> merge(Area<Tile> target) {
         Cloner cloner = new Cloner();
+        cloner.deepCloneDontCloneInstances(SecureRandom.class);
+        cloner.deepCloneDontCloneInstances(PriorityQueue.class);
         cloner.dontCloneInstanceOf(SecureRandom.class);
         cloner.dontCloneInstanceOf(PriorityQueue.class);
         HashMap<Integer, HashMap<Integer, Tile>> cloned = cloner.deepClone(region);

@@ -1,5 +1,7 @@
 package com.nscharrenberg.um.multiagentsurveillance.headless.repositories;
 
+import com.nscharrenberg.um.multiagentsurveillance.agents.random.RandomAgent;
+import com.nscharrenberg.um.multiagentsurveillance.agents.shared.Agent;
 import com.nscharrenberg.um.multiagentsurveillance.headless.Factory;
 import com.nscharrenberg.um.multiagentsurveillance.headless.contracts.repositories.IGameRepository;
 import com.nscharrenberg.um.multiagentsurveillance.headless.contracts.repositories.IMapRepository;
@@ -22,12 +24,19 @@ public class PlayerRepository implements IPlayerRepository {
     private List<Intruder> intruders;
     private List<Guard> guards;
 
+    private List<Agent> agents;
+
+    private static final Class<? extends Agent> agentType = RandomAgent.class;
+
+    private float explorationPercentage = 0;
+
     public PlayerRepository(IMapRepository mapRepository, IGameRepository gameRepository) {
         this.mapRepository = mapRepository;
         this.gameRepository = gameRepository;
 
         this.intruders = new ArrayList<>();
         this.guards = new ArrayList<>();
+        this.agents = new ArrayList<>();
 
         try {
             this.random = SecureRandom.getInstanceStrong();
@@ -36,12 +45,23 @@ public class PlayerRepository implements IPlayerRepository {
         }
     }
 
+    public float calculateExplorationPercentage() {
+        float percentage = 0;
+
+        for (Agent agent : agents) {
+            
+        }
+
+        return percentage;
+    }
+
     public PlayerRepository() {
         this.mapRepository = Factory.getMapRepository();
         this.gameRepository = Factory.getGameRepository();
 
         this.intruders = new ArrayList<>();
         this.guards = new ArrayList<>();
+        this.agents = new ArrayList<>();
 
         try {
             this.random = SecureRandom.getInstanceStrong();
@@ -70,7 +90,7 @@ public class PlayerRepository implements IPlayerRepository {
         spawn(Intruder.class, guardSpawnArea);
     }
 
-    private void spawn(Class<?> playerClass, TileArea playerSpawnArea) {
+    private void spawn(Class<? extends Player> playerClass, TileArea playerSpawnArea) {
         HashMap<Integer, HashMap<Integer, Tile>> spawnArea = playerSpawnArea.getRegion();
 
         boolean tileAssigned = false;
@@ -99,10 +119,12 @@ public class PlayerRepository implements IPlayerRepository {
                         Guard guard = new Guard(tile, Angle.UP);
                         tile.add(guard);
                         guards.add(guard);
+                        spawnAgent(guard, agentType);
                     } else {
                         Intruder intruder = new Intruder(tile, Angle.UP);
                         tile.add(intruder);
                         intruders.add(intruder);
+                        spawnAgent(intruder, agentType);
                     }
 
                     tileAssigned = true;
@@ -111,6 +133,16 @@ public class PlayerRepository implements IPlayerRepository {
                 }
             }
         }
+    }
+
+    public void spawnAgent(Player player, Class<? extends Agent> agentClass) {
+        Agent agent = null;
+
+        if (agentClass.equals(RandomAgent.class)) {
+            agent = new RandomAgent(player);
+        }
+
+        this.agents.add(agent);
     }
 
     @Override
@@ -228,5 +260,23 @@ public class PlayerRepository implements IPlayerRepository {
         this.gameRepository = gameRepository;
     }
 
+    @Override
+    public List<Agent> getAgents() {
+        return agents;
+    }
 
+    @Override
+    public void setAgents(List<Agent> agents) {
+        this.agents = agents;
+    }
+
+    @Override
+    public float getExplorationPercentage() {
+        return explorationPercentage;
+    }
+
+    @Override
+    public void setExplorationPercentage(float explorationPercentage) {
+        this.explorationPercentage = explorationPercentage;
+    }
 }

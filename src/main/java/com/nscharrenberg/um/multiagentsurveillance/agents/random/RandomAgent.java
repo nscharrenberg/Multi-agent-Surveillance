@@ -1,7 +1,6 @@
 package com.nscharrenberg.um.multiagentsurveillance.agents.random;
 
-import com.nscharrenberg.um.multiagentsurveillance.agents.IAgent;
-import com.nscharrenberg.um.multiagentsurveillance.headless.Factory;
+import com.nscharrenberg.um.multiagentsurveillance.agents.shared.Agent;
 import com.nscharrenberg.um.multiagentsurveillance.headless.contracts.repositories.IGameRepository;
 import com.nscharrenberg.um.multiagentsurveillance.headless.contracts.repositories.IMapRepository;
 import com.nscharrenberg.um.multiagentsurveillance.headless.contracts.repositories.IPlayerRepository;
@@ -15,21 +14,11 @@ import com.nscharrenberg.um.multiagentsurveillance.headless.models.Player;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 
-public class RandomAgent implements IAgent {
-    private final IMapRepository mapRepository;
-    private final IGameRepository gameRepository;
-    private final IPlayerRepository playerRepository;
-
-    private final Player agent;
-
+public class RandomAgent extends Agent {
     private SecureRandom random;
 
     public RandomAgent(Player agent) {
-        this.agent = agent;
-
-        this.mapRepository = Factory.getMapRepository();
-        this.playerRepository = Factory.getPlayerRepository();
-        this.gameRepository = Factory.getGameRepository();
+        super(agent);
 
         try {
             this.random = SecureRandom.getInstanceStrong();
@@ -39,10 +28,7 @@ public class RandomAgent implements IAgent {
     }
 
     public RandomAgent(Player agent, IMapRepository mapRepository, IGameRepository gameRepository, IPlayerRepository playerRepository) {
-        this.mapRepository = mapRepository;
-        this.gameRepository = gameRepository;
-        this.playerRepository = playerRepository;
-        this.agent = agent;
+        super(agent, mapRepository, gameRepository, playerRepository);
 
         try {
             this.random = SecureRandom.getInstanceStrong();
@@ -59,13 +45,12 @@ public class RandomAgent implements IAgent {
     @Override
     public void execute(Angle move) {
         try {
-            playerRepository.move(agent, move);
+            playerRepository.move(player, move);
         } catch (CollisionException | InvalidTileException | ItemNotOnTileException | ItemAlreadyOnTileException e) {
             gameRepository.setRunning(false);
             System.out.println(e.getMessage());
         }
     }
-
 
     @Override
     public Angle decide() {

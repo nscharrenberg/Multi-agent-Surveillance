@@ -1,9 +1,6 @@
 package com.nscharrenberg.um.multiagentsurveillance.headless.models;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 // Collection of objects
 public abstract class Area<T> {
@@ -51,5 +48,24 @@ public abstract class Area<T> {
 
     public abstract void add(Tile tile);
 
+    public abstract void add(boolean overwrite, Tile... tiles);
+
+    public abstract void add(Tile... tiles);
+
     public abstract void add(Tile tile, boolean overwrite);
+
+    public abstract Area<Tile> merge(Area<Tile> target);
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Area<?> area = (Area<?>) o;
+        return Objects.equals(region, area.region);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(region);
+    }
 }

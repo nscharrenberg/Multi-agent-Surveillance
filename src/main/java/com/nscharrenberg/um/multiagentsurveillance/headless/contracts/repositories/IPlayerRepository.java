@@ -1,5 +1,6 @@
 package com.nscharrenberg.um.multiagentsurveillance.headless.contracts.repositories;
 
+import com.nscharrenberg.um.multiagentsurveillance.agents.shared.Agent;
 import com.nscharrenberg.um.multiagentsurveillance.headless.exceptions.CollisionException;
 import com.nscharrenberg.um.multiagentsurveillance.headless.exceptions.InvalidTileException;
 import com.nscharrenberg.um.multiagentsurveillance.headless.exceptions.ItemAlreadyOnTileException;
@@ -54,4 +55,12 @@ public interface IPlayerRepository {
     void setMapRepository(IMapRepository mapRepository);
 
     void setGameRepository(IGameRepository gameRepository);
+
+    List<Agent> getAgents();
+
+    void setAgents(List<Agent> agents);
+
+    float getExplorationPercentage();
+
+    void setExplorationPercentage(float explorationPercentage);
 }

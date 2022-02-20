@@ -25,7 +25,6 @@ public class SBOAgent implements IAgent {
     private final Player agent;
 
     private Stack<Tile> scanned;
-    private Area<Tile> observation;
     private Area<Tile> visited;
 
     public SBOAgent(Player agent) {
@@ -34,9 +33,7 @@ public class SBOAgent implements IAgent {
         this.gameRepository = Factory.getGameRepository();
         this.agent = agent;
 
-        // Not sure if we want to take this approach yet
-        this.observation = agent.getObservation();
-        // this.visited = agent tile position?
+        visited = agent.getObservation();
 
     }
 
@@ -71,14 +68,17 @@ public class SBOAgent implements IAgent {
         Tile goal = null;
         while(goal == null) {
             Tile top = scanned.peek();
-            if(observation.getByCoordinates(top.getX(), top.getY()).isPresent()) {
+            if(visited.getByCoordinates(top.getX(), top.getY()).isPresent()) {
                 scanned.pop();
             } else {
                 goal = scanned.peek();
             }
         }
 
-        // Calculate angle for specified Tile
+        // TODO: Calculate angle for specified Tile
+        // This is actually a lot harder than it looks,
+        // because we cant run path finding algorithms on unspecified map areas
+        // and the closest discovered tile might not result in a solution....
 
         int pick = 0;
         return Angle.values()[pick];
@@ -87,9 +87,11 @@ public class SBOAgent implements IAgent {
     private void gather() {
         Tile current = agent.getTile();
         for (Tile t : getAdjacent(current)) {
-            if(observation.getByCoordinates(t.getX(),t.getY()).isEmpty()) {
+            if(visited.getByCoordinates(t.getX(),t.getY()).isEmpty()) {
                 if(unobstructedTile(this.mapRepository.getBoard(), t)) {
                     scanned.push(t);
+                    // TODO: Some way of adding tiles to the visited tile area
+                    // visited.add(t)
                 }
             }
         }

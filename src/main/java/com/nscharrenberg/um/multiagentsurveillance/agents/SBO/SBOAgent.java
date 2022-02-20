@@ -9,10 +9,7 @@ import com.nscharrenberg.um.multiagentsurveillance.headless.exceptions.Collision
 import com.nscharrenberg.um.multiagentsurveillance.headless.exceptions.InvalidTileException;
 import com.nscharrenberg.um.multiagentsurveillance.headless.exceptions.ItemAlreadyOnTileException;
 import com.nscharrenberg.um.multiagentsurveillance.headless.exceptions.ItemNotOnTileException;
-import com.nscharrenberg.um.multiagentsurveillance.headless.models.Angle;
-import com.nscharrenberg.um.multiagentsurveillance.headless.models.Area;
-import com.nscharrenberg.um.multiagentsurveillance.headless.models.Player;
-import com.nscharrenberg.um.multiagentsurveillance.headless.models.Tile;
+import com.nscharrenberg.um.multiagentsurveillance.headless.models.*;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -29,6 +26,7 @@ public class SBOAgent implements IAgent {
 
     private Stack<Tile> scanned;
     private Area<Tile> observation;
+    private Area<Tile> visited;
 
     public SBOAgent(Player agent) {
         this.mapRepository = Factory.getMapRepository();
@@ -38,6 +36,7 @@ public class SBOAgent implements IAgent {
 
         // Not sure if we want to take this approach yet
         this.observation = agent.getObservation();
+        // this.visited = agent tile position?
 
     }
 
@@ -65,6 +64,22 @@ public class SBOAgent implements IAgent {
 
     @Override
     public Angle decide() {
+        // Update Stack
+        gather();
+
+        // Select first valid top Tile from Stack
+        Tile goal = null;
+        while(goal == null) {
+            Tile top = scanned.peek();
+            if(observation.getByCoordinates(top.getX(), top.getY()).isPresent()) {
+                scanned.pop();
+            } else {
+                goal = scanned.peek();
+            }
+        }
+
+        // Calculate angle for specified Tile
+
         int pick = 0;
         return Angle.values()[pick];
     }
@@ -73,12 +88,11 @@ public class SBOAgent implements IAgent {
         Tile current = agent.getTile();
         for (Tile t : getAdjacent(current)) {
             if(observation.getByCoordinates(t.getX(),t.getY()).isEmpty()) {
-
+                if(unobstructedTile(this.mapRepository.getBoard(), t)) {
+                    scanned.push(t);
+                }
             }
-
         }
-
-
     }
 
     private List<Tile> getAdjacent(Tile pos) {
@@ -90,5 +104,18 @@ public class SBOAgent implements IAgent {
         return adj;
     }
 
+    private boolean unobstructedTile(TileArea board, Tile t) {
+        if(board.getByCoordinates(t.getX(), t.getY()).isPresent()) {
+            if (board.getByCoordinates(t.getX(), t.getY()).get().getItems().size() != 0) {
+                for (Item im : t.getItems()) {
+                    if (im instanceof Wall) {   // Might have to add other checks to this later
+                        return false;
+                    }
+                }
+            }
+            return true;
+        }
+        return false;
+    }
 
 }

@@ -56,6 +56,18 @@ public class Tile {
         this.items = items;
     }
 
+    public boolean isCollision() {
+        boolean blocked = false;
+        for (Item item : items) {
+            if (item instanceof Collision) {
+                blocked = true;
+                break;
+            }
+        }
+
+        return blocked;
+    }
+
     /**
      * Add Item to tile
      * @param item - the item to be added

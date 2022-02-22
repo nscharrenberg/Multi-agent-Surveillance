@@ -55,6 +55,8 @@ public class YamauchiAgent extends Agent {
 
             // If any of the above errors is thrown we can't continue with our planned moves, and need to recalculate our frontiers
             plannedMoves.clear();
+            frontiers.clear();
+            detectFrontiers();
         } catch (ItemAlreadyOnTileException e) {
             e.printStackTrace();
         }
@@ -101,7 +103,7 @@ public class YamauchiAgent extends Agent {
 
         Frontier chosenFrontier = chosenFrontierOpt.get();
 
-        plannedMoves.addAll(chosenFrontier.getQueueNode().getMoves());
+        plannedMoves = chosenFrontier.getQueueNode().getMoves();
 
         return plannedMoves.poll();
     }
@@ -138,8 +140,6 @@ public class YamauchiAgent extends Agent {
                 bestFrontier.getQueueNode().getMoves().add(angle);
             }
         }
-
-
 
         return Optional.of(bestFrontier);
     }

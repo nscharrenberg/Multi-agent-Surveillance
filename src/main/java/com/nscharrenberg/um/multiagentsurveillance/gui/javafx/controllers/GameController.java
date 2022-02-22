@@ -53,6 +53,7 @@ public class GameController {
         try {
             importer.load(path);
         } catch (IOException e) {
+            e.printStackTrace();
 //            Factory.getGameRepository().setRunning(false);
         }
     }
@@ -67,7 +68,7 @@ public class GameController {
     }
 
     private void setupAgents() {
-        for (int i = 0; i <= Factory.getGameRepository().getGuardCount(); i++) {
+        for (int i = 0; i < Factory.getGameRepository().getGuardCount(); i++) {
             Factory.getPlayerRepository().spawn(Guard.class);
         }
     }

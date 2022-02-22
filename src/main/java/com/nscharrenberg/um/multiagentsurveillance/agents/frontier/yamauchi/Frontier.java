@@ -51,6 +51,10 @@ public class Frontier {
      * @return whether or not the tile was added to the frontier
      */
     public boolean add(Tile tile) {
+        if (tile.isCollision()) {
+            return false;
+        }
+
         // reject if there is no adjacent tile in the frontier
         if (!isAdjacent(tile) && !frontier.isEmpty()) {
             return false;
@@ -93,7 +97,7 @@ public class Frontier {
     }
 
     public void setQueueNode(QueueNode queueNode) {
-        if (queueNode.getDistance() <= this.queueNode.getDistance() || queueNode.getMoves().size() <= this.queueNode.getMoves().size()) {
+        if (this.queueNode != null && (queueNode.getDistance() <= this.queueNode.getDistance() || queueNode.getMoves().size() <= this.queueNode.getMoves().size())) {
             return;
         }
 

@@ -67,6 +67,8 @@ public class YamauchiAgent extends Agent {
             return plannedMoves.poll();
         }
 
+        frontiers.clear();
+
         Optional<Frontier> chosenFrontierOpt = pickBestFrontier();
 
         // No Frontier found, just do a random move for now
@@ -127,6 +129,18 @@ public class YamauchiAgent extends Agent {
             }
         }
 
+        if (bestFrontier.getQueueNode() != null) {
+            Angle finalPosition = bestFrontier.getQueueNode().getEntrancePosition();
+
+            for (Angle angle : Angle.values()) {
+                if (angle.equals(finalPosition)) continue;
+
+                bestFrontier.getQueueNode().getMoves().add(angle);
+            }
+        }
+
+
+
         return Optional.of(bestFrontier);
     }
 
@@ -145,6 +159,10 @@ public class YamauchiAgent extends Agent {
                 Optional<Tile> downOpt = nextPosition(colEntry.getValue(), Angle.DOWN);
 
                 if (upOpt.isPresent() && rightOpt.isPresent() && leftOpt.isPresent() && downOpt.isPresent()) {
+                    continue;
+                }
+
+                if (colEntry.getValue().isCollision() && !colEntry.getValue().getItems().contains(player)) {
                     continue;
                 }
 

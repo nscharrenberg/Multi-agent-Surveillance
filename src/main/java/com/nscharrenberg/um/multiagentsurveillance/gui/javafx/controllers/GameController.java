@@ -73,8 +73,6 @@ public class GameController {
     }
 
     private void gameLoop() {
-        int stepCount = 0;
-
         Factory.getGameRepository().setRunning(true);
         while (Factory.getGameRepository().isRunning()) {
             for (Agent agent : Factory.getPlayerRepository().getAgents()) {
@@ -82,13 +80,6 @@ public class GameController {
             }
 
             boardGUI.updateGUI();
-
-
-            // temp step count check
-            stepCount++;
-            if (stepCount >= 1000 || Factory.getPlayerRepository().getExplorationPercentage() >= 100) {
-                break;
-            }
 
             try {
                 Thread.sleep(200);

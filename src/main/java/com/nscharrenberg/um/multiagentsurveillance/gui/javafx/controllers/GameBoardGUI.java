@@ -16,9 +16,8 @@ import javafx.scene.text.Font ;
 import java.util.*;
 
 public class GameBoardGUI extends Application {
-
-    private final int FRAME_WIDTH = 2000;
-    private final int FRAME_HEIGHT = 1500;
+    private final int FRAME_WIDTH = 2500;
+    private final int FRAME_HEIGHT = 2000;
     private final int GRID_WIDTH;
     private final int GRID_HEIGHT;
     private final int RECTANGLE_SIZE = 30;

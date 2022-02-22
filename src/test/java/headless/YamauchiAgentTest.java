@@ -45,7 +45,7 @@ public class YamauchiAgentTest {
             Guard guard = new Guard(spawnTile, Angle.RIGHT);
             YamauchiAgent agent = new YamauchiAgent(guard);
 
-            HashMap<Integer, HashMap<Integer, Tile>> region = Factory.getMapRepository().getBoard().subset(2, 1, 5,7);
+            HashMap<Integer, HashMap<Integer, Tile>> region = Factory.getMapRepository().getBoard().subset(0, 0, 10,10);
 
             if (region.isEmpty()) {
                 Assertions.fail();
@@ -69,8 +69,8 @@ public class YamauchiAgentTest {
 
             QueueNode planData = planDataOpt.get();
 
-            Assertions.assertEquals(11, planData.getDistance());
-            Assertions.assertEquals(11, planData.getTiles().size());
+            Assertions.assertEquals(21, planData.getDistance());
+            Assertions.assertEquals(21, planData.getMoves().size());
         } catch (IOException e) {
             Assertions.fail();
         }

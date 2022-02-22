@@ -1,5 +1,6 @@
 package com.nscharrenberg.um.multiagentsurveillance.headless.repositories;
 
+import com.nscharrenberg.um.multiagentsurveillance.agents.frontier.yamauchi.YamauchiAgent;
 import com.nscharrenberg.um.multiagentsurveillance.agents.random.RandomAgent;
 import com.nscharrenberg.um.multiagentsurveillance.agents.shared.Agent;
 import com.nscharrenberg.um.multiagentsurveillance.headless.Factory;
@@ -26,7 +27,7 @@ public class PlayerRepository implements IPlayerRepository {
 
     private List<Agent> agents;
 
-    private static final Class<? extends Agent> agentType = RandomAgent.class;
+    private static final Class<? extends Agent> agentType = YamauchiAgent.class;
 
     private float explorationPercentage = 0;
 
@@ -140,16 +141,16 @@ public class PlayerRepository implements IPlayerRepository {
                 try {
 
                     Agent agent = null;
-                    if (playerClass.equals(Guard.class)) {
-                        Guard guard = new Guard(tile, Angle.UP);
-                        tile.add(guard);
-                        guards.add(guard);
-                        agent = spawnAgent(guard, agentType);
-                    } else {
+                    if (playerClass.equals(Intruder.class)) {
                         Intruder intruder = new Intruder(tile, Angle.UP);
                         tile.add(intruder);
                         intruders.add(intruder);
                         agent = spawnAgent(intruder, agentType);
+                    } else {
+                        Guard guard = new Guard(tile, Angle.UP);
+                        tile.add(guard);
+                        guards.add(guard);
+                        agent = spawnAgent(guard, agentType);
                     }
 
                     agent.addKnowledge(tile);
@@ -166,6 +167,8 @@ public class PlayerRepository implements IPlayerRepository {
 
         if (agentClass.equals(RandomAgent.class)) {
             agent = new RandomAgent(player);
+        } else if (agentClass.equals(YamauchiAgent.class)) {
+            agent = new YamauchiAgent(player);
         }
 
         this.agents.add(agent);

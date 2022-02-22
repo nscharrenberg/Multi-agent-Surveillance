@@ -4,35 +4,130 @@ import com.nscharrenberg.um.multiagentsurveillance.agents.shared.Agent;
 import com.nscharrenberg.um.multiagentsurveillance.headless.contracts.repositories.IGameRepository;
 import com.nscharrenberg.um.multiagentsurveillance.headless.contracts.repositories.IMapRepository;
 import com.nscharrenberg.um.multiagentsurveillance.headless.contracts.repositories.IPlayerRepository;
+import com.nscharrenberg.um.multiagentsurveillance.headless.exceptions.CollisionException;
+import com.nscharrenberg.um.multiagentsurveillance.headless.exceptions.InvalidTileException;
+import com.nscharrenberg.um.multiagentsurveillance.headless.exceptions.ItemAlreadyOnTileException;
+import com.nscharrenberg.um.multiagentsurveillance.headless.exceptions.ItemNotOnTileException;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.*;
 import com.rits.cloning.Cloner;
 
+import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
 import java.util.*;
 
 public class YamauchiAgent extends Agent {
     private List<Frontier> frontiers = new ArrayList<>();
-    private int frontierRadius = 3;
+    private SecureRandom random;
 
     public YamauchiAgent(Player player) {
         super(player);
+        try {
+            this.random = SecureRandom.getInstanceStrong();
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        }
     }
 
     public YamauchiAgent(Player player, IMapRepository mapRepository, IGameRepository gameRepository, IPlayerRepository playerRepository) {
         super(player, mapRepository, gameRepository, playerRepository);
+        try {
+            this.random = SecureRandom.getInstanceStrong();
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        }
     }
 
     public YamauchiAgent(Player player, Area<Tile> knowledge, Queue<Angle> plannedMoves, IMapRepository mapRepository, IGameRepository gameRepository, IPlayerRepository playerRepository) {
         super(player, knowledge, plannedMoves, mapRepository, gameRepository, playerRepository);
+        try {
+            this.random = SecureRandom.getInstanceStrong();
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
     public void execute(Angle angle) {
+        try {
+            playerRepository.move(player, angle);
+        } catch (CollisionException | InvalidTileException | ItemNotOnTileException e) {
+            System.out.println(e.getMessage());
 
+            // If any of the above errors is thrown we can't continue with our planned moves, and need to recalculate our frontiers
+            plannedMoves.clear();
+        } catch (ItemAlreadyOnTileException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
     public Angle decide() {
-        return null;
+        // If moves are alread planned just continue deciding them.
+        if (!plannedMoves.isEmpty()) {
+            return plannedMoves.poll();
+        }
+
+        Optional<Frontier> chosenFrontierOpt = pickBestFrontier();
+
+        // No Frontier found, just do a random move for now
+        if (chosenFrontierOpt.isEmpty() || chosenFrontierOpt.get().getQueueNode() == null) {
+            int value = this.random.nextInt(100);
+
+            Angle move = player.getDirection();
+
+            Optional<Tile> nextTileOpt = knowledge.getByCoordinates(player.getTile().getX() + move.getxIncrement(), player.getTile().getY() + player.getDirection().getyIncrement());
+
+            boolean nextBlocked = false;
+            if (nextTileOpt.isPresent()) {
+                Tile nextTile = nextTileOpt.get();
+
+                for (Item items : nextTile.getItems()) {
+                    if (items instanceof Collision) {
+                        nextBlocked = true;
+                        break;
+                    }
+                }
+            }
+
+            if (value <= 30 || nextBlocked) {
+                int pick = this.random.nextInt(Angle.values().length);
+                move = Angle.values()[pick];
+            }
+
+            return move;
+        }
+
+        Frontier chosenFrontier = chosenFrontierOpt.get();
+
+        plannedMoves.addAll(chosenFrontier.getQueueNode().getMoves());
+
+        return plannedMoves.poll();
+    }
+
+    private Optional<Frontier> pickBestFrontier() {
+        if (frontiers.isEmpty() && plannedMoves.isEmpty()) {
+            detectFrontiers();
+        }
+
+        if (frontiers.isEmpty()) {
+            return Optional.empty();
+        }
+
+        Frontier bestFrontier = null;
+
+        for (Frontier frontier : frontiers) {
+            if (bestFrontier == null) {
+                bestFrontier = frontier;
+            }
+
+            if (frontier.getQueueNode() != null && frontier.getQueueNode().getDistance() < bestFrontier.getQueueNode().getDistance() && frontier.getUnknownAreas() > bestFrontier.getUnknownAreas()) {
+                bestFrontier = frontier;
+            } else if (frontier.getUnknownAreas() > bestFrontier.getUnknownAreas()) {
+                bestFrontier = frontier;
+            }
+        }
+
+        return Optional.of(bestFrontier);
     }
 
     private void detectFrontiers() {
@@ -70,6 +165,14 @@ public class YamauchiAgent extends Agent {
                             frontier.addUnknownArea();
                         }
 
+                        Optional<QueueNode> queueNodeOpt = BFS(colEntry.getValue());
+
+                        if (queueNodeOpt.isPresent()) {
+                            QueueNode queueNode = queueNodeOpt.get();
+
+                            frontier.setQueueNode(queueNode);
+                        }
+
                         addedTofrontier = true;
                         break;
                     }
@@ -90,6 +193,14 @@ public class YamauchiAgent extends Agent {
                     }
                     if (rightOpt.isEmpty()) {
                         newFrontier.addUnknownArea();
+                    }
+
+                    Optional<QueueNode> queueNodeOpt = BFS(colEntry.getValue());
+
+                    if (queueNodeOpt.isPresent()) {
+                        QueueNode queueNode = queueNodeOpt.get();
+
+                        newFrontier.setQueueNode(queueNode);
                     }
                 }
             }
@@ -124,7 +235,7 @@ public class YamauchiAgent extends Agent {
 
         Queue<QueueNode> queue = new LinkedList<>();
 
-        QueueNode s = new QueueNode(player.getTile(), 0);
+        QueueNode s = new QueueNode(player.getTile(), 0, player.getDirection());
         queue.add(s);
 
         Cloner cloner = new Cloner();
@@ -144,9 +255,15 @@ public class YamauchiAgent extends Agent {
                 if (nextTileOpt.isPresent() && !nextTileOpt.get().isCollision() && visited.get(nextTileOpt.get().getX()).get(nextTileOpt.get().getY()).equals(Boolean.FALSE)) {
                     visited.get(nextTileOpt.get().getX()).put(nextTileOpt.get().getY(), Boolean.TRUE);
 
-                    QueueNode adj = new QueueNode(nextTileOpt.get(), currentNode.getDistance()+1);
-                    adj.setTiles(cloner.deepClone(currentNode.getTiles()));
-                    adj.getTiles().add(adj.getTile());
+                    QueueNode adj = new QueueNode(nextTileOpt.get(), currentNode.getDistance()+1, angle);
+
+                    adj.setMoves(cloner.deepClone(currentNode.getMoves()));
+                    // If player is not looking at this direction, then it takes 2 timesteps to get to this tile
+                    if (!currentNode.entrancePosition.equals(angle)) {
+                        adj.getMoves().add(angle);
+                        adj.setDistance(adj.getDistance() + 1);
+                    }
+                    adj.getMoves().add(angle);
                     queue.add(adj);
                 }
             }

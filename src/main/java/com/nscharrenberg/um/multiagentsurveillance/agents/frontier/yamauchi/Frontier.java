@@ -8,8 +8,7 @@ import java.util.HashMap;
 public class Frontier {
     private HashMap<Integer, HashMap<Integer, Tile>> frontier;
     private int unknownAreas = 0;
-    private Float informationGain = null;
-    private Float closestLocator = null;
+    private QueueNode queueNode;
 
     public Frontier() {
         this.frontier = new HashMap<>();
@@ -77,22 +76,6 @@ public class Frontier {
         this.frontier = frontier;
     }
 
-    public Float getInformationGain() {
-        return informationGain;
-    }
-
-    public void setInformationGain(Float informationGain) {
-        this.informationGain = informationGain;
-    }
-
-    public Float getClosestLocator() {
-        return closestLocator;
-    }
-
-    public void setClosestLocator(Float closestLocator) {
-        this.closestLocator = closestLocator;
-    }
-
     public void addUnknownArea() {
         this.unknownAreas++;
     }
@@ -103,5 +86,17 @@ public class Frontier {
 
     public void setUnknownAreas(int unknownAreas) {
         this.unknownAreas = unknownAreas;
+    }
+
+    public QueueNode getQueueNode() {
+        return queueNode;
+    }
+
+    public void setQueueNode(QueueNode queueNode) {
+        if (queueNode.getDistance() <= this.queueNode.getDistance() || queueNode.getMoves().size() <= this.queueNode.getMoves().size()) {
+            return;
+        }
+
+        this.queueNode = queueNode;
     }
 }

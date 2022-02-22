@@ -1,6 +1,5 @@
 package com.nscharrenberg.um.multiagentsurveillance.gui.javafx.controllers;
 
-import com.nscharrenberg.um.multiagentsurveillance.agents.random.RandomAgent;
 import com.nscharrenberg.um.multiagentsurveillance.agents.shared.Agent;
 import com.nscharrenberg.um.multiagentsurveillance.headless.Factory;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Guard;
@@ -45,7 +44,7 @@ public class GameController {
     }
 
     private void importMap() {
-        File file = new File("src/test/resources/maps/testmap.txt");
+        File file = new File("src/test/resources/maps/testmap2.txt");
         String path = file.getAbsolutePath();
         MapImporter importer = new MapImporter();
 

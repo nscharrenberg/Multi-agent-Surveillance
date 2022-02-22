@@ -1,6 +1,5 @@
 package com.nscharrenberg.um.multiagentsurveillance.gui.terminal;
 
-import com.nscharrenberg.um.multiagentsurveillance.agents.random.RandomAgent;
 import com.nscharrenberg.um.multiagentsurveillance.agents.shared.Agent;
 import com.nscharrenberg.um.multiagentsurveillance.headless.Factory;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Angle;

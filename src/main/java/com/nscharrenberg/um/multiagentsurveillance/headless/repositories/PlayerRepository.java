@@ -12,6 +12,7 @@ import com.nscharrenberg.um.multiagentsurveillance.headless.exceptions.InvalidTi
 import com.nscharrenberg.um.multiagentsurveillance.headless.exceptions.ItemAlreadyOnTileException;
 import com.nscharrenberg.um.multiagentsurveillance.headless.exceptions.ItemNotOnTileException;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.*;
+import com.nscharrenberg.um.multiagentsurveillance.headless.utils.CharacterVision;
 
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
@@ -218,8 +219,12 @@ public class PlayerRepository implements IPlayerRepository {
             player.setDirection(teleporter.getDirection());
 
             if (player.getAgent() != null) {
-                player.getAgent().addKnowledge(player.getTile());
-                player.getAgent().addKnowledge(teleporter.getSource().getRegion());
+                CharacterVision characterVision = new CharacterVision(3, player.getDirection());
+                List<Tile> vision = characterVision.getVision(mapRepository.getBoard(), nextPosition);
+                player.getAgent().addKnowledge(vision);
+
+                List<Tile> vision2 = characterVision.getVision(mapRepository.getBoard(), player.getTile());
+                player.getAgent().addKnowledge(vision2);
 
                 calculateExplorationPercentage();
             }
@@ -232,7 +237,12 @@ public class PlayerRepository implements IPlayerRepository {
         player.setTile(nextPosition);
 
         if (player.getAgent() != null) {
-            player.getAgent().addKnowledge(player.getTile());
+            CharacterVision characterVision = new CharacterVision(3, player.getDirection());
+            List<Tile> vision = characterVision.getVision(mapRepository.getBoard(), player.getTile());
+
+            // TODO: GetByCoordinates as tiles are copies
+
+            player.getAgent().addKnowledge(vision);
             calculateExplorationPercentage();
         }
     }

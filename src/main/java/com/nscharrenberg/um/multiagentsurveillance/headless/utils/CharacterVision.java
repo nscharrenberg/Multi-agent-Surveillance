@@ -1,34 +1,95 @@
 package com.nscharrenberg.um.multiagentsurveillance.headless.utils;
 
-import com.nscharrenberg.um.multiagentsurveillance.headless.models.Angle;
-import com.nscharrenberg.um.multiagentsurveillance.headless.models.Area;
-import com.nscharrenberg.um.multiagentsurveillance.headless.models.Tile;
+import com.nscharrenberg.um.multiagentsurveillance.headless.models.*;
 
 import java.util.ArrayList;
+import java.util.Map;
+import java.util.Optional;
 
 // probably have players inherit this class later
-public class CharacterVision {
+public class CharacterVision{
     private int length;
     private Angle direction;
+    private Geometrics gm;
 
     public CharacterVision(int length, Angle direction) {
         this.length = length;
         this.direction = direction;
+        gm = new Geometrics();
     }
 
-    // TODO: convert it from arraylist to area later on probably, waiting on NOAH's update on area
-    public ArrayList<Tile> getRawVision(Tile position) {
+    // Basic method for line vision + adjacent tiles
+    private ArrayList<Tile> getBasicVision(TileArea board, Tile position) {
+        ArrayList<Tile> vision = new ArrayList<Tile>();
+        int px = position.getX();
+        int py = position.getY();
+
+        // Add left and right tiles
+        if (this.direction == Angle.UP || this.direction == Angle.DOWN) {
+            Optional<Tile> rightOpt = board.getByCoordinates(px+1, py);
+
+            vision.add(new Tile(px+1,py));
+
+            vision.add(new Tile(px-1,py));
+        } else if(this.direction == Angle.RIGHT || this.direction == Angle.LEFT) {
+            vision.add(new Tile(px,py+1));
+            vision.add(new Tile(px,py-1));
+        }
+
+        // Add tiles in vision line
+        Tile current;
+        switch(direction) {
+            case UP:
+                for(int i = 0; i < this.length; i++) {
+                    current = new Tile(px,py-i);
+                    vision.add(current);
+                    if(!unobstructedTile(board, current))
+                        break;
+                }
+            case DOWN:
+                for(int i = 0; i < this.length; i++) {
+                    current = new Tile(px,py+i);
+                    vision.add(current);
+                    if(!unobstructedTile(board, current))
+                        break;
+                }
+            case RIGHT:
+                for(int i = 0; i < this.length; i++) {
+                    current = new Tile(px+i, py);
+                    vision.add(current);
+                    if(!unobstructedTile(board, current))
+                        break;
+                }
+            case LEFT:
+                for(int i = 0; i < this.length; i++) {
+                    current = new Tile(px-i, py);
+                    vision.add(current);
+                    if(!unobstructedTile(board, current))
+                        break;
+                }
+        }
+
+        return vision;
+    }
+
+    // TODO: Confirm if return parameter is what we want
+    public ArrayList<Tile> getVision(TileArea board, Tile position) {
+        // getRealVision(board, getConeVision(position), position);
+        return getBasicVision(board, position);
+    }
+
+    // -------------- Cone Vision Methods --------------
+    private ArrayList<Tile> getConeVision(Tile position) {
         int px = position.getX();
         int py = position.getY();
         int s = (2*length)+1; // value for cone width
         ArrayList<Tile> observation = new ArrayList<Tile>();
         observation.add(position);
 
-        // TODO: handle out of bounds tiles
         if(this.direction == Angle.DOWN) {
             for(int k=0; k < length; k++) {
                 for(int r=0; r < s; r++) {
-                    observation.add(new Tile((px+length)-k-r, (py+length)-k, null));
+                    observation.add(new Tile((px+length)-k-r, (py+length)-k));
                 }
                 s -= 2;
             }
@@ -36,7 +97,7 @@ public class CharacterVision {
         else if(this.direction == Angle.RIGHT) {
             for(int k=0; k < length; k++) {
                 for(int r=0; r < s; r++) {
-                    observation.add(new Tile((px+length)-k, (py+length)-k-r, null));
+                    observation.add(new Tile((px+length)-k, (py+length)-k-r));
                 }
                 s -= 2;
             }
@@ -44,7 +105,7 @@ public class CharacterVision {
         else if(this.direction == Angle.UP) {
             for(int k=0; k < length; k++) {
                 for(int r=0; r < s; r++) {
-                    observation.add(new Tile((px-length)+k+r, (py-length)+k, null));
+                    observation.add(new Tile((px-length)+k+r, (py-length)+k));
                 }
                 s -= 2;
             }
@@ -52,36 +113,56 @@ public class CharacterVision {
         else if(this.direction == Angle.LEFT) {
             for(int k=0; k < length; k++) {
                 for(int r=0; r < s; r++) {
-                    observation.add(new Tile((px-length)+k, (py-length)+k+r, null));
+                    observation.add(new Tile((px-length)+k, (py-length)+k+r));
                 }
                 s -= 2;
             }
-        } else {
-            // Invalid direction
         }
 
         return observation;
-
     }
 
-    // Ignore for now
-//    // TODO: properly rework method to check for item collision
-//    public ArrayList<Tile> getRealVision(ArrayList<Tile> rawvision) {
-//        ArrayList<Tile> finalvision = new ArrayList<>();
-//
-//        for (Tile t : rawvision) {
-//            // Trim out of bounds tiles
-//            if(t.getX() < 0 || t.getY() < 0 || t.getX() > 48 || t.getY() > 24) {
-//                //got to check map values
-//            }
-//            if(t.getItems().size() == 0) {
-//                // dummy method, will rework to proper item recognition later
-//                finalvision.add(t);
-//            }
-//        }
-//
-//        return finalvision;
-//    }
+    // Method for vision collision (only needed for cone vision)
+    private ArrayList<Tile> getRealVision(TileArea board, ArrayList<Tile> rawvision, Tile position) {
+        ArrayList<Tile> finalvision = new ArrayList<>();
+        boolean validtile = true;
+
+        // Remove out of bound tiles first (maybe redundant if we use Optional)
+        rawvision.removeIf(tc -> (tc.getX() < 0 || tc.getY() < 0));
+        rawvision.removeIf(tc -> (tc.getX() > board.width() || tc.getY() > board.height()));
+
+        // Check remaining tiles for items
+        for (Tile t : rawvision) {
+            if (unobstructedTile(board, t)) {
+                for (Tile it : gm.getIntersectingTiles(position, t)) {
+                    if(!unobstructedTile(board,it)) {
+                        validtile = false;
+                        break;
+                    }
+                }
+            }
+
+            if(validtile)
+                finalvision.add(t);
+        }
+
+        return finalvision;
+    }
+
+
+    private boolean unobstructedTile(TileArea board, Tile t) {
+        if(board.getByCoordinates(t.getX(), t.getY()).isPresent()) {
+            if (board.getByCoordinates(t.getX(), t.getY()).get().getItems().size() != 0) {
+                for (Item im : t.getItems()) {
+                    if (im instanceof Wall) {   // Might have to add other checks to this later
+                        return false;
+                    }
+                }
+            }
+            return true;
+        }
+        return false;
+    }
 
     public int getLength() {
         return length;

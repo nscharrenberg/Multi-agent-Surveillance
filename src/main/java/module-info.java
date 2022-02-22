@@ -13,4 +13,5 @@ module com.nscharrenberg.um.multiagentsurveillance {
     opens com.nscharrenberg.um.multiagentsurveillance.headless.models to cloning;
     opens com.nscharrenberg.um.multiagentsurveillance.agents.random to cloning;
     opens com.nscharrenberg.um.multiagentsurveillance.agents.shared to cloning;
+    opens com.nscharrenberg.um.multiagentsurveillance.agents.frontier.yamauchi to cloning;
 }

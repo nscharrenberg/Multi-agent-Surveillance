@@ -210,10 +210,12 @@ public class TileArea extends Area<Tile> {
         cloner.deepCloneDontCloneInstances(LinkedList.class);
         cloner.deepCloneDontCloneInstances(List.class);
         cloner.deepCloneDontCloneInstances(ArrayList.class);
+        cloner.deepCloneDontCloneInstances(PriorityQueue.class);
         cloner.dontCloneInstanceOf(SecureRandom.class);
         cloner.dontCloneInstanceOf(LinkedList.class);
         cloner.dontCloneInstanceOf(List.class);
         cloner.dontCloneInstanceOf(ArrayList.class);
+        cloner.dontCloneInstanceOf(PriorityQueue.class);
         HashMap<Integer, HashMap<Integer, Tile>> cloned = cloner.deepClone(region);
 
         TileArea newArea = new TileArea(cloned);

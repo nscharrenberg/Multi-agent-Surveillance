@@ -6,10 +6,7 @@ import com.nscharrenberg.um.multiagentsurveillance.headless.contracts.repositori
 import com.nscharrenberg.um.multiagentsurveillance.headless.contracts.repositories.IPlayerRepository;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.*;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.PriorityQueue;
-import java.util.Queue;
+import java.util.*;
 
 public abstract class Agent {
     protected final Player player;
@@ -79,6 +76,12 @@ public abstract class Agent {
             for (Map.Entry<Integer, Tile> colEntry : rowEntry.getValue().entrySet()) {
                 knowledge.add(colEntry.getValue(), false);
             }
+        }
+    }
+
+    public void addKnowledge(List<Tile> tiles) {
+        for (Tile tile : tiles) {
+            knowledge.add(tile, false);
         }
     }
 

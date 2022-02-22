@@ -17,6 +17,9 @@ public class Tile {
     }
 
     public Tile(List<Item> items) {
+        if (items == null) {
+            this.items = new ArrayList<>();
+        }
         this.items = items;
     }
 
@@ -49,6 +52,9 @@ public class Tile {
     }
 
     public List<Item> getItems() {
+        if (items == null) {
+            System.out.println("Something");
+        }
         return items;
     }
 

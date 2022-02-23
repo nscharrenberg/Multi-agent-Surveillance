@@ -249,6 +249,9 @@ public class YamauchiAgent extends Agent {
         }
 
         // Set current tile to visited
+        if (!visited.containsKey(player.getTile().getX())) {
+            visited.put(player.getTile().getX(), new HashMap<>());
+        }
         visited.get(player.getTile().getX()).put(player.getTile().getY(), Boolean.TRUE);
 
         Queue<QueueNode> queue = new LinkedList<>();

@@ -219,7 +219,7 @@ public class PlayerRepository implements IPlayerRepository {
             player.setDirection(teleporter.getDirection());
 
             if (player.getAgent() != null) {
-                CharacterVision characterVision = new CharacterVision(3, player.getDirection());
+                CharacterVision characterVision = new CharacterVision(6, player.getDirection());
                 List<Tile> vision = characterVision.getVision(mapRepository.getBoard(), nextPosition);
                 player.getAgent().addKnowledge(vision);
 
@@ -237,7 +237,7 @@ public class PlayerRepository implements IPlayerRepository {
         player.setTile(nextPosition);
 
         if (player.getAgent() != null) {
-            CharacterVision characterVision = new CharacterVision(3, player.getDirection());
+            CharacterVision characterVision = new CharacterVision(6, player.getDirection());
             List<Tile> vision = characterVision.getVision(mapRepository.getBoard(), player.getTile());
 
             // TODO: GetByCoordinates as tiles are copies

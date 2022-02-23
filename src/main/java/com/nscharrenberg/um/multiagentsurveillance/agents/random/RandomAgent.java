@@ -38,11 +38,6 @@ public class RandomAgent extends Agent {
     }
 
     @Override
-    public void execute() {
-        execute(decide());
-    }
-
-    @Override
     public void execute(Angle move) {
         try {
             playerRepository.move(player, move);

@@ -93,7 +93,7 @@ public class CharacterVision{
 
     // TODO: Confirm if return parameter is what we want
     public ArrayList<Tile> getVision(TileArea board, Tile position) {
-//         getRealVision(board, getConeVision(board, position), position);
+//         return getRealVision(board, getConeVision(board, position), position);
         return getBasicVision(board, position);
     }
 
@@ -108,7 +108,11 @@ public class CharacterVision{
         if(this.direction == Angle.DOWN) {
             for(int k=0; k < length; k++) {
                 for(int r=0; r < s; r++) {
-                    observation.add(findTile(board,(px+length)-k-r, (py+length)-k));
+                    Tile t = findTile(board,(px+length)-k-r, (py+length)-k);
+
+                    if (t == null) continue;;
+
+                    observation.add(t);
                 }
                 s -= 2;
             }
@@ -116,7 +120,11 @@ public class CharacterVision{
         else if(this.direction == Angle.RIGHT) {
             for(int k=0; k < length; k++) {
                 for(int r=0; r < s; r++) {
-                    observation.add(findTile(board,(px+length)-k, (py+length)-k-r));
+                    Tile t = findTile(board,(px+length)-k, (py+length)-k-r);
+
+                    if (t == null) continue;
+
+                    observation.add(t);
                 }
                 s -= 2;
             }
@@ -124,7 +132,9 @@ public class CharacterVision{
         else if(this.direction == Angle.UP) {
             for(int k=0; k < length; k++) {
                 for(int r=0; r < s; r++) {
-                    observation.add(findTile(board,(px-length)+k+r, (py-length)+k));
+                    Tile t = findTile(board,(px-length)+k+r, (py-length)+k);
+                    if (t == null) continue;
+                    observation.add(t);
                 }
                 s -= 2;
             }
@@ -132,7 +142,9 @@ public class CharacterVision{
         else if(this.direction == Angle.LEFT) {
             for(int k=0; k < length; k++) {
                 for(int r=0; r < s; r++) {
-                    observation.add(findTile(board,(px-length)+k, (py-length)+k+r));
+                    Tile t = findTile(board,(px-length)+k, (py-length)+k+r);
+                    if (t == null) continue;
+                    observation.add(t);
                 }
                 s -= 2;
             }
@@ -153,7 +165,7 @@ public class CharacterVision{
         // Check remaining tiles for items
         for (Tile t : rawvision) {
             if (unobstructedTile(board, t)) {
-                for (Tile it : gm.getIntersectingTiles(position, t)) {
+                for (Tile it : gm.getIntersectingTiles(board, position, t)) {
                     if(!unobstructedTile(board,it)) {
                         validtile = false;
                         break;

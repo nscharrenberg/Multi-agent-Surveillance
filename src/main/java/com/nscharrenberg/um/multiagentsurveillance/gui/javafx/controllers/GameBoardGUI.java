@@ -50,17 +50,6 @@ public class GameBoardGUI extends Application {
         WINDOW;
     }
 
-    // TODO: Might have to change if require differing grid size
-    private Double[] faceUP_Intruder = {15.0, 5.0, 25.0, 25.0, 15.0, 20.0, 5.0, 25.0, 15.0, 5.0 };
-    private Double[] faceDOWN_Intruder = {15.0, 25.0, 5.0, 5.0, 15.0, 10.0, 25.0, 5.0, 15.0, 25.0};
-    private Double[] faceLEFT_Intruder = {5.0, 15.0, 25.0, 5.0, 20.0, 15.0, 25.0, 25.0, 5.0, 15.0};
-    private Double[] faceRIGHT_Intruder = {25.0, 15.0, 5.0, 5.0, 10.0, 15.0, 5.0, 25.0, 25.0, 15.0};
-
-    private Double[] faceUP_Guard = {15.0, 5.0, 5.0, 15.0, 5.0, 25.0, 25.0, 25.0, 25.0, 15.0, 15.0, 5.0};
-    private Double[] faceDOWN_Guard = {15.0, 25.0, 5.0, 15.0, 5.0, 5.0, 25.0, 5.0, 25.0, 15.0, 15.0, 25.0};
-    private Double[] faceLEFT_Guard = {5.0, 15.0, 15.0, 25.0, 25.0, 25.0, 25.0, 5.0, 15.0, 5.0, 5.0, 15.0};
-    private Double[] faceRIGHT_Guard = {25.0, 15.0, 15.0, 5.0, 5.0, 5.0, 5.0, 25.0, 25.0, 25.0, 25.0, 15.0};
-
     public GameBoardGUI(){
         GRID_WIDTH = Factory.getGameRepository().getWidth();
         GRID_HEIGHT = Factory.getGameRepository().getHeight();
@@ -258,6 +247,18 @@ public class GameBoardGUI extends Application {
         //TODO: We need to store changes to the board somewhere, such that here we can take the original board and add the changes to it.
 
         return null;
+    }
+
+    private void createPolygons() {
+        faceUP_Intruder = new Double[]{GSSD / 2.0, GSSD / 6.0, GSSD * 5.0 / 6.0, GSSD * 5.0 / 6.0, GSSD / 2.0, GSSD * 2.0 / 3.0, GSSD * 5.0 / 6.0, GSSD * 5.0 / 6.0, GSSD / 2.0, GSSD / 6.0};
+        faceDOWN_Intruder = new Double[]{GSSD / 2.0, GSSD * 5.0 / 6.0, GSSD / 6.0, GSSD / 6.0, GSSD / 2.0, GSSD / 3.0, GSSD * 5.0 / 6.0, GSSD / 6.0, GSSD / 2.0, GSSD * 5.0 / 6.0};
+        faceLEFT_Intruder = new Double[]{GSSD / 6.0, GSSD / 2.0, GSSD * 5.0 / 6.0, GSSD / 6.0, 20.0, GSSD / 2.0, GSSD * 5.0 / 6.0, GSSD * 5.0 / 6.0, GSSD / 6.0, GSSD / 2.0};
+        faceRIGHT_Intruder = new Double[]{GSSD * 5.0 / 6.0, GSSD / 2.0, GSSD / 6.0, 5.0, GSSD / 3.0, GSSD / 2.0, GSSD / 6.0, GSSD * 5.0 / 6.0, GSSD * 5.0 / 6.0, GSSD / 2.0};
+
+        faceUP_Guard = new Double[]{GSSD / 2.0, GSSD / 6.0, GSSD / 6.0, GSSD / 2.0, GSSD / 6.0, GSSD * 5.0 / 6.0, GSSD * 5.0 / 6.0, GSSD * 5.0 / 6.0, GSSD * 5.0 / 6.0, GSSD / 2.0, GSSD / 2.0, GSSD / 6.0};
+        faceDOWN_Guard = new Double[]{GSSD / 2.0, GSSD * 5.0 / 6.0, GSSD / 6.0, GSSD / 2.0, GSSD / 6.0, GSSD / 6.0, GSSD * 5.0 / 6.0, GSSD / 6.0, GSSD * 5.0 / 6.0, GSSD / 2.0, GSSD / 2.0, GSSD * 5.0 / 6.0};
+        faceLEFT_Guard = new Double[]{GSSD / 6.0, GSSD / 2.0, GSSD / 2.0, GSSD * 5.0 / 6.0, GSSD * 5.0 / 6.0, GSSD * 5.0 / 6.0, GSSD * 5.0 / 6.0, GSSD / 6.0, GSSD / 2.0, GSSD / 6.0, GSSD / 6.0, GSSD / 2.0};
+        faceRIGHT_Guard = new Double[]{GSSD * 5.0 / 6.0, GSSD / 2.0, GSSD / 2.0, GSSD / 6.0, GSSD / 6.0, GSSD / 6.0, GSSD / 6.0, GSSD * 5.0 / 6.0, GSSD / 2.0, GSSD * 5.0/ 6.0, GSSD * 5.0 / 6.0, GSSD / 2.0};
     }
 
 

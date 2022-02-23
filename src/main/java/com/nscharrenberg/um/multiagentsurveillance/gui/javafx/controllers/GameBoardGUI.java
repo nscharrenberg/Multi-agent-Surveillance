@@ -50,6 +50,10 @@ public class GameBoardGUI extends Application {
     public GameBoardGUI(){
         GRID_WIDTH = Factory.getGameRepository().getWidth();
         GRID_HEIGHT = Factory.getGameRepository().getHeight();
+
+        if (FRAME_HEIGHT/GRID_HEIGHT < FRAME_WIDTH/GRID_WIDTH){
+
+        }
     }
 
     @Override

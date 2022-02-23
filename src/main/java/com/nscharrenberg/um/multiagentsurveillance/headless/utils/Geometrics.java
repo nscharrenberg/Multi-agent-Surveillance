@@ -1,8 +1,10 @@
 package com.nscharrenberg.um.multiagentsurveillance.headless.utils;
 
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Tile;
+import com.nscharrenberg.um.multiagentsurveillance.headless.models.TileArea;
 
 import java.util.ArrayList;
+import java.util.Optional;
 
 public class Geometrics {
 
@@ -10,7 +12,7 @@ public class Geometrics {
 
     }
 
-    public ArrayList<Tile> getIntersectingTiles(Tile position, Tile endpoint) {
+    public ArrayList<Tile> getIntersectingTiles(TileArea board, Tile position, Tile endpoint) {
         ArrayList<Tile> linetiles = new ArrayList<>();
         double x0 = position.getX();
         double y0 = position.getY();
@@ -32,13 +34,19 @@ public class Geometrics {
             if(Math.abs(a) <= 1) {
                 for (double i = imin; i <= imax; i++) {
                     int yt = (int)Math.round((a * (i-x0)) + y0);
-                    linetiles.add(new Tile((int)i, yt, null));
+                    Tile t = findTile(board, (int) i, yt);
+
+                    if (t == null) continue;
+
+                    linetiles.add(t);
                     //System.out.println("xt: " + i + " yt: " + yt);
                 }
             } else {
                 for (double i = vmin; i <= vmax; i++) {
                     int xt = (int)Math.round(((i-y0)/a)+x0);
-                    linetiles.add(new Tile(xt, (int)i, null));
+                    Tile t = findTile(board, xt, (int)i);
+                    if (t == null) continue;
+                    linetiles.add(t);
                     //System.out.println("a: " + a + " xt: " + xt + " yt: " + i);
                 }
             }
@@ -47,6 +55,16 @@ public class Geometrics {
         }
 
         return linetiles;
+    }
+
+    private Tile findTile(TileArea board, int x, int y) {
+        Optional<Tile> tileOpt = board.getByCoordinates(x, y);
+
+        if (tileOpt.isEmpty()) {
+            return null;
+        }
+
+        return tileOpt.get();
     }
 
 }

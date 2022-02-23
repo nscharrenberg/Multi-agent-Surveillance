@@ -1,23 +1,25 @@
 package com.nscharrenberg.um.multiagentsurveillance.headless.contracts.repositories;
 
+import com.nscharrenberg.um.multiagentsurveillance.agents.shared.Agent;
 import com.nscharrenberg.um.multiagentsurveillance.headless.exceptions.CollisionException;
 import com.nscharrenberg.um.multiagentsurveillance.headless.exceptions.InvalidTileException;
 import com.nscharrenberg.um.multiagentsurveillance.headless.exceptions.ItemAlreadyOnTileException;
 import com.nscharrenberg.um.multiagentsurveillance.headless.exceptions.ItemNotOnTileException;
-import com.nscharrenberg.um.multiagentsurveillance.headless.models.Angle;
-import com.nscharrenberg.um.multiagentsurveillance.headless.models.Guard;
-import com.nscharrenberg.um.multiagentsurveillance.headless.models.Intruder;
-import com.nscharrenberg.um.multiagentsurveillance.headless.models.Player;
+import com.nscharrenberg.um.multiagentsurveillance.headless.models.*;
 
 import java.util.List;
 
 public interface IPlayerRepository {
+
+    float calculateExplorationPercentage();
 
     /**
      * Spawn a player to their corresponding spawn area
      * @param playerInstance - the player instance to be spawned
      */
     void spawn(Class<?> playerInstance);
+
+    void spawn(Class<? extends Player> playerClass, TileArea playerSpawnArea);
 
     /**
      * Rotate or Move a player to a new tile
@@ -43,9 +45,9 @@ public interface IPlayerRepository {
 
     void setIntruders(List<Intruder> intruders);
 
-    List<Guard> getGuards();
-
     void setGuards(List<Guard> guards);
+
+    List<Guard> getGuards();
 
     IMapRepository getMapRepository();
 
@@ -54,4 +56,12 @@ public interface IPlayerRepository {
     void setMapRepository(IMapRepository mapRepository);
 
     void setGameRepository(IGameRepository gameRepository);
+
+    List<Agent> getAgents();
+
+    void setAgents(List<Agent> agents);
+
+    float getExplorationPercentage();
+
+    void setExplorationPercentage(float explorationPercentage);
 }

@@ -17,6 +17,9 @@ public class Tile {
     }
 
     public Tile(List<Item> items) {
+        if (items == null) {
+            this.items = new ArrayList<>();
+        }
         this.items = items;
     }
 
@@ -49,11 +52,26 @@ public class Tile {
     }
 
     public List<Item> getItems() {
+        if (items == null) {
+            System.out.println("Something");
+        }
         return items;
     }
 
     public void setItems(List<Item> items) {
         this.items = items;
+    }
+
+    public boolean isCollision() {
+        boolean blocked = false;
+        for (Item item : items) {
+            if (item instanceof Collision) {
+                blocked = true;
+                break;
+            }
+        }
+
+        return blocked;
     }
 
     /**

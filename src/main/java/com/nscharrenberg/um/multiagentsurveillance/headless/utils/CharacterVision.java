@@ -26,11 +26,11 @@ public class CharacterVision{
 
         // Add left and right tiles
         if (this.direction == Angle.UP || this.direction == Angle.DOWN) {
-            vision.add(new Tile(px+1,py,null));
-            vision.add(new Tile(px-1,py,null));
+            vision.add(new Tile(px+1,py));
+            vision.add(new Tile(px-1,py));
         } else if(this.direction == Angle.RIGHT || this.direction == Angle.LEFT) {
-            vision.add(new Tile(px,py+1,null));
-            vision.add(new Tile(px,py-1,null));
+            vision.add(new Tile(px,py+1));
+            vision.add(new Tile(px,py-1));
         }
 
         // Add tiles in vision line
@@ -38,28 +38,28 @@ public class CharacterVision{
         switch(direction) {
             case UP:
                 for(int i = 0; i < this.length; i++) {
-                    current = new Tile(px,py-i,null);
+                    current = new Tile(px,py-i);
                     vision.add(current);
                     if(!unobstructedTile(board, current))
                         break;
                 }
             case DOWN:
                 for(int i = 0; i < this.length; i++) {
-                    current = new Tile(px,py+i,null);
+                    current = new Tile(px,py+i);
                     vision.add(current);
                     if(!unobstructedTile(board, current))
                         break;
                 }
             case RIGHT:
                 for(int i = 0; i < this.length; i++) {
-                    current = new Tile(px+i, py,null);
+                    current = new Tile(px+i, py);
                     vision.add(current);
                     if(!unobstructedTile(board, current))
                         break;
                 }
             case LEFT:
                 for(int i = 0; i < this.length; i++) {
-                    current = new Tile(px-i, py,null);
+                    current = new Tile(px-i, py);
                     vision.add(current);
                     if(!unobstructedTile(board, current))
                         break;
@@ -86,7 +86,7 @@ public class CharacterVision{
         if(this.direction == Angle.DOWN) {
             for(int k=0; k < length; k++) {
                 for(int r=0; r < s; r++) {
-                    observation.add(new Tile((px+length)-k-r, (py+length)-k, null));
+                    observation.add(new Tile((px+length)-k-r, (py+length)-k));
                 }
                 s -= 2;
             }
@@ -94,7 +94,7 @@ public class CharacterVision{
         else if(this.direction == Angle.RIGHT) {
             for(int k=0; k < length; k++) {
                 for(int r=0; r < s; r++) {
-                    observation.add(new Tile((px+length)-k, (py+length)-k-r, null));
+                    observation.add(new Tile((px+length)-k, (py+length)-k-r));
                 }
                 s -= 2;
             }
@@ -102,7 +102,7 @@ public class CharacterVision{
         else if(this.direction == Angle.UP) {
             for(int k=0; k < length; k++) {
                 for(int r=0; r < s; r++) {
-                    observation.add(new Tile((px-length)+k+r, (py-length)+k, null));
+                    observation.add(new Tile((px-length)+k+r, (py-length)+k));
                 }
                 s -= 2;
             }
@@ -110,7 +110,7 @@ public class CharacterVision{
         else if(this.direction == Angle.LEFT) {
             for(int k=0; k < length; k++) {
                 for(int r=0; r < s; r++) {
-                    observation.add(new Tile((px-length)+k, (py-length)+k+r, null));
+                    observation.add(new Tile((px-length)+k, (py-length)+k+r));
                 }
                 s -= 2;
             }

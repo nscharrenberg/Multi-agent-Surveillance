@@ -32,13 +32,13 @@ public class Geometrics {
             if(Math.abs(a) <= 1) {
                 for (double i = imin; i <= imax; i++) {
                     int yt = (int)Math.round((a * (i-x0)) + y0);
-                    linetiles.add(new Tile((int)i, yt, null));
+                    linetiles.add(new Tile((int)i, yt));
                     //System.out.println("xt: " + i + " yt: " + yt);
                 }
             } else {
                 for (double i = vmin; i <= vmax; i++) {
                     int xt = (int)Math.round(((i-y0)/a)+x0);
-                    linetiles.add(new Tile(xt, (int)i, null));
+                    linetiles.add(new Tile(xt, (int)i));
                     //System.out.println("a: " + a + " xt: " + xt + " yt: " + i);
                 }
             }

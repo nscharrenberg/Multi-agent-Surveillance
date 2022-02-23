@@ -97,6 +97,6 @@ public class Tile {
 
     @Override
     public int hashCode() {
-        return Objects.hash(x, y, items);
+        return Objects.hash(x, y);
     }
 }

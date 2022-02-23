@@ -132,20 +132,24 @@ public class CharacterVision{
         for (Tile t : rawvision) {
             if (unobstructedTile(board, t)) {
                 for (Tile it : gm.getIntersectingTiles(position, t)) {
-                    if(!unobstructedTile(board, it)) {
+                    if (!unobstructedTile(board, it)) {
                         validtile = false;
                         break;
                     }
                 }
+            } else {
+                validtile = false;
             }
 
-            if(validtile)
+            if(validtile) {
                 finalvision.add(t);
+            } else {
+                validtile = true;
+            }
         }
 
         return finalvision;
     }
-
 
     private boolean unobstructedTile(TileArea board, Tile t) {
         if(board.getByCoordinates(t.getX(), t.getY()).isPresent()) {

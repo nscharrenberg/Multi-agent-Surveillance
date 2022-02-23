@@ -21,19 +21,19 @@ public class VisionTest {
     void testRawVisionTiles() {
 
         CharacterVision cvup = new CharacterVision(4, Angle.UP);
+        Tile pos = new Tile(1,1);
 
         Factory.reset();
-        Factory.getGameRepository().setHeight(20);
-        Factory.getGameRepository().setWidth(20);
+        Factory.getGameRepository().setHeight(5);
+        Factory.getGameRepository().setWidth(5);
         Factory.getMapRepository().buildEmptyBoard();
         TileArea map = Factory.getMapRepository().getBoard();
 
-        /* Display tiles */
-        ArrayList<Tile> tiles = cvup.getVision(map, new Tile(4,4, null));
+         /* Display tiles */
+        ArrayList<Tile> tiles = cvup.getVision(map, new Tile(1,1));
         for (Tile t:tiles) {
             System.out.println("Tile: " + t.getX() + " - " + t.getY());
         }
-
 
         // Assertions.assertEquals(9, cvup.getConeVision(new Tile(0,0,null)).size());
 

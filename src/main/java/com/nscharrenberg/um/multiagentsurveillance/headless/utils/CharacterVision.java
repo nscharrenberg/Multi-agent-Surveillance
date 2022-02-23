@@ -125,9 +125,10 @@ public class CharacterVision{
         boolean validtile = true;
 
         // Remove out of bound tiles first
-        rawvision.removeIf(tc -> board.getByCoordinates(tc.getX(), tc.getY()).isEmpty());
+        rawvision.removeIf(tc -> (tc.getX() < 0 || tc.getY() < 0));
+        rawvision.removeIf(tc -> (tc.getX() > board.width() || tc.getY() > board.height()));
 
-        // Check remaining tiles for items
+         // Check remaining tiles for items
         for (Tile t : rawvision) {
             if (unobstructedTile(board, t)) {
                 for (Tile it : gm.getIntersectingTiles(position, t)) {

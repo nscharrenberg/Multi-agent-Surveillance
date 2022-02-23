@@ -15,11 +15,10 @@ public class GeometricsTest {
     void testIntersectingTiles() {
 
         Geometrics gm = new Geometrics();
-        int tilecount = gm.getIntersectingTiles(new Tile(3,3,null),
-                new Tile(6,1,null)).size();
+//        int tilecount = gm.getIntersectingTiles(new Tile(3,3,null),
+//                new Tile(6,1,null)).size();
+//        Assertions.assertEquals(4 , tilecount);
 
-        Assertions.assertEquals(4 , tilecount);
-//
 //        ArrayList<Tile> it = gm.getIntersectingTiles(
 //                new Tile(3,3,null),
 //                new Tile(4,0,null));

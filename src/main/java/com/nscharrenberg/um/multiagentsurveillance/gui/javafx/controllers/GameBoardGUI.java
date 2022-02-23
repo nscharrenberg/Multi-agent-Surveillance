@@ -3,15 +3,14 @@ package com.nscharrenberg.um.multiagentsurveillance.gui.javafx.controllers;
 import com.nscharrenberg.um.multiagentsurveillance.headless.Factory;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.*;
 import javafx.application.Application ;
-import javafx.scene.Group ;
-import javafx.scene.Scene ;
+import javafx.scene.Group;
+import javafx.scene.Scene;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Polygon;
 import javafx.scene.shape.Rectangle;
-import javafx.stage.Stage ;
-import javafx.scene.text.Font ;
+import javafx.stage.Stage;
 
 import java.util.*;
 

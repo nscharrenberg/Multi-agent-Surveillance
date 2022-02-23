@@ -240,8 +240,6 @@ public class PlayerRepository implements IPlayerRepository {
             CharacterVision characterVision = new CharacterVision(6, player.getDirection());
             List<Tile> vision = characterVision.getVision(mapRepository.getBoard(), player.getTile());
 
-            // TODO: GetByCoordinates as tiles are copies
-
             player.getAgent().addKnowledge(vision);
             calculateExplorationPercentage();
         }

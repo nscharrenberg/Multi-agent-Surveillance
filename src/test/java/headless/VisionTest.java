@@ -8,6 +8,7 @@ import com.nscharrenberg.um.multiagentsurveillance.headless.models.TileArea;
 import com.nscharrenberg.um.multiagentsurveillance.headless.utils.CharacterVision;
 import com.nscharrenberg.um.multiagentsurveillance.headless.utils.Geometrics;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -20,12 +21,15 @@ public class VisionTest {
     void testRawVisionTiles() {
 
         CharacterVision cvup = new CharacterVision(4, Angle.UP);
-        // TODO: insert map here
-        TileArea map = new TileArea();
+
+        Factory.reset();
+        Factory.getGameRepository().setHeight(20);
+        Factory.getGameRepository().setWidth(20);
+        Factory.getMapRepository().buildEmptyBoard();
+        TileArea map = Factory.getMapRepository().getBoard();
 
         /* Display tiles */
         ArrayList<Tile> tiles = cvup.getVision(map, new Tile(4,4, null));
-        int expSize = tiles.size();
         for (Tile t:tiles) {
             System.out.println("Tile: " + t.getX() + " - " + t.getY());
         }

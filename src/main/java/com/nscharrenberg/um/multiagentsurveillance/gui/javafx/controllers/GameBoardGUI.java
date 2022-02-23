@@ -3,6 +3,7 @@ package com.nscharrenberg.um.multiagentsurveillance.gui.javafx.controllers;
 import com.nscharrenberg.um.multiagentsurveillance.headless.Factory;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.*;
 import javafx.application.Application ;
+import javafx.geometry.Rectangle2D;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.layout.GridPane;
@@ -10,18 +11,31 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Polygon;
 import javafx.scene.shape.Rectangle;
+import javafx.stage.Screen;
 import javafx.stage.Stage;
 
 import java.util.*;
 
 public class GameBoardGUI extends Application {
-    private final int FRAME_WIDTH = 2500;
-    private final int FRAME_HEIGHT = 2000;
+    private final int FRAME_WIDTH = (int) (Screen.getPrimary().getBounds().getWidth() * 0.99);
+    private final int FRAME_HEIGHT = (int) (Screen.getPrimary().getBounds().getHeight() * 0.99);
     private final int GRID_WIDTH;
     private final int GRID_HEIGHT;
-    private final int RECTANGLE_SIZE = 15;
+    private final int GRID_SQUARE_SIZE;
+    private double GSSD;
     private Scene scene;
     private Stage stage;
+
+    private Double[] faceUP_Intruder;
+    private Double[] faceDOWN_Intruder;
+    private Double[] faceLEFT_Intruder;
+    private Double[] faceRIGHT_Intruder;
+
+    private Double[] faceUP_Guard;
+    private Double[] faceDOWN_Guard;
+    private Double[] faceLEFT_Guard;
+    private Double[] faceRIGHT_Guard;
+
 
     private ArrayList<TileComponents> components = new ArrayList<TileComponents>(Arrays.asList(TileComponents.SHADED, TileComponents.WALL, TileComponents.DOOR, TileComponents.WINDOW, TileComponents.TELEPORTER,
             TileComponents.GUARD, TileComponents.INTRUDER));
@@ -51,9 +65,17 @@ public class GameBoardGUI extends Application {
         GRID_WIDTH = Factory.getGameRepository().getWidth();
         GRID_HEIGHT = Factory.getGameRepository().getHeight();
 
-        if (FRAME_HEIGHT/GRID_HEIGHT < FRAME_WIDTH/GRID_WIDTH){
+        System.out.println("Grid width " + GRID_WIDTH);
+        System.out.println("Grid height " + GRID_HEIGHT);
 
-        }
+        if (FRAME_HEIGHT/GRID_HEIGHT < FRAME_WIDTH/GRID_WIDTH)
+            GRID_SQUARE_SIZE = FRAME_HEIGHT/GRID_HEIGHT - 1;
+        else
+            GRID_SQUARE_SIZE = FRAME_WIDTH/GRID_WIDTH - 1;
+
+        GSSD = GRID_SQUARE_SIZE;
+
+        createPolygons();
     }
 
     @Override
@@ -66,6 +88,7 @@ public class GameBoardGUI extends Application {
         scene = new Scene(group, FRAME_WIDTH, FRAME_HEIGHT);
 
         this.stage = st;
+        stage.setMaximized(true);
 
         stage.setTitle(" Multi-Agent Surveillance ");
         stage.setScene(scene);
@@ -99,7 +122,7 @@ public class GameBoardGUI extends Application {
         for (int i = 0; i < GRID_WIDTH; i++) {
             for (int j = 0; j < GRID_HEIGHT; j++) {
 
-                rectangle = new Rectangle(RECTANGLE_SIZE, RECTANGLE_SIZE);
+                rectangle = new Rectangle(GRID_SQUARE_SIZE, GRID_SQUARE_SIZE);
                 rectangle.setStroke(Color.BLACK);
 
                 optTile = board.getByCoordinates(i,j);
@@ -122,7 +145,7 @@ public class GameBoardGUI extends Application {
 
     private StackPane createTile(Tile tile){
 
-        Rectangle rectangle = new Rectangle(RECTANGLE_SIZE, RECTANGLE_SIZE);
+        Rectangle rectangle = new Rectangle(GRID_SQUARE_SIZE, GRID_SQUARE_SIZE);
         Polygon polygon = null;
         Player player;
 

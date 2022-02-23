@@ -33,7 +33,7 @@ public class SBOAgent implements IAgent {
         this.gameRepository = Factory.getGameRepository();
         this.agent = agent;
 
-        visited = agent.getObservation();
+        visited = new TileArea();
 
     }
 
@@ -65,8 +65,8 @@ public class SBOAgent implements IAgent {
         gather();
 
         // Select first valid top Tile from Stack
-        Tile goal = null;
-        while(goal == null) {
+        Tile goal = this.agent.getTile();
+        while(!scanned.isEmpty()) {
             Tile top = scanned.peek();
             if(visited.getByCoordinates(top.getX(), top.getY()).isPresent()) {
                 scanned.pop();
@@ -95,6 +95,10 @@ public class SBOAgent implements IAgent {
                 }
             }
         }
+
+        // More advanced gathering based on vision
+        // TODO: implement
+
     }
 
     private List<Tile> getAdjacent(Tile pos) {

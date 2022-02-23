@@ -29,7 +29,7 @@ public class GeometricsTest {
         correctTiles[10][0] = 11; correctTiles[10][1] = 5;
 
         int k = 0;
-        for (Tile t:gm.getIntersectingTiles(new Tile(1,1,null), new Tile(11,5,null))) {
+        for (Tile t:gm.getIntersectingTiles(new Tile(1,1), new Tile(11,5))) {
             collectedTiles[k][0] = t.getX();
             collectedTiles[k][1] = t.getY();
             k++;

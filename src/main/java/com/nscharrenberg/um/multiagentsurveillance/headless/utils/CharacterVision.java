@@ -71,8 +71,8 @@ public class CharacterVision{
 
     // TODO: Confirm if return parameter is what we want
     public ArrayList<Tile> getVision(TileArea board, Tile position) {
-        // getRealVision(board, getConeVision(position), position);
-        return getBasicVision(board, position);
+        //return getBasicVision(board, position);
+        return getRealVision(board, getConeVision(position), position);
     }
 
     // -------------- Cone Vision Methods --------------
@@ -124,15 +124,14 @@ public class CharacterVision{
         ArrayList<Tile> finalvision = new ArrayList<>();
         boolean validtile = true;
 
-        // Remove out of bound tiles first (maybe redundant if we use Optional)
-        rawvision.removeIf(tc -> (tc.getX() < 0 || tc.getY() < 0));
-        rawvision.removeIf(tc -> (tc.getX() > board.width() || tc.getY() > board.height()));
+        // Remove out of bound tiles first
+        rawvision.removeIf(tc -> board.getByCoordinates(tc.getX(), tc.getY()).isEmpty());
 
         // Check remaining tiles for items
         for (Tile t : rawvision) {
             if (unobstructedTile(board, t)) {
                 for (Tile it : gm.getIntersectingTiles(position, t)) {
-                    if(!unobstructedTile(board,it)) {
+                    if(!unobstructedTile(board, it)) {
                         validtile = false;
                         break;
                     }
@@ -150,7 +149,7 @@ public class CharacterVision{
     private boolean unobstructedTile(TileArea board, Tile t) {
         if(board.getByCoordinates(t.getX(), t.getY()).isPresent()) {
             if (board.getByCoordinates(t.getX(), t.getY()).get().getItems().size() != 0) {
-                for (Item im : t.getItems()) {
+                for (Item im : board.getByCoordinates(t.getX(), t.getY()).get().getItems()) {
                     if (im instanceof Wall) {   // Might have to add other checks to this later
                         return false;
                     }

@@ -1,5 +1,7 @@
 package com.nscharrenberg.um.multiagentsurveillance.gui.javafx.controllers;
 
+import com.nscharrenberg.um.multiagentsurveillance.agents.frontier.yamauchi.Frontier;
+import com.nscharrenberg.um.multiagentsurveillance.agents.frontier.yamauchi.YamauchiAgent;
 import com.nscharrenberg.um.multiagentsurveillance.headless.Factory;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.*;
 import javafx.application.Application ;
@@ -139,6 +141,26 @@ public class GameBoardGUI extends Application {
         for (Player player : guards) {
             combinedVisions = combinedVisions.merge(player.getVision());
             combinedKnowledge = combinedKnowledge.merge(player.getAgent().getKnowledge());
+
+            if (player.getAgent() instanceof YamauchiAgent) {
+                if (((YamauchiAgent) player.getAgent()).getChosenFrontier() != null) {
+                    Rectangle r = new Rectangle(GRID_SQUARE_SIZE, GRID_SQUARE_SIZE);
+                    r.setFill(Color.GREEN);
+
+                    Frontier chosenFrontier = ((YamauchiAgent) player.getAgent()).getChosenFrontier();
+
+                    if (chosenFrontier.getQueueNode() != null) {
+                        gameGrid.add(r, chosenFrontier.getQueueNode().getTile().getX(), chosenFrontier.getQueueNode().getTile().getY());
+                    } else {
+                        System.out.println("No QueueNode for Frontier Found");
+                    }
+
+                } else {
+                    System.out.println("No chosen frontier");
+                }
+
+
+            }
         }
 
         for (Map.Entry<Integer, HashMap<Integer, Tile>> rowEntry : combinedVisions.getRegion().entrySet()) {
@@ -192,7 +214,8 @@ public class GameBoardGUI extends Application {
 
         for (Item item : orderedList) {
             if (item instanceof Wall) {
-                rectangle.setFill(Color.BLACK);
+                rectangle.setFill(Color.DARKGRAY);
+                rectangle.setOpacity(0.5);
             } else if (item instanceof Window) {
                 rectangle.setFill(Color.BLUE);
             } else if (item instanceof Door) {

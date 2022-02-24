@@ -17,6 +17,7 @@ import java.util.*;
 
 public class YamauchiAgent extends Agent {
     private List<Frontier> frontiers = new ArrayList<>();
+    private Frontier chosenFrontier = null;
     private SecureRandom random;
 
     public YamauchiAgent(Player player) {
@@ -126,8 +127,6 @@ public class YamauchiAgent extends Agent {
 
             if (frontier.getQueueNode() != null && frontier.getQueueNode().getDistance() < bestFrontier.getQueueNode().getDistance() && frontier.getUnknownAreas() > bestFrontier.getUnknownAreas()) {
                 bestFrontier = frontier;
-            } else if (frontier.getUnknownAreas() > bestFrontier.getUnknownAreas()) {
-                bestFrontier = frontier;
             }
         }
 
@@ -141,18 +140,25 @@ public class YamauchiAgent extends Agent {
             }
         }
 
+        chosenFrontier = bestFrontier;
+
         return Optional.of(bestFrontier);
     }
 
     private void detectFrontiers() {
         // Clear up all previously found frontiers
         frontiers.clear();
+        chosenFrontier = null;
 
         // Classify each cell by comparing its occupancy probability to the initial (prior) probability assigned to all cells
         // Any open cell adjacent to an unknown cell is labeled a frontier edge cell.
 
         for (Map.Entry<Integer, HashMap<Integer, Tile>> rowEntry : knowledge.getRegion().entrySet()) {
             for (Map.Entry<Integer, Tile> colEntry : rowEntry.getValue().entrySet()) {
+                if (colEntry.getValue().isCollision()) {
+                    continue;
+                }
+
                 Optional<Tile> upOpt = nextPosition(colEntry.getValue(), Angle.UP);
                 Optional<Tile> rightOpt = nextPosition(colEntry.getValue(), Angle.RIGHT);
                 Optional<Tile> leftOpt = nextPosition(colEntry.getValue(), Angle.LEFT);
@@ -187,7 +193,7 @@ public class YamauchiAgent extends Agent {
 
                         if (queueNodeOpt.isPresent()) {
                             QueueNode queueNode = queueNodeOpt.get();
-
+                            if (queueNode.getTile().isCollision()) continue;
                             frontier.setQueueNode(queueNode);
                         }
 
@@ -197,8 +203,12 @@ public class YamauchiAgent extends Agent {
                 }
 
                 if (!addedTofrontier) {
+                    if (colEntry.getValue().isCollision()) {
+                        continue;
+                    }
+
                     Frontier newFrontier = new Frontier(colEntry.getValue());
-                    frontiers.add(new Frontier());
+                    frontiers.add(newFrontier);
 
                     if (upOpt.isEmpty()) {
                         newFrontier.addUnknownArea();
@@ -217,7 +227,7 @@ public class YamauchiAgent extends Agent {
 
                     if (queueNodeOpt.isPresent()) {
                         QueueNode queueNode = queueNodeOpt.get();
-
+                        if (queueNode.getTile().isCollision()) continue;
                         newFrontier.setQueueNode(queueNode);
                     }
                 }
@@ -311,5 +321,9 @@ public class YamauchiAgent extends Agent {
         }
 
         return nextTileOpt;
+    }
+
+    public Frontier getChosenFrontier() {
+        return chosenFrontier;
     }
 }

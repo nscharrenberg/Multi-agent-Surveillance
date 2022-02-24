@@ -137,8 +137,6 @@ public class CharacterVision{
                         break;
                     }
                 }
-            } else {
-                validtile = false;
             }
 
             if(validtile) {

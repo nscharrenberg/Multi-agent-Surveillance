@@ -1,5 +1,8 @@
 package com.nscharrenberg.um.multiagentsurveillance.headless.models;
 
+import com.rits.cloning.Cloner;
+
+import java.security.SecureRandom;
 import java.util.*;
 
 public class TileArea extends Area<Tile> {
@@ -50,6 +53,14 @@ public class TileArea extends Area<Tile> {
 
     @Override
     public Optional<Tile> getByCoordinates(int x, int y) {
+        if (region.get(x) == null || region.get(x).isEmpty()) {
+            return Optional.empty();
+        }
+
+        if (region.get(x).get(y) == null) {
+            return Optional.empty();
+        }
+
         return Optional.of(region.get(x).get(y));
     }
 
@@ -156,5 +167,65 @@ public class TileArea extends Area<Tile> {
         }
 
         return result;
+    }
+
+    @Override
+    public void add(boolean overwrite, Tile... tiles) {
+        for (Tile tile : tiles) {
+            add(tile, overwrite);
+        }
+    }
+
+    @Override
+    public void add(Tile... tiles) {
+        for (Tile tile : tiles) {
+            add(tile);
+        }
+    }
+
+    @Override
+    public void add(Tile tile, boolean overwrite) {
+        Optional<Tile> existing = getByCoordinates(tile.getX(), tile.getY());
+
+        if (existing.isEmpty() && !region.containsKey(tile.getX())) {
+            region.put(tile.getX(), new HashMap<>());
+        }
+
+        if (existing.isPresent() && !overwrite) {
+            return;
+        }
+
+        region.get(tile.getX()).put(tile.getY(), tile);
+    }
+
+    @Override
+    public void add(Tile tile) {
+        add(tile, true);
+    }
+
+    @Override
+    public Area<Tile> merge(Area<Tile> target) {
+        Cloner cloner = new Cloner();
+        cloner.deepCloneDontCloneInstances(SecureRandom.class);
+        cloner.deepCloneDontCloneInstances(LinkedList.class);
+        cloner.deepCloneDontCloneInstances(List.class);
+        cloner.deepCloneDontCloneInstances(ArrayList.class);
+        cloner.deepCloneDontCloneInstances(PriorityQueue.class);
+        cloner.dontCloneInstanceOf(SecureRandom.class);
+        cloner.dontCloneInstanceOf(LinkedList.class);
+        cloner.dontCloneInstanceOf(List.class);
+        cloner.dontCloneInstanceOf(ArrayList.class);
+        cloner.dontCloneInstanceOf(PriorityQueue.class);
+        HashMap<Integer, HashMap<Integer, Tile>> cloned = cloner.deepClone(region);
+
+        TileArea newArea = new TileArea(cloned);
+
+        for (Map.Entry<Integer, HashMap<Integer, Tile>> rowEntry : target.getRegion().entrySet()) {
+            for (Map.Entry<Integer, Tile> colEntry : rowEntry.getValue().entrySet()) {
+                newArea.add(colEntry.getValue(), false);
+            }
+        }
+
+        return newArea;
     }
 }

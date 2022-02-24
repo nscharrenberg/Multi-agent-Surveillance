@@ -18,10 +18,7 @@ import org.junit.jupiter.api.Test;
 import java.io.File;
 import java.io.IOException;
 import java.security.SecureRandom;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 public class MapImporterTest {
     @DisplayName("Decoupled Repository Import Successful")
@@ -44,6 +41,7 @@ public class MapImporterTest {
 
             Cloner cloner = new Cloner();
             cloner.dontCloneInstanceOf(SecureRandom.class);
+            cloner.dontCloneInstanceOf(PriorityQueue.class);
             IMapRepository mapRepository = cloner.deepClone(Factory.getMapRepository());
             IGameRepository gameRepository = cloner.deepClone(Factory.getGameRepository());
             IPlayerRepository playerRepository = cloner.deepClone(Factory.getPlayerRepository());

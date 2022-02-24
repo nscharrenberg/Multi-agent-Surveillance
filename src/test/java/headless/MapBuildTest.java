@@ -1,5 +1,7 @@
 package headless;
 
+import com.nscharrenberg.um.multiagentsurveillance.agents.random.RandomAgent;
+import com.nscharrenberg.um.multiagentsurveillance.agents.shared.Agent;
 import com.nscharrenberg.um.multiagentsurveillance.headless.Factory;
 import com.nscharrenberg.um.multiagentsurveillance.headless.exceptions.*;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.*;

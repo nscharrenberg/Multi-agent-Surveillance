@@ -39,6 +39,7 @@ public class VisionTest {
         ArrayList<Tile> tiles = cvup.getVision(map, pos);
 
         int k = 0;
+
         for (Tile t:tiles) {
             collectedTiles[k][0] = t.getX();
             collectedTiles[k][1] = t.getY();

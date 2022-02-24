@@ -41,6 +41,10 @@ public interface IPlayerRepository {
      */
     boolean isLegalMove(Player player, Angle direction);
 
+    public Tile getSpawnPoint(Player player);
+
+    public List<Tile> convertToLocalVision(Player player, List<Tile> globalVision);
+
     List<Intruder> getIntruders();
 
     void setIntruders(List<Intruder> intruders);

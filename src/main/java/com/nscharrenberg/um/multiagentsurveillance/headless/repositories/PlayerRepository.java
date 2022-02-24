@@ -17,6 +17,7 @@ import com.nscharrenberg.um.multiagentsurveillance.headless.utils.CharacterVisio
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class PlayerRepository implements IPlayerRepository {
     private IMapRepository mapRepository;
@@ -25,6 +26,7 @@ public class PlayerRepository implements IPlayerRepository {
     private SecureRandom random;
     private List<Intruder> intruders;
     private List<Guard> guards;
+    private HashMap<Player, Tile> spawnPoints = new HashMap<>();
 
     private List<Agent> agents;
 
@@ -147,11 +149,13 @@ public class PlayerRepository implements IPlayerRepository {
                         tile.add(intruder);
                         intruders.add(intruder);
                         agent = spawnAgent(intruder, agentType);
+                        spawnPoints.put(intruder, tile);
                     } else {
                         Guard guard = new Guard(tile, Angle.UP);
                         tile.add(guard);
                         guards.add(guard);
                         agent = spawnAgent(guard, agentType);
+                        spawnPoints.put(guard, tile);
                     }
 
                     agent.addKnowledge(tile);
@@ -221,10 +225,10 @@ public class PlayerRepository implements IPlayerRepository {
             if (player.getAgent() != null) {
                 CharacterVision characterVision = new CharacterVision(6, player.getDirection());
                 List<Tile> vision = characterVision.getVision(mapRepository.getBoard(), nextPosition);
-                player.getAgent().addKnowledge(vision);
+                player.getAgent().addKnowledge(convertToLocalVision(player, vision));
 
                 List<Tile> vision2 = characterVision.getVision(mapRepository.getBoard(), player.getTile());
-                player.getAgent().addKnowledge(vision2);
+                player.getAgent().addKnowledge(convertToLocalVision(player, vision));
 
                 calculateExplorationPercentage();
             }
@@ -240,7 +244,7 @@ public class PlayerRepository implements IPlayerRepository {
             CharacterVision characterVision = new CharacterVision(6, player.getDirection());
             List<Tile> vision = characterVision.getVision(mapRepository.getBoard(), player.getTile());
 
-            player.getAgent().addKnowledge(vision);
+            player.getAgent().addKnowledge(convertToLocalVision(player, vision));
             calculateExplorationPercentage();
         }
     }
@@ -268,6 +272,35 @@ public class PlayerRepository implements IPlayerRepository {
         Optional<Item> collisionFound = nextPosition.getItems().stream().filter(item -> item instanceof Collision).findFirst();
 
         return collisionFound.isEmpty();
+    }
+
+    public Tile getSpawnPoint(Player player) {
+        return spawnPoints.get(player);
+    }
+
+    public List<Tile> convertToLocalVision(Player player, List<Tile> globalVision) {
+        System.out.println("GLOBAL VISION: " + globalVision.get(0).getX() + " " + globalVision.get(0).getY());
+        List<Tile> localVision = new ArrayList<Tile>();
+        List<Item> currentTileItems= new ArrayList<Item>();
+        int spawnX = getSpawnPoint(player).getX();
+        int spawnY = getSpawnPoint(player).getY();
+        System.out.println("SPAWN X: " + spawnX);
+        System.out.println("SPAWN Y: " + spawnY);
+        for (Tile tile : globalVision) {
+            for (Item item : tile.getItems()) {
+                currentTileItems = tile.getItems();
+                if (item instanceof Guard || item instanceof Intruder) {
+                    currentTileItems.remove(item);
+                } else {
+                    continue;
+                }
+            }
+            System.out.println("NEW X: " + (tile.getX() - spawnX));
+            System.out.println("NEW Y: " + (tile.getY() - spawnY));
+            Tile currentTile = new Tile(tile.getX() - spawnX, tile.getY() - spawnY, currentTileItems);
+            localVision.add(currentTile);
+        }
+        return localVision;
     }
 
     @Override

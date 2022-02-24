@@ -11,6 +11,7 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Polygon;
 import javafx.scene.shape.Rectangle;
+import javafx.scene.shape.StrokeType;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 
@@ -35,6 +36,8 @@ public class GameBoardGUI extends Application {
     private Double[] faceDOWN_Guard;
     private Double[] faceLEFT_Guard;
     private Double[] faceRIGHT_Guard;
+
+    private List<Guard> guards;
 
 
     private ArrayList<TileComponents> components = new ArrayList<TileComponents>(Arrays.asList(TileComponents.SHADED, TileComponents.WALL, TileComponents.DOOR, TileComponents.WINDOW, TileComponents.TELEPORTER,
@@ -71,6 +74,7 @@ public class GameBoardGUI extends Application {
     public void start(Stage st) {
 
         TileArea board = Factory.getMapRepository().getBoardAsArea();
+        guards = Factory.getPlayerRepository().getGuards();
 
         GridPane grid = createBoard(board);
         Group group = new Group(grid);
@@ -128,12 +132,30 @@ public class GameBoardGUI extends Application {
                 gameGrid.add(stackPane, i, j);
             }
         }
+
+        Area<Tile> combinedVisions = new TileArea();
+
+        for (Player player : guards) {
+            combinedVisions = combinedVisions.merge(player.getVision());
+        }
+
+        for (Map.Entry<Integer, HashMap<Integer, Tile>> rowEntry : combinedVisions.getRegion().entrySet()) {
+            for (Map.Entry<Integer, Tile> colEntry : rowEntry.getValue().entrySet()) {
+                StackPane visionPane = createTile(colEntry.getValue(), true);
+                gameGrid.add(visionPane, rowEntry.getKey(), colEntry.getKey());
+            }
+        }
+
+
         //gameGrid.setPadding(new Insets(10, 10, 10, 10));
         return gameGrid;
     }
 
-    private StackPane createTile(Tile tile){
+    private StackPane createTile(Tile tile) {
+        return createTile(tile, false);
+    }
 
+    private StackPane createTile(Tile tile, boolean isVision){
         Rectangle rectangle = new Rectangle(GRID_SQUARE_SIZE, GRID_SQUARE_SIZE);
         Polygon polygon = null;
         Player player;
@@ -160,12 +182,17 @@ public class GameBoardGUI extends Application {
                 player = (Player) item;
                 polygon = createIntruder(player.getDirection());
                 polygon.setFill(Color.BLUE);
-            }else if (item instanceof  Teleporter){
+            } else if (item instanceof  Teleporter){
                 rectangle.setFill(Color.PURPLE);
             }
         }
 
-        rectangle.setStroke(Color.BLACK);
+        if (isVision) {
+            rectangle.setFill(Color.GREEN);
+            rectangle.setOpacity(.2);
+        } else {
+            rectangle.setStroke(Color.BLACK);
+        }
 
         if (polygon == null)
             return new StackPane(rectangle);

@@ -13,6 +13,7 @@ import java.io.IOException;
 
 public class GameController {
     private GameBoardGUI boardGUI;
+    private static int timeDelay = 300;
 
     public GameController(){
         Factory.init();
@@ -83,7 +84,7 @@ public class GameController {
             boardGUI.updateGUI();
 
             try {
-                Thread.sleep(200);
+                Thread.sleep(timeDelay);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }

@@ -1,5 +1,7 @@
 package com.nscharrenberg.um.multiagentsurveillance.agents.frontier.yamauchi;
 
+import com.nscharrenberg.um.multiagentsurveillance.agents.frontier.yamauchi.FibonacciHeap.Fibonacci;
+import com.nscharrenberg.um.multiagentsurveillance.agents.frontier.yamauchi.FibonacciHeap.Node;
 import com.nscharrenberg.um.multiagentsurveillance.agents.shared.Agent;
 import com.nscharrenberg.um.multiagentsurveillance.headless.contracts.repositories.IGameRepository;
 import com.nscharrenberg.um.multiagentsurveillance.headless.contracts.repositories.IMapRepository;
@@ -239,7 +241,7 @@ public class YamauchiAgent extends Agent {
         }
     }
 
-    public Optional<QueueNode> BFS(Tile target) {
+    public Optional<QueueNode> BFS1(Tile target) {
         // Unable to find any path to target or agent already on target
         if (target.isCollision() || player.getTile().equals(target) || knowledge.isEmpty()) {
             return Optional.empty();
@@ -305,6 +307,63 @@ public class YamauchiAgent extends Agent {
         }
 
         return Optional.empty();
+    }
+
+    public Optional<QueueNode> BFS(Tile target) {
+        // Unable to find any path to target or agent already on target
+        if (target.isCollision() || player.getTile().equals(target) || knowledge.isEmpty()) {
+            return Optional.empty();
+        }
+
+        Fibonacci fib = new Fibonacci();
+
+        TreeNode tree = new TreeNode(player.getTile(), player.getDirection());
+
+        Node currentNode = new Node(player.getTile(), computeDistanceBetween(player.getTile(), target), player.getDirection(), tree);
+
+        while (currentNode.getTile().equals(target)) {
+
+            for (Angle angle : Angle.values()) {
+                Optional<Tile> nextTileOpt = nextPosition(currentNode.getTile(), angle);
+
+                if (nextTileOpt.isPresent() && !nextTileOpt.get().isCollision()) {
+                    int distance = computeDistanceBetween(nextTileOpt.get(), target);
+
+                    TreeNode childNode = new TreeNode(nextTileOpt.get(), angle, tree);
+
+                    tree.addChildren(childNode);
+
+                    if(currentNode.getDirection().equals(childNode.getDirection())){
+                        TreeNode additionalChildNode = new TreeNode(nextTileOpt.get(), angle, childNode);
+                        childNode.addChildren(additionalChildNode);
+                        fib.insert(new Node(nextTileOpt.get(), distance, angle, additionalChildNode));
+                    } else{
+                        fib.insert(new Node(nextTileOpt.get(), distance, angle, childNode));
+                    }
+
+                }
+            }
+
+            currentNode = fib.extractMin();
+            tree = currentNode.getTreeNode();
+        }
+
+        LinkedList<Angle> sequenceMoves = new LinkedList<>();
+
+        while(tree.getParent() != null){
+            sequenceMoves.addFirst(tree.getDirection());
+            tree = tree.getParent();
+        }
+
+        QueueNode tmp = new QueueNode(tree.getTile(), sequenceMoves.size(), tree.getDirection());
+        tmp.setMoves(sequenceMoves);
+        return Optional.of(tmp);
+    }
+
+    private int computeDistanceBetween(Tile tileX, Tile tileY){
+        int x = Math.abs(tileX.getX() - tileY.getX());
+        int y = Math.abs(tileX.getY() - tileY.getY());
+        return x + y;
     }
 
     private Optional<Tile> nextPosition(Tile tile, Angle direction) {

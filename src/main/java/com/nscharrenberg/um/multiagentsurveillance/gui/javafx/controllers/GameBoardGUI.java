@@ -134,14 +134,29 @@ public class GameBoardGUI extends Application {
         }
 
         Area<Tile> combinedVisions = new TileArea();
+        Area<Tile> combinedKnowledge = new TileArea();
 
         for (Player player : guards) {
             combinedVisions = combinedVisions.merge(player.getVision());
+            combinedKnowledge = combinedKnowledge.merge(player.getAgent().getKnowledge());
         }
 
         for (Map.Entry<Integer, HashMap<Integer, Tile>> rowEntry : combinedVisions.getRegion().entrySet()) {
             for (Map.Entry<Integer, Tile> colEntry : rowEntry.getValue().entrySet()) {
-                StackPane visionPane = createTile(colEntry.getValue(), true);
+                StackPane visionPane = createTile(colEntry.getValue(), true, false);
+                gameGrid.add(visionPane, rowEntry.getKey(), colEntry.getKey());
+            }
+        }
+
+        for (Map.Entry<Integer, HashMap<Integer, Tile>> rowEntry : combinedKnowledge.getRegion().entrySet()) {
+            for (Map.Entry<Integer, Tile> colEntry : rowEntry.getValue().entrySet()) {
+                if (combinedVisions.getRegion().containsKey(rowEntry.getKey())) {
+                    if (combinedVisions.getRegion().get(rowEntry.getKey()).containsKey(colEntry.getKey())) {
+                        continue;
+                    }
+                }
+
+                StackPane visionPane = createTile(colEntry.getValue(), false, true);
                 gameGrid.add(visionPane, rowEntry.getKey(), colEntry.getKey());
             }
         }
@@ -152,10 +167,10 @@ public class GameBoardGUI extends Application {
     }
 
     private StackPane createTile(Tile tile) {
-        return createTile(tile, false);
+        return createTile(tile, false, false);
     }
 
-    private StackPane createTile(Tile tile, boolean isVision){
+    private StackPane createTile(Tile tile, boolean isVision, boolean isKnowledge){
         Rectangle rectangle = new Rectangle(GRID_SQUARE_SIZE, GRID_SQUARE_SIZE);
         Polygon polygon = null;
         Player player;
@@ -166,6 +181,14 @@ public class GameBoardGUI extends Application {
             rectangle.setFill(Color.BURLYWOOD);
 
         ArrayList<Item> orderedList = orderList((ArrayList<Item>) tile.getItems());
+
+        if (isVision) {
+            rectangle.setFill(Color.GREEN);
+            rectangle.setOpacity(.2);
+        } else if (isKnowledge) {
+            rectangle.setFill(Color.AQUA);
+            rectangle.setOpacity(.2);
+        }
 
         for (Item item : orderedList) {
             if (item instanceof Wall) {
@@ -187,12 +210,7 @@ public class GameBoardGUI extends Application {
             }
         }
 
-        if (isVision) {
-            rectangle.setFill(Color.GREEN);
-            rectangle.setOpacity(.2);
-        } else {
-            rectangle.setStroke(Color.BLACK);
-        }
+        rectangle.setStroke(Color.BLACK);
 
         if (polygon == null)
             return new StackPane(rectangle);

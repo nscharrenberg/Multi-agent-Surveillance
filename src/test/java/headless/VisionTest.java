@@ -18,7 +18,7 @@ public class VisionTest {
     @Test
     void testRawVisionTiles() {
 
-        CharacterVision cvup = new CharacterVision(3, Angle.RIGHT);
+        CharacterVision cv = new CharacterVision(3, Angle.RIGHT);
         Tile pos = new Tile(3,3);
 
         int[][] correctTiles = new int[12][2];
@@ -36,7 +36,7 @@ public class VisionTest {
         }
 
         TileArea map = Factory.getMapRepository().getBoard();
-        ArrayList<Tile> tiles = cvup.getVision(map, pos);
+        ArrayList<Tile> tiles = cv.getVision(map, pos);
 //        for (Tile t:tiles) {
 //            System.out.println(t.getX() + " - " + t.getY());
 //        }

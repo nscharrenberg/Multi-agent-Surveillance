@@ -12,11 +12,20 @@ import javafx.stage.Stage;
 public class HomeScreen extends Application {
     private static final int window_Length = 800;
     private static final int window_Breadth = 600;
+    private Stage stage;
 
     public void start(Stage stage) {
-        stage = new Stage();
+        this.stage = stage;
 
         Button play = new Button("Play");
+
+        play.setOnAction(e -> {
+            new GameController();
+
+            stage.close();
+        });
+
+
         Label space1 = new Label(" ");
         Button howTo = new Button("How To Play");
         Label space2 = new Label(" ");

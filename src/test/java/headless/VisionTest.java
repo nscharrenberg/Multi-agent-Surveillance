@@ -21,8 +21,8 @@ public class VisionTest {
         CharacterVision cvup = new CharacterVision(3, Angle.RIGHT);
         Tile pos = new Tile(3,3);
 
-        int[][] correctTiles = new int[10][2];
-        int[][] collectedTiles = new int[10][2];
+        int[][] correctTiles = new int[12][2];
+        int[][] collectedTiles = new int[12][2];
 
         try {
             Factory.reset();
@@ -37,9 +37,11 @@ public class VisionTest {
 
         TileArea map = Factory.getMapRepository().getBoard();
         ArrayList<Tile> tiles = cvup.getVision(map, pos);
+//        for (Tile t:tiles) {
+//            System.out.println(t.getX() + " - " + t.getY());
+//        }
 
         int k = 0;
-
         for (Tile t:tiles) {
             collectedTiles[k][0] = t.getX();
             collectedTiles[k][1] = t.getY();
@@ -51,11 +53,13 @@ public class VisionTest {
         correctTiles[2][0] = 6; correctTiles[2][1] = 3;
         correctTiles[3][0] = 6; correctTiles[3][1] = 0;
         correctTiles[4][0] = 5; correctTiles[4][1] = 5;
-        correctTiles[5][0] = 5; correctTiles[5][1] = 3;
-        correctTiles[6][0] = 5; correctTiles[6][1] = 1;
-        correctTiles[7][0] = 4; correctTiles[7][1] = 4;
-        correctTiles[8][0] = 4; correctTiles[8][1] = 3;
-        correctTiles[9][0] = 4; correctTiles[9][1] = 2;
+        correctTiles[5][0] = 5; correctTiles[5][1] = 4;
+        correctTiles[6][0] = 5; correctTiles[6][1] = 3;
+        correctTiles[7][0] = 5; correctTiles[7][1] = 2;
+        correctTiles[8][0] = 5; correctTiles[8][1] = 1;
+        correctTiles[9][0] = 4; correctTiles[9][1] = 4;
+        correctTiles[10][0] = 4; correctTiles[10][1] = 3;
+        correctTiles[11][0] = 4; correctTiles[11][1] = 2;
 
         Assertions.assertArrayEquals(correctTiles, collectedTiles);
 

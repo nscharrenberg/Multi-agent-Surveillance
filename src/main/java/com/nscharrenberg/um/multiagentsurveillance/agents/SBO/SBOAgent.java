@@ -59,24 +59,29 @@ public class SBOAgent extends Agent {
 
     @Override
     public Angle decide() {
+
+        // Handle visited tiles
+        visited.add(player.getTile());
+
         // Update Stack
         gather();
 
         // Select first valid top Tile from Stack
-        Tile goal = this.player.getTile();
+        Tile goal = player.getTile();
         while(!scanned.isEmpty()) {
             Tile top = scanned.peek();
             if(visited.getByCoordinates(top.getX(), top.getY()).isPresent()) {
                 scanned.pop();
             } else {
                 goal = scanned.peek();
+                break;
             }
         }
 
+        System.out.println("Current goal Tile: " + goal.getX() +"  "+ goal.getY());
+
         // TODO: Calculate angle for specified Tile
-        // This is actually a lot harder than it looks,
-        // because we cant run path finding algorithms on unspecified map areas
-        // and the closest discovered tile might not result in a solution....
+
 
         int pick = 0;
         return Angle.values()[pick];
@@ -88,7 +93,8 @@ public class SBOAgent extends Agent {
             if(visited.getByCoordinates(t.getX(),t.getY()).isEmpty()) {
                 if(unobstructedTile(this.mapRepository.getBoard(), t)) {
                     scanned.push(t);
-                    visited.add(t);
+                    // TODO: consider how to mix vision with visited tiles
+                    //visited.add(t);
                 }
             }
         }

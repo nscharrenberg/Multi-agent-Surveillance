@@ -17,8 +17,8 @@ import javafx.stage.Stage;
 import java.util.*;
 
 public class GameBoardGUI extends Application {
-    private final int FRAME_WIDTH = (int) (Screen.getPrimary().getBounds().getWidth() * 0.99);
-    private final int FRAME_HEIGHT = (int) (Screen.getPrimary().getBounds().getHeight() * 0.99);
+    private final int FRAME_WIDTH = (int) (Screen.getPrimary().getBounds().getWidth());
+    private final int FRAME_HEIGHT = (int) (Screen.getPrimary().getBounds().getHeight() - 50);
     private final int GRID_WIDTH;
     private final int GRID_HEIGHT;
     private final int GRID_SQUARE_SIZE;

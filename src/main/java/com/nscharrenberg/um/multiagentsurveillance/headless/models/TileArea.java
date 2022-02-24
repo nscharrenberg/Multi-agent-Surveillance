@@ -15,6 +15,18 @@ public class TileArea extends Area<Tile> {
         super(region);
     }
 
+    public TileArea(List<Tile> tiles) {
+        super();
+
+        for (Tile tile : tiles) {
+            if (!region.containsKey(tile.getX())) {
+                region.put(tile.getX(), new HashMap<>());
+            }
+
+            region.get(tile.getX()).put(tile.getY(), tile);
+        }
+    }
+
     @Override
     public boolean within(int x1, int y1, int x2, int y2) {
         return !subset(x1, y1, x2, y2).isEmpty();

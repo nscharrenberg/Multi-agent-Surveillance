@@ -1,5 +1,7 @@
 package com.nscharrenberg.um.multiagentsurveillance.gui.javafx.controllers;
 
+import com.nscharrenberg.um.multiagentsurveillance.agents.frontier.yamauchi.Frontier;
+import com.nscharrenberg.um.multiagentsurveillance.agents.frontier.yamauchi.YamauchiAgent;
 import com.nscharrenberg.um.multiagentsurveillance.headless.Factory;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.*;
 import javafx.application.Application ;
@@ -11,6 +13,7 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Polygon;
 import javafx.scene.shape.Rectangle;
+import javafx.scene.shape.StrokeType;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 
@@ -35,6 +38,8 @@ public class GameBoardGUI extends Application {
     private Double[] faceDOWN_Guard;
     private Double[] faceLEFT_Guard;
     private Double[] faceRIGHT_Guard;
+
+    private List<Guard> guards;
 
 
     private ArrayList<TileComponents> components = new ArrayList<TileComponents>(Arrays.asList(TileComponents.SHADED, TileComponents.WALL, TileComponents.DOOR, TileComponents.WINDOW, TileComponents.TELEPORTER,
@@ -71,6 +76,7 @@ public class GameBoardGUI extends Application {
     public void start(Stage st) {
 
         TileArea board = Factory.getMapRepository().getBoardAsArea();
+        guards = Factory.getPlayerRepository().getGuards();
 
         GridPane grid = createBoard(board);
         Group group = new Group(grid);
@@ -128,12 +134,65 @@ public class GameBoardGUI extends Application {
                 gameGrid.add(stackPane, i, j);
             }
         }
+
+        Area<Tile> combinedVisions = new TileArea();
+        Area<Tile> combinedKnowledge = new TileArea();
+
+        for (Player player : guards) {
+            combinedVisions = combinedVisions.merge(player.getVision());
+            combinedKnowledge = combinedKnowledge.merge(player.getAgent().getKnowledge());
+
+            if (player.getAgent() instanceof YamauchiAgent) {
+                if (((YamauchiAgent) player.getAgent()).getChosenFrontier() != null) {
+                    Rectangle r = new Rectangle(GRID_SQUARE_SIZE, GRID_SQUARE_SIZE);
+                    r.setFill(Color.GREEN);
+
+                    Frontier chosenFrontier = ((YamauchiAgent) player.getAgent()).getChosenFrontier();
+
+                    if (chosenFrontier.getQueueNode() != null) {
+                        gameGrid.add(r, chosenFrontier.getQueueNode().getTile().getX(), chosenFrontier.getQueueNode().getTile().getY());
+                    } else {
+                        System.out.println("No QueueNode for Frontier Found");
+                    }
+
+                } else {
+                    System.out.println("No chosen frontier");
+                }
+
+
+            }
+        }
+
+        for (Map.Entry<Integer, HashMap<Integer, Tile>> rowEntry : combinedVisions.getRegion().entrySet()) {
+            for (Map.Entry<Integer, Tile> colEntry : rowEntry.getValue().entrySet()) {
+                StackPane visionPane = createTile(colEntry.getValue(), true, false);
+                gameGrid.add(visionPane, rowEntry.getKey(), colEntry.getKey());
+            }
+        }
+
+        for (Map.Entry<Integer, HashMap<Integer, Tile>> rowEntry : combinedKnowledge.getRegion().entrySet()) {
+            for (Map.Entry<Integer, Tile> colEntry : rowEntry.getValue().entrySet()) {
+                if (combinedVisions.getRegion().containsKey(rowEntry.getKey())) {
+                    if (combinedVisions.getRegion().get(rowEntry.getKey()).containsKey(colEntry.getKey())) {
+                        continue;
+                    }
+                }
+
+                StackPane visionPane = createTile(colEntry.getValue(), false, true);
+                gameGrid.add(visionPane, rowEntry.getKey(), colEntry.getKey());
+            }
+        }
+
+
         //gameGrid.setPadding(new Insets(10, 10, 10, 10));
         return gameGrid;
     }
 
-    private StackPane createTile(Tile tile){
+    private StackPane createTile(Tile tile) {
+        return createTile(tile, false, false);
+    }
 
+    private StackPane createTile(Tile tile, boolean isVision, boolean isKnowledge){
         Rectangle rectangle = new Rectangle(GRID_SQUARE_SIZE, GRID_SQUARE_SIZE);
         Polygon polygon = null;
         Player player;
@@ -145,9 +204,18 @@ public class GameBoardGUI extends Application {
 
         ArrayList<Item> orderedList = orderList((ArrayList<Item>) tile.getItems());
 
+        if (isVision) {
+            rectangle.setFill(Color.GREEN);
+            rectangle.setOpacity(.2);
+        } else if (isKnowledge) {
+            rectangle.setFill(Color.AQUA);
+            rectangle.setOpacity(.2);
+        }
+
         for (Item item : orderedList) {
             if (item instanceof Wall) {
-                rectangle.setFill(Color.BLACK);
+                rectangle.setFill(Color.DARKGRAY);
+                rectangle.setOpacity(0.5);
             } else if (item instanceof Window) {
                 rectangle.setFill(Color.BLUE);
             } else if (item instanceof Door) {
@@ -160,7 +228,7 @@ public class GameBoardGUI extends Application {
                 player = (Player) item;
                 polygon = createIntruder(player.getDirection());
                 polygon.setFill(Color.BLUE);
-            }else if (item instanceof  Teleporter){
+            } else if (item instanceof  Teleporter){
                 rectangle.setFill(Color.PURPLE);
             }
         }

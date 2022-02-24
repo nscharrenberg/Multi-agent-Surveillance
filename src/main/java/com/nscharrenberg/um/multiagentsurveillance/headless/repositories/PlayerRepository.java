@@ -184,6 +184,19 @@ public class PlayerRepository implements IPlayerRepository {
         // Rotate the player when it's not facing the same direction as it wants to go to.
         if (!currentDirection.equals(direction)) {
             player.setDirection(direction);
+
+            if (player.getAgent() != null) {
+                CharacterVision characterVision = new CharacterVision(6, player.getDirection());
+                List<Tile> vision = characterVision.getVision(mapRepository.getBoard(), player.getTile());
+                player.getAgent().addKnowledge(vision);
+
+                List<Tile> vision2 = characterVision.getVision(mapRepository.getBoard(), player.getTile());
+                player.getAgent().addKnowledge(vision2);
+                player.setVision(new TileArea(vision2));
+
+                calculateExplorationPercentage();
+            }
+
             return;
         }
 
@@ -225,6 +238,7 @@ public class PlayerRepository implements IPlayerRepository {
 
                 List<Tile> vision2 = characterVision.getVision(mapRepository.getBoard(), player.getTile());
                 player.getAgent().addKnowledge(vision2);
+                player.setVision(new TileArea(vision2));
 
                 calculateExplorationPercentage();
             }
@@ -241,6 +255,7 @@ public class PlayerRepository implements IPlayerRepository {
             List<Tile> vision = characterVision.getVision(mapRepository.getBoard(), player.getTile());
 
             player.getAgent().addKnowledge(vision);
+            player.setVision(new TileArea(vision));
             calculateExplorationPercentage();
         }
     }

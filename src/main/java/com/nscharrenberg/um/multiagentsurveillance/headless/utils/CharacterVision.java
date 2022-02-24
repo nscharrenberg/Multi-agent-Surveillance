@@ -140,7 +140,13 @@ public class CharacterVision{
             }
 
             if(validtile) {
-                finalvision.add(t);
+                Optional<Tile> tileAddOpt = board.getByCoordinates(t.getX(), t.getY());
+
+                if (tileAddOpt.isEmpty()) {
+                    continue;
+                }
+
+                finalvision.add(tileAddOpt.get());
             } else {
                 validtile = true;
             }

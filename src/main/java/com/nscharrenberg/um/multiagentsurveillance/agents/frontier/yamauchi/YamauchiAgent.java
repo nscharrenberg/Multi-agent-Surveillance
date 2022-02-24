@@ -241,7 +241,7 @@ public class YamauchiAgent extends Agent {
         }
     }
 
-    public Optional<QueueNode> BFS1(Tile target) {
+    public Optional<QueueNode> BFS(Tile target) {
         // Unable to find any path to target or agent already on target
         if (target.isCollision() || player.getTile().equals(target) || knowledge.isEmpty()) {
             return Optional.empty();
@@ -309,7 +309,7 @@ public class YamauchiAgent extends Agent {
         return Optional.empty();
     }
 
-    public Optional<QueueNode> BFS(Tile target) {
+    public Optional<QueueNode> AStar(Tile target) {
         // Unable to find any path to target or agent already on target
         if (target.isCollision() || player.getTile().equals(target) || knowledge.isEmpty()) {
             return Optional.empty();

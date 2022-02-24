@@ -1,9 +1,11 @@
 plugins {
     id 'java'
     id 'application'
-    id 'org.openjfx.javafxplugin' version '0.0.10'
-    id 'org.javamodularity.moduleplugin' version '1.8.8'
+    id 'org.openjfx.javafxplugin' version '0.0.11'
+    id 'org.javamodularity.moduleplugin' version '1.8.10' apply false
     id 'org.beryx.jlink' version '2.24.1'
+    id 'org.sonarqube' version '3.3'
+    id 'jacoco'
 }
 
 group 'com.nscharrenberg.um'
@@ -29,19 +31,35 @@ application {
     mainClass = 'com.nscharrenberg.um.multiagentsurveillance.Application'
 }
 
+sonarqube {
+    properties {
+        property "sonar.projectKey", "nscharrenberg_Multi-agent-Surveillance"
+        property "sonar.organization", "nscharrenberg"
+        property "sonar.host.url", "https://sonarcloud.io"
+    }
+}
+
 javafx {
     version = '17.0.1'
     modules = ['javafx.controls', 'javafx.fxml']
 }
 
 dependencies {
-
+    implementation('io.github.kostaskougios:cloning:1.10.3')
     testImplementation("org.junit.jupiter:junit-jupiter-api:${junitVersion}")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:${junitVersion}")
 }
 
 test {
     useJUnitPlatform()
+    finalizedBy jacocoTestReport
+}
+
+jacocoTestReport {
+    dependsOn test
+    reports {
+        xml.enabled true
+    }
 }
 
 jlink {

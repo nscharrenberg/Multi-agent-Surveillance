@@ -1,28 +1,17 @@
 package com.nscharrenberg.um.multiagentsurveillance.headless.models;
 
+import java.util.Objects;
+
 public class Intruder extends Player {
-    private Area<Tile> target;
     private double sprintSpeed;
     private boolean isSprinting = false;
 
-    public Intruder(Tile position, Angle direction, Area<Tile> target) {
+    public Intruder(Tile position, Angle direction) {
         // TODO: Read speed from Configuration
         super(position, direction, 10);
 
         // TODO: Read sprint speed from Configuration
         this.sprintSpeed = 20;
-        this.target = target;
-
-
-
-    }
-
-    public Area<Tile> getTarget() {
-        return target;
-    }
-
-    public void setTarget(Area<Tile> target) {
-        this.target = target;
     }
 
     public double getSprintSpeed() {
@@ -48,5 +37,19 @@ public class Intruder extends Player {
         }
 
         return super.getSpeed();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+        Intruder intruder = (Intruder) o;
+        return Double.compare(intruder.sprintSpeed, sprintSpeed) == 0 && isSprinting == intruder.isSprinting;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), sprintSpeed, isSprinting);
     }
 }

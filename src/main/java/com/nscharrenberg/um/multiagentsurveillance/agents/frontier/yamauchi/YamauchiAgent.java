@@ -131,6 +131,10 @@ public class YamauchiAgent extends Agent {
         }
 
         if (bestFrontier.getQueueNode() != null) {
+            if (bestFrontier.getQueueNode().getTile().isCollision()) {
+                return Optional.empty();
+            }
+
             Angle finalPosition = bestFrontier.getQueueNode().getEntrancePosition();
 
             for (Angle angle : Angle.values()) {

@@ -152,18 +152,17 @@ public class YamauchiAgent extends Agent {
     }
 
     private void detectFrontiers() {
-        // Clear up all previously found frontiers
         frontiers.clear();
         chosenFrontier = null;
 
-        // Classify each cell by comparing its occupancy probability to the initial (prior) probability assigned to all cells
-        // Any open cell adjacent to an unknown cell is labeled a frontier edge cell.
-
         for (Map.Entry<Integer, HashMap<Integer, Tile>> rowEntry : knowledge.getRegion().entrySet()) {
             for (Map.Entry<Integer, Tile> colEntry : rowEntry.getValue().entrySet()) {
-                if (colEntry.getValue().isCollision()) {
+                // Reject tile if its a collidable object
+                if (colEntry.getValue().isCollision() && !colEntry.getValue().getItems().contains(player)) {
                     continue;
                 }
+
+                // Check if it is a fully known tile
 
                 Optional<Tile> upOpt = nextPosition(colEntry.getValue(), Angle.UP);
                 Optional<Tile> rightOpt = nextPosition(colEntry.getValue(), Angle.RIGHT);
@@ -174,12 +173,8 @@ public class YamauchiAgent extends Agent {
                     continue;
                 }
 
-                if (colEntry.getValue().isCollision() && !colEntry.getValue().getItems().contains(player)) {
-                    continue;
-                }
+                boolean isAdded = false;
 
-                boolean addedTofrontier = false;
-                // At least 1 unknown adjacent cel
                 for (Frontier frontier : frontiers) {
                     if (frontier.add(colEntry.getValue())) {
                         if (upOpt.isEmpty()) {
@@ -195,24 +190,26 @@ public class YamauchiAgent extends Agent {
                             frontier.addUnknownArea();
                         }
 
+                        // Find the shortest path to this tile
                         Optional<QueueNode> queueNodeOpt = BFS(colEntry.getValue());
 
                         if (queueNodeOpt.isPresent()) {
                             QueueNode queueNode = queueNodeOpt.get();
+
                             if (queueNode.getTile().isCollision()) continue;
-                            frontier.setQueueNode(queueNode);
+                            if (frontier.getQueueNode() == null) {
+                                frontier.setQueueNode(queueNode);
+                            } else if (queueNode.getDistance() < frontier.getQueueNode().getDistance()) {
+                                frontier.setQueueNode(queueNode);
+                            }
                         }
 
-                        addedTofrontier = true;
+                        isAdded = true;
                         break;
                     }
                 }
 
-                if (!addedTofrontier) {
-                    if (colEntry.getValue().isCollision()) {
-                        continue;
-                    }
-
+                if (!isAdded) {
                     Frontier newFrontier = new Frontier(colEntry.getValue());
                     frontiers.add(newFrontier);
 
@@ -229,12 +226,18 @@ public class YamauchiAgent extends Agent {
                         newFrontier.addUnknownArea();
                     }
 
+                    // Find the shortest path to this tile
                     Optional<QueueNode> queueNodeOpt = BFS(colEntry.getValue());
 
                     if (queueNodeOpt.isPresent()) {
                         QueueNode queueNode = queueNodeOpt.get();
+
                         if (queueNode.getTile().isCollision()) continue;
-                        newFrontier.setQueueNode(queueNode);
+                        if (newFrontier.getQueueNode() == null) {
+                            newFrontier.setQueueNode(queueNode);
+                        } else if (queueNode.getDistance() < newFrontier.getQueueNode().getDistance()) {
+                            newFrontier.setQueueNode(queueNode);
+                        }
                     }
                 }
             }

@@ -92,10 +92,14 @@ public class GameBoardGUI extends Application {
     }
 
     public void updateGUI(){
-        GridPane grid = createBoard(Factory.getMapRepository().getBoardAsArea());
+        try {
+            GridPane grid = createBoard(Factory.getMapRepository().getBoardAsArea());
 
-        if (grid != null && scene != null) {
-            stage.getScene().setRoot(grid);
+            if (grid != null && scene != null) {
+                stage.getScene().setRoot(grid);
+            }
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
         }
     }
 
@@ -154,12 +158,9 @@ public class GameBoardGUI extends Application {
                     } else {
                         System.out.println("No QueueNode for Frontier Found");
                     }
-
                 } else {
                     System.out.println("No chosen frontier");
                 }
-
-
             }
         }
 

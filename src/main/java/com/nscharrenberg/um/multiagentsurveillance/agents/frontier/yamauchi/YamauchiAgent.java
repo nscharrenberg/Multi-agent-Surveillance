@@ -123,33 +123,80 @@ public class YamauchiAgent extends Agent {
         Frontier bestFrontier = null;
 
         for (Frontier frontier : frontiers) {
-            if (bestFrontier == null) {
-                bestFrontier = frontier;
+            if (frontier.getQueueNode() == null) {
+                continue;
             }
 
-            if (frontier.getQueueNode() != null && frontier.getQueueNode().getDistance() < bestFrontier.getQueueNode().getDistance() && frontier.getUnknownAreas() > bestFrontier.getUnknownAreas()) {
+            if (bestFrontier == null) {
+                bestFrontier = frontier;
+            } else if ((frontier.getQueueNode().getDistance() * frontier.getUnknownAreas()) < (bestFrontier.getQueueNode().getDistance() * bestFrontier.getUnknownAreas())) {
                 bestFrontier = frontier;
             }
         }
 
-        if (bestFrontier.getQueueNode() != null) {
-            if (bestFrontier.getQueueNode().getTile().isCollision()) {
-                return Optional.empty();
-            }
+        if (bestFrontier == null || bestFrontier.getQueueNode() == null) {
+            return Optional.empty();
+        }
 
-            Angle finalPosition = bestFrontier.getQueueNode().getEntrancePosition();
+        if (bestFrontier.getQueueNode().getTile().isCollision()) {
+            return Optional.empty();
+        }
 
-            for (Angle angle : Angle.values()) {
-                if (angle.equals(finalPosition)) continue;
+        Angle finalPosition = bestFrontier.getQueueNode().getEntrancePosition();
 
-                bestFrontier.getQueueNode().getMoves().add(angle);
-            }
+        for (Angle angle : Angle.values()) {
+            if (angle.equals(finalPosition)) continue;
+            bestFrontier.getQueueNode().getMoves().add(angle);
         }
 
         chosenFrontier = bestFrontier;
 
         return Optional.of(bestFrontier);
     }
+
+//    private Optional<Frontier> pickBestFrontier() {
+//        if (frontiers.isEmpty() && plannedMoves.isEmpty()) {
+//            detectFrontiers();
+//        }
+//
+//        if (frontiers.isEmpty()) {
+//            return Optional.empty();
+//        }
+//
+//        Frontier bestFrontier = null;
+//
+//        for (Frontier frontier : frontiers) {
+//            if (frontier.getQueueNode() != null) {
+//                if (bestFrontier == null) {
+//                    bestFrontier = frontier;
+//                }
+//
+//                if (frontier.getQueueNode().getDistance() < bestFrontier.getQueueNode().getDistance() && frontier.getUnknownAreas() > bestFrontier.getUnknownAreas()) {
+//                    bestFrontier = frontier;
+//                }
+//            }
+//        }
+//
+//        if (bestFrontier.getQueueNode() != null) {
+//            if (bestFrontier.getQueueNode().getTile().isCollision()) {
+//                return Optional.empty();
+//            }
+//
+//            Angle finalPosition = bestFrontier.getQueueNode().getEntrancePosition();
+//
+//            for (Angle angle : Angle.values()) {
+//                if (angle.equals(finalPosition)) continue;
+//
+//                bestFrontier.getQueueNode().getMoves().add(angle);
+//            }
+//        } else {
+//            System.out.println("frontier missing?");
+//        }
+//
+//        chosenFrontier = bestFrontier;
+//
+//        return Optional.of(bestFrontier);
+//    }
 
     private void detectFrontiers() {
         frontiers.clear();
@@ -191,7 +238,7 @@ public class YamauchiAgent extends Agent {
                         }
 
                         // Find the shortest path to this tile
-                        Optional<QueueNode> queueNodeOpt = BFS(colEntry.getValue());
+                        Optional<QueueNode> queueNodeOpt = AStar(colEntry.getValue());
 
                         if (queueNodeOpt.isPresent()) {
                             QueueNode queueNode = queueNodeOpt.get();
@@ -227,7 +274,7 @@ public class YamauchiAgent extends Agent {
                     }
 
                     // Find the shortest path to this tile
-                    Optional<QueueNode> queueNodeOpt = BFS(colEntry.getValue());
+                    Optional<QueueNode> queueNodeOpt = AStar(colEntry.getValue());
 
                     if (queueNodeOpt.isPresent()) {
                         QueueNode queueNode = queueNodeOpt.get();

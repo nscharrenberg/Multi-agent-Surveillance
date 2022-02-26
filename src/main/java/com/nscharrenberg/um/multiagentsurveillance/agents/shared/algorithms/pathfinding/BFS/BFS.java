@@ -69,8 +69,6 @@ public class BFS implements IPathFinding {
                     queue.add(adj);
                 }
             }
-
-            return Optional.empty();
         }
 
 

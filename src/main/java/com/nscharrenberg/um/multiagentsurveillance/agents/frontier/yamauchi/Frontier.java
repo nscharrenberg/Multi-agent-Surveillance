@@ -1,5 +1,6 @@
 package com.nscharrenberg.um.multiagentsurveillance.agents.frontier.yamauchi;
 
+import com.nscharrenberg.um.multiagentsurveillance.agents.shared.utils.QueueNode;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Angle;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Tile;
 

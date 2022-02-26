@@ -1,7 +1,8 @@
 package headless;
 
-import com.nscharrenberg.um.multiagentsurveillance.agents.frontier.yamauchi.QueueNode;
+import com.nscharrenberg.um.multiagentsurveillance.agents.shared.utils.QueueNode;
 import com.nscharrenberg.um.multiagentsurveillance.agents.frontier.yamauchi.YamauchiAgent;
+import com.nscharrenberg.um.multiagentsurveillance.agents.shared.algorithms.pathfinding.BFS.BFS;
 import com.nscharrenberg.um.multiagentsurveillance.headless.Factory;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Angle;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Guard;
@@ -61,7 +62,7 @@ public class YamauchiAgentTest {
 
             Tile target = targetOpt.get();
 
-            Optional<QueueNode> planDataOpt = agent.BFS(target);
+            Optional<QueueNode> planDataOpt = (new BFS()).execute(agent.getKnowledge(), agent.getPlayer(), target);
 
             if (planDataOpt.isEmpty()) {
                 Assertions.fail();

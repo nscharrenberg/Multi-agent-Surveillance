@@ -1,9 +1,8 @@
-package com.nscharrenberg.um.multiagentsurveillance.agents.frontier.yamauchi.FibonacciHeap;
+package com.nscharrenberg.um.multiagentsurveillance.agents.shared.algorithms.structures.FibonacciHeap;
 
-import com.nscharrenberg.um.multiagentsurveillance.agents.frontier.yamauchi.TreeNode;
+import com.nscharrenberg.um.multiagentsurveillance.agents.shared.utils.TreeNode;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Angle;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Tile;
-import javafx.scene.control.TreeCell;
 
 public class Node{
 

@@ -1,4 +1,4 @@
-package com.nscharrenberg.um.multiagentsurveillance.agents.frontier.yamauchi.FibonacciHeap;
+package com.nscharrenberg.um.multiagentsurveillance.agents.shared.algorithms.structures.FibonacciHeap;
 
 public class Fibonacci{
 

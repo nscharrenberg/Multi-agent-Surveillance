@@ -1,11 +1,9 @@
 package com.nscharrenberg.um.multiagentsurveillance.agents.frontier.yamauchi;
 
-import com.nscharrenberg.um.multiagentsurveillance.agents.shared.algorithms.pathfinding.AStar.AStar;
+import com.nscharrenberg.um.multiagentsurveillance.agents.frontier.yamauchi.detectors.*;
+import com.nscharrenberg.um.multiagentsurveillance.agents.shared.Agent;
 import com.nscharrenberg.um.multiagentsurveillance.agents.shared.algorithms.pathfinding.BFS.BFS;
 import com.nscharrenberg.um.multiagentsurveillance.agents.shared.algorithms.pathfinding.IPathFinding;
-import com.nscharrenberg.um.multiagentsurveillance.agents.shared.algorithms.structures.FibonacciHeap.Fibonacci;
-import com.nscharrenberg.um.multiagentsurveillance.agents.shared.algorithms.structures.FibonacciHeap.Node;
-import com.nscharrenberg.um.multiagentsurveillance.agents.shared.Agent;
 import com.nscharrenberg.um.multiagentsurveillance.agents.shared.utils.QueueNode;
 import com.nscharrenberg.um.multiagentsurveillance.headless.contracts.repositories.IGameRepository;
 import com.nscharrenberg.um.multiagentsurveillance.headless.contracts.repositories.IMapRepository;
@@ -25,7 +23,8 @@ public class YamauchiAgent extends Agent {
     private List<Frontier> frontiers = new ArrayList<>();
     private Frontier chosenFrontier = null;
     private SecureRandom random;
-    private static IPathFinding pathFindingAlgorithm = new AStar();
+    private IPathFinding pathFindingAlgorithm = new BFS();
+    private IWeightDetector weightDetector = new DistanceSqrtUnknownWeightDetector();
 
     public YamauchiAgent(Player player) {
         super(player);
@@ -132,9 +131,7 @@ public class YamauchiAgent extends Agent {
                 continue;
             }
 
-            if (bestFrontier == null) {
-                bestFrontier = frontier;
-            } else if ((frontier.getQueueNode().getDistance() * frontier.getUnknownAreas()) < (bestFrontier.getQueueNode().getDistance() * bestFrontier.getUnknownAreas())) {
+            if (bestFrontier == null || weightDetector.compute(frontier) < weightDetector.compute(bestFrontier)) {
                 bestFrontier = frontier;
             }
         }
@@ -176,8 +173,13 @@ public class YamauchiAgent extends Agent {
                 Optional<Tile> rightOpt = BoardUtils.nextPosition(knowledge, colEntry.getValue(), Angle.RIGHT);
                 Optional<Tile> leftOpt = BoardUtils.nextPosition(knowledge, colEntry.getValue(), Angle.LEFT);
                 Optional<Tile> downOpt = BoardUtils.nextPosition(knowledge, colEntry.getValue(), Angle.DOWN);
+                Optional<Tile> upLeftOpt = knowledge.getByCoordinates(colEntry.getKey() + Angle.LEFT.getxIncrement(), rowEntry.getKey() + Angle.UP.getyIncrement());
+                Optional<Tile> upRightOpt = knowledge.getByCoordinates(colEntry.getKey() + Angle.RIGHT.getxIncrement(), rowEntry.getKey() + Angle.UP.getyIncrement());
+                Optional<Tile> bottomLeftOpt = knowledge.getByCoordinates(colEntry.getKey() + Angle.LEFT.getxIncrement(), rowEntry.getKey() + Angle.DOWN.getyIncrement());
+                Optional<Tile> bottomRightOpt = knowledge.getByCoordinates(colEntry.getKey() + Angle.RIGHT.getxIncrement(), rowEntry.getKey() + Angle.DOWN.getyIncrement());
 
-                if (upOpt.isPresent() && rightOpt.isPresent() && leftOpt.isPresent() && downOpt.isPresent()) {
+                if (upOpt.isPresent() && rightOpt.isPresent() && leftOpt.isPresent()
+                        && downOpt.isPresent()) {
                     continue;
                 }
 
@@ -185,18 +187,14 @@ public class YamauchiAgent extends Agent {
 
                 for (Frontier frontier : frontiers) {
                     if (frontier.add(colEntry.getValue())) {
-                        if (upOpt.isEmpty()) {
-                            frontier.addUnknownArea();
-                        }
-                        if (downOpt.isEmpty()) {
-                            frontier.addUnknownArea();
-                        }
-                        if (leftOpt.isEmpty()) {
-                            frontier.addUnknownArea();
-                        }
-                        if (rightOpt.isEmpty()) {
-                            frontier.addUnknownArea();
-                        }
+                        addUnknownArea(frontier,upOpt);
+                        addUnknownArea(frontier, downOpt);
+                        addUnknownArea(frontier, leftOpt);
+                        addUnknownArea(frontier, rightOpt);
+                        addUnknownArea(frontier, upRightOpt);
+                        addUnknownArea(frontier, upLeftOpt);
+                        addUnknownArea(frontier, bottomLeftOpt);
+                        addUnknownArea(frontier, bottomRightOpt);
 
                         // Find the shortest path to this tile
                         Optional<QueueNode> queueNodeOpt = pathFindingAlgorithm.execute(knowledge, player, colEntry.getValue());
@@ -250,6 +248,10 @@ public class YamauchiAgent extends Agent {
                 }
             }
         }
+    }
+
+    private void addUnknownArea(Frontier frontier, Optional<Tile> opt) {
+        if (opt.isEmpty()) frontier.addUnknownArea();
     }
 
     private int computeDistanceBetween(Tile tileX, Tile tileY){

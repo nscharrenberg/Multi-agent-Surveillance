@@ -61,7 +61,7 @@ public class AStar implements IPathFinding {
                     TreeNode childNode = new TreeNode(nextTileOpt.get(), angle, tree);
                     tree.getChildren().add(childNode);
 
-                    if (currentNode.getDirection().equals(childNode.getEntrancePosition())) {
+                    if (!currentNode.getDirection().equals(childNode.getEntrancePosition())) {
                         TreeNode additionalChildNode = new TreeNode(nextTileOpt.get(), angle, childNode);
                         childNode.getChildren().add(additionalChildNode);
 
@@ -95,7 +95,6 @@ public class AStar implements IPathFinding {
     private double euclideanDistance(Tile tileX, Tile tileY){
         int x = Math.abs(tileX.getX() - tileY.getX());
         int y = Math.abs(tileX.getY() - tileY.getY());
-
-        return Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2));
+        return x + y;
     }
 }

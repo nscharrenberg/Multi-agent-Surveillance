@@ -130,12 +130,10 @@ public class CharacterVision{
 
          // Check remaining tiles for items
         for (Tile t : rawvision) {
-            if (unobstructedTile(board, t)) {
-                for (Tile it : gm.getIntersectingTiles(position, t)) {
-                    if (!unobstructedTile(board, it)) {
-                        validtile = false;
-                        break;
-                    }
+            for (Tile it : gm.getIntersectingTiles(position, t)) {
+                if (!unobstructedTile(board, it)) {
+                    validtile = false;
+                    break;
                 }
             }
 

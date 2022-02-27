@@ -46,6 +46,10 @@ public class Geometrics {
             // divide by 0 error
         }
 
+        // Remove start and end tiles
+        linetiles.removeIf(tc -> (tc.getX() == position.getX() && tc.getY() == position.getY()));
+        linetiles.removeIf(tc -> (tc.getX() == endpoint.getX() && tc.getY() == endpoint.getY()));
+
         return linetiles;
     }
 

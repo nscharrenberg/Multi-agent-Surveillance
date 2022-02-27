@@ -31,15 +31,17 @@ public class VisionTest {
             Factory.getMapRepository().buildEmptyBoard();
             Factory.getMapRepository().addWall(5,2);
             Factory.getMapRepository().addWall(5,4);
+            Factory.getMapRepository().addWall(6,1);
+            Factory.getMapRepository().addWall(6,2);
         } catch(Exception exc) {
 
         }
 
         TileArea map = Factory.getMapRepository().getBoard();
         ArrayList<Tile> tiles = cv.getVision(map, pos);
-//        for (Tile t:tiles) {
-//            System.out.println(t.getX() + " - " + t.getY());
-//        }
+        for (Tile t:tiles) {
+            System.out.println(t.getX() + " - " + t.getY());
+        }
 
         int k = 0;
         for (Tile t:tiles) {

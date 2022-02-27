@@ -47,7 +47,7 @@ public class AStar implements IPathFinding {
 
         TreeNode tree = new TreeNode(player.getTile(), player.getDirection());
 
-        Node currentNode = new Node(player.getTile(), (int) euclideanDistance(player.getTile(), target), player.getDirection(), tree);
+        Node currentNode = new Node(player.getTile(), computeDistance(player.getTile(), target), player.getDirection(), tree);
 
         while (!currentNode.getTile().equals(target)) {
             for (Angle angle : Angle.values()) {
@@ -56,7 +56,7 @@ public class AStar implements IPathFinding {
                 if (nextTileOpt.isPresent() && !nextTileOpt.get().isCollision() && visited.get(nextTileOpt.get().getX()).get(nextTileOpt.get().getY()).equals(Boolean.FALSE)) {
                     visited.get(nextTileOpt.get().getX()).put(nextTileOpt.get().getY(), Boolean.TRUE);
 
-                    double distance = euclideanDistance(nextTileOpt.get(), target);
+                    int distance = computeDistance(nextTileOpt.get(), target);
 
                     TreeNode childNode = new TreeNode(nextTileOpt.get(), angle, tree);
                     tree.getChildren().add(childNode);
@@ -92,7 +92,7 @@ public class AStar implements IPathFinding {
         return Optional.of(queueNode);
     }
 
-    private double euclideanDistance(Tile tileX, Tile tileY){
+    private int computeDistance(Tile tileX, Tile tileY){
         int x = Math.abs(tileX.getX() - tileY.getX());
         int y = Math.abs(tileX.getY() - tileY.getY());
         return x + y;

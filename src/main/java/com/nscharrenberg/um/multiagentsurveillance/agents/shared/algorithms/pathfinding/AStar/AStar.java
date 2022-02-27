@@ -56,7 +56,14 @@ public class AStar implements IPathFinding {
                 if (nextTileOpt.isPresent() && !nextTileOpt.get().isCollision() && visited.get(nextTileOpt.get().getX()).get(nextTileOpt.get().getY()).equals(Boolean.FALSE)) {
                     visited.get(nextTileOpt.get().getX()).put(nextTileOpt.get().getY(), Boolean.TRUE);
 
-                    int distance = computeDistance(nextTileOpt.get(), target);
+                    int unknownTiles = 0;
+                    for (Angle angleForNextTile : Angle.values()) {
+                        Optional<Tile> knownTile = BoardUtils.nextPosition(board, nextTileOpt.get(), angleForNextTile);
+                        if(knownTile.isEmpty())
+                            unknownTiles++;
+
+                    }
+                    int distance = computeDistance(nextTileOpt.get(), target) - unknownTiles;
 
                     TreeNode childNode = new TreeNode(nextTileOpt.get(), angle, tree);
                     tree.getChildren().add(childNode);
@@ -65,9 +72,9 @@ public class AStar implements IPathFinding {
                         TreeNode additionalChildNode = new TreeNode(nextTileOpt.get(), angle, childNode);
                         childNode.getChildren().add(additionalChildNode);
 
-                        heap.insert(new Node(nextTileOpt.get(), (int) distance, angle, additionalChildNode));
+                        heap.insert(new Node(nextTileOpt.get(), distance, angle, additionalChildNode));
                     } else {
-                        heap.insert(new Node(nextTileOpt.get(), (int) distance, angle, childNode));
+                        heap.insert(new Node(nextTileOpt.get(), distance, angle, childNode));
                     }
                 }
             }

@@ -128,7 +128,7 @@ public class CharacterVision{
         rawvision.removeIf(tc -> (tc.getX() < 0 || tc.getY() < 0));
         rawvision.removeIf(tc -> (tc.getX() > board.width() || tc.getY() > board.height()));
 
-        // Check remaining tiles for items
+         // Check remaining tiles for items
         for (Tile t : rawvision) {
             if (unobstructedTile(board, t)) {
                 for (Tile it : gm.getIntersectingTiles(position, t)) {

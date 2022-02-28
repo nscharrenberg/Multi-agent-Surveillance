@@ -1,6 +1,7 @@
 package com.nscharrenberg.um.multiagentsurveillance.agents.frontier.yamauchi;
 
-import com.nscharrenberg.um.multiagentsurveillance.agents.frontier.yamauchi.detectors.*;
+import com.nscharrenberg.um.multiagentsurveillance.agents.frontier.yamauchi.comparator.IWeightComparator;
+import com.nscharrenberg.um.multiagentsurveillance.agents.frontier.yamauchi.comparator.MinDistanceUnknownAreaComparator;
 import com.nscharrenberg.um.multiagentsurveillance.agents.shared.Agent;
 import com.nscharrenberg.um.multiagentsurveillance.agents.shared.algorithms.pathfinding.BFS.BFS;
 import com.nscharrenberg.um.multiagentsurveillance.agents.shared.algorithms.pathfinding.IPathFinding;
@@ -24,7 +25,7 @@ public class YamauchiAgent extends Agent {
     private Frontier chosenFrontier = null;
     private SecureRandom random;
     private IPathFinding pathFindingAlgorithm = new BFS();
-    private IWeightDetector weightDetector = new DistanceSqrtUnknownWeightDetector();
+    private IWeightComparator weightDetector = new MinDistanceUnknownAreaComparator();
 
     public YamauchiAgent(Player player) {
         super(player);
@@ -131,9 +132,12 @@ public class YamauchiAgent extends Agent {
                 continue;
             }
 
-            if (bestFrontier == null || weightDetector.compute(frontier) < weightDetector.compute(bestFrontier)) {
+            
+            if (bestFrontier == null)
                 bestFrontier = frontier;
-            }
+
+            bestFrontier = weightDetector.compare(frontier, bestFrontier);
+
         }
 
         if (bestFrontier == null || bestFrontier.getQueueNode() == null) {
@@ -252,12 +256,6 @@ public class YamauchiAgent extends Agent {
 
     private void addUnknownArea(Frontier frontier, Optional<Tile> opt) {
         if (opt.isEmpty()) frontier.addUnknownArea();
-    }
-
-    private int computeDistanceBetween(Tile tileX, Tile tileY){
-        int x = Math.abs(tileX.getX() - tileY.getX());
-        int y = Math.abs(tileX.getY() - tileY.getY());
-        return x + y;
     }
 
     public Frontier getChosenFrontier() {

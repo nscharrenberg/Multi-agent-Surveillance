@@ -3,6 +3,7 @@ package com.nscharrenberg.um.multiagentsurveillance.agents.frontier.yamauchi;
 import com.nscharrenberg.um.multiagentsurveillance.agents.frontier.yamauchi.comparator.IWeightComparator;
 import com.nscharrenberg.um.multiagentsurveillance.agents.frontier.yamauchi.comparator.MinDistanceUnknownAreaComparator;
 import com.nscharrenberg.um.multiagentsurveillance.agents.shared.Agent;
+import com.nscharrenberg.um.multiagentsurveillance.agents.shared.algorithms.pathfinding.AStar.AStar;
 import com.nscharrenberg.um.multiagentsurveillance.agents.shared.algorithms.pathfinding.BFS.BFS;
 import com.nscharrenberg.um.multiagentsurveillance.agents.shared.algorithms.pathfinding.IPathFinding;
 import com.nscharrenberg.um.multiagentsurveillance.agents.shared.utils.QueueNode;
@@ -24,7 +25,7 @@ public class YamauchiAgent extends Agent {
     private List<Frontier> frontiers = new ArrayList<>();
     private Frontier chosenFrontier = null;
     private SecureRandom random;
-    private IPathFinding pathFindingAlgorithm = new BFS();
+    private IPathFinding pathFindingAlgorithm = new AStar();
     private IWeightComparator weightDetector = new MinDistanceUnknownAreaComparator();
 
     public YamauchiAgent(Player player) {
@@ -132,7 +133,7 @@ public class YamauchiAgent extends Agent {
                 continue;
             }
 
-            
+
             if (bestFrontier == null)
                 bestFrontier = frontier;
 

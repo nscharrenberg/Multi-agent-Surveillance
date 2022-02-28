@@ -49,9 +49,12 @@ public class AStar implements IPathFinding {
 
         Node currentNode = new Node(player.getTile(), computeDistance(player.getTile(), target), player.getDirection(), tree);
 
+        board.add(player.getTile());
+
         while (!currentNode.getTile().equals(target)) {
             for (Angle angle : Angle.values()) {
                 Optional<Tile> nextTileOpt = BoardUtils.nextPosition(board, currentNode.getTile(), angle);
+
 
                 if (nextTileOpt.isPresent() && !nextTileOpt.get().isCollision() && visited.get(nextTileOpt.get().getX()).get(nextTileOpt.get().getY()).equals(Boolean.FALSE)) {
                     visited.get(nextTileOpt.get().getX()).put(nextTileOpt.get().getY(), Boolean.TRUE);
@@ -85,6 +88,8 @@ public class AStar implements IPathFinding {
 
         Queue<Angle> sequenceMoves = new LinkedList<>();
 
+        TreeNode lastMove = tree;
+
         while (tree.getParent() != null) {
             sequenceMoves.add(tree.getEntrancePosition());
             tree = tree.getParent();
@@ -94,7 +99,7 @@ public class AStar implements IPathFinding {
             return Optional.empty();
         }
 
-        QueueNode queueNode = new QueueNode(tree.getTile(), tree.getEntrancePosition(), sequenceMoves);
+        QueueNode queueNode = new QueueNode(lastMove.getTile(), tree.getEntrancePosition(), sequenceMoves);
 
         return Optional.of(queueNode);
     }

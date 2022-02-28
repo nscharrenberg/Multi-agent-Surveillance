@@ -3,8 +3,10 @@ package com.nscharrenberg.um.multiagentsurveillance.headless.models;
 import com.nscharrenberg.um.multiagentsurveillance.agents.shared.Agent;
 
 import java.util.Objects;
+import java.util.UUID;
 
 public abstract class Player extends Collision {
+    private UUID id;
     private Angle direction;
     private double speed;
     private Area<Tile> vision;
@@ -14,6 +16,7 @@ public abstract class Player extends Collision {
 
     public Player(Tile tile, Angle direction, double speed) {
         super(tile);
+        this.id = UUID.randomUUID();
         this.direction = direction;
         this.speed = speed;
         this.agent = null;
@@ -21,6 +24,7 @@ public abstract class Player extends Collision {
 
     public Player(Tile tile, Angle direction, double speed, Area<Tile> observation) {
         super(tile);
+        this.id = UUID.randomUUID();
         this.direction = direction;
         this.speed = speed;
         this.vision = observation;
@@ -55,13 +59,14 @@ public abstract class Player extends Collision {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
         Player player = (Player) o;
-        return Double.compare(player.speed, speed) == 0 && direction == player.direction && Objects.equals(vision, player.vision);
+        return Double.compare(player.speed, speed) == 0 && direction == player.direction && Objects.equals(vision, player.vision) && Objects.equals(agent, player.agent);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(direction, speed, vision);
+        return Objects.hash(super.hashCode(), direction, speed, vision, agent);
     }
 
     public Agent getAgent() {
@@ -70,5 +75,13 @@ public abstract class Player extends Collision {
 
     public void setAgent(Agent agent) {
         this.agent = agent;
+    }
+
+    public UUID getUuid() {
+        return id;
+    }
+
+    public String getId() {
+        return id.toString();
     }
 }

@@ -26,7 +26,7 @@ public class PlayerRepository implements IPlayerRepository {
     private SecureRandom random;
     private List<Intruder> intruders;
     private List<Guard> guards;
-    private HashMap<Player, Tile> spawnPoints = new HashMap<>();
+    private HashMap<String, Tile> spawnPoints = new HashMap<>();
 
     private List<Agent> agents;
 
@@ -149,13 +149,13 @@ public class PlayerRepository implements IPlayerRepository {
                         tile.add(intruder);
                         intruders.add(intruder);
                         agent = spawnAgent(intruder, agentType);
-                        spawnPoints.put(intruder, tile);
+                        spawnPoints.put(intruder.getId(), tile);
                     } else {
                         Guard guard = new Guard(tile, Angle.UP);
                         tile.add(guard);
                         guards.add(guard);
                         agent = spawnAgent(guard, agentType);
-                        spawnPoints.put(guard, tile);
+                        spawnPoints.put(guard.getId(), tile);
                     }
 
                     agent.addKnowledge(tile);
@@ -275,7 +275,7 @@ public class PlayerRepository implements IPlayerRepository {
     }
 
     public Tile getSpawnPoint(Player player) {
-        return spawnPoints.get(player);
+        return spawnPoints.get(player.getId());
     }
 
     public List<Tile> convertToLocalVision(Player player, List<Tile> globalVision) {

@@ -11,7 +11,7 @@ public class Frontier {
     private HashMap<Integer, HashMap<Integer, Tile>> frontier;
     private int unknownAreas = 0;
     private QueueNode queueNode;
-    private int maxSize = 0;
+    private int maxSize = 3;
 
     public Frontier() {
         this.frontier = new HashMap<>();
@@ -63,7 +63,7 @@ public class Frontier {
             return false;
         }
 
-        if (!exceedsSize()) {
+        if (exceedsSize()) {
             return false;
         }
 

@@ -25,7 +25,7 @@ public class YamauchiAgent extends Agent {
     private List<Frontier> frontiers = new ArrayList<>();
     private Frontier chosenFrontier = null;
     private SecureRandom random;
-    private IPathFinding pathFindingAlgorithm = new AStar();
+    private IPathFinding pathFindingAlgorithm = new BFS();
     private IWeightComparator weightDetector = new MinDistanceUnknownAreaComparator();
 
     public YamauchiAgent(Player player) {
@@ -224,18 +224,14 @@ public class YamauchiAgent extends Agent {
                     Frontier newFrontier = new Frontier(colEntry.getValue());
                     frontiers.add(newFrontier);
 
-                    if (upOpt.isEmpty()) {
-                        newFrontier.addUnknownArea();
-                    }
-                    if (downOpt.isEmpty()) {
-                        newFrontier.addUnknownArea();
-                    }
-                    if (leftOpt.isEmpty()) {
-                        newFrontier.addUnknownArea();
-                    }
-                    if (rightOpt.isEmpty()) {
-                        newFrontier.addUnknownArea();
-                    }
+                    addUnknownArea(newFrontier, upOpt);
+                    addUnknownArea(newFrontier, downOpt);
+                    addUnknownArea(newFrontier, leftOpt);
+                    addUnknownArea(newFrontier, rightOpt);
+                    addUnknownArea(newFrontier, upRightOpt);
+                    addUnknownArea(newFrontier, upLeftOpt);
+                    addUnknownArea(newFrontier, bottomLeftOpt);
+                    addUnknownArea(newFrontier, bottomRightOpt);
 
                     // Find the shortest path to this tile
                     Optional<QueueNode> queueNodeOpt = pathFindingAlgorithm.execute(knowledge, player, colEntry.getValue());

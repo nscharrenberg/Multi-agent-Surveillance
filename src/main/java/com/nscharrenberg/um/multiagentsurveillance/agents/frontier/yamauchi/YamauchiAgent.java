@@ -172,6 +172,25 @@ public class YamauchiAgent extends Agent {
                     continue;
                 }
 
+                // Reject if all tile is surrounded by collision objects or teleporters
+                HashMap<AdvancedAngle, Tile> neighbours = BoardUtils.getNeighbours(knowledge, colEntry.getValue());
+
+                boolean isInaccessible = true;
+                for (Map.Entry<AdvancedAngle, Tile> neighbour : neighbours.entrySet()) {
+                    if (neighbour.getValue() == null) {
+                        continue;
+                    }
+
+                    if (!neighbour.getValue().isCollision() && !neighbour.getValue().isTeleport()) {
+                        isInaccessible = false;
+                        break;
+                    }
+                }
+
+                if (isInaccessible) {
+                    continue;
+                }
+
                 // Check if it is a fully known tile
 
                 Optional<Tile> upOpt = BoardUtils.nextPosition(knowledge, colEntry.getValue(), Angle.UP);

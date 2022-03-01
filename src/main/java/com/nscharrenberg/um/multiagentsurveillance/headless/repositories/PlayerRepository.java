@@ -173,8 +173,13 @@ public class PlayerRepository implements IPlayerRepository {
             agent = new YamauchiAgent(player);
         }
 
+        if (agent == null) {
+            return null;
+        }
+
         this.agents.add(agent);
         player.setAgent(agent);
+        agent.addKnowledge(player.getTile());
         return agent;
     }
 

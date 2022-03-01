@@ -27,6 +27,8 @@ public class PlayerRepository implements IPlayerRepository {
     private List<Intruder> intruders;
     private List<Guard> guards;
 
+    private TileArea completeKnowledgeProgress = new TileArea();
+
     private List<Agent> agents;
 
     private static final Class<? extends Agent> agentType = YamauchiAgent.class;
@@ -49,18 +51,43 @@ public class PlayerRepository implements IPlayerRepository {
     }
 
     @Override
-    public float calculateExplorationPercentage() {
-        TileArea discoveredArea = new TileArea();
+    public void calculateInaccessibleTiles() {
+        for (Map.Entry<Integer, HashMap<Integer, Tile>> rowEntry : mapRepository.getBoard().getRegion().entrySet()) {
+            for (Map.Entry<Integer, Tile> colEntry : rowEntry.getValue().entrySet()) {
+                HashMap<AdvancedAngle, Tile> neighbours = BoardUtils.getNeighbours(mapRepository.getBoard(), colEntry.getValue());
 
+                boolean isInaccessible = true;
+                for (Map.Entry<AdvancedAngle, Tile> neighbour : neighbours.entrySet()) {
+                    if (neighbour.getValue() == null) {
+                        continue;
+                    }
+
+                    if (!neighbour.getValue().isCollision()) {
+                        isInaccessible = false;
+                        break;
+                    }
+                }
+
+                if (!isInaccessible) {
+                    continue;
+                }
+
+                completeKnowledgeProgress.add(colEntry.getValue());
+            }
+        }
+    }
+
+    @Override
+    public float calculateExplorationPercentage() {
         for (Agent agent : agents) {
-            discoveredArea = (TileArea) discoveredArea.merge(agent.getKnowledge());
+            completeKnowledgeProgress = (TileArea) completeKnowledgeProgress.merge(agent.getKnowledge());
         }
 
         float totalTileCount = mapRepository.getBoard().height() * mapRepository.getBoard().width();
         float discoveredAreaTileCount = 0;
 
         // TODO: Could probably do with some optimization
-        for (Map.Entry<Integer, HashMap<Integer, Tile>> rowEntry : discoveredArea.getRegion().entrySet()) {
+        for (Map.Entry<Integer, HashMap<Integer, Tile>> rowEntry : completeKnowledgeProgress.getRegion().entrySet()) {
             for (Map.Entry<Integer, Tile> colEntry : rowEntry.getValue().entrySet()) {
                 discoveredAreaTileCount += 1;
             }

@@ -47,13 +47,11 @@ public class AStar implements IPathFinding {
 
         TreeNode tree = new TreeNode(player.getTile(), player.getDirection());
 
-        Node currentNode = new Node(player.getTile(), computeDistance(player.getTile(), target), player.getDirection(), tree);
-
         board.add(player.getTile());
 
-        while (!currentNode.getTile().equals(target)) {
+        while (!tree.getTile().equals(target)) {
             for (Angle angle : Angle.values()) {
-                Optional<Tile> nextTileOpt = BoardUtils.nextPosition(board, currentNode.getTile(), angle);
+                Optional<Tile> nextTileOpt = BoardUtils.nextPosition(board, tree.getTile(), angle);
 
 
                 if (nextTileOpt.isPresent() && !nextTileOpt.get().isCollision() && visited.get(nextTileOpt.get().getX()).get(nextTileOpt.get().getY()).equals(Boolean.FALSE)) {
@@ -71,18 +69,18 @@ public class AStar implements IPathFinding {
                     TreeNode childNode = new TreeNode(nextTileOpt.get(), angle, tree);
                     tree.getChildren().add(childNode);
 
-                    if (!currentNode.getDirection().equals(childNode.getEntrancePosition())) {
+                    if (!tree.getEntrancePosition().equals(childNode.getEntrancePosition())) {
                         TreeNode additionalChildNode = new TreeNode(nextTileOpt.get(), angle, childNode);
                         childNode.getChildren().add(additionalChildNode);
 
-                        heap.insert(new Node(nextTileOpt.get(), distance, angle, additionalChildNode));
+                        heap.insert(new Node(distance, additionalChildNode));
                     } else {
-                        heap.insert(new Node(nextTileOpt.get(), distance, angle, childNode));
+                        heap.insert(new Node(distance, childNode));
                     }
                 }
             }
 
-            currentNode = heap.extractMin();
+            Node currentNode = heap.extractMin();
 
             if (currentNode == null) break;
 

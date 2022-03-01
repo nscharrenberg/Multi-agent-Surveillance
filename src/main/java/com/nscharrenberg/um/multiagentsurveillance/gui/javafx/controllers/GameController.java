@@ -53,6 +53,7 @@ public class GameController {
 
         try {
             importer.load(path);
+            Factory.getPlayerRepository().calculateInaccessibleTiles();
         } catch (IOException e) {
             e.printStackTrace();
 //            Factory.getGameRepository().setRunning(false);

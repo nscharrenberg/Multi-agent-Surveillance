@@ -33,6 +33,9 @@ public class AStar implements IPathFinding {
 
                 if (nextTileOpt.isPresent() && !nextTileOpt.get().isCollision() && !isVisited(tree, nextTileOpt.get())) {
 
+                    if(!nextTileOpt.get().equals(target) && nextTileOpt.get().isTeleport())
+                        continue;
+
                     int unknownTiles = 0;
 //                    for (Angle angleForNextTile : Angle.values()) {
 //                        Optional<Tile> knownTile = BoardUtils.nextPosition(board, nextTileOpt.get(), angleForNextTile);

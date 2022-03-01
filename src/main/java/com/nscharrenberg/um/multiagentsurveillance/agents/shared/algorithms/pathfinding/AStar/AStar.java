@@ -51,6 +51,10 @@ public class AStar implements IPathFinding {
                     if (!tree.getEntrancePosition().equals(childNode.getEntrancePosition())) {
                         TreeNode additionalChildNode = new TreeNode(nextTileOpt.get(), angle, childNode);
 
+                        if(nextTileOpt.get().equals(target)){
+                            tree = additionalChildNode;
+                            break;
+                        }
 
                         heap.insert(new Node(distance+1, additionalChildNode));
                     } else {

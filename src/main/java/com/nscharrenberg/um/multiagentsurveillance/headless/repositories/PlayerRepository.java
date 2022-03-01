@@ -62,7 +62,7 @@ public class PlayerRepository implements IPlayerRepository {
                         continue;
                     }
 
-                    if (!neighbour.getValue().isCollision()) {
+                    if (!neighbour.getValue().isCollision() && !neighbour.getValue().isTeleport()) {
                         isInaccessible = false;
                         break;
                     }

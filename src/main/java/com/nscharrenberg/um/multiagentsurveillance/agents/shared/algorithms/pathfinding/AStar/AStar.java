@@ -83,6 +83,9 @@ public class AStar implements IPathFinding {
             }
 
             currentNode = heap.extractMin();
+
+            if (currentNode == null) break;
+
             tree = currentNode.getTreeNode();
         }
 

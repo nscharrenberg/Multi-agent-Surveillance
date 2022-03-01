@@ -45,7 +45,7 @@ public class AStar implements IPathFinding {
 
         Fibonacci heap = new Fibonacci();
 
-        TreeNode tree = new TreeNode(player.getTile(), player.getDirection());
+        TreeNode tree = new TreeNode(player.getTile(), player.getDirection(), null);
 
         board.add(player.getTile());
 
@@ -67,16 +67,26 @@ public class AStar implements IPathFinding {
                     int distance = computeDistance(nextTileOpt.get(), target) - unknownTiles;
 
                     TreeNode childNode = new TreeNode(nextTileOpt.get(), angle, tree);
-                    tree.getChildren().add(childNode);
+
+                    if(nextTileOpt.get().equals(target)) {
+                        tree = childNode;
+                        break;
+                    }
 
                     if (!tree.getEntrancePosition().equals(childNode.getEntrancePosition())) {
                         TreeNode additionalChildNode = new TreeNode(nextTileOpt.get(), angle, childNode);
-                        childNode.getChildren().add(additionalChildNode);
+
+                        if(nextTileOpt.get().equals(target)) {
+                            tree = additionalChildNode;
+                            break;
+                        }
 
                         heap.insert(new Node(distance, additionalChildNode));
                     } else {
                         heap.insert(new Node(distance, childNode));
                     }
+
+
                 }
             }
 

@@ -8,8 +8,6 @@ import java.util.Queue;
 
 public class TreeNode extends QueueNode {
     private TreeNode parent;
-    private LinkedList<TreeNode> children = new LinkedList<>();
-
 
     public TreeNode(Tile tile, Angle entrancePosition, TreeNode parent) {
         super(tile, entrancePosition);
@@ -19,9 +17,4 @@ public class TreeNode extends QueueNode {
     public TreeNode getParent() {
         return parent;
     }
-
-    public Queue<TreeNode> getChildren() {
-        return children;
-    }
-
 }

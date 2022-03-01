@@ -10,19 +10,13 @@ public class Node{
 
     protected int key, degree;
 
-    private Angle direction;
-
     private TreeNode treeNode;
-
-    protected final Tile tile;
 
     protected boolean mark;
 
-    public Node(Tile tile, int key, Angle direction, TreeNode treeNode){
+    public Node(int key, TreeNode treeNode){
         this.key = key;
-        this.tile = tile;
         this.treeNode = treeNode;
-        this.direction = direction;
         this.degree = 0;
         this.parent = this.child = null;
         this.left = this.right = this;
@@ -31,13 +25,5 @@ public class Node{
 
     public TreeNode getTreeNode() {
         return treeNode;
-    }
-
-    public Angle getDirection() {
-        return direction;
-    }
-
-    public Tile getTile() {
-        return tile;
     }
 }

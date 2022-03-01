@@ -13,7 +13,7 @@ import java.io.IOException;
 
 public class GameController {
     private GameBoardGUI boardGUI;
-    private static int timeDelay = 200;
+    private static int timeDelay = 250;
 
     public GameController(){
         Factory.init();

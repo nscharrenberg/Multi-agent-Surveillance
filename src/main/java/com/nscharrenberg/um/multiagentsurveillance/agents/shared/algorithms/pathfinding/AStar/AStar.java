@@ -20,6 +20,29 @@ public class AStar implements IPathFinding {
             return Optional.empty();
         }
 
+        HashMap<Integer, HashMap<Integer, Boolean>> visited = new HashMap<>();
+
+        // Set all cells in knowledge to not visited
+        for (Map.Entry<Integer, HashMap<Integer, Tile>> rowEntry : board.getRegion().entrySet()) {
+            if (!visited.containsKey(rowEntry.getKey())) {
+                visited.put(rowEntry.getKey(), new HashMap<>());
+            }
+
+            for (Map.Entry<Integer, Tile> colEntry : rowEntry.getValue().entrySet()) {
+                visited.get(rowEntry.getKey()).put(colEntry.getKey(), Boolean.FALSE);
+            }
+        }
+
+        if (visited.isEmpty()) {
+            return Optional.empty();
+        }
+
+        // Current tile always explored
+        if (!visited.containsKey(player.getTile().getX())) {
+            visited.put(player.getTile().getX(), new HashMap<>());
+        }
+        visited.get(player.getTile().getX()).put(player.getTile().getY(), Boolean.TRUE);
+
         Fibonacci heap = new Fibonacci();
 
         TreeNode tree = new TreeNode(player.getTile(), player.getDirection(), null);
@@ -31,7 +54,8 @@ public class AStar implements IPathFinding {
                 Optional<Tile> nextTileOpt = BoardUtils.nextPosition(board, tree.getTile(), angle);
 
 
-                if (nextTileOpt.isPresent() && !nextTileOpt.get().isCollision() && !isVisited(tree, nextTileOpt.get())) {
+                if (nextTileOpt.isPresent() && !nextTileOpt.get().isCollision() && !isVisited(tree, nextTileOpt.get()) && visited.get(nextTileOpt.get().getX()).get(nextTileOpt.get().getY()).equals(Boolean.FALSE)) {
+                    visited.get(nextTileOpt.get().getX()).put(nextTileOpt.get().getY(), Boolean.TRUE);
 
                     if(!nextTileOpt.get().equals(target) && nextTileOpt.get().isTeleport())
                         continue;
@@ -75,6 +99,9 @@ public class AStar implements IPathFinding {
         LinkedList<Angle> sequenceMoves = new LinkedList<>();
 
         TreeNode lastMove = tree;
+
+        if(tree.getParent() == null)
+            sequenceMoves.addFirst(tree.getEntrancePosition());
 
         while (tree.getParent() != null) {
             sequenceMoves.addFirst(tree.getEntrancePosition());

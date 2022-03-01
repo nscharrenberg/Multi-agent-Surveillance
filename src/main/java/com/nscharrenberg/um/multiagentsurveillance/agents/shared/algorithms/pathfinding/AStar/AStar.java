@@ -31,7 +31,7 @@ public class AStar implements IPathFinding {
                 Optional<Tile> nextTileOpt = BoardUtils.nextPosition(board, tree.getTile(), angle);
 
 
-                if (nextTileOpt.isPresent() && !nextTileOpt.get().isCollision()) {
+                if (nextTileOpt.isPresent() && !nextTileOpt.get().isCollision() && !isVisited(tree, nextTileOpt.get())) {
 
                     int unknownTiles = 0;
 //                    for (Angle angleForNextTile : Angle.values()) {
@@ -84,10 +84,10 @@ public class AStar implements IPathFinding {
     }
 
     private boolean isVisited(TreeNode tree, Tile tile){
-        if(tree.getParent() == null) {
+        if(tree.getParent() == null || tree.getParent().getParent() == null) {
             return false;
         } else {
-            return tree.getParent().getTile().equals(tile);
+            return tree.getParent().getTile().equals(tile) || tree.getParent().getParent().getTile().equals(tile);
         }
     }
 

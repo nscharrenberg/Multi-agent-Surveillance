@@ -12,6 +12,7 @@ import com.nscharrenberg.um.multiagentsurveillance.headless.exceptions.InvalidTi
 import com.nscharrenberg.um.multiagentsurveillance.headless.exceptions.ItemAlreadyOnTileException;
 import com.nscharrenberg.um.multiagentsurveillance.headless.exceptions.ItemNotOnTileException;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.*;
+import com.nscharrenberg.um.multiagentsurveillance.headless.utils.BoardUtils;
 import com.nscharrenberg.um.multiagentsurveillance.headless.utils.CharacterVision;
 
 import java.security.NoSuchAlgorithmException;
@@ -25,6 +26,8 @@ public class PlayerRepository implements IPlayerRepository {
     private SecureRandom random;
     private List<Intruder> intruders;
     private List<Guard> guards;
+
+    private TileArea completeKnowledgeProgress = new TileArea();
 
     private List<Agent> agents;
 
@@ -48,18 +51,43 @@ public class PlayerRepository implements IPlayerRepository {
     }
 
     @Override
-    public float calculateExplorationPercentage() {
-        TileArea discoveredArea = new TileArea();
+    public void calculateInaccessibleTiles() {
+        for (Map.Entry<Integer, HashMap<Integer, Tile>> rowEntry : mapRepository.getBoard().getRegion().entrySet()) {
+            for (Map.Entry<Integer, Tile> colEntry : rowEntry.getValue().entrySet()) {
+                HashMap<AdvancedAngle, Tile> neighbours = BoardUtils.getNeighbours(mapRepository.getBoard(), colEntry.getValue());
 
+                boolean isInaccessible = true;
+                for (Map.Entry<AdvancedAngle, Tile> neighbour : neighbours.entrySet()) {
+                    if (neighbour.getValue() == null) {
+                        continue;
+                    }
+
+                    if (!neighbour.getValue().isCollision() && !neighbour.getValue().isTeleport()) {
+                        isInaccessible = false;
+                        break;
+                    }
+                }
+
+                if (!isInaccessible) {
+                    continue;
+                }
+
+                completeKnowledgeProgress.add(colEntry.getValue());
+            }
+        }
+    }
+
+    @Override
+    public float calculateExplorationPercentage() {
         for (Agent agent : agents) {
-            discoveredArea = (TileArea) discoveredArea.merge(agent.getKnowledge());
+            completeKnowledgeProgress = (TileArea) completeKnowledgeProgress.merge(agent.getKnowledge());
         }
 
         float totalTileCount = mapRepository.getBoard().height() * mapRepository.getBoard().width();
         float discoveredAreaTileCount = 0;
 
         // TODO: Could probably do with some optimization
-        for (Map.Entry<Integer, HashMap<Integer, Tile>> rowEntry : discoveredArea.getRegion().entrySet()) {
+        for (Map.Entry<Integer, HashMap<Integer, Tile>> rowEntry : completeKnowledgeProgress.getRegion().entrySet()) {
             for (Map.Entry<Integer, Tile> colEntry : rowEntry.getValue().entrySet()) {
                 discoveredAreaTileCount += 1;
             }
@@ -172,8 +200,13 @@ public class PlayerRepository implements IPlayerRepository {
             agent = new YamauchiAgent(player);
         }
 
+        if (agent == null) {
+            return null;
+        }
+
         this.agents.add(agent);
         player.setAgent(agent);
+        agent.addKnowledge(player.getTile());
         return agent;
     }
 
@@ -184,6 +217,19 @@ public class PlayerRepository implements IPlayerRepository {
         // Rotate the player when it's not facing the same direction as it wants to go to.
         if (!currentDirection.equals(direction)) {
             player.setDirection(direction);
+
+            if (player.getAgent() != null) {
+                CharacterVision characterVision = new CharacterVision(6, player.getDirection());
+                List<Tile> vision = characterVision.getVision(mapRepository.getBoard(), player.getTile());
+                player.getAgent().addKnowledge(vision);
+
+                List<Tile> vision2 = characterVision.getVision(mapRepository.getBoard(), player.getTile());
+                player.getAgent().addKnowledge(vision2);
+                player.setVision(new TileArea(vision2));
+
+                calculateExplorationPercentage();
+            }
+
             return;
         }
 
@@ -225,6 +271,7 @@ public class PlayerRepository implements IPlayerRepository {
 
                 List<Tile> vision2 = characterVision.getVision(mapRepository.getBoard(), player.getTile());
                 player.getAgent().addKnowledge(vision2);
+                player.setVision(new TileArea(vision2));
 
                 calculateExplorationPercentage();
             }
@@ -241,6 +288,7 @@ public class PlayerRepository implements IPlayerRepository {
             List<Tile> vision = characterVision.getVision(mapRepository.getBoard(), player.getTile());
 
             player.getAgent().addKnowledge(vision);
+            player.setVision(new TileArea(vision));
             calculateExplorationPercentage();
         }
     }

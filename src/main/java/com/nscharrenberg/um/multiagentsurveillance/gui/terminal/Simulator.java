@@ -39,8 +39,6 @@ public class Simulator {
     }
 
     private void gameLoop() {
-        int stepCount = 0;
-
         Factory.getGameRepository().setRunning(true);
         while (Factory.getGameRepository().isRunning()) {
             int agentId = 0;
@@ -68,17 +66,9 @@ public class Simulator {
                 agentId++;
             }
 
-            // temp step count check
-            stepCount++;
-            if (stepCount >= 1000 || Factory.getPlayerRepository().getExplorationPercentage() >= 100) {
+            if (Factory.getPlayerRepository().getExplorationPercentage() >= 100) {
                 System.out.println("Out of Iterations - Game Over");
                 break;
-            }
-
-            try {
-                Thread.sleep(200);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
             }
         }
     }

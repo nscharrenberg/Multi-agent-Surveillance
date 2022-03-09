@@ -1,14 +1,17 @@
 package com.nscharrenberg.um.multiagentsurveillance.agents.frontier.yamauchi;
 
+import com.nscharrenberg.um.multiagentsurveillance.agents.shared.utils.QueueNode;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Angle;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Tile;
 
 import java.util.HashMap;
+import java.util.Map;
 
 public class Frontier {
     private HashMap<Integer, HashMap<Integer, Tile>> frontier;
     private int unknownAreas = 0;
     private QueueNode queueNode;
+    private int maxSize = 3;
 
     public Frontier() {
         this.frontier = new HashMap<>();
@@ -60,6 +63,10 @@ public class Frontier {
             return false;
         }
 
+        if (exceedsSize()) {
+            return false;
+        }
+
         // creates new row
         if (!frontier.containsKey(tile.getX())) {
             frontier.put(tile.getX(), new HashMap<>());
@@ -70,6 +77,20 @@ public class Frontier {
 
         // accept
         return true;
+    }
+
+    private boolean exceedsSize() {
+        if (frontier.size() > maxSize) {
+            return true;
+        }
+
+        for (Map.Entry<Integer, HashMap<Integer, Tile>> rowEntry : frontier.entrySet()) {
+            if (rowEntry.getValue().size() > maxSize) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     public HashMap<Integer, HashMap<Integer, Tile>> getFrontier() {

@@ -15,6 +15,7 @@ public class GameRepository implements IGameRepository {
     private double springSpeedIntruders;
     private double baseSpeedGuards;
     private double timeStep;
+    private boolean isRunning = false;
 
     @Override
     public String getName() {
@@ -124,5 +125,15 @@ public class GameRepository implements IGameRepository {
     @Override
     public void setTimeStep(double timeStep) {
         this.timeStep = timeStep;
+    }
+
+    @Override
+    public boolean isRunning() {
+        return isRunning;
+    }
+
+    @Override
+    public void setRunning(boolean running) {
+        isRunning = running;
     }
 }

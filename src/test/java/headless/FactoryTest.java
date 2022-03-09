@@ -11,6 +11,7 @@ public class FactoryTest {
     @DisplayName("Factory Reset Successful")
     @Test
     void testFactoryResetSuccess() {
+        Factory.init();
         Factory.getGameRepository().setGameMode(GameMode.NO_COMMUNICATION);
 
         Assertions.assertEquals(Factory.getGameRepository().getGameMode(), GameMode.NO_COMMUNICATION);

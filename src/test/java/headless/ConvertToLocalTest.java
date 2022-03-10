@@ -57,6 +57,7 @@ public class ConvertToLocalTest {
             toBeConverted.add(new Tile(guard.getTile().getX(), guard.getTile().getY()));
             List<Tile> actualTile = Factory.getPlayerRepository().convertToLocalVision(guard, toBeConverted);
 
+            System.out.println(actualTile.get(0).getX() + " " + actualTile.get(0).getY());
             Assertions.assertEquals(2, actualTile.get(0).getX());
             Assertions.assertEquals(1, actualTile.get(0).getY());
         } catch (CollisionException | ItemAlreadyOnTileException | InvalidTileException | ItemNotOnTileException e) {

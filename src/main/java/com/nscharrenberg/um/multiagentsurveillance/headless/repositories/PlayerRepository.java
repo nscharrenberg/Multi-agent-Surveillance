@@ -228,7 +228,7 @@ public class PlayerRepository implements IPlayerRepository {
                 player.getAgent().addKnowledge(convertToLocalVision(player, vision));
 
                 List<Tile> vision2 = characterVision.getVision(mapRepository.getBoard(), player.getTile());
-                player.getAgent().addKnowledge(convertToLocalVision(player, vision));
+                player.getAgent().addKnowledge(convertToLocalVision(player, vision2));
 
                 calculateExplorationPercentage();
             }
@@ -279,13 +279,13 @@ public class PlayerRepository implements IPlayerRepository {
     }
 
     public List<Tile> convertToLocalVision(Player player, List<Tile> globalVision) {
-        System.out.println("GLOBAL VISION: " + globalVision.get(0).getX() + " " + globalVision.get(0).getY());
+        //System.out.println("GLOBAL VISION: " + globalVision.get(0).getX() + " " + globalVision.get(0).getY());
         List<Tile> localVision = new ArrayList<Tile>();
         List<Item> currentTileItems= new ArrayList<Item>();
         int spawnX = getSpawnPoint(player).getX();
         int spawnY = getSpawnPoint(player).getY();
-        System.out.println("SPAWN X: " + spawnX);
-        System.out.println("SPAWN Y: " + spawnY);
+        //System.out.println("SPAWN X: " + spawnX);
+        //System.out.println("SPAWN Y: " + spawnY);
         for (Tile tile : globalVision) {
             for (Item item : tile.getItems()) {
                 currentTileItems = tile.getItems();
@@ -295,8 +295,8 @@ public class PlayerRepository implements IPlayerRepository {
                     continue;
                 }
             }
-            System.out.println("NEW X: " + (tile.getX() - spawnX));
-            System.out.println("NEW Y: " + (tile.getY() - spawnY));
+            //System.out.println("NEW X: " + (tile.getX() - spawnX));
+            //System.out.println("NEW Y: " + (tile.getY() - spawnY));
             Tile currentTile = new Tile(tile.getX() - spawnX, tile.getY() - spawnY, currentTileItems);
             localVision.add(currentTile);
         }

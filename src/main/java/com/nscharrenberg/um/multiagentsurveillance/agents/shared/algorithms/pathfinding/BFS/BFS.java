@@ -58,7 +58,7 @@ public class BFS implements IPathFinding {
                 if (nextTileOpt.isPresent() && !nextTileOpt.get().isCollision() && visited.get(nextTileOpt.get().getX()).get(nextTileOpt.get().getY()).equals(Boolean.FALSE)) {
                     visited.get(nextTileOpt.get().getX()).put(nextTileOpt.get().getY(), Boolean.TRUE);
 
-                    QueueNode adj = new QueueNode(nextTileOpt.get(), angle, cloner.deepClone(currentNode.getMoves()));
+                    QueueNode adj = new QueueNode(nextTileOpt.get(), angle, cloner.deepClone(currentNode.getMoves()), 0);
 
                     // If player is not looking at this direction, then it takes 2 timesteps to get to this tile
                     if (!currentNode.getEntrancePosition().equals(angle)) {

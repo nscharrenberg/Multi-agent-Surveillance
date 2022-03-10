@@ -1,6 +1,7 @@
 package com.nscharrenberg.um.multiagentsurveillance.agents.frontier.yamauchi;
 
 import com.nscharrenberg.um.multiagentsurveillance.agents.frontier.yamauchi.comparator.IWeightComparator;
+import com.nscharrenberg.um.multiagentsurveillance.agents.frontier.yamauchi.comparator.MaxPathCost;
 import com.nscharrenberg.um.multiagentsurveillance.agents.frontier.yamauchi.comparator.MinDistanceUnknownAreaComparator;
 import com.nscharrenberg.um.multiagentsurveillance.agents.shared.Agent;
 import com.nscharrenberg.um.multiagentsurveillance.agents.shared.algorithms.pathfinding.AStar.AStar;
@@ -134,8 +135,13 @@ public class YamauchiAgent extends Agent {
             }
 
 
+            if(frontier.getUnknownAreas() == 0)
+                continue;
+
             if (bestFrontier == null)
                 bestFrontier = frontier;
+
+
 
             bestFrontier = weightDetector.compare(frontier, bestFrontier);
 

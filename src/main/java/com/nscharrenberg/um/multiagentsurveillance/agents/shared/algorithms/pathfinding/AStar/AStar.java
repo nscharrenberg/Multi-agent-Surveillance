@@ -108,13 +108,13 @@ public class AStar implements IPathFinding {
             tree = tree.getParent();
         }
 
-        Queue<Angle> sequenceMoves1 = new LinkedList<>(sequenceMoves);
+        Queue<Angle> queue = new LinkedList<>(sequenceMoves);
 
         if (sequenceMoves.isEmpty()) {
             return Optional.empty();
         }
 
-        QueueNode queueNode = new QueueNode(lastMove.getTile(), tree.getEntrancePosition(), sequenceMoves1);
+        QueueNode queueNode = new QueueNode(lastMove.getTile(), tree.getEntrancePosition(), queue);
 
         return Optional.of(queueNode);
     }

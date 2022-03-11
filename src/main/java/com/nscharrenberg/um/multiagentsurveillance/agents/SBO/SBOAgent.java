@@ -78,6 +78,8 @@ public class SBOAgent extends Agent {
             }
         }
 
+        // If stack is empty, search for teleporter
+
         System.out.println("Current goal Tile: " + goal.getX() +"  "+ goal.getY());
 
         // TODO: Calculate angle for specified Tile
@@ -101,6 +103,7 @@ public class SBOAgent extends Agent {
 
         // More advanced gathering based on vision
         // TODO: implement
+
 
     }
 

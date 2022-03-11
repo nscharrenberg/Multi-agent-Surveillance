@@ -128,7 +128,7 @@ public class CharacterVision{
         rawvision.removeIf(tc -> (tc.getX() < 0 || tc.getY() < 0));
         rawvision.removeIf(tc -> (tc.getX() > board.width() || tc.getY() > board.height()));
 
-         // Check remaining tiles for items
+        // Check remaining tiles for items
         for (Tile t : rawvision) {
             for (Tile it : gm.getIntersectingTiles(position, t)) {
                 if (!unobstructedTile(board, it)) {
@@ -138,7 +138,13 @@ public class CharacterVision{
             }
 
             if(validtile) {
-                finalvision.add(t);
+                Optional<Tile> tileAddOpt = board.getByCoordinates(t.getX(), t.getY());
+
+                if (tileAddOpt.isEmpty()) {
+                    continue;
+                }
+
+                finalvision.add(tileAddOpt.get());
             } else {
                 validtile = true;
             }

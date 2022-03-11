@@ -13,6 +13,7 @@ import java.io.IOException;
 
 public class GameController {
     private GameBoardGUI boardGUI;
+    private static int timeDelay = 300;
 
     public GameController(){
         Factory.init();
@@ -44,7 +45,7 @@ public class GameController {
     }
 
     private void importMap() {
-        File file = new File("src/test/resources/maps/testmap.txt");
+        File file = new File("src/test/resources/maps/testmap4.txt");
         String path = file.getAbsolutePath();
         MapImporter importer = new MapImporter();
 
@@ -52,6 +53,7 @@ public class GameController {
 
         try {
             importer.load(path);
+            Factory.getPlayerRepository().calculateInaccessibleTiles();
         } catch (IOException e) {
             e.printStackTrace();
 //            Factory.getGameRepository().setRunning(false);
@@ -77,13 +79,17 @@ public class GameController {
         Factory.getGameRepository().setRunning(true);
         while (Factory.getGameRepository().isRunning()) {
             for (Agent agent : Factory.getPlayerRepository().getAgents()) {
-                agent.execute();
+                try {
+                    agent.execute();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
 
             boardGUI.updateGUI();
 
             try {
-                Thread.sleep(200);
+                Thread.sleep(timeDelay);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }

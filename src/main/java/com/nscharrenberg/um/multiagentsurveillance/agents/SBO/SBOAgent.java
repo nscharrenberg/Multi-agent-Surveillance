@@ -1,6 +1,7 @@
 package com.nscharrenberg.um.multiagentsurveillance.agents.SBO;
 
 import com.nscharrenberg.um.multiagentsurveillance.agents.shared.Agent;
+import com.nscharrenberg.um.multiagentsurveillance.agents.shared.algorithms.pathfinding.BFS.BFS;
 import com.nscharrenberg.um.multiagentsurveillance.headless.Factory;
 import com.nscharrenberg.um.multiagentsurveillance.headless.contracts.repositories.IGameRepository;
 import com.nscharrenberg.um.multiagentsurveillance.headless.contracts.repositories.IMapRepository;
@@ -78,15 +79,14 @@ public class SBOAgent extends Agent {
             }
         }
 
-        // If stack is empty, search for teleporter
+        // TODO: If stack is empty, search for teleporter
+        //System.out.println("Current goal Tile: " + goal.getX() +"  "+ goal.getY());
 
-        System.out.println("Current goal Tile: " + goal.getX() +"  "+ goal.getY());
+        // Turn goal tile into Queue angle
+        BFS bfs = new BFS();
+        plannedMoves = bfs.execute(mapRepository.getBoard(), player, goal).get().getMoves();
 
-        // TODO: Calculate angle for specified Tile
-
-
-        int pick = 0;
-        return Angle.values()[pick];
+        return plannedMoves.poll();
     }
 
     private void gather() {

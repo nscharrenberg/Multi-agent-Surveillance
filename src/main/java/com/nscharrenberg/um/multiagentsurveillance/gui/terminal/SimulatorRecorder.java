@@ -12,8 +12,10 @@ import com.nscharrenberg.um.multiagentsurveillance.headless.utils.recorder.GameC
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.json.JSONTokener;
 
 import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
@@ -67,7 +69,7 @@ public class SimulatorRecorder {
                 Long moveTimeDecide = endTime - startTime;
                 agent.execute(move);
 
-                JSONArray agentJSON = new JSONArray(new File(directoryPath + "\\Agent#" + agentId));
+                JSONArray agentJSON = new JSONArray(new JSONTokener(new FileReader(directoryPath + "\\Agent#" + agentId)));
 
                 JSONObject moveJSON = new JSONObject();
                 moveJSON.put("Move", moveCount);

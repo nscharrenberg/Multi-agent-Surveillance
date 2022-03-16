@@ -11,6 +11,7 @@ import java.util.*;
 public abstract class Agent {
     protected final Player player;
     protected Area<Tile> knowledge;
+    protected Area<Tile> vision;
     protected Queue<Angle> plannedMoves;
 
     protected final IMapRepository mapRepository;
@@ -20,6 +21,7 @@ public abstract class Agent {
     public Agent(Player player) {
         this.player = player;
         this.knowledge = new TileArea();
+        this.vision = new TileArea();
         this.plannedMoves = new PriorityQueue<>();
 
         this.mapRepository = Factory.getMapRepository();
@@ -30,6 +32,7 @@ public abstract class Agent {
     public Agent(Player player, IMapRepository mapRepository, IGameRepository gameRepository, IPlayerRepository playerRepository) {
         this.player = player;
         this.knowledge = new TileArea();
+        this.vision = new TileArea();
         this.plannedMoves = new PriorityQueue<>();
 
         this.mapRepository = mapRepository;
@@ -40,6 +43,7 @@ public abstract class Agent {
     public Agent(Player player, Area<Tile> knowledge, Queue<Angle> plannedMoves, IMapRepository mapRepository, IGameRepository gameRepository, IPlayerRepository playerRepository) {
         this.player = player;
         this.knowledge = knowledge;
+        this.vision = new TileArea();
         this.plannedMoves = plannedMoves;
 
         this.mapRepository = mapRepository;

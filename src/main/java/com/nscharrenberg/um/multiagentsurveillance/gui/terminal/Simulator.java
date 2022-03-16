@@ -33,7 +33,7 @@ public class Simulator {
     }
 
     private void spawn() {
-        for (int i = 0; i <= Factory.getGameRepository().getGuardCount(); i++) {
+        for (int i = 0; i < Factory.getGameRepository().getGuardCount(); i++) {
             Factory.getPlayerRepository().spawn(Guard.class);
         }
     }

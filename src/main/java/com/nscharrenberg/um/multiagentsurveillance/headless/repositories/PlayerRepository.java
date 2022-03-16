@@ -234,6 +234,8 @@ public class PlayerRepository implements IPlayerRepository {
                 player.getAgent().addKnowledge(vision2);
                 player.setVision(new TileArea(vision2));
 
+                System.out.println("visionsize in Repo: " + player.getVision().getRegion().entrySet().size());
+
                 calculateExplorationPercentage();
             }
 
@@ -296,6 +298,7 @@ public class PlayerRepository implements IPlayerRepository {
 
             player.getAgent().addKnowledge(vision);
             player.setVision(new TileArea(vision));
+            System.out.println("visionsize in Repo: " + player.getVision().getRegion().entrySet().size());
             calculateExplorationPercentage();
         }
     }

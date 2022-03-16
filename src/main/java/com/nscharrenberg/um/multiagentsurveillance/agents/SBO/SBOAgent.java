@@ -10,22 +10,16 @@ import com.nscharrenberg.um.multiagentsurveillance.headless.exceptions.InvalidTi
 import com.nscharrenberg.um.multiagentsurveillance.headless.exceptions.ItemAlreadyOnTileException;
 import com.nscharrenberg.um.multiagentsurveillance.headless.exceptions.ItemNotOnTileException;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.*;
+import com.nscharrenberg.um.multiagentsurveillance.headless.utils.CharacterVision;
 
 import java.util.*;
 
 public class SBOAgent extends Agent {
-    //private final IMapRepository mapRepository;
-    //private final IGameRepository gameRepository;
-    //private final IPlayerRepository playerRepository;
-
     private final Stack<Tile> scanned = new Stack<>();
     private Area<Tile> visited;
 
     public SBOAgent(Player agent) {
         super(agent);
-        //this.mapRepository = Factory.getMapRepository();
-        //this.playerRepository = Factory.getPlayerRepository();
-        //this.gameRepository = Factory.getGameRepository();
         visited = new TileArea();
     }
 
@@ -55,7 +49,11 @@ public class SBOAgent extends Agent {
         visited.add(player.getTile());
 
         // Update Stack
-        gather();
+        //gather();
+        gatherV2();
+
+        if(player.getVision() == null)
+            System.out.println("leeg why?");
 
         // Select first valid top Tile from Stack
         Tile goal = player.getTile();
@@ -68,6 +66,8 @@ public class SBOAgent extends Agent {
                 break;
             }
         }
+
+        //System.out.println("Goal tile: " + goal.getX() + " - " + goal.getY());
 
         // TODO: If stack is empty, search for teleporter
         //System.out.println("Current goal Tile: " + goal.getX() +"  "+ goal.getY());
@@ -91,9 +91,19 @@ public class SBOAgent extends Agent {
     }
 
     private void gatherV2() {
-        // TODO: consider how to mix vision adjacency with visited tiles
-        // visited.add(t);
-
+        if(player.getVision() != null) {
+            for (Map.Entry<Integer, HashMap<Integer, Tile>> intHashMapEntry : this.player.getVision().getRegion().entrySet()) {
+                Tile vt = intHashMapEntry.getValue().get(intHashMapEntry.getKey());
+                if(vt != null) {
+                    if(unobstructedTile(mapRepository.getBoard(), vt)
+                            && knowledge.getByCoordinates(vt.getX(), vt.getY()).isEmpty()) {
+                        scanned.addAll(getAdjacent(vt));
+                    }
+                }
+            }
+        } else {
+            scanned.addAll(getAdjacent(player.getTile()));
+        }
     }
 
     private List<Tile> getAdjacent(Tile pos) {

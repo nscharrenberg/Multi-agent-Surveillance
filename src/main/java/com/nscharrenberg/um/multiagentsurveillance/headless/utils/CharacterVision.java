@@ -3,6 +3,7 @@ package com.nscharrenberg.um.multiagentsurveillance.headless.utils;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.*;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -16,6 +17,11 @@ public class CharacterVision{
         this.length = length;
         this.direction = direction;
         gm = new Geometrics();
+    }
+
+    public ArrayList<Tile> getVision(TileArea board, Tile position) {
+        //return getBasicVision(board, position);
+        return getRealVision(board, getConeVision(position), position);
     }
 
     // Basic method for line vision + adjacent tiles
@@ -67,12 +73,6 @@ public class CharacterVision{
         }
 
         return vision;
-    }
-
-    // TODO: Confirm if return parameter is what we want
-    public ArrayList<Tile> getVision(TileArea board, Tile position) {
-        //return getBasicVision(board, position);
-        return getRealVision(board, getConeVision(position), position);
     }
 
     // -------------- Cone Vision Methods --------------

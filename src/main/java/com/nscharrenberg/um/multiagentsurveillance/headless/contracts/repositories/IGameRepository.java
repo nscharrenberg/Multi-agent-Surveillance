@@ -3,6 +3,10 @@ package com.nscharrenberg.um.multiagentsurveillance.headless.contracts.repositor
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.GameMode;
 
 public interface IGameRepository {
+    void startGame();
+
+    void stopGame();
+
     String getName();
 
     void setName(String name);

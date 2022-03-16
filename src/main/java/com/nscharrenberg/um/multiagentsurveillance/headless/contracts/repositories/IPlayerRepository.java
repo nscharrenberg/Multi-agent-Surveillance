@@ -6,6 +6,7 @@ import com.nscharrenberg.um.multiagentsurveillance.headless.exceptions.InvalidTi
 import com.nscharrenberg.um.multiagentsurveillance.headless.exceptions.ItemAlreadyOnTileException;
 import com.nscharrenberg.um.multiagentsurveillance.headless.exceptions.ItemNotOnTileException;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.*;
+import com.nscharrenberg.um.multiagentsurveillance.headless.utils.StopWatch;
 
 import java.util.List;
 
@@ -66,4 +67,8 @@ public interface IPlayerRepository {
     float getExplorationPercentage();
 
     void setExplorationPercentage(float explorationPercentage);
+
+    StopWatch getStopWatch();
+
+    void setStopWatch(StopWatch stopWatch);
 }

@@ -1,9 +1,20 @@
 package com.nscharrenberg.um.multiagentsurveillance.headless.repositories;
 
+import com.nscharrenberg.um.multiagentsurveillance.headless.Factory;
 import com.nscharrenberg.um.multiagentsurveillance.headless.contracts.repositories.IGameRepository;
+import com.nscharrenberg.um.multiagentsurveillance.headless.contracts.repositories.IMapRepository;
+import com.nscharrenberg.um.multiagentsurveillance.headless.contracts.repositories.IPlayerRepository;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.GameMode;
+import com.nscharrenberg.um.multiagentsurveillance.headless.models.Guard;
+import com.nscharrenberg.um.multiagentsurveillance.headless.utils.files.MapImporter;
+
+import java.io.File;
+import java.io.IOException;
 
 public class GameRepository implements IGameRepository {
+    private IMapRepository mapRepository;
+    private IPlayerRepository playerRepository;
+
     private String name;
     private GameMode gameMode;
     private int guardCount;
@@ -16,6 +27,55 @@ public class GameRepository implements IGameRepository {
     private double baseSpeedGuards;
     private double timeStep;
     private boolean isRunning = false;
+
+    public GameRepository() {
+        this.mapRepository = Factory.getMapRepository();
+        this.playerRepository = Factory.getPlayerRepository();
+    }
+
+    public GameRepository(IMapRepository mapRepository, IPlayerRepository playerRepository) {
+        this.mapRepository = mapRepository;
+        this.playerRepository = playerRepository;
+    }
+
+    @Override
+    public void startGame() {
+        importMap();
+        setupAgents();
+
+        playerRepository.getStopWatch().start();
+    }
+
+    @Override
+    public void stopGame() {
+        try {
+            playerRepository.getStopWatch().stop();
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    private void importMap() {
+        File file = new File("src/test/resources/maps/testmap4.txt");
+        String path = file.getAbsolutePath();
+        MapImporter importer = new MapImporter();
+
+        Factory.getGameRepository().setRunning(true);
+
+        try {
+            importer.load(path);
+            Factory.getPlayerRepository().calculateInaccessibleTiles();
+        } catch (IOException e) {
+            e.printStackTrace();
+//            Factory.getGameRepository().setRunning(false);
+        }
+    }
+
+    private void setupAgents() {
+        for (int i = 0; i < Factory.getGameRepository().getGuardCount(); i++) {
+            Factory.getPlayerRepository().spawn(Guard.class);
+        }
+    }
 
     @Override
     public String getName() {

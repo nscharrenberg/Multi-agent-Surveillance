@@ -14,6 +14,7 @@ import com.nscharrenberg.um.multiagentsurveillance.headless.exceptions.ItemNotOn
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.*;
 import com.nscharrenberg.um.multiagentsurveillance.headless.utils.BoardUtils;
 import com.nscharrenberg.um.multiagentsurveillance.headless.utils.CharacterVision;
+import com.nscharrenberg.um.multiagentsurveillance.headless.utils.StopWatch;
 
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
@@ -27,7 +28,8 @@ public class PlayerRepository implements IPlayerRepository {
     private List<Intruder> intruders;
     private List<Guard> guards;
 
-    private TileArea completeKnowledgeProgress = new TileArea();
+    private TileArea completeKnowledgeProgress;
+    private StopWatch stopWatch;
 
     private List<Agent> agents;
 
@@ -42,6 +44,8 @@ public class PlayerRepository implements IPlayerRepository {
         this.intruders = new ArrayList<>();
         this.guards = new ArrayList<>();
         this.agents = new ArrayList<>();
+        this.completeKnowledgeProgress = new TileArea();
+        this.stopWatch = new StopWatch();
 
         try {
             this.random = SecureRandom.getInstanceStrong();
@@ -96,6 +100,7 @@ public class PlayerRepository implements IPlayerRepository {
         // no tiles = 100% (division by 0 not possible)
         if (totalTileCount <= 0) {
             explorationPercentage = 100;
+            gameRepository.setRunning(false);
             return 100;
         }
 
@@ -104,6 +109,12 @@ public class PlayerRepository implements IPlayerRepository {
 
         // TODO: Remove this when UI elements are present
         System.out.println("Explored: " + explorationPercentage + "%");
+
+        try {
+            stopWatch.saveOrIgnoreSplit(explorationPercentage);
+        } catch (Exception e) {
+            System.out.println("Stopwatch Error: " + e.getMessage());
+        }
 
         return percentage;
     }
@@ -115,6 +126,8 @@ public class PlayerRepository implements IPlayerRepository {
         this.intruders = new ArrayList<>();
         this.guards = new ArrayList<>();
         this.agents = new ArrayList<>();
+        this.completeKnowledgeProgress = new TileArea();
+        this.stopWatch = new StopWatch();
 
         try {
             this.random = SecureRandom.getInstanceStrong();
@@ -376,5 +389,15 @@ public class PlayerRepository implements IPlayerRepository {
     @Override
     public void setExplorationPercentage(float explorationPercentage) {
         this.explorationPercentage = explorationPercentage;
+    }
+
+    @Override
+    public StopWatch getStopWatch() {
+        return stopWatch;
+    }
+
+    @Override
+    public void setStopWatch(StopWatch stopWatch) {
+        this.stopWatch = stopWatch;
     }
 }

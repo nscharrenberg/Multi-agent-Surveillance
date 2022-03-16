@@ -2,6 +2,7 @@ module com.nscharrenberg.um.multiagentsurveillance {
     requires javafx.controls;
     requires javafx.fxml;
     requires cloning;
+    requires json;
 
     opens com.nscharrenberg.um.multiagentsurveillance to javafx.fxml, cloning;
     exports com.nscharrenberg.um.multiagentsurveillance;

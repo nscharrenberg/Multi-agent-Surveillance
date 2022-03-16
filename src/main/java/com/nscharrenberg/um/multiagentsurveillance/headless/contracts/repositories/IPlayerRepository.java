@@ -64,6 +64,8 @@ public interface IPlayerRepository {
 
     void setAgents(List<Agent> agents);
 
+    float calculateAgentExplorationRate(Agent agent);
+
     float getExplorationPercentage();
 
     void setExplorationPercentage(float explorationPercentage);

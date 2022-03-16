@@ -82,6 +82,20 @@ public class PlayerRepository implements IPlayerRepository {
     }
 
     @Override
+    public float calculateAgentExplorationRate(Agent agent){
+        float totalTileCount = mapRepository.getBoard().height() * mapRepository.getBoard().width();
+        float discoveredAreaTileCount = 0;
+
+        // TODO: Could probably do with some optimization
+        for (Map.Entry<Integer, HashMap<Integer, Tile>> rowEntry : agent.getKnowledge().getRegion().entrySet()) {
+            for (Map.Entry<Integer, Tile> colEntry : rowEntry.getValue().entrySet()) {
+                discoveredAreaTileCount += 1;
+            }
+        }
+        return (discoveredAreaTileCount / totalTileCount) * 100;
+    }
+
+    @Override
     public float calculateExplorationPercentage() {
         for (Agent agent : agents) {
             completeKnowledgeProgress = (TileArea) completeKnowledgeProgress.merge(agent.getKnowledge());

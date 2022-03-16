@@ -13,11 +13,12 @@ import static com.nscharrenberg.um.multiagentsurveillance.headless.utils.recorde
 public class GameConfigurationRecorder {
 
 
-    public void setUpConfFile() throws JSONException {
+    public void setUpConfFiles() throws Exception {
 
         //Creating folders for recording
         String directoryPath = System.getProperty("user.dir") + "\\Recorder";
         File directory = new File(directoryPath);
+        directory.mkdir();
         int fileCount = directory.list().length + 1;
         directoryPath += "\\Game#" + fileCount;
         directory = new File(directoryPath);
@@ -27,6 +28,14 @@ public class GameConfigurationRecorder {
         GAME_ID = fileCount;
 
         //Creating Game Configuration file
+        setUpGameConfiguration(fileCount, directoryPath);
+
+        //Creating Agent files
+        setUpFirstRecording(directoryPath);
+
+    }
+
+    private void setUpGameConfiguration(int fileCount, String directoryPath) throws JSONException {
         List<Agent> agentList = Factory.getPlayerRepository().getAgents();
 
         JSONArray jsonArray = new JSONArray();
@@ -52,21 +61,36 @@ public class GameConfigurationRecorder {
         } catch(Exception e){
             throw new RuntimeException("Error Game Configuration in GameConfigurationRecorder.java");
         }
+    }
 
-        //Creating folder for Agents
+    private void setUpFirstRecording(String directoryPath) throws Exception {
         File agents = new File(directoryPath + "\\Agents");
         agents.mkdir();
 
-        //Creation files for Agents
-        for (int i = 0; i < agentList.size(); i++) {
-            JSONArray jsonArrayAgent = new JSONArray();
-            String agent_num = "Agent#"+ (i+1);
-            jsonArrayAgent.put(agent_num);
-            try (FileWriter file = new FileWriter(agents.getPath() + "\\" + agent_num)){
-                file.write(jsonArrayAgent.toString());
+        int agentId = 1;
+        for (Agent agent : Factory.getPlayerRepository().getAgents()) {
+            JSONArray agentJSON = new JSONArray();
+
+            JSONObject moveJSON = new JSONObject();
+            moveJSON.put("Move", 0);
+            JSONObject agentCoordinates = new JSONObject();
+            agentCoordinates.put("X", agent.getPlayer().getTile().getX());
+            agentCoordinates.put("Y", agent.getPlayer().getTile().getY());
+            moveJSON.put("Location", agentCoordinates);
+            moveJSON.put("Time", 0);
+            moveJSON.put("Time to decide", 0);
+            moveJSON.put("Exploration rate %", Factory.getPlayerRepository().calculateAgentExplorationRate(agent));
+            moveJSON.put("Total Exploration rate %", Factory.getPlayerRepository().getExplorationPercentage());
+
+            agentJSON.put(moveJSON);
+
+            try (FileWriter file = new FileWriter(agents.getPath() + "\\Agent#" + agentId)){
+                file.write(agentJSON.toString());
             } catch(Exception e){
                 throw new RuntimeException("Error Agents recorder in GameConfigurationRecorder.java");
             }
+
+            agentId++;
         }
     }
 }

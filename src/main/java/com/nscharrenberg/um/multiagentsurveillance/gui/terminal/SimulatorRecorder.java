@@ -26,7 +26,7 @@ public class SimulatorRecorder {
         Factory.init();
         importMap();
         spawn();
-        new GameConfigurationRecorder().setUpConfFile();
+        new GameConfigurationRecorder().setUpConfFiles();
         gameLoop();
     }
 
@@ -52,10 +52,9 @@ public class SimulatorRecorder {
 
     private void gameLoop() throws Exception {
         String directoryPath = System.getProperty("user.dir") + "\\Recorder\\Game#" + GAME_ID + "\\Agents";
-        setUpFirstRecording(directoryPath);
-
 
         Factory.getGameRepository().setRunning(true);
+        Factory.getPlayerRepository().getStopWatch().start();
         int moveCount = 1;
         while (Factory.getGameRepository().isRunning()) {
             int agentId = 1;
@@ -68,7 +67,7 @@ public class SimulatorRecorder {
                 Long moveTimeDecide = endTime - startTime;
                 agent.execute(move);
 
-                JSONArray agentJSON = new JSONArray(directoryPath + "Agent#" + agentId);
+                JSONArray agentJSON = new JSONArray(new File(directoryPath + "\\Agent#" + agentId));
 
                 JSONObject moveJSON = new JSONObject();
                 moveJSON.put("Move", moveCount);
@@ -92,30 +91,6 @@ public class SimulatorRecorder {
                 System.out.println("Out of Iterations - Game Over");
                 break;
             }
-        }
-    }
-
-    private void setUpFirstRecording(String directoryPath) throws Exception {
-
-        int agentId = 1;
-        Long time = Factory.getPlayerRepository().getStopWatch().getDurationInSeconds();
-        for (Agent agent : Factory.getPlayerRepository().getAgents()) {
-            JSONArray agentJSON = new JSONArray(directoryPath + "Agent#" + agentId);
-
-            JSONObject moveJSON = new JSONObject();
-            moveJSON.put("Move", 0);
-            JSONObject agentCoordinates = new JSONObject();
-            agentCoordinates.put("X", agent.getPlayer().getTile().getX());
-            agentCoordinates.put("Y", agent.getPlayer().getTile().getY());
-            moveJSON.put("Location", agentCoordinates);
-            moveJSON.put("Time", time);
-            moveJSON.put("Time to decide", 0);
-            moveJSON.put("Exploration rate %", Factory.getPlayerRepository().calculateAgentExplorationRate(agent));
-            moveJSON.put("Total Exploration rate %", Factory.getPlayerRepository().getExplorationPercentage());
-
-            agentJSON.put(moveJSON);
-
-            agentId++;
         }
     }
 }

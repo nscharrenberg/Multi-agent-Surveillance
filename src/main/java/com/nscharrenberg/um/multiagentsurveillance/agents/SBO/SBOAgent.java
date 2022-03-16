@@ -95,15 +95,14 @@ public class SBOAgent extends Agent {
             if(visited.getByCoordinates(t.getX(),t.getY()).isEmpty()) {
                 if(unobstructedTile(this.mapRepository.getBoard(), t)) {
                     scanned.push(t);
-                    // TODO: consider how to mix vision with visited tiles
-                    //visited.add(t);
                 }
             }
         }
+    }
 
-        // More advanced gathering based on vision
-        // TODO: implement
-
+    private void gatherV2() {
+        // TODO: consider how to mix vision adjacency with visited tiles
+        // visited.add(t);
 
     }
 

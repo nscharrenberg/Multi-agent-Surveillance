@@ -16,6 +16,7 @@ import java.util.*;
 
 public class SBOAgent extends Agent {
     private final Stack<Tile> scanned = new Stack<>();
+    private final TileArea visited = new TileArea();
 
     public SBOAgent(Player agent) {
         super(agent);
@@ -43,45 +44,67 @@ public class SBOAgent extends Agent {
     @Override
     public Angle decide() {
 
+        int SBOversion = 1;
+        Tile goal = this.player.getTile();
+        try {
+            //System.out.println("knowledgesize: " + this.knowledge.getRegion().entrySet().size());
+            //System.out.println("vissize: " + this.player.getVision().getRegion().entrySet().size());
+        } catch (Exception exc) {
+            System.out.println("Shits empty bruh");
+            System.out.println(exc.getMessage());
+        }
 
-        System.out.println("knowledgesize: " + knowledge.getRegion().entrySet().size());
+        // V1:
+        if(SBOversion == 1) {
+            visited.add(this.player.getTile());
+            gather();
 
-        // Update Stack
-        //gather();
-        gatherV2();
-
-        // Select first valid top Tile from Stack
-        Tile goal = player.getTile();
-        while(!scanned.isEmpty()) {
-            Tile top = scanned.peek();
-            if(knowledge.getByCoordinates(top.getX(), top.getY()).isPresent()) {
-                scanned.pop();
-            } else {
-                goal = scanned.peek();
-                break;
+            while(!scanned.isEmpty()) {
+                Tile top = scanned.peek();
+                if(this.visited.getByCoordinates(top.getX(), top.getY()).isPresent()) {
+                    scanned.pop();
+                } else {
+                    goal = scanned.peek();
+                    break;
+                }
             }
         }
 
-        // TODO: If stack is empty, search for teleporter
-        System.out.println("Current goal Tile: " + goal.getX() +"  "+ goal.getY());
+        // V2:
+        if(SBOversion == 2) {
+            gatherV2();
 
-//        if(player.getVision() != null) {
-//            // If goal tile is outside the knowledge, get the adjacent tile thats inside the knowledge
+            while(!scanned.isEmpty()) {
+                Tile top = scanned.peek();
+                if(this.knowledge.getByCoordinates(top.getX(), top.getY()).isPresent()) {
+                    scanned.pop();
+                } else {
+                    goal = scanned.peek();
+                    break;
+                }
+            }
+
+            // If goal tile is outside the knowledge, get the adjacent tile thats inside the knowledge
 //            if(knowledge.getByCoordinates(goal.getX(), goal.getY()).isEmpty()) {
 //                for (Tile at: getAdjacent(goal)) {
 //                    if(knowledge.getByCoordinates(at.getX(),at.getY()).isPresent())
 //                        goal = at;
 //                }
 //            }
-//        }
-
-        for (Tile st:scanned){
-            System.out.println("Stack tile: " + st.getX() +"  "+ st.getY());
         }
+
+        // TODO: If stack is empty, search for teleporter
+        //System.out.println("Current goal Tile: " + goal.getX() +"  "+ goal.getY());
+        //System.out.println("Stack size: " + scanned.size());
+
+
+//        for (Tile st:scanned){
+//            System.out.println("Stack tile: " + st.getX() +"  "+ st.getY());
+//        }
 
         // Turn goal tile into Queue angle
         BFS bfs = new BFS();
-        plannedMoves = bfs.execute(mapRepository.getBoard(), player, goal).get().getMoves();
+        plannedMoves = bfs.execute(mapRepository.getBoard(), this.player, goal).get().getMoves();
 
         return plannedMoves.poll();
     }
@@ -89,7 +112,7 @@ public class SBOAgent extends Agent {
     private void gather() {
         Tile current = player.getTile();
         for (Tile t : getAdjacent(current)) {
-            if(knowledge.getByCoordinates(t.getX(),t.getY()).isEmpty()) {
+            if(this.visited.getByCoordinates(t.getX(),t.getY()).isEmpty()) {
                 if(unobstructedTile(this.mapRepository.getBoard(), t)) {
                     scanned.push(t);
                 }
@@ -98,19 +121,18 @@ public class SBOAgent extends Agent {
     }
 
     private void gatherV2() {
-        if(player.getVision() != null) {
-            System.out.println("visionsize: " + player.getVision().getRegion().entrySet().size());
-            for (Map.Entry<Integer, HashMap<Integer, Tile>> intHashMapEntry : player.getVision().getRegion().entrySet()) {
+        if(this.player.getVision() != null) {
+            for (Map.Entry<Integer, HashMap<Integer, Tile>> intHashMapEntry : this.player.getVision().getRegion().entrySet()) {
                 Tile vt = intHashMapEntry.getValue().get(intHashMapEntry.getKey());
                 if(vt != null) {
-                    if(knowledge.getByCoordinates(vt.getX(), vt.getY()).isEmpty()) {
+                    if(this.knowledge.getByCoordinates(vt.getX(), vt.getY()).isEmpty()) {
                         if(unobstructedTile(mapRepository.getBoard(), vt))
                             scanned.addAll(getAdjacent(vt));
                     }
                 }
             }
         } else {
-            scanned.addAll(getAdjacent(player.getTile()));
+            scanned.addAll(getAdjacent(this.player.getTile()));
         }
     }
 

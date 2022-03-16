@@ -73,6 +73,10 @@ public class YamauchiAgent extends Agent {
 
     @Override
     public Angle decide() {
+
+        // Incosistent with explorer% ????
+        System.out.println("knowledgesize: " + this.knowledge.getRegion().entrySet().size());
+
         // If moves are alread planned just continue deciding them.
         if (!plannedMoves.isEmpty()) {
             return plannedMoves.poll();

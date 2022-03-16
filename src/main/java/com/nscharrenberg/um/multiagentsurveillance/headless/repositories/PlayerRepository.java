@@ -106,6 +106,7 @@ public class PlayerRepository implements IPlayerRepository {
 
         // TODO: Remove this when UI elements are present
         System.out.println("Explored: " + explorationPercentage + "%");
+        System.out.println("Knowledgesize: " + completeKnowledgeProgress.getRegion().entrySet().size());
 
         return percentage;
     }
@@ -233,9 +234,6 @@ public class PlayerRepository implements IPlayerRepository {
                 List<Tile> vision2 = characterVision.getVision(mapRepository.getBoard(), player.getTile());
                 player.getAgent().addKnowledge(vision2);
                 player.setVision(new TileArea(vision2));
-
-                System.out.println("visionsize in Repo: " + player.getVision().getRegion().entrySet().size());
-
                 calculateExplorationPercentage();
             }
 
@@ -298,7 +296,6 @@ public class PlayerRepository implements IPlayerRepository {
 
             player.getAgent().addKnowledge(vision);
             player.setVision(new TileArea(vision));
-            System.out.println("visionsize in Repo: " + player.getVision().getRegion().entrySet().size());
             calculateExplorationPercentage();
         }
     }

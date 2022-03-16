@@ -33,6 +33,7 @@ public class PlayerRepository implements IPlayerRepository {
     private List<Agent> agents;
 
     private static final Class<? extends Agent> agentType = YamauchiAgent.class;
+    private static final Class<? extends Agent> agentType2 = SBOAgent.class;
 
     private float explorationPercentage = 0;
 
@@ -180,7 +181,10 @@ public class PlayerRepository implements IPlayerRepository {
                         Guard guard = new Guard(tile, Angle.UP);
                         tile.add(guard);
                         guards.add(guard);
-                        agent = spawnAgent(guard, agentType);
+                        //agent = spawnAgent(guard, agentType);
+
+                        agent = spawnAgent(guard, agentType2);
+                        // Changed this ^ to SBO agent
                     }
 
                     agent.addKnowledge(tile);

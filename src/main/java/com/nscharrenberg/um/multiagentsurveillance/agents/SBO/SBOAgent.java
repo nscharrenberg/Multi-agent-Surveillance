@@ -2,7 +2,6 @@ package com.nscharrenberg.um.multiagentsurveillance.agents.SBO;
 
 import com.nscharrenberg.um.multiagentsurveillance.agents.shared.Agent;
 import com.nscharrenberg.um.multiagentsurveillance.agents.shared.algorithms.pathfinding.BFS.BFS;
-import com.nscharrenberg.um.multiagentsurveillance.headless.Factory;
 import com.nscharrenberg.um.multiagentsurveillance.headless.contracts.repositories.IGameRepository;
 import com.nscharrenberg.um.multiagentsurveillance.headless.contracts.repositories.IMapRepository;
 import com.nscharrenberg.um.multiagentsurveillance.headless.contracts.repositories.IPlayerRepository;
@@ -12,35 +11,26 @@ import com.nscharrenberg.um.multiagentsurveillance.headless.exceptions.ItemAlrea
 import com.nscharrenberg.um.multiagentsurveillance.headless.exceptions.ItemNotOnTileException;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.*;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Stack;
-
+import java.util.*;
 
 public class SBOAgent extends Agent {
-    private final IMapRepository mapRepository;
-    private final IGameRepository gameRepository;
-    private final IPlayerRepository playerRepository;
+    //private final IMapRepository mapRepository;
+    //private final IGameRepository gameRepository;
+    //private final IPlayerRepository playerRepository;
 
-    private Stack<Tile> scanned;
+    private final Stack<Tile> scanned = new Stack<>();
     private Area<Tile> visited;
 
     public SBOAgent(Player agent) {
         super(agent);
-        this.mapRepository = Factory.getMapRepository();
-        this.playerRepository = Factory.getPlayerRepository();
-        this.gameRepository = Factory.getGameRepository();
-
+        //this.mapRepository = Factory.getMapRepository();
+        //this.playerRepository = Factory.getPlayerRepository();
+        //this.gameRepository = Factory.getGameRepository();
         visited = new TileArea();
-
     }
 
     public SBOAgent(Player agent, IMapRepository mapRepository, IGameRepository gameRepository, IPlayerRepository playerRepository) {
-        super(agent);
-        this.mapRepository = mapRepository;
-        this.gameRepository = gameRepository;
-        this.playerRepository = playerRepository;
+        super(agent, mapRepository, gameRepository, playerRepository);
     }
 
     @Override

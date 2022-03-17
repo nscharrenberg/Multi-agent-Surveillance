@@ -303,6 +303,21 @@ public class PlayerRepository implements IPlayerRepository {
         return localVision;
     }
 
+    public List<Tile> convertToGlobalVision(Player player, List<Tile> localVision) {
+        List<Tile> globalVision = new ArrayList<Tile>();
+        int spawnX = getSpawnPoint(player).getX();
+        int spawnY = getSpawnPoint(player).getY();
+        for (Tile tile : localVision) {
+            Optional<Tile> currentTileOpt = mapRepository.getBoard().getByCoordinates(tile.getX() + spawnX,tile.getY() + spawnY);
+
+            if (currentTileOpt.isEmpty()) {
+                continue;
+            }
+            globalVision.add(currentTileOpt.get());
+        }
+        return globalVision;
+    }
+
     @Override
     public List<Intruder> getIntruders() {
         return intruders;

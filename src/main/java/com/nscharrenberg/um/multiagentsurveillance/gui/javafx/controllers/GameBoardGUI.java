@@ -5,6 +5,7 @@ import com.nscharrenberg.um.multiagentsurveillance.agents.frontier.yamauchi.Yama
 import com.nscharrenberg.um.multiagentsurveillance.headless.Factory;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.*;
 import javafx.application.Application ;
+import javafx.application.Platform;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Group;
 import javafx.scene.Scene;
@@ -40,6 +41,7 @@ public class GameBoardGUI extends Application {
     private Double[] faceRIGHT_Guard;
 
     private List<Guard> guards;
+    private HashMap<Integer, HashMap<Integer, StackPane>> gridPanes = new HashMap<>();
 
 
     private ArrayList<TileComponents> components = new ArrayList<TileComponents>(Arrays.asList(TileComponents.SHADED, TileComponents.WALL, TileComponents.DOOR, TileComponents.WINDOW, TileComponents.TELEPORTER,
@@ -78,7 +80,7 @@ public class GameBoardGUI extends Application {
         TileArea board = Factory.getMapRepository().getBoardAsArea();
         guards = Factory.getPlayerRepository().getGuards();
 
-        GridPane grid = createBoard(board);
+        GridPane grid = buildEmptyBoard(board);
         Group group = new Group(grid);
         scene = new Scene(group, FRAME_WIDTH, FRAME_HEIGHT);
 
@@ -93,14 +95,64 @@ public class GameBoardGUI extends Application {
 
     public void updateGUI(){
         try {
-            GridPane grid = createBoard(Factory.getMapRepository().getBoardAsArea());
+            // TODO: Update Players
 
-            if (grid != null && scene != null) {
-                stage.getScene().setRoot(grid);
-            }
+            Platform.runLater(new Runnable() {
+                @Override
+                public void run() {
+                    for (Guard guard : guards) {
+                        Tile tile = guard.getTile();
+                        StackPane pane = gridPanes.get(tile.getX()).get(tile.getY());
+
+                        pane.getChildren().add(createGuard(guard.getDirection()));
+                    }
+                }
+            });
+
+            // TODO: Update Vision
+
+            // TODO: Update Knowledge
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
+    }
+
+    public GridPane buildEmptyBoard(TileArea board) {
+        GridPane gameGrid = new GridPane();
+        Optional<Tile> optTile;
+        Tile tile;
+        Rectangle rectangle;
+        StackPane stackPane = new StackPane();
+
+
+        for (int i = 0; i < GRID_WIDTH; i++) {
+            for (int j = 0; j < GRID_HEIGHT; j++) {
+
+                rectangle = new Rectangle(GRID_SQUARE_SIZE, GRID_SQUARE_SIZE);
+                rectangle.setStroke(Color.BLACK);
+
+                optTile = board.getByCoordinates(i,j);
+                if (optTile.isEmpty())
+                    System.out.println("Tile is Empty");
+
+                else{
+                    tile = optTile.get();
+                    stackPane = createTile(tile);
+                }
+
+
+                //gameGrid.add(new StackPane(tile, text), i, j);
+                gameGrid.add(stackPane, i, j);
+
+                if (!gridPanes.containsKey(i)) {
+                    gridPanes.put(i, new HashMap<>());
+                }
+
+                gridPanes.get(i).put(j, stackPane);
+            }
+        }
+
+        return gameGrid;
     }
 
     /**

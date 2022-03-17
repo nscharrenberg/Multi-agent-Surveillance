@@ -74,6 +74,21 @@ public class Tile {
         return blocked;
     }
 
+    public boolean isTeleport() {
+        boolean teleporter = false;
+
+        for (Item item : items) {
+            if (item instanceof Teleporter) {
+                if (((Teleporter) item).getSource().within(x, y)) {
+                    teleporter = true;
+                    break;
+                }
+            }
+        }
+
+        return teleporter;
+    }
+
     /**
      * Add Item to tile
      * @param item - the item to be added

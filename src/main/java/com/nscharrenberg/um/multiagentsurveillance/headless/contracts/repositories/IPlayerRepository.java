@@ -11,6 +11,8 @@ import java.util.List;
 
 public interface IPlayerRepository {
 
+    void calculateInaccessibleTiles();
+
     float calculateExplorationPercentage();
 
     /**

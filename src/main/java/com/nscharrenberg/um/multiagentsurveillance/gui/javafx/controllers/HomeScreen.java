@@ -22,7 +22,11 @@ public class HomeScreen extends Application {
         Button play = new Button("Play");
 
         play.setOnAction(e -> {
-            new GameController();
+            try {
+                new GameController();
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
 
             stage.close();
         });

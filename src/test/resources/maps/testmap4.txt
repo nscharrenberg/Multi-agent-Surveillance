@@ -18,6 +18,6 @@ wall = 0 0 1 80
 wall = 0 79 120 80
 wall = 119 0 120 80
 wall = 0 0 120 1
-teleport = 20 70 25 75 90 50 0.0
+teleport = 2 5 7 10 90 50 0.0
 shaded = 10 20 20 40
 texture = 10 20 20 40 0 0

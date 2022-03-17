@@ -1,12 +1,16 @@
 package com.nscharrenberg.um.multiagentsurveillance.headless.models;
 
-public enum Angle {
+public enum AdvancedAngle {
     UP(0, -1),
     DOWN(0, 1),
     LEFT(-1, 0),
-    RIGHT(1, 0);
+    RIGHT(1, 0),
+    TOP_LEFT(-1, -1),
+    TOP_RIGHT(1, -1),
+    BOTTOM_LEFT(-1, 1),
+    BOTTOM_RIGHT(1, 1);
 
-    Angle(int xIncrement, int yIncrement) {
+    AdvancedAngle(int xIncrement, int yIncrement) {
         this.xIncrement = xIncrement;
         this.yIncrement = yIncrement;
     }
@@ -20,13 +24,5 @@ public enum Angle {
 
     public int getyIncrement() {
         return yIncrement;
-    }
-
-    public static AdvancedAngle toAdvancedAngle(Angle angle) {
-        if (angle.equals(Angle.DOWN)) return AdvancedAngle.DOWN;
-        if (angle.equals(Angle.LEFT)) return AdvancedAngle.LEFT;
-        if (angle.equals(Angle.RIGHT)) return AdvancedAngle.RIGHT;
-
-        return AdvancedAngle.UP;
     }
 }

@@ -176,8 +176,8 @@ public class PlayerRepository implements IPlayerRepository {
                         Intruder intruder = new Intruder(tile, Angle.UP);
                         tile.add(intruder);
                         intruders.add(intruder);
-                        agent = spawnAgent(intruder, agentType);
                         spawnPoints.put(intruder.getId(), tile);
+                        agent = spawnAgent(intruder, agentType);
                         TileArea visionIntruder = new TileArea();
                         visionIntruder.add(tile);
                         agent.addKnowledge(convertToLocalVision(intruder, visionIntruder.getRegion()));
@@ -185,8 +185,8 @@ public class PlayerRepository implements IPlayerRepository {
                         Guard guard = new Guard(tile, Angle.UP);
                         tile.add(guard);
                         guards.add(guard);
-                        agent = spawnAgent(guard, agentType);
                         spawnPoints.put(guard.getId(), tile);
+                        agent = spawnAgent(guard, agentType);
                         TileArea visionGuard = new TileArea();
                         visionGuard.add(tile);
                         agent.addKnowledge(convertToLocalVision(guard, visionGuard.getRegion()));

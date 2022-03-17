@@ -67,7 +67,7 @@ public class GameConfigurationRecorder {
         File agents = new File(directoryPath + "\\Agents");
         agents.mkdir();
 
-        int agentId = 1;
+        int agentId = 0;
         for (Agent agent : Factory.getPlayerRepository().getAgents()) {
             JSONArray agentJSON = new JSONArray();
 

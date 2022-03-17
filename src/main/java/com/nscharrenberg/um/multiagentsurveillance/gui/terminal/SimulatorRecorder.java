@@ -14,15 +14,17 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONTokener;
 
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static com.nscharrenberg.um.multiagentsurveillance.headless.utils.recorder.RecordHelper.GAME_ID;
 
 public class SimulatorRecorder {
+
+    private int RECORD = 4;
 
     public SimulatorRecorder() throws Exception {
         Factory.init();
@@ -57,9 +59,13 @@ public class SimulatorRecorder {
 
         Factory.getGameRepository().setRunning(true);
         Factory.getPlayerRepository().getStopWatch().start();
+
+        List<JSONArray> JSONList = createJSONArrayAgent(Factory.getPlayerRepository().getAgents().size(), directoryPath);
+
         int moveCount = 1;
+        int point = 0;
         while (Factory.getGameRepository().isRunning()) {
-            int agentId = 1;
+            int agentId = 0;
             Long time = Factory.getPlayerRepository().getStopWatch().getDurationInSeconds();
             for (Agent agent : Factory.getPlayerRepository().getAgents()) {
 
@@ -69,7 +75,7 @@ public class SimulatorRecorder {
                 Long moveTimeDecide = endTime - startTime;
                 agent.execute(move);
 
-                JSONArray agentJSON = new JSONArray(new JSONTokener(new FileReader(directoryPath + "\\Agent#" + agentId)));
+                JSONArray agentJSON = JSONList.get(agentId);
 
                 JSONObject moveJSON = new JSONObject();
                 moveJSON.put("Move", moveCount);
@@ -89,9 +95,36 @@ public class SimulatorRecorder {
 
             moveCount++;
 
+            if(point == RECORD){
+                System.out.println("Successfully stored recordings");
+                writeData(JSONList, directoryPath);
+                JSONList = createJSONArrayAgent(Factory.getPlayerRepository().getAgents().size(), directoryPath);
+                point = 0;
+            } else {
+                point++;
+            }
+
             if (Factory.getPlayerRepository().getExplorationPercentage() >= 100) {
                 System.out.println("Out of Iterations - Game Over");
                 break;
+            }
+        }
+    }
+
+    private List<JSONArray> createJSONArrayAgent(int agentNum, String directoryPath) throws FileNotFoundException, JSONException {
+        ArrayList<JSONArray> JSONArray = new ArrayList<>();
+        for (int i = 0; i < agentNum; i++) {
+            JSONArray.add(new JSONArray(new JSONTokener(new FileReader(directoryPath + "\\Agent#" + i))));
+        }
+        return JSONArray;
+    }
+
+    private void writeData(List<JSONArray> agentJSON, String directoryPath){
+        for (int i = 0; i < agentJSON.size(); i++) {
+            try (FileWriter file = new FileWriter(directoryPath + "\\Agent#" + i)) {
+                file.write(agentJSON.get(i).toString());
+            } catch (Exception e) {
+                throw new RuntimeException("Error Agents recorder in GameConfigurationRecorder.java");
             }
         }
     }

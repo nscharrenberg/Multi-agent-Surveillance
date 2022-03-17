@@ -341,9 +341,8 @@ public class PlayerRepository implements IPlayerRepository {
         for (Map.Entry<Integer, HashMap<Integer, Tile>> rowEntry : globalVision.entrySet()) {
             for (Map.Entry<Integer, Tile> colEntry : rowEntry.getValue().entrySet()) {
                 for (Item item : colEntry.getValue().getItems()) {
-                    currentTileItems = colEntry.getValue().getItems();
-                    if (item instanceof Guard || item instanceof Intruder) {
-                        currentTileItems.remove(item);
+                    if (!(item instanceof Guard || item instanceof Intruder)) {
+                        currentTileItems.add(item);
                     } else {
                         continue;
                     }

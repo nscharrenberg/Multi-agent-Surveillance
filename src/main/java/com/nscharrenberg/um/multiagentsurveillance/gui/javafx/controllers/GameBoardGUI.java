@@ -144,7 +144,7 @@ public class GameBoardGUI extends Application {
 
         for (Player player : guards) {
             combinedVisions = combinedVisions.merge(player.getVision());
-            combinedKnowledge = combinedKnowledge.merge(player.getAgent().getKnowledge());
+            combinedKnowledge = combinedKnowledge.merge(new TileArea(Factory.getPlayerRepository().convertToGlobalVision(player, ((TileArea) player.getAgent().getKnowledge()).getRegion())));
 
             if (player.getAgent() instanceof YamauchiAgent) {
                 if (((YamauchiAgent) player.getAgent()).getChosenFrontier() != null) {

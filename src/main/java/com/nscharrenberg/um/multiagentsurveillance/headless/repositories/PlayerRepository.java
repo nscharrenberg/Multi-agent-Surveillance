@@ -278,42 +278,55 @@ public class PlayerRepository implements IPlayerRepository {
         return spawnPoints.get(player.getId());
     }
 
-    public List<Tile> convertToLocalVision(Player player, List<Tile> globalVision) {
-        //System.out.println("GLOBAL VISION: " + globalVision.get(0).getX() + " " + globalVision.get(0).getY());
-        List<Tile> localVision = new ArrayList<Tile>();
+    public HashMap<Integer, HashMap<Integer, Tile>> convertToLocalVision(Player player, HashMap<Integer, HashMap<Integer, Tile>> globalVision) {
+        HashMap<Integer, HashMap<Integer, Tile>> localVision = new HashMap<>();
         List<Item> currentTileItems= new ArrayList<Item>();
         int spawnX = getSpawnPoint(player).getX();
         int spawnY = getSpawnPoint(player).getY();
-        //System.out.println("SPAWN X: " + spawnX);
-        //System.out.println("SPAWN Y: " + spawnY);
-        for (Tile tile : globalVision) {
-            for (Item item : tile.getItems()) {
-                currentTileItems = tile.getItems();
-                if (item instanceof Guard || item instanceof Intruder) {
-                    currentTileItems.remove(item);
-                } else {
-                    continue;
+
+        for (Map.Entry<Integer, HashMap<Integer, Tile>> rowEntry : globalVision.entrySet()) {
+            for (Map.Entry<Integer, Tile> colEntry : rowEntry.getValue().entrySet()) {
+                for (Item item : colEntry.getValue().getItems()) {
+                    currentTileItems = colEntry.getValue().getItems();
+                    if (item instanceof Guard || item instanceof Intruder) {
+                        currentTileItems.remove(item);
+                    } else {
+                        continue;
+                    }
                 }
+                Tile currentTile = new Tile(colEntry.getValue().getX() - spawnX, colEntry.getValue().getY() - spawnY, currentTileItems);
+                if (!localVision.containsKey(rowEntry.getKey())) {
+                    localVision.put(rowEntry.getKey(), new HashMap<>());
+                }
+
+                localVision.get(rowEntry.getKey()).put(colEntry.getKey(), currentTile);
             }
-            //System.out.println("NEW X: " + (tile.getX() - spawnX));
-            //System.out.println("NEW Y: " + (tile.getY() - spawnY));
-            Tile currentTile = new Tile(tile.getX() - spawnX, tile.getY() - spawnY, currentTileItems);
-            localVision.add(currentTile);
+
         }
         return localVision;
     }
 
-    public List<Tile> convertToGlobalVision(Player player, List<Tile> localVision) {
-        List<Tile> globalVision = new ArrayList<Tile>();
+    public HashMap<Integer, HashMap<Integer, Tile>> convertToGlobalVision(Player player, HashMap<Integer, HashMap<Integer, Tile>> localVision) {
+        HashMap<Integer, HashMap<Integer, Tile>> globalVision = new HashMap<>();
+        List<Item> currentTileItems= new ArrayList<Item>();
         int spawnX = getSpawnPoint(player).getX();
         int spawnY = getSpawnPoint(player).getY();
-        for (Tile tile : localVision) {
-            Optional<Tile> currentTileOpt = mapRepository.getBoard().getByCoordinates(tile.getX() + spawnX,tile.getY() + spawnY);
 
-            if (currentTileOpt.isEmpty()) {
-                continue;
+        for (Map.Entry<Integer, HashMap<Integer, Tile>> rowEntry : localVision.entrySet()) {
+            for (Map.Entry<Integer, Tile> colEntry : rowEntry.getValue().entrySet()) {
+                Optional<Tile> currentTileOpt = mapRepository.getBoard().getByCoordinates(colEntry.getValue().getX() + spawnX,colEntry.getValue().getY() + spawnY);
+
+                if (currentTileOpt.isEmpty()) {
+                    continue;
+                }
+
+                if (!globalVision.containsKey(rowEntry.getKey())) {
+                    globalVision.put(rowEntry.getKey(), new HashMap<>());
+                }
+
+                globalVision.get(rowEntry.getKey()).put(colEntry.getKey(), currentTileOpt.get());
             }
-            globalVision.add(currentTileOpt.get());
+
         }
         return globalVision;
     }

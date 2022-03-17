@@ -178,15 +178,19 @@ public class PlayerRepository implements IPlayerRepository {
                         intruders.add(intruder);
                         agent = spawnAgent(intruder, agentType);
                         spawnPoints.put(intruder.getId(), tile);
+                        TileArea visionIntruder = new TileArea();
+                        visionIntruder.add(tile);
+                        agent.addKnowledge(convertToLocalVision(intruder, visionIntruder.getRegion()));
                     } else {
                         Guard guard = new Guard(tile, Angle.UP);
                         tile.add(guard);
                         guards.add(guard);
                         agent = spawnAgent(guard, agentType);
                         spawnPoints.put(guard.getId(), tile);
+                        TileArea visionGuard = new TileArea();
+                        visionGuard.add(tile);
+                        agent.addKnowledge(convertToLocalVision(guard, visionGuard.getRegion()));
                     }
-
-                    agent.addKnowledge(tile);
                     tileAssigned = true;
                 } catch (ItemAlreadyOnTileException e) {
                     System.out.println("Player Already on tile - this shouldn't happen");
@@ -210,7 +214,9 @@ public class PlayerRepository implements IPlayerRepository {
 
         this.agents.add(agent);
         player.setAgent(agent);
-        agent.addKnowledge(player.getTile());
+        TileArea visionAgent = new TileArea();
+        visionAgent.add(player.getTile());
+        agent.addKnowledge(convertToLocalVision(player, visionAgent.getRegion()));
         return agent;
     }
 
@@ -225,10 +231,10 @@ public class PlayerRepository implements IPlayerRepository {
             if (player.getAgent() != null) {
                 CharacterVision characterVision = new CharacterVision(6, player.getDirection());
                 List<Tile> vision = characterVision.getVision(mapRepository.getBoard(), player.getTile());
-                player.getAgent().addKnowledge(vision);
+                player.getAgent().addKnowledge(convertToLocalVision(player, (new TileArea(vision)).getRegion()));
 
                 List<Tile> vision2 = characterVision.getVision(mapRepository.getBoard(), player.getTile());
-                player.getAgent().addKnowledge(vision2);
+                player.getAgent().addKnowledge(convertToLocalVision(player, (new TileArea(vision2)).getRegion()));
                 player.setVision(new TileArea(vision2));
 
                 calculateExplorationPercentage();
@@ -271,10 +277,10 @@ public class PlayerRepository implements IPlayerRepository {
             if (player.getAgent() != null) {
                 CharacterVision characterVision = new CharacterVision(6, player.getDirection());
                 List<Tile> vision = characterVision.getVision(mapRepository.getBoard(), nextPosition);
-                player.getAgent().addKnowledge(convertToLocalVision(player, vision));
+                player.getAgent().addKnowledge(convertToLocalVision(player, (new TileArea(vision)).getRegion()));
 
                 List<Tile> vision2 = characterVision.getVision(mapRepository.getBoard(), player.getTile());
-                player.getAgent().addKnowledge(convertToLocalVision(player, vision2));
+                player.getAgent().addKnowledge(convertToLocalVision(player, (new TileArea(vision2)).getRegion()));
                 player.setVision(new TileArea(vision2));
 
                 calculateExplorationPercentage();
@@ -291,7 +297,7 @@ public class PlayerRepository implements IPlayerRepository {
             CharacterVision characterVision = new CharacterVision(6, player.getDirection());
             List<Tile> vision = characterVision.getVision(mapRepository.getBoard(), player.getTile());
 
-            player.getAgent().addKnowledge(convertToLocalVision(player, vision));
+            player.getAgent().addKnowledge(convertToLocalVision(player, (new TileArea(vision)).getRegion()));
             player.setVision(new TileArea(vision));
             calculateExplorationPercentage();
         }

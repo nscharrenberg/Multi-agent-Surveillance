@@ -7,6 +7,7 @@ import com.nscharrenberg.um.multiagentsurveillance.headless.exceptions.ItemAlrea
 import com.nscharrenberg.um.multiagentsurveillance.headless.exceptions.ItemNotOnTileException;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.*;
 
+import java.util.HashMap;
 import java.util.List;
 
 public interface IPlayerRepository {
@@ -45,7 +46,9 @@ public interface IPlayerRepository {
 
     public Tile getSpawnPoint(Player player);
 
-    public List<Tile> convertToLocalVision(Player player, List<Tile> globalVision);
+    public  HashMap<Integer, HashMap<Integer, Tile>> convertToLocalVision(Player player,  HashMap<Integer, HashMap<Integer, Tile>> globalVision);
+
+    public HashMap<Integer, HashMap<Integer, Tile>> convertToGlobalVision(Player player, HashMap<Integer, HashMap<Integer, Tile>> localVision);
 
     List<Intruder> getIntruders();
 

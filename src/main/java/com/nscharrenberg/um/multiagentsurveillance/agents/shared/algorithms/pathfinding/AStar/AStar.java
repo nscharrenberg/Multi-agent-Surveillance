@@ -61,8 +61,9 @@ public class AStar implements IPathFinding {
                 if (nextTileOpt.isPresent() && !nextTileOpt.get().isCollision() && visited.get(nextTileOpt.get().getX()).get(nextTileOpt.get().getY()).equals(Boolean.FALSE)) {
                     visited.get(nextTileOpt.get().getX()).put(nextTileOpt.get().getY(), Boolean.TRUE);
 
-                    if(!nextTileOpt.get().equals(target) && nextTileOpt.get().isTeleport())
+                    if (!target.isTeleport() && nextTileOpt.get().isTeleport())
                         continue;
+
 
                     int distance = computeDistance(nextTileOpt.get(), target);
 

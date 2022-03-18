@@ -47,7 +47,7 @@ public class GameController {
     }
 
     private void importMap() {
-        File file = new File("src/test/resources/maps/exam.txt");
+        File file = new File("src/test/resources/maps/exam_test.txt");
         String path = file.getAbsolutePath();
         MapImporter importer = new MapImporter();
 

@@ -26,7 +26,7 @@ public class YamauchiAgent extends Agent {
     private List<Frontier> frontiers = new ArrayList<>();
     private Frontier chosenFrontier = null;
     private SecureRandom random;
-    private IPathFinding pathFindingAlgorithm = new BFS();
+    private IPathFinding pathFindingAlgorithm = new AStar();
     private IWeightComparator weightDetector = new MinDistanceUnknownAreaComparator();
 
     public YamauchiAgent(Player player) {
@@ -289,6 +289,7 @@ public class YamauchiAgent extends Agent {
         // If No frontiers are found but teleporter is in knowledge, go to teleporter.
         if (chosenFrontier == null && possibleTeleport != null) {
             Frontier newFrontier = new Frontier(possibleTeleport);
+            newFrontier.setUnknownAreas(1);
             frontiers.add(newFrontier);
 
             // Find the shortest path to this tile

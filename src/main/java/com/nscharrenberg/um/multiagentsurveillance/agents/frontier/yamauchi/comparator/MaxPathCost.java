@@ -6,13 +6,8 @@ public class MaxPathCost implements IWeightComparator{
     @Override
     public Frontier compare(Frontier frontier, Frontier bestFrontier) {
 
-        if (frontier.getQueueNode().getDistance() < bestFrontier.getQueueNode().getDistance()) {
-            return frontier;
-        } else if(frontier.getQueueNode().getDistance() == bestFrontier.getQueueNode().getDistance()){
-            if(frontier.getQueueNode().getPathCost() > bestFrontier.getQueueNode().getPathCost())
-                return frontier;
-        }
-
-        return bestFrontier;
+        int f = frontier.getQueueNode().getPathCost() / frontier.getQueueNode().getDistance();
+        int bf = bestFrontier.getQueueNode().getPathCost() / bestFrontier.getQueueNode().getDistance();
+        return f > bf? frontier:bestFrontier;
     }
 }

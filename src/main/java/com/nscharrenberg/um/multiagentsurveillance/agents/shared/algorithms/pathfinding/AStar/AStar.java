@@ -83,7 +83,9 @@ public class AStar implements IPathFinding {
 
             Node currentNode = heap.extractMin();
 
-            if (currentNode == null) break;
+            if (currentNode == null){
+                return Optional.empty();
+            }
 
             tree = currentNode.getTreeNode();
         }
@@ -97,7 +99,7 @@ public class AStar implements IPathFinding {
         int pathCost = 0;
 
         while (tree.getParent() != null) {
-//            pathCost += unknownAreaCalculate.calculateUnknownArea(board, tree.getTile());
+            pathCost += unknownAreaCalculate.calculateUnknownArea(board, tree.getTile());
             sequenceMoves.addFirst(tree.getEntrancePosition());
             tree = tree.getParent();
         }

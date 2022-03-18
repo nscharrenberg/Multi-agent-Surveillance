@@ -72,12 +72,7 @@ public class AStar implements IPathFinding {
                     if (!tree.getEntrancePosition().equals(childNode.getEntrancePosition())) {
                         TreeNode additionalChildNode = new TreeNode(nextTileOpt.get(), angle, childNode);
 
-                        if(nextTileOpt.get().equals(target)){
-                            tree = additionalChildNode;
-                            break;
-                        }
-
-                        heap.insert(new Node(distance+1, additionalChildNode));
+                        heap.insert(new Node(distance+0.5, additionalChildNode));
                     } else {
                         heap.insert(new Node(distance, childNode));
                     }
@@ -108,13 +103,11 @@ public class AStar implements IPathFinding {
         }
 
 
-        Queue<Angle> queue = new LinkedList<>(sequenceMoves);
-
         if (sequenceMoves.isEmpty()) {
             return Optional.empty();
         }
 
-        QueueNode queueNode = new QueueNode(target, lastMove.getEntrancePosition(), queue, pathCost);
+        QueueNode queueNode = new QueueNode(target, lastMove.getEntrancePosition(), sequenceMoves, pathCost);
 
         return Optional.of(queueNode);
     }

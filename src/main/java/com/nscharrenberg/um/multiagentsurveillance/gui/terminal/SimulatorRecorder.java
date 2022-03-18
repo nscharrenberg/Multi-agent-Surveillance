@@ -79,10 +79,8 @@ public class SimulatorRecorder {
 
                 JSONObject moveJSON = new JSONObject();
                 moveJSON.put("Move", moveCount);
-                JSONObject agentCoordinates = new JSONObject();
-                agentCoordinates.put("X", agent.getPlayer().getTile().getX());
-                agentCoordinates.put("Y", agent.getPlayer().getTile().getY());
-                moveJSON.put("Location", agentCoordinates);
+                moveJSON.put("X", agent.getPlayer().getTile().getX());
+                moveJSON.put("Y", agent.getPlayer().getTile().getY());
                 moveJSON.put("Time", time);
                 moveJSON.put("Time to decide", moveTimeDecide);
                 moveJSON.put("Exploration rate %", Factory.getPlayerRepository().calculateAgentExplorationRate(agent));

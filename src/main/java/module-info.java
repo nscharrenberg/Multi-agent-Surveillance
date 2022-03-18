@@ -7,6 +7,8 @@ module com.nscharrenberg.um.multiagentsurveillance {
     opens com.nscharrenberg.um.multiagentsurveillance to javafx.fxml, cloning;
     exports com.nscharrenberg.um.multiagentsurveillance;
     exports com.nscharrenberg.um.multiagentsurveillance.gui.javafx.controllers;
+    opens com.nscharrenberg.um.multiagentsurveillance.gui.dataGUI to javafx.fxml;
+    exports com.nscharrenberg.um.multiagentsurveillance.gui.dataGUI;
     opens com.nscharrenberg.um.multiagentsurveillance.gui.javafx.controllers to javafx.fxml;
     exports com.nscharrenberg.um.multiagentsurveillance.headless.repositories;
     opens com.nscharrenberg.um.multiagentsurveillance.headless.repositories to cloning;

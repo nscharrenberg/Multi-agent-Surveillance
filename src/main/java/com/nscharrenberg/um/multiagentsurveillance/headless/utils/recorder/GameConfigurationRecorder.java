@@ -73,10 +73,8 @@ public class GameConfigurationRecorder {
 
             JSONObject moveJSON = new JSONObject();
             moveJSON.put("Move", 0);
-            JSONObject agentCoordinates = new JSONObject();
-            agentCoordinates.put("X", agent.getPlayer().getTile().getX());
-            agentCoordinates.put("Y", agent.getPlayer().getTile().getY());
-            moveJSON.put("Location", agentCoordinates);
+            moveJSON.put("X", agent.getPlayer().getTile().getX());
+            moveJSON.put("Y", agent.getPlayer().getTile().getY());
             moveJSON.put("Time", 0);
             moveJSON.put("Time to decide", 0);
             moveJSON.put("Exploration rate %", Factory.getPlayerRepository().calculateAgentExplorationRate(agent));

@@ -26,7 +26,7 @@ public class YamauchiAgent extends Agent {
     private List<Frontier> frontiers = new ArrayList<>();
     private Frontier chosenFrontier = null;
     private SecureRandom random;
-    private IPathFinding pathFindingAlgorithm = new AStar();
+    private IPathFinding pathFindingAlgorithm = new BFS();
     private IWeightComparator weightDetector = new MinDistanceUnknownAreaComparator();
 
     public YamauchiAgent(Player player) {
@@ -170,12 +170,23 @@ public class YamauchiAgent extends Agent {
     private void detectFrontiers() {
         frontiers.clear();
         chosenFrontier = null;
+        Tile possibleTeleport = null;
 
         for (Map.Entry<Integer, HashMap<Integer, Tile>> rowEntry : knowledge.getRegion().entrySet()) {
             for (Map.Entry<Integer, Tile> colEntry : rowEntry.getValue().entrySet()) {
                 // Reject tile if its a collidable object
                 if (colEntry.getValue().isCollision() && !colEntry.getValue().getItems().contains(player)) {
                     continue;
+                }
+
+                if (colEntry.getValue().isTeleport()) {
+                    if (possibleTeleport == null
+                    || (Math.abs(player.getTile().getX() - colEntry.getValue().getX()) < Math.abs(player.getTile().getX() - possibleTeleport.getX()) && Math.abs(player.getTile().getX() - colEntry.getValue().getY()) < Math.abs(player.getTile().getX() - possibleTeleport.getY()))
+                            || (Math.abs(player.getTile().getX() - colEntry.getValue().getX()) < Math.abs(player.getTile().getX() - possibleTeleport.getX()))
+                            || (Math.abs(player.getTile().getX() - colEntry.getValue().getY()) < Math.abs(player.getTile().getX() - possibleTeleport.getY()))
+                    ) {
+                        possibleTeleport = colEntry.getValue();
+                    }
                 }
 
                 // Reject if all tile is surrounded by collision objects or teleporters
@@ -273,6 +284,28 @@ public class YamauchiAgent extends Agent {
                     }
                 }
             }
+        }
+
+        // If No frontiers are found but teleporter is in knowledge, go to teleporter.
+        if (chosenFrontier == null && possibleTeleport != null) {
+            Frontier newFrontier = new Frontier(possibleTeleport);
+            frontiers.add(newFrontier);
+
+            // Find the shortest path to this tile
+            Optional<QueueNode> queueNodeOpt = pathFindingAlgorithm.execute(knowledge, player, possibleTeleport);
+
+            if (queueNodeOpt.isPresent()) {
+                QueueNode queueNode = queueNodeOpt.get();
+
+                if (queueNode.getTile().isCollision()) return;
+                if (newFrontier.getQueueNode() == null) {
+                    newFrontier.setQueueNode(queueNode);
+                } else if (queueNode.getDistance() < newFrontier.getQueueNode().getDistance()) {
+                    newFrontier.setQueueNode(queueNode);
+                }
+            }
+
+            chosenFrontier = newFrontier;
         }
     }
 

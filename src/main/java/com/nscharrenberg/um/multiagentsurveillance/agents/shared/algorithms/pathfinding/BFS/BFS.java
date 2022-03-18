@@ -56,6 +56,10 @@ public class BFS implements IPathFinding {
                 Optional<Tile> nextTileOpt = BoardUtils.nextPosition(board, currentNode.getTile(), angle);
 
                 if (nextTileOpt.isPresent() && !nextTileOpt.get().isCollision() && visited.get(nextTileOpt.get().getX()).get(nextTileOpt.get().getY()).equals(Boolean.FALSE)) {
+                    if (!target.isTeleport() && nextTileOpt.get().isTeleport()) {
+                        continue;
+                    }
+
                     visited.get(nextTileOpt.get().getX()).put(nextTileOpt.get().getY(), Boolean.TRUE);
 
                     QueueNode adj = new QueueNode(nextTileOpt.get(), angle, cloner.deepClone(currentNode.getMoves()), 0);

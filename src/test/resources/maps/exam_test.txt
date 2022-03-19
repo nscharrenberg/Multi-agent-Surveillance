@@ -1,0 +1,13 @@
+height = 100
+width = 200
+numGuards = 1
+baseSpeedGuard = 5
+distanceViewing = 10
+numberMarkers = 5
+smellingDistance = 5
+spawnAreaGuards = 2 2 20 10
+wall = 0 0 1 25
+wall = 0 24 25 25
+wall = 24 0 25 25
+wall = 0 0 25 1
+teleport = 20 20 21 21 50 90 0.0

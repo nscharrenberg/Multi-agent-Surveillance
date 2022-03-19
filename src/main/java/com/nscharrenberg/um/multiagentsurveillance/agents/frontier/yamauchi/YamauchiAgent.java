@@ -29,6 +29,9 @@ public class YamauchiAgent extends Agent {
     private IPathFinding pathFindingAlgorithm = new AStar();
     private IWeightComparator weightDetector = new MinDistanceUnknownAreaComparator();
 
+    private int consecutiveNoFrontier = 0;
+    private static int MAX_CONSECUTIVE_NO_FRONTIER = 3;
+
     public YamauchiAgent(Player player) {
         super(player);
         try {
@@ -85,6 +88,7 @@ public class YamauchiAgent extends Agent {
 
         // No Frontier found, just do a random move for now
         if (chosenFrontierOpt.isEmpty() || chosenFrontierOpt.get().getQueueNode() == null) {
+            consecutiveNoFrontier++;
             int value = this.random.nextInt(100);
 
             Angle move = player.getDirection();
@@ -110,6 +114,8 @@ public class YamauchiAgent extends Agent {
 
             return move;
         }
+
+        consecutiveNoFrontier = 0;
 
         Frontier chosenFrontier = chosenFrontierOpt.get();
 
@@ -198,7 +204,7 @@ public class YamauchiAgent extends Agent {
                     continue;
                 }
 
-                if (colEntry.getValue().isTeleport()) {
+                if (colEntry.getValue().isTeleport() && consecutiveNoFrontier >= MAX_CONSECUTIVE_NO_FRONTIER) {
                     if (possibleTeleport == null
                             || (Math.abs(player.getTile().getX() - colEntry.getValue().getX()) < Math.abs(player.getTile().getX() - possibleTeleport.getX()) && Math.abs(player.getTile().getX() - colEntry.getValue().getY()) < Math.abs(player.getTile().getX() - possibleTeleport.getY()))
                             || (Math.abs(player.getTile().getX() - colEntry.getValue().getX()) < Math.abs(player.getTile().getX() - possibleTeleport.getX()))
@@ -286,12 +292,8 @@ public class YamauchiAgent extends Agent {
             }
         }
 
-        if (chosenFrontier == null) {
-            System.out.printf("No frontier");
-        }
-
         // If No frontiers are found but teleporter is in knowledge, go to teleporter.
-        if (chosenFrontier == null && possibleTeleport != null) {
+        if (chosenFrontier == null && possibleTeleport != null && consecutiveNoFrontier >= MAX_CONSECUTIVE_NO_FRONTIER) {
             Frontier newFrontier = new Frontier(possibleTeleport);
             newFrontier.setUnknownAreas(1);
             frontiers.add(newFrontier);

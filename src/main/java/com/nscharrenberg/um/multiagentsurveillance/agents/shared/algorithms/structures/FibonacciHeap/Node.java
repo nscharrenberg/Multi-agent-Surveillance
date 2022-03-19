@@ -8,13 +8,14 @@ public class Node{
 
     protected Node parent, left, right, child;
 
-    protected int key, degree;
+    protected double key;
+    protected int degree;
 
     private TreeNode treeNode;
 
     protected boolean mark;
 
-    public Node(int key, TreeNode treeNode){
+    public Node(double key, TreeNode treeNode){
         this.key = key;
         this.treeNode = treeNode;
         this.degree = 0;

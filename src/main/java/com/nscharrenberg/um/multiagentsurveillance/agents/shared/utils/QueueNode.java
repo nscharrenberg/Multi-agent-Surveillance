@@ -7,6 +7,7 @@ import java.util.LinkedList;
 import java.util.Queue;
 
 public class QueueNode {
+    int pathCost;
     Tile tile;
     Angle entrancePosition;
     Queue<Angle> moves;
@@ -17,10 +18,19 @@ public class QueueNode {
         this.entrancePosition = entrancePosition;
     }
 
-    public QueueNode(Tile tile, Angle entrancePosition, Queue<Angle> moves) {
+    public QueueNode(Tile tile, Angle entrancePosition, Queue<Angle> moves, int pathCost) {
         this.tile = tile;
         this.moves = moves;
         this.entrancePosition = entrancePosition;
+        this.pathCost = pathCost;
+    }
+
+    public int getPathCost() {
+        return pathCost;
+    }
+
+    public void setPathCost(int pathCost) {
+        this.pathCost = pathCost;
     }
 
     public Tile getTile() {

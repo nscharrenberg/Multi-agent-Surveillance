@@ -4,6 +4,7 @@ import com.nscharrenberg.um.multiagentsurveillance.agents.shared.Agent;
 import com.nscharrenberg.um.multiagentsurveillance.headless.Factory;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Guard;
 import com.nscharrenberg.um.multiagentsurveillance.headless.utils.files.MapImporter;
+import javafx.application.Platform;
 import javafx.concurrent.Task;
 import javafx.scene.control.Alert;
 import javafx.stage.Stage;
@@ -13,7 +14,7 @@ import java.io.IOException;
 
 public class GameController {
     private GameBoardGUI boardGUI;
-    private static int timeDelay = 300;
+    private static int timeDelay = 250;
 
     public GameController(){
         Factory.init();
@@ -34,6 +35,7 @@ public class GameController {
 
                 System.out.println(" Game Finished ");
                 gameFinished();
+                Factory.getGameRepository().setRunning(false);
 
                 return null;
             }
@@ -45,7 +47,7 @@ public class GameController {
     }
 
     private void importMap() {
-        File file = new File("src/test/resources/maps/testmap4.txt");
+        File file = new File("src/test/resources/maps/exam_test.txt");
         String path = file.getAbsolutePath();
         MapImporter importer = new MapImporter();
 
@@ -86,7 +88,7 @@ public class GameController {
                 }
             }
 
-            boardGUI.updateGUI();
+            Platform.runLater(() -> boardGUI.updateGUI());
 
             try {
                 Thread.sleep(timeDelay);

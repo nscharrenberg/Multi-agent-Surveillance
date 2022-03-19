@@ -1,11 +1,9 @@
 package com.nscharrenberg.um.multiagentsurveillance.agents.frontier.yamauchi;
 
 import com.nscharrenberg.um.multiagentsurveillance.agents.frontier.yamauchi.comparator.IWeightComparator;
-import com.nscharrenberg.um.multiagentsurveillance.agents.frontier.yamauchi.comparator.MaxPathCost;
 import com.nscharrenberg.um.multiagentsurveillance.agents.frontier.yamauchi.comparator.MinDistanceUnknownAreaComparator;
 import com.nscharrenberg.um.multiagentsurveillance.agents.shared.Agent;
 import com.nscharrenberg.um.multiagentsurveillance.agents.shared.algorithms.pathfinding.AStar.AStar;
-import com.nscharrenberg.um.multiagentsurveillance.agents.shared.algorithms.pathfinding.BFS.BFS;
 import com.nscharrenberg.um.multiagentsurveillance.agents.shared.algorithms.pathfinding.IPathFinding;
 import com.nscharrenberg.um.multiagentsurveillance.agents.shared.utils.QueueNode;
 import com.nscharrenberg.um.multiagentsurveillance.headless.contracts.repositories.IGameRepository;
@@ -23,14 +21,14 @@ import java.security.SecureRandom;
 import java.util.*;
 
 public class YamauchiAgent extends Agent {
-    private List<Frontier> frontiers = new ArrayList<>();
+    private final List<Frontier> frontiers = new ArrayList<>();
     private Frontier chosenFrontier = null;
     private SecureRandom random;
-    private IPathFinding pathFindingAlgorithm = new AStar();
-    private IWeightComparator weightDetector = new MinDistanceUnknownAreaComparator();
+    private final IPathFinding pathFindingAlgorithm = new AStar();
+    private final IWeightComparator weightDetector = new MinDistanceUnknownAreaComparator();
 
     private int consecutiveNoFrontier = 0;
-    private static int MAX_CONSECUTIVE_NO_FRONTIER = 3;
+    private static final int MAX_CONSECUTIVE_NO_FRONTIER_COUNT = 3;
 
     public YamauchiAgent(Player player) {
         super(player);
@@ -136,13 +134,9 @@ public class YamauchiAgent extends Agent {
         Frontier bestFrontier = null;
 
         for (Frontier frontier : frontiers) {
-            if (frontier.getQueueNode() == null) {
+            if (frontier.getQueueNode() == null || frontier.getUnknownAreas() == 0) {
                 continue;
             }
-
-
-            if(frontier.getUnknownAreas() == 0)
-                continue;
 
             if (bestFrontier == null)
                 bestFrontier = frontier;
@@ -204,14 +198,11 @@ public class YamauchiAgent extends Agent {
                     continue;
                 }
 
-                if (colEntry.getValue().isTeleport() && consecutiveNoFrontier >= MAX_CONSECUTIVE_NO_FRONTIER) {
-                    if (possibleTeleport == null
-                            || (Math.abs(player.getTile().getX() - colEntry.getValue().getX()) < Math.abs(player.getTile().getX() - possibleTeleport.getX()) && Math.abs(player.getTile().getX() - colEntry.getValue().getY()) < Math.abs(player.getTile().getX() - possibleTeleport.getY()))
-                            || (Math.abs(player.getTile().getX() - colEntry.getValue().getX()) < Math.abs(player.getTile().getX() - possibleTeleport.getX()))
-                            || (Math.abs(player.getTile().getX() - colEntry.getValue().getY()) < Math.abs(player.getTile().getX() - possibleTeleport.getY()))
-                    ) {
-                        possibleTeleport = colEntry.getValue();
-                    }
+                if (colEntry.getValue().isTeleport() && consecutiveNoFrontier >= MAX_CONSECUTIVE_NO_FRONTIER_COUNT && (possibleTeleport == null
+                        || (Math.abs(player.getTile().getX() - colEntry.getValue().getX()) < Math.abs(player.getTile().getX() - possibleTeleport.getX()) && Math.abs(player.getTile().getX() - colEntry.getValue().getY()) < Math.abs(player.getTile().getX() - possibleTeleport.getY()))
+                        || (Math.abs(player.getTile().getX() - colEntry.getValue().getX()) < Math.abs(player.getTile().getX() - possibleTeleport.getX()))
+                        || (Math.abs(player.getTile().getX() - colEntry.getValue().getY()) < Math.abs(player.getTile().getX() - possibleTeleport.getY())))) {
+                    possibleTeleport = colEntry.getValue();
                 }
 
                 // Check if it is a fully known tile
@@ -250,9 +241,7 @@ public class YamauchiAgent extends Agent {
                             QueueNode queueNode = queueNodeOpt.get();
 
                             if (queueNode.getTile().isCollision()) continue;
-                            if (frontier.getQueueNode() == null) {
-                                frontier.setQueueNode(queueNode);
-                            } else if (queueNode.getDistance() < frontier.getQueueNode().getDistance()) {
+                            if (frontier.getQueueNode() == null || (queueNode.getDistance() < frontier.getQueueNode().getDistance())) {
                                 frontier.setQueueNode(queueNode);
                             }
                         }
@@ -282,9 +271,7 @@ public class YamauchiAgent extends Agent {
                         QueueNode queueNode = queueNodeOpt.get();
 
                         if (queueNode.getTile().isCollision()) continue;
-                        if (newFrontier.getQueueNode() == null) {
-                            newFrontier.setQueueNode(queueNode);
-                        } else if (queueNode.getDistance() < newFrontier.getQueueNode().getDistance()) {
+                        if (newFrontier.getQueueNode() == null || (queueNode.getDistance() < newFrontier.getQueueNode().getDistance())) {
                             newFrontier.setQueueNode(queueNode);
                         }
                     }
@@ -293,7 +280,7 @@ public class YamauchiAgent extends Agent {
         }
 
         // If No frontiers are found but teleporter is in knowledge, go to teleporter.
-        if (chosenFrontier == null && possibleTeleport != null && consecutiveNoFrontier >= MAX_CONSECUTIVE_NO_FRONTIER) {
+        if (chosenFrontier == null && possibleTeleport != null && consecutiveNoFrontier >= MAX_CONSECUTIVE_NO_FRONTIER_COUNT) {
             Frontier newFrontier = new Frontier(possibleTeleport);
             newFrontier.setUnknownAreas(1);
             frontiers.add(newFrontier);
@@ -305,9 +292,7 @@ public class YamauchiAgent extends Agent {
                 QueueNode queueNode = queueNodeOpt.get();
 
                 if (queueNode.getTile().isCollision()) return;
-                if (newFrontier.getQueueNode() == null) {
-                    newFrontier.setQueueNode(queueNode);
-                } else if (queueNode.getDistance() < newFrontier.getQueueNode().getDistance()) {
+                if (newFrontier.getQueueNode() == null || (queueNode.getDistance() < newFrontier.getQueueNode().getDistance())) {
                     newFrontier.setQueueNode(queueNode);
                 }
             }

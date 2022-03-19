@@ -174,19 +174,13 @@ public class YamauchiAgent extends Agent {
 
         for (Map.Entry<Integer, HashMap<Integer, Tile>> rowEntry : knowledge.getRegion().entrySet()) {
             for (Map.Entry<Integer, Tile> colEntry : rowEntry.getValue().entrySet()) {
+                if (colEntry.getValue().isTeleport()) {
+                    System.out.printf("Teleporter");
+                }
+
                 // Reject tile if its a collidable object
                 if (colEntry.getValue().isCollision() && !colEntry.getValue().getItems().contains(player)) {
                     continue;
-                }
-
-                if (colEntry.getValue().isTeleport()) {
-                    if (possibleTeleport == null
-                    || (Math.abs(player.getTile().getX() - colEntry.getValue().getX()) < Math.abs(player.getTile().getX() - possibleTeleport.getX()) && Math.abs(player.getTile().getX() - colEntry.getValue().getY()) < Math.abs(player.getTile().getX() - possibleTeleport.getY()))
-                            || (Math.abs(player.getTile().getX() - colEntry.getValue().getX()) < Math.abs(player.getTile().getX() - possibleTeleport.getX()))
-                            || (Math.abs(player.getTile().getX() - colEntry.getValue().getY()) < Math.abs(player.getTile().getX() - possibleTeleport.getY()))
-                    ) {
-                        possibleTeleport = colEntry.getValue();
-                    }
                 }
 
                 // Reject if all tile is surrounded by collision objects or teleporters
@@ -206,6 +200,16 @@ public class YamauchiAgent extends Agent {
 
                 if (isInaccessible) {
                     continue;
+                }
+
+                if (colEntry.getValue().isTeleport()) {
+                    if (possibleTeleport == null
+                            || (Math.abs(player.getTile().getX() - colEntry.getValue().getX()) < Math.abs(player.getTile().getX() - possibleTeleport.getX()) && Math.abs(player.getTile().getX() - colEntry.getValue().getY()) < Math.abs(player.getTile().getX() - possibleTeleport.getY()))
+                            || (Math.abs(player.getTile().getX() - colEntry.getValue().getX()) < Math.abs(player.getTile().getX() - possibleTeleport.getX()))
+                            || (Math.abs(player.getTile().getX() - colEntry.getValue().getY()) < Math.abs(player.getTile().getX() - possibleTeleport.getY()))
+                    ) {
+                        possibleTeleport = colEntry.getValue();
+                    }
                 }
 
                 // Check if it is a fully known tile
@@ -284,6 +288,10 @@ public class YamauchiAgent extends Agent {
                     }
                 }
             }
+        }
+
+        if (chosenFrontier == null) {
+            System.out.printf("No frontier");
         }
 
         // If No frontiers are found but teleporter is in knowledge, go to teleporter.

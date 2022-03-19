@@ -174,10 +174,6 @@ public class YamauchiAgent extends Agent {
 
         for (Map.Entry<Integer, HashMap<Integer, Tile>> rowEntry : knowledge.getRegion().entrySet()) {
             for (Map.Entry<Integer, Tile> colEntry : rowEntry.getValue().entrySet()) {
-                if (colEntry.getValue().isTeleport()) {
-                    System.out.printf("Teleporter");
-                }
-
                 // Reject tile if its a collidable object
                 if (colEntry.getValue().isCollision() && !colEntry.getValue().getItems().contains(player)) {
                     continue;

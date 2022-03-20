@@ -18,10 +18,12 @@ import java.util.List;
 
 public class DataCharts {
 
+    private ParseJSONData parseData = new ParseJSONData();
+
     public void start(Stage stage, File directoryPath) throws Exception {
 
 
-        List<List<Coordinates>> data = parseData(directoryPath.getAbsolutePath());
+        List<List<Coordinates>> data = parseData.parseData(directoryPath.getAbsolutePath());
 
         stage.setTitle("Data Chart");
         //defining the axes
@@ -56,25 +58,5 @@ public class DataCharts {
 
         stage.setScene(scene);
         stage.show();
-    }
-
-    private List<List<Coordinates>> parseData(String directoryPath) throws Exception {
-
-        List<List<Coordinates>> result = new ArrayList<>();
-        for (int i = 0; i < DataHelper.agentToCompare.length; i++) {
-            JSONArray JSONArray = new JSONArray(new JSONTokener
-                    (new FileReader(directoryPath + "\\Agents\\Agent#" + DataHelper.agentToCompare[i])));
-
-            int length = JSONArray.length();
-
-            List<Coordinates> data = new ArrayList<>();
-            for (int j = 0; j < length; j++) {
-                JSONObject object = JSONArray.getJSONObject(j);
-                data.add(new Coordinates(object.get(DataHelper.X_and_Y[0]),
-                        object.get(DataHelper.X_and_Y[1])));
-            }
-            result.add(data);
-        }
-        return result;
     }
 }

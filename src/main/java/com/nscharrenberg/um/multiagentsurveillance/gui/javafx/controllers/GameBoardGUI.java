@@ -2,6 +2,7 @@ package com.nscharrenberg.um.multiagentsurveillance.gui.javafx.controllers;
 
 import com.nscharrenberg.um.multiagentsurveillance.agents.frontier.yamauchi.Frontier;
 import com.nscharrenberg.um.multiagentsurveillance.agents.frontier.yamauchi.YamauchiAgent;
+import com.nscharrenberg.um.multiagentsurveillance.gui.dataGUI.Coordinates;
 import com.nscharrenberg.um.multiagentsurveillance.headless.Factory;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.*;
 import javafx.application.Application ;
@@ -328,6 +329,75 @@ public class GameBoardGUI extends Application {
         faceDOWN_Guard = new Double[]{GSSD / 2.0, GSSD * 5.0 / 6.0, GSSD / 6.0, GSSD / 2.0, GSSD / 6.0, GSSD / 6.0, GSSD * 5.0 / 6.0, GSSD / 6.0, GSSD * 5.0 / 6.0, GSSD / 2.0, GSSD / 2.0, GSSD * 5.0 / 6.0};
         faceLEFT_Guard = new Double[]{GSSD / 6.0, GSSD / 2.0, GSSD / 2.0, GSSD * 5.0 / 6.0, GSSD * 5.0 / 6.0, GSSD * 5.0 / 6.0, GSSD * 5.0 / 6.0, GSSD / 6.0, GSSD / 2.0, GSSD / 6.0, GSSD / 6.0, GSSD / 2.0};
         faceRIGHT_Guard = new Double[]{GSSD * 5.0 / 6.0, GSSD / 2.0, GSSD / 2.0, GSSD / 6.0, GSSD / 6.0, GSSD / 6.0, GSSD / 6.0, GSSD * 5.0 / 6.0, GSSD / 2.0, GSSD * 5.0/ 6.0, GSSD * 5.0 / 6.0, GSSD / 2.0};
+    }
+
+    public void showPath(Stage st, List<List<Coordinates>> data){
+        TileArea board = Factory.getMapRepository().getBoardAsArea();
+        guards = Factory.getPlayerRepository().getGuards();
+
+        GridPane grid = createPathBoard(board, data);
+        Group group = new Group(grid);
+        scene = new Scene(group, FRAME_WIDTH, FRAME_HEIGHT);
+
+        this.stage = st;
+        stage.setMaximized(true);
+
+        stage.setTitle(" Multi-Agent Surveillance ");
+        stage.setScene(scene);
+
+        stage.show();
+    }
+
+    public GridPane createPathBoard(TileArea board, List<List<Coordinates>> data) {
+
+        GridPane gameGrid = new GridPane();
+        Optional<Tile> optTile;
+        Tile tile;
+        Rectangle rectangle;
+        StackPane stackPane = new StackPane();
+
+
+        for (int i = 0; i < GRID_WIDTH; i++) {
+            for (int j = 0; j < GRID_HEIGHT; j++) {
+
+                rectangle = new Rectangle(GRID_SQUARE_SIZE, GRID_SQUARE_SIZE);
+                rectangle.setStroke(Color.BLACK);
+
+                optTile = board.getByCoordinates(i,j);
+                if (optTile.isEmpty())
+                    System.out.println("Tile is Empty");
+
+                else{
+                    tile = optTile.get();
+                    stackPane = createTile(tile);
+                }
+
+
+                //gameGrid.add(new StackPane(tile, text), i, j);
+                gameGrid.add(stackPane, i, j);
+            }
+        }
+
+        Color[] colors = {Color.BLUE, Color.GREEN, Color.GREY, Color.RED,
+                Color.BROWN, Color.ORANGE, Color.YELLOW, Color.PURPLE};
+
+        int point = 0;
+        for (List<Coordinates> listCoordinates : data) {
+            for (Coordinates coordinates : listCoordinates) {
+                int x = (int) coordinates.x;
+                int y = (int) coordinates.y;
+
+                Rectangle r = new Rectangle(GRID_SQUARE_SIZE, GRID_SQUARE_SIZE);
+                r.setFill(colors[point]);
+
+                gameGrid.add(r, x, y);
+            }
+            point++;
+        }
+
+
+        //gameGrid.setPadding(new Insets(10, 10, 10, 10));
+        return gameGrid;
     }
 
 

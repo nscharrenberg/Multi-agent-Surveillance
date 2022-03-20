@@ -45,7 +45,7 @@ public class FileChooser extends Application {
             System.out.println(selectedDirectory.getAbsolutePath());
             primaryStage.close();
             try {
-                new DataCharts().start(primaryStage, selectedDirectory);
+                new PathData().start(primaryStage, selectedDirectory);
             } catch (Exception exception) {
                 exception.printStackTrace();
             }

@@ -43,7 +43,7 @@ public class GameRepository implements IGameRepository {
         importMap();
         setupAgents();
 
-        playerRepository.getStopWatch().start();
+//        playerRepository.getStopWatch().start();
     }
 
     @Override

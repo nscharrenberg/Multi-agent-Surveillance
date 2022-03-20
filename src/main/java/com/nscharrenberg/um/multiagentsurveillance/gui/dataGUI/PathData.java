@@ -2,11 +2,6 @@ package com.nscharrenberg.um.multiagentsurveillance.gui.dataGUI;
 
 import com.nscharrenberg.um.multiagentsurveillance.gui.javafx.controllers.GameBoardGUI;
 import com.nscharrenberg.um.multiagentsurveillance.headless.Factory;
-import javafx.scene.Scene;
-import javafx.scene.chart.LineChart;
-import javafx.scene.chart.NumberAxis;
-import javafx.scene.chart.XYChart;
-import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 import java.io.File;

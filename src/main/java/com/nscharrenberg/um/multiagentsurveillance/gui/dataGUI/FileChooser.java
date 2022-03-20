@@ -21,14 +21,15 @@ public class FileChooser extends Application {
     public void start(Stage primaryStage) {
         primaryStage.setTitle("File Chooser");
 
+        File parentDirectory = new File(System.getProperty("user.dir") + "\\Recorder");
+        parentDirectory.mkdir();
+
         DirectoryChooser directoryChooser = new DirectoryChooser();
-        directoryChooser.setInitialDirectory(new File("Recorder"));
+        directoryChooser.setInitialDirectory(parentDirectory);
 
         Button button = new Button("Select Directory");
         button.setOnAction(e -> {
             File selectedDirectory = null;
-
-            File parentDirectory = new File(System.getProperty("user.dir") + "\\Recorder");
 
             while(selectedDirectory == null){
                 selectedDirectory = directoryChooser.showDialog(primaryStage);
@@ -45,7 +46,11 @@ public class FileChooser extends Application {
             System.out.println(selectedDirectory.getAbsolutePath());
             primaryStage.close();
             try {
-                new PathData().start(primaryStage, selectedDirectory);
+
+                if(DataHelper.X_and_Y[0].equals("X") && DataHelper.X_and_Y[1].equals("Y"))
+                    new PathData().start(primaryStage, selectedDirectory);
+                else
+                    new DataCharts().start(primaryStage, selectedDirectory);
             } catch (Exception exception) {
                 exception.printStackTrace();
             }

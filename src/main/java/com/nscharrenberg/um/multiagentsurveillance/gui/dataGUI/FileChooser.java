@@ -3,6 +3,7 @@ package com.nscharrenberg.um.multiagentsurveillance.gui.dataGUI;
 import javafx.application.Application;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.stage.Stage;
 import javafx.scene.control.Button;
 import javafx.scene.layout.VBox;
@@ -29,19 +30,23 @@ public class FileChooser extends Application {
 
         Button button = new Button("Select Directory");
         button.setOnAction(e -> {
+            if (!parentDirectory.exists()) {
+                Alert parentAlert = new Alert(Alert.AlertType.INFORMATION);
+                parentAlert.setTitle("Must run Terminal Simulator first");
+                parentAlert.setContentText("There are no simulations to be found. Please run the Terminal Simulator at least once!");
+                parentAlert.show();
+            }
+
             File selectedDirectory = null;
 
-            while(selectedDirectory == null){
-                selectedDirectory = directoryChooser.showDialog(primaryStage);
+            selectedDirectory = directoryChooser.showDialog(primaryStage);
 
-
-                if(selectedDirectory == null)
-                    continue;
-                else if(selectedDirectory.getParent() == null)
-                    selectedDirectory = null;
-                else if(!selectedDirectory.getParent().equals(parentDirectory.getAbsolutePath()))
-                    selectedDirectory = null;
-            }
+            if(selectedDirectory == null)
+                return;
+            else if(selectedDirectory.getParent() == null)
+                selectedDirectory = null;
+            else if(!selectedDirectory.getParent().equals(parentDirectory.getAbsolutePath()))
+                selectedDirectory = null;
 
             System.out.println(selectedDirectory.getAbsolutePath());
             primaryStage.close();

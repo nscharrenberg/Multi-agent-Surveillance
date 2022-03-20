@@ -6,11 +6,13 @@ import com.nscharrenberg.um.multiagentsurveillance.headless.Factory;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.*;
 import javafx.application.Application ;
 import javafx.application.Platform;
+import javafx.geometry.Pos;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Polygon;
@@ -103,7 +105,7 @@ public class GameBoardGUI extends Application {
     private GridPane createLegend(){
         GridPane legend = new GridPane();
 
-        int LEGEND_WIDTH = FRAME_WIDTH - (GRID_WIDTH * GRID_SQUARE_SIZE) + 70;
+        int LEGEND_WIDTH = FRAME_WIDTH - (GRID_WIDTH * GRID_SQUARE_SIZE);
 
 
         Rectangle item = new Rectangle(LEGEND_WIDTH,100);
@@ -112,7 +114,18 @@ public class GameBoardGUI extends Application {
 
         Label lb = new Label("Legend");
 
-        legend.add(new StackPane(item, new Label("LEGEND")), 0,0);
+
+        HBox wallBox = new HBox(wallRectangle(new Rectangle(GRID_SQUARE_SIZE,GRID_SQUARE_SIZE)), lb);
+
+        BorderPane wallPane = new BorderPane();
+        wallPane.setLeft(wallRectangle(new Rectangle(GRID_SQUARE_SIZE,GRID_SQUARE_SIZE)));
+        wallPane.setCenter(new Label("="));
+        wallPane.setRight(new Label("Wall Tile"));
+
+        wallBox.setAlignment(Pos.CENTER_LEFT);
+        legend.add(wallPane, 0,0);
+
+
         return legend;
     }
 
@@ -148,7 +161,8 @@ public class GameBoardGUI extends Application {
                             }
                             vkTile = getTileOnIndex(rowEntry.getKey(), colEntry.getKey());
                             vkPane = gridPanes.get(rowEntry.getKey()).get(colEntry.getKey());
-                            vkPane.getChildren().set(0,createTile(vkTile, false, true));
+                            if (vkPane != null)
+                                vkPane.getChildren().set(0,createTile(vkTile, false, true));
                         }
                     }
 
@@ -156,7 +170,8 @@ public class GameBoardGUI extends Application {
                         for (Map.Entry<Integer, Tile> colEntry : rowEntry.getValue().entrySet()) {
                             vkTile = getTileOnIndex(rowEntry.getKey(), colEntry.getKey());
                             vkPane = gridPanes.get(rowEntry.getKey()).get(colEntry.getKey());
-                            vkPane.getChildren().set(0,createTile(vkTile, true, true));
+                            if (vkPane != null)
+                                vkPane.getChildren().set(0,createTile(vkTile, true, true));
                         }
                     }
 
@@ -342,6 +357,21 @@ public class GameBoardGUI extends Application {
             return new StackPane(rectangle);
         else
             return new StackPane(rectangle, polygon);
+    }
+
+    private Rectangle wallRectangle(Rectangle rectangle){
+        rectangle.setFill(Color.BLACK);
+        return rectangle;
+    }
+
+    private Rectangle windowRectangle(Rectangle rectangle){
+        rectangle.setFill(Color.BLACK);
+        return rectangle;
+    }
+
+    private Rectangle doorRectangle(Rectangle rectangle){
+        rectangle.setFill(Color.BROWN);
+        return rectangle;
     }
 
     private Polygon createGuard(Angle angle){

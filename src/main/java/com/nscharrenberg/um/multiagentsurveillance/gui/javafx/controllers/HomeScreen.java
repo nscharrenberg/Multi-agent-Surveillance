@@ -23,7 +23,7 @@ public class HomeScreen extends Application {
 
         play.setOnAction(e -> {
             try {
-                new GameController();
+                new Menu();
             } catch (Exception ex) {
                 ex.printStackTrace();
             }

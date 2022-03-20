@@ -13,29 +13,8 @@ public class Simulator {
 
     public Simulator() {
         Factory.init();
-        importMap();
-        spawn();
+        Factory.getGameRepository().startGame();
         gameLoop();
-    }
-
-    private void importMap() {
-        File file = new File("src/test/resources/maps/testmap2.txt");
-        String path = file.getAbsolutePath();
-        MapImporter importer = new MapImporter();
-
-        Factory.getGameRepository().setRunning(true);
-
-        try {
-            importer.load(path);
-        } catch (IOException e) {
-//            Factory.getGameRepository().setRunning(false);
-        }
-    }
-
-    private void spawn() {
-        for (int i = 1; i <= Factory.getGameRepository().getGuardCount(); i++) {
-            Factory.getPlayerRepository().spawn(Guard.class);
-        }
     }
 
     private void gameLoop() {
@@ -43,35 +22,19 @@ public class Simulator {
         while (Factory.getGameRepository().isRunning()) {
             int agentId = 0;
             for (Agent agent : Factory.getPlayerRepository().getAgents()) {
-                StringBuilder sb = new StringBuilder();
-                sb.append("Agent ");
-                sb.append(agentId);
-                sb.append(" going from (");
-                sb.append(agent.getPlayer().getTile().getX());
-                sb.append(", ");
-                sb.append(agent.getPlayer().getTile().getY());
-                sb.append(") to move ");
-
+                int oldX = agent.getPlayer().getTile().getX();
+                int oldY = agent.getPlayer().getTile().getY();
                 Angle move = agent.decide();
-                sb.append(move);
-                sb.append(" to ");
                 agent.execute(move);
-
-                sb.append(agent.getPlayer().getTile().getX());
-                sb.append(", ");
-                sb.append(agent.getPlayer().getTile().getY());
-                sb.append(")");
-
-                System.out.println(sb.toString());
+                System.out.println("Agent " + agentId
+                        + " going from (" + oldX + ", " + oldY + ") to move "
+                        + move + " to (" + agent.getPlayer().getTile().getX() + ", "
+                        + agent.getPlayer().getTile().getY() + ")");
                 agentId++;
             }
-
-            if (Factory.getPlayerRepository().getExplorationPercentage() >= 100) {
-                System.out.println("Out of Iterations - Game Over");
-                Factory.getGameRepository().setRunning(false);
-                break;
-            }
         }
+
+        System.out.println("100% Achieved");
     }
 
 }

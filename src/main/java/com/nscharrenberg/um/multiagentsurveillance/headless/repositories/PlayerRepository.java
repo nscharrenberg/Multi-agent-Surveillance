@@ -14,6 +14,7 @@ import com.nscharrenberg.um.multiagentsurveillance.headless.exceptions.ItemNotOn
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.*;
 import com.nscharrenberg.um.multiagentsurveillance.headless.utils.BoardUtils;
 import com.nscharrenberg.um.multiagentsurveillance.headless.utils.CharacterVision;
+import com.nscharrenberg.um.multiagentsurveillance.headless.utils.StopWatch;
 
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
@@ -27,7 +28,8 @@ public class PlayerRepository implements IPlayerRepository {
     private List<Intruder> intruders;
     private List<Guard> guards;
 
-    private TileArea completeKnowledgeProgress = new TileArea();
+    private TileArea completeKnowledgeProgress;
+    private StopWatch stopWatch;
 
     private List<Agent> agents;
 
@@ -42,6 +44,8 @@ public class PlayerRepository implements IPlayerRepository {
         this.intruders = new ArrayList<>();
         this.guards = new ArrayList<>();
         this.agents = new ArrayList<>();
+        this.completeKnowledgeProgress = new TileArea();
+        this.stopWatch = new StopWatch();
 
         try {
             this.random = SecureRandom.getInstanceStrong();
@@ -78,9 +82,27 @@ public class PlayerRepository implements IPlayerRepository {
     }
 
     @Override
+    public float calculateAgentExplorationRate(Agent agent){
+        float totalTileCount = mapRepository.getBoard().height() * mapRepository.getBoard().width();
+        float discoveredAreaTileCount = 0;
+
+        // TODO: Could probably do with some optimization
+        for (Map.Entry<Integer, HashMap<Integer, Tile>> rowEntry : agent.getKnowledge().getRegion().entrySet()) {
+            for (Map.Entry<Integer, Tile> colEntry : rowEntry.getValue().entrySet()) {
+                discoveredAreaTileCount += 1;
+            }
+        }
+        return (discoveredAreaTileCount / totalTileCount) * 100;
+    }
+
+    @Override
     public float calculateExplorationPercentage() {
         for (Agent agent : agents) {
-            completeKnowledgeProgress = (TileArea) completeKnowledgeProgress.merge(agent.getKnowledge());
+            try {
+                completeKnowledgeProgress = (TileArea) completeKnowledgeProgress.merge(agent.getKnowledge());
+            } catch (ConcurrentModificationException ex) {
+                // do nothing
+            }
         }
 
         float totalTileCount = mapRepository.getBoard().height() * mapRepository.getBoard().width();
@@ -107,6 +129,12 @@ public class PlayerRepository implements IPlayerRepository {
         // TODO: Remove this when UI elements are present
         System.out.println("Explored: " + explorationPercentage + "%");
 
+        try {
+            stopWatch.saveOrIgnoreSplit(explorationPercentage);
+        } catch (Exception e) {
+            System.out.println("Stopwatch Error: " + e.getMessage());
+        }
+
         return percentage;
     }
 
@@ -117,6 +145,8 @@ public class PlayerRepository implements IPlayerRepository {
         this.intruders = new ArrayList<>();
         this.guards = new ArrayList<>();
         this.agents = new ArrayList<>();
+        this.completeKnowledgeProgress = new TileArea();
+        this.stopWatch = new StopWatch();
 
         try {
             this.random = SecureRandom.getInstanceStrong();
@@ -224,10 +254,7 @@ public class PlayerRepository implements IPlayerRepository {
                 CharacterVision characterVision = new CharacterVision(6, player.getDirection());
                 List<Tile> vision = characterVision.getVision(mapRepository.getBoard(), player.getTile());
                 player.getAgent().addKnowledge(vision);
-
-                List<Tile> vision2 = characterVision.getVision(mapRepository.getBoard(), player.getTile());
-                player.getAgent().addKnowledge(vision2);
-                player.setVision(new TileArea(vision2));
+                player.setVision(new TileArea(vision));
 
                 calculateExplorationPercentage();
             }
@@ -383,5 +410,15 @@ public class PlayerRepository implements IPlayerRepository {
     @Override
     public TileArea getCompleteKnowledgeProgress() {
         return completeKnowledgeProgress;
+    }
+
+    @Override
+    public StopWatch getStopWatch() {
+        return stopWatch;
+    }
+
+    @Override
+    public void setStopWatch(StopWatch stopWatch) {
+        this.stopWatch = stopWatch;
     }
 }

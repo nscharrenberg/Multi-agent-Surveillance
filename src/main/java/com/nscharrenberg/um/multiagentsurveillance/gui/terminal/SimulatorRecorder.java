@@ -2,6 +2,7 @@ package com.nscharrenberg.um.multiagentsurveillance.gui.terminal;
 
 import com.nscharrenberg.um.multiagentsurveillance.agents.shared.Agent;
 import com.nscharrenberg.um.multiagentsurveillance.headless.Factory;
+import com.nscharrenberg.um.multiagentsurveillance.headless.contracts.repositories.IPlayerRepository;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Angle;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Guard;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Tile;
@@ -65,34 +66,49 @@ public class SimulatorRecorder {
 
         int moveCount = 1;
         int point = 0;
+
+        IPlayerRepository playerRepository = Factory.getPlayerRepository();
+
+        Angle[] agentAngles = new Angle[playerRepository.getAgents().size()];
+        int agentNum = 0;
+        for (Agent agent : playerRepository.getAgents()) {
+            agentAngles[agentNum] = agent.getPlayer().getDirection();
+            agentNum++;
+        }
+
+
         while (Factory.getGameRepository().isRunning()) {
             int agentId = 0;
-            Long time = Factory.getPlayerRepository().getStopWatch().getDurationInMillis();
-            for (Agent agent : Factory.getPlayerRepository().getAgents()) {
+            Long time = playerRepository.getStopWatch().getDurationInMillis();
+            for (Agent agent : playerRepository.getAgents()) {
 
-                Long startTime = Factory.getPlayerRepository().getStopWatch().getDurationInMillis();
+                Long startTime = playerRepository.getStopWatch().getDurationInMillis();
                 Angle move = agent.decide();
-                Long endTime = Factory.getPlayerRepository().getStopWatch().getDurationInMillis();
+
+                Long endTime = playerRepository.getStopWatch().getDurationInMillis();
                 Long moveTimeDecide = endTime - startTime;
                 agent.execute(move);
 
+                if(agentAngles[agentId].equals(move)) {
+                    Long recordedStartTime = playerRepository.getStopWatch().getDurationInMillis();
+                    JSONArray agentJSON = JSONList.get(agentId);
 
-                Long recordedStartTime = Factory.getPlayerRepository().getStopWatch().getDurationInMillis();
-                JSONArray agentJSON = JSONList.get(agentId);
+                    JSONObject moveJSON = new JSONObject();
+                    moveJSON.put("Move", moveCount);
+                    moveJSON.put("X", agent.getPlayer().getTile().getX());
+                    moveJSON.put("Y", agent.getPlayer().getTile().getY());
+                    moveJSON.put("Time", time / 1000.0);
+                    moveJSON.put("Time to decide", moveTimeDecide / 1000.0);
+                    moveJSON.put("Exploration rate %", playerRepository.calculateAgentExplorationRate(agent));
+                    moveJSON.put("Total Exploration rate %", playerRepository.getExplorationPercentage());
 
-                JSONObject moveJSON = new JSONObject();
-                moveJSON.put("Move", moveCount);
-                moveJSON.put("X", agent.getPlayer().getTile().getX());
-                moveJSON.put("Y", agent.getPlayer().getTile().getY());
-                moveJSON.put("Time", time/1000.0);
-                moveJSON.put("Time to decide", moveTimeDecide/1000.0);
-                moveJSON.put("Exploration rate %", Factory.getPlayerRepository().calculateAgentExplorationRate(agent));
-                moveJSON.put("Total Exploration rate %", Factory.getPlayerRepository().getExplorationPercentage());
+                    agentJSON.put(moveJSON);
+                    Long recordedEndTime = playerRepository.getStopWatch().getDurationInMillis();
 
-                agentJSON.put(moveJSON);
-                Long recordedEndTime = Factory.getPlayerRepository().getStopWatch().getDurationInMillis();
+                    Factory.getPlayerRepository().getStopWatch().minusMillis(recordedEndTime - recordedStartTime);
+                }
 
-                Factory.getPlayerRepository().getStopWatch().minusMillis(recordedEndTime - recordedStartTime);
+                agentAngles[agentId] = move;
 
                 agentId++;
             }
@@ -100,11 +116,11 @@ public class SimulatorRecorder {
             moveCount++;
 
             if(point == RECORD){
-                Long recordedStartTime = Factory.getPlayerRepository().getStopWatch().getDurationInMillis();
+                Long recordedStartTime = playerRepository.getStopWatch().getDurationInMillis();
                 System.out.println("Successfully stored recordings");
                 writeData(JSONList, directoryPath);
-                JSONList = createJSONArrayAgent(Factory.getPlayerRepository().getAgents().size(), directoryPath);
-                Long recordedEndTime = Factory.getPlayerRepository().getStopWatch().getDurationInMillis();
+                JSONList = createJSONArrayAgent(playerRepository.getAgents().size(), directoryPath);
+                Long recordedEndTime = playerRepository.getStopWatch().getDurationInMillis();
 
                 Factory.getPlayerRepository().getStopWatch().minusMillis(recordedEndTime - recordedStartTime);
 

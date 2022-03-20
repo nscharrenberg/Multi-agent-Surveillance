@@ -379,4 +379,9 @@ public class PlayerRepository implements IPlayerRepository {
     public void setExplorationPercentage(float explorationPercentage) {
         this.explorationPercentage = explorationPercentage;
     }
+
+    @Override
+    public TileArea getCompleteKnowledgeProgress() {
+        return completeKnowledgeProgress;
+    }
 }

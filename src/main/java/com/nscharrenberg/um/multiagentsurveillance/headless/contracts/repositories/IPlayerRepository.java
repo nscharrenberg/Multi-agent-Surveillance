@@ -66,4 +66,6 @@ public interface IPlayerRepository {
     float getExplorationPercentage();
 
     void setExplorationPercentage(float explorationPercentage);
+
+    TileArea getCompleteKnowledgeProgress();
 }

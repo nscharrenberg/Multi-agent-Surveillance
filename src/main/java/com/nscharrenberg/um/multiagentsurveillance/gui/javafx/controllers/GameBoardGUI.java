@@ -177,7 +177,6 @@ public class GameBoardGUI extends Application {
                     pane.getChildren().add(createGuard(player.getDirection()));
                 }
             });
-
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }

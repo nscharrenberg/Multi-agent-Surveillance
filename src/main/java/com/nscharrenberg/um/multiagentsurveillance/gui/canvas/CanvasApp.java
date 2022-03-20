@@ -7,9 +7,13 @@ import javafx.stage.Stage;
 
 public class CanvasApp extends Application {
     private GameView view;
+    private static int WIDTH = 800;
+    private static int HEIGHT = 800;
 
     @Override
-    public void start(Stage primaryStage) throws Exception {
+    public void start(Stage primaryStage) {
+        primaryStage.setWidth(WIDTH);
+        primaryStage.setHeight(HEIGHT);
         view = new GameView(primaryStage);
 
         Scene scene = new Scene(view, 800, 800);
@@ -39,6 +43,10 @@ public class CanvasApp extends Application {
     }
 
     public static void main(String[] args) {
-        launch(args);
+        try {
+            launch(args);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }

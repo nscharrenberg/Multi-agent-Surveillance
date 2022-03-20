@@ -74,3 +74,18 @@ jlink {
 jlinkZip {
     group = 'distribution'
 }
+
+task(canvas, dependsOn: 'classes', type: JavaExec) {
+    mainClass = 'com.nscharrenberg.um.multiagentsurveillance.gui.canvas.CanvasLauncher'
+    classpath = sourceSets.main.runtimeClasspath
+}
+
+task(dataManager, dependsOn: 'classes', type: JavaExec) {
+    mainClass = 'com.nscharrenberg.um.multiagentsurveillance.gui.dataGUI.FileChooser'
+    classpath = sourceSets.main.runtimeClasspath
+}
+
+task(terminal, dependsOn: 'classes', type: JavaExec) {
+    mainClass = 'com.nscharrenberg.um.multiagentsurveillance.gui.terminal.TerminalApp'
+    classpath = sourceSets.main.runtimeClasspath
+}

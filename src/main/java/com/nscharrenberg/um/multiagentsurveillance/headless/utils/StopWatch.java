@@ -80,10 +80,10 @@ public class StopWatch {
     }
 
     public void minusMillis(Long time){
-        this.startTime = this.startTime.plusMillis(time);
+        this.startTime = this.startTime.minusMillis(time);
     }
 
     public void minusSeconds(Long time){
-        this.startTime = this.startTime.plusSeconds(time);
+        this.startTime = this.startTime.minusSeconds(time);
     }
 }

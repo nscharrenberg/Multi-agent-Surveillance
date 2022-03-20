@@ -9,6 +9,9 @@ import javafx.concurrent.Task;
 import javafx.scene.control.Alert;
 import javafx.stage.Stage;
 
+import java.io.File;
+import java.io.IOException;
+
 public class GameController {
     private GameBoardGUI boardGUI;
     private static int timeDelay = 250;

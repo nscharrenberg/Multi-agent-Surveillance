@@ -59,10 +59,11 @@ public class AStar implements IPathFinding {
 
 
                 if (nextTileOpt.isPresent() && !nextTileOpt.get().isCollision() && visited.get(nextTileOpt.get().getX()).get(nextTileOpt.get().getY()).equals(Boolean.FALSE)) {
-                    visited.get(nextTileOpt.get().getX()).put(nextTileOpt.get().getY(), Boolean.TRUE);
-
-                    if(!nextTileOpt.get().equals(target) && nextTileOpt.get().isTeleport())
+                    if (!target.isTeleport() && nextTileOpt.get().isTeleport()) {
                         continue;
+                    }
+
+                    visited.get(nextTileOpt.get().getX()).put(nextTileOpt.get().getY(), Boolean.TRUE);
 
                     int distance = computeDistance(nextTileOpt.get(), target);
 
@@ -83,7 +84,9 @@ public class AStar implements IPathFinding {
 
             Node currentNode = heap.extractMin();
 
-            if (currentNode == null) break;
+            if (currentNode == null){
+                return Optional.empty();
+            }
 
             tree = currentNode.getTreeNode();
         }
@@ -97,7 +100,7 @@ public class AStar implements IPathFinding {
         int pathCost = 0;
 
         while (tree.getParent() != null) {
-//            pathCost += unknownAreaCalculate.calculateUnknownArea(board, tree.getTile());
+            pathCost += unknownAreaCalculate.calculateUnknownArea(board, tree.getTile());
             sequenceMoves.addFirst(tree.getEntrancePosition());
             tree = tree.getParent();
         }

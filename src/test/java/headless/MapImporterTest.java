@@ -84,7 +84,7 @@ public class MapImporterTest {
             Assertions.assertEquals(80, Factory.getGameRepository().getHeight());
             Assertions.assertEquals(120, Factory.getGameRepository().getWidth());
             Assertions.assertEquals(0.1, Factory.getGameRepository().getScaling());
-            Assertions.assertEquals(3, Factory.getGameRepository().getGuardCount());
+            Assertions.assertEquals(1, Factory.getGameRepository().getGuardCount());
             Assertions.assertEquals(0, Factory.getGameRepository().getIntruderCount());
             Assertions.assertEquals(14, Factory.getGameRepository().getBaseSpeedGuards());
             Assertions.assertEquals(14, Factory.getGameRepository().getBaseSpeedIntruders());

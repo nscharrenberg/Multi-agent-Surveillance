@@ -98,7 +98,11 @@ public class PlayerRepository implements IPlayerRepository {
     @Override
     public float calculateExplorationPercentage() {
         for (Agent agent : agents) {
-            completeKnowledgeProgress = (TileArea) completeKnowledgeProgress.merge(agent.getKnowledge());
+            try {
+                completeKnowledgeProgress = (TileArea) completeKnowledgeProgress.merge(agent.getKnowledge());
+            } catch (ConcurrentModificationException ex) {
+                // do nothing
+            }
         }
 
         float totalTileCount = mapRepository.getBoard().height() * mapRepository.getBoard().width();
@@ -250,10 +254,7 @@ public class PlayerRepository implements IPlayerRepository {
                 CharacterVision characterVision = new CharacterVision(6, player.getDirection());
                 List<Tile> vision = characterVision.getVision(mapRepository.getBoard(), player.getTile());
                 player.getAgent().addKnowledge(vision);
-
-                List<Tile> vision2 = characterVision.getVision(mapRepository.getBoard(), player.getTile());
-                player.getAgent().addKnowledge(vision2);
-                player.setVision(new TileArea(vision2));
+                player.setVision(new TileArea(vision));
 
                 calculateExplorationPercentage();
             }

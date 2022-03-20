@@ -217,7 +217,7 @@ public class TileArea extends Area<Tile> {
     }
 
     @Override
-    public Area<Tile> merge(Area<Tile> target) {
+    public Area<Tile> merge(Area<Tile> target) throws ConcurrentModificationException {
         Cloner cloner = new Cloner();
         cloner.deepCloneDontCloneInstances(SecureRandom.class);
         cloner.deepCloneDontCloneInstances(LinkedList.class);

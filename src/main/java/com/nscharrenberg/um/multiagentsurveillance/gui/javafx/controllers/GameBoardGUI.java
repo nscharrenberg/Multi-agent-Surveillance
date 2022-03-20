@@ -136,8 +136,21 @@ public class GameBoardGUI extends Application {
                     tile = player.getTile();
                     pane = gridPanes.get(tile.getX()).get(tile.getY());
 
-                    combinedVisions = combinedVisions.merge(player.getVision());
-                    combinedKnowledge = combinedKnowledge.merge(player.getAgent().getKnowledge());
+                    if (player.getVision() != null) {
+                        try {
+                            combinedVisions = combinedVisions.merge(player.getVision());
+                        } catch (ConcurrentModificationException ex) {
+                            // do nothing
+                        }
+                    }
+
+                    if (player.getAgent().getKnowledge() != null) {
+                        try {
+                            combinedKnowledge = combinedKnowledge.merge(player.getAgent().getKnowledge());
+                        } catch (ConcurrentModificationException ex) {
+                            // do nothing
+                        }
+                    }
 
                     for (Map.Entry<Integer, HashMap<Integer, Tile>> rowEntry : combinedKnowledge.getRegion().entrySet()) {
                         for (Map.Entry<Integer, Tile> colEntry : rowEntry.getValue().entrySet()) {
@@ -245,8 +258,17 @@ public class GameBoardGUI extends Application {
         Area<Tile> combinedKnowledge = new TileArea();
 
         for (Player player : guards) {
-            combinedVisions = combinedVisions.merge(player.getVision());
-            combinedKnowledge = combinedKnowledge.merge(player.getAgent().getKnowledge());
+            try {
+                combinedVisions = combinedVisions.merge(player.getVision());
+            } catch (ConcurrentModificationException ex) {
+                // do nothing
+            }
+
+            try {
+                combinedKnowledge = combinedKnowledge.merge(player.getAgent().getKnowledge());
+            } catch (ConcurrentModificationException ex) {
+                // do nothing
+            }
 
             if (player.getAgent() instanceof YamauchiAgent) {
                 if (((YamauchiAgent) player.getAgent()).getChosenFrontier() != null) {

@@ -81,7 +81,7 @@ public class GameController {
                 }
             }
 
-            Platform.runLater(() -> boardGUI.updateGUI());
+            boardGUI.updateGUI();
 
             try {
                 Thread.sleep(timeDelay);

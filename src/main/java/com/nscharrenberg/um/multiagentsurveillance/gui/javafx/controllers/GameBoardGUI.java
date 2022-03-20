@@ -6,6 +6,7 @@ import com.nscharrenberg.um.multiagentsurveillance.headless.Factory;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.*;
 import javafx.application.Application ;
 import javafx.application.Platform;
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Group;
 import javafx.scene.Scene;
@@ -17,6 +18,7 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Polygon;
 import javafx.scene.shape.Rectangle;
+import javafx.scene.text.Font;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 
@@ -106,25 +108,52 @@ public class GameBoardGUI extends Application {
         GridPane legend = new GridPane();
 
         int LEGEND_WIDTH = FRAME_WIDTH - (GRID_WIDTH * GRID_SQUARE_SIZE);
-
+        legend.setMinWidth(LEGEND_WIDTH);
+        legend.setMaxWidth(LEGEND_WIDTH);
+        legend.setPadding(new Insets(10, 30, 30, 30));
 
         Rectangle item = new Rectangle(LEGEND_WIDTH,100);
         item.setStroke(Color.YELLOW);
         item.setFill(Color.WHITE);
 
         Label lb = new Label("Legend");
+        lb.setFont(new Font("Arial", 30));
 
-
-        HBox wallBox = new HBox(wallRectangle(new Rectangle(GRID_SQUARE_SIZE,GRID_SQUARE_SIZE)), lb);
 
         BorderPane wallPane = new BorderPane();
-        wallPane.setLeft(wallRectangle(new Rectangle(GRID_SQUARE_SIZE,GRID_SQUARE_SIZE)));
-        wallPane.setCenter(new Label("="));
-        wallPane.setRight(new Label("Wall Tile"));
+        wallPane.setLeft(wallRectangle(new Rectangle((int)LEGEND_WIDTH*0.05,(int)LEGEND_WIDTH*0.05)));
+        wallPane.setRight(new Label("= Wall Tile"));
+        BorderPane windowPane = new BorderPane();
+        windowPane.setLeft(windowRectangle(new Rectangle((int)LEGEND_WIDTH*0.05,(int)LEGEND_WIDTH*0.05)));
+        windowPane.setRight(new Label("= Window Tile"));
+        BorderPane doorPane = new BorderPane();
+        doorPane.setLeft(doorRectangle(new Rectangle((int)LEGEND_WIDTH*0.05,(int)LEGEND_WIDTH*0.05)));
+        doorPane.setRight(new Label("= Door Tile"));
 
-        wallBox.setAlignment(Pos.CENTER_LEFT);
-        legend.add(wallPane, 0,0);
+        BorderPane guardPane = new BorderPane();
+        Polygon polygon = new Polygon();
+        polygon.getPoints().addAll(createGuardLegend(LEGEND_WIDTH*0.05));
+        guardPane.setLeft(polygon);
+        guardPane.setRight(new Label("= Guard"));
 
+        Polygon polygon1 = new Polygon();
+        BorderPane intruderPane = new BorderPane();
+        polygon1.setFill(Color.BLUE);
+        polygon1.getPoints().addAll(createIntruderLegend(LEGEND_WIDTH*0.05));
+        intruderPane.setLeft(polygon1);
+        intruderPane.setRight(new Label(" = Intruder"));
+
+        legend.add(lb,0, 0);
+        legend.setVgap(20);
+        legend.add(wallPane, 0,1);
+        legend.setVgap(5);
+        legend.add(windowPane, 0,2);
+        legend.setVgap(5);
+        legend.add(doorPane, 0,3);
+        legend.setVgap(5);
+        legend.add(guardPane, 0,4);
+        legend.setVgap(5);
+        legend.add(intruderPane, 0,5);
 
         return legend;
     }
@@ -318,7 +347,7 @@ public class GameBoardGUI extends Application {
         if (tile instanceof ShadowTile)
             rectangle.setFill(Color.GREY);
         else
-            rectangle.setFill(Color.BURLYWOOD);
+            rectangle.setFill(Color.SILVER);
 
         ArrayList<Item> orderedList = orderList((ArrayList<Item>) tile.getItems());
 
@@ -331,12 +360,11 @@ public class GameBoardGUI extends Application {
 
         for (Item item : orderedList) {
             if (item instanceof Wall) {
-                rectangle.setFill(Color.DARKGRAY);
-                rectangle.setOpacity(0.5);
+                rectangle = wallRectangle(rectangle);
             } else if (item instanceof Window) {
-                rectangle.setFill(Color.BLUE);
+                rectangle = windowRectangle(rectangle);
             } else if (item instanceof Door) {
-                rectangle.setFill(Color.BROWN);
+                rectangle = doorRectangle(rectangle);
             } else if (item instanceof Guard) {
                 player = (Player) item;
                 polygon = createGuard(player.getDirection());
@@ -361,11 +389,12 @@ public class GameBoardGUI extends Application {
 
     private Rectangle wallRectangle(Rectangle rectangle){
         rectangle.setFill(Color.BLACK);
+        //rectangle.setOpacity(0.5);
         return rectangle;
     }
 
     private Rectangle windowRectangle(Rectangle rectangle){
-        rectangle.setFill(Color.BLACK);
+        rectangle.setFill(Color.BLUE);
         return rectangle;
     }
 
@@ -452,6 +481,16 @@ public class GameBoardGUI extends Application {
         faceLEFT_Guard = new Double[]{GSSD / 6.0, GSSD / 2.0, GSSD / 2.0, GSSD * 5.0 / 6.0, GSSD * 5.0 / 6.0, GSSD * 5.0 / 6.0, GSSD * 5.0 / 6.0, GSSD / 6.0, GSSD / 2.0, GSSD / 6.0, GSSD / 6.0, GSSD / 2.0};
         faceRIGHT_Guard = new Double[]{GSSD * 5.0 / 6.0, GSSD / 2.0, GSSD / 2.0, GSSD / 6.0, GSSD / 6.0, GSSD / 6.0, GSSD / 6.0, GSSD * 5.0 / 6.0, GSSD / 2.0, GSSD * 5.0/ 6.0, GSSD * 5.0 / 6.0, GSSD / 2.0};
     }
+
+
+    private Double[] createGuardLegend(double size){
+        return new Double[]{size / 2.0, size / 6.0, size / 6.0, size / 2.0, size / 6.0, size * 5.0 / 6.0, size * 5.0 / 6.0, size * 5.0 / 6.0, size * 5.0 / 6.0, size / 2.0, size / 2.0, size / 6.0};
+    }
+
+    private Double[] createIntruderLegend(double size){
+        return new Double[]{size / 2.0, size / 6.0, size * 5.0 / 6.0, size * 5.0 / 6.0, size / 2.0, size * 2.0 / 3.0, size * 5.0 / 6.0, size * 5.0 / 6.0, size / 2.0, size / 6.0};
+    }
+
 
     class GridIndex{
         int x;

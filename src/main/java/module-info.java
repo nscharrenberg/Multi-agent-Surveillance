@@ -17,4 +17,5 @@ module com.nscharrenberg.um.multiagentsurveillance {
     opens com.nscharrenberg.um.multiagentsurveillance.agents.SBO to cloning;
     opens com.nscharrenberg.um.multiagentsurveillance.agents.shared.utils to cloning;
     opens com.nscharrenberg.um.multiagentsurveillance.agents.frontier.yamauchi.comparator to cloning;
+    opens com.nscharrenberg.um.multiagentsurveillance.agents.shared.algorithms.pathfinding.AStar to cloning;
 }

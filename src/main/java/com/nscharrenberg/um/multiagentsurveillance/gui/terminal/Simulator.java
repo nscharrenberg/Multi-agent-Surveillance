@@ -19,7 +19,7 @@ public class Simulator {
     }
 
     private void importMap() {
-        File file = new File("src/test/resources/maps/testmap.txt");
+        File file = new File("src/test/resources/maps/testmap2.txt");
         String path = file.getAbsolutePath();
         MapImporter importer = new MapImporter();
 
@@ -33,7 +33,7 @@ public class Simulator {
     }
 
     private void spawn() {
-        for (int i = 0; i < Factory.getGameRepository().getGuardCount(); i++) {
+        for (int i = 1; i <= Factory.getGameRepository().getGuardCount(); i++) {
             Factory.getPlayerRepository().spawn(Guard.class);
         }
     }
@@ -68,6 +68,7 @@ public class Simulator {
 
             if (Factory.getPlayerRepository().getExplorationPercentage() >= 100) {
                 System.out.println("Out of Iterations - Game Over");
+                Factory.getGameRepository().setRunning(false);
                 break;
             }
         }

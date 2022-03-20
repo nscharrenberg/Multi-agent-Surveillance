@@ -7,6 +7,7 @@ import com.nscharrenberg.um.multiagentsurveillance.headless.models.Guard;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Tile;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.TileArea;
 import com.nscharrenberg.um.multiagentsurveillance.headless.repositories.PlayerRepository;
+import com.nscharrenberg.um.multiagentsurveillance.headless.utils.StopWatch;
 import com.nscharrenberg.um.multiagentsurveillance.headless.utils.files.MapImporter;
 import com.nscharrenberg.um.multiagentsurveillance.headless.utils.recorder.GameConfigurationRecorder;
 import org.json.JSONArray;
@@ -75,6 +76,7 @@ public class SimulatorRecorder {
                 Long moveTimeDecide = endTime - startTime;
                 agent.execute(move);
 
+                Long recordedStartTime = Factory.getPlayerRepository().getStopWatch().getDurationInSeconds();
                 JSONArray agentJSON = JSONList.get(agentId);
 
                 JSONObject moveJSON = new JSONObject();
@@ -87,6 +89,9 @@ public class SimulatorRecorder {
                 moveJSON.put("Total Exploration rate %", Factory.getPlayerRepository().getExplorationPercentage());
 
                 agentJSON.put(moveJSON);
+                Long recordedEndTime = Factory.getPlayerRepository().getStopWatch().getDurationInSeconds();
+
+                Factory.getPlayerRepository().getStopWatch().minusSeconds(recordedEndTime - recordedStartTime);
 
                 agentId++;
             }
@@ -94,9 +99,14 @@ public class SimulatorRecorder {
             moveCount++;
 
             if(point == RECORD){
+                Long recordedStartTime = Factory.getPlayerRepository().getStopWatch().getDurationInSeconds();
                 System.out.println("Successfully stored recordings");
                 writeData(JSONList, directoryPath);
                 JSONList = createJSONArrayAgent(Factory.getPlayerRepository().getAgents().size(), directoryPath);
+                Long recordedEndTime = Factory.getPlayerRepository().getStopWatch().getDurationInSeconds();
+
+                Factory.getPlayerRepository().getStopWatch().minusSeconds(recordedEndTime - recordedStartTime);
+
                 point = 0;
             } else {
                 point++;

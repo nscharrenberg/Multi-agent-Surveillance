@@ -78,4 +78,12 @@ public class StopWatch {
     public Long getDurationInHours() throws Exception {
         return getDuration().toHours();
     }
+
+    public void minusMillis(Long time){
+        this.startTime = this.startTime.plusMillis(time);
+    }
+
+    public void minusSeconds(Long time){
+        this.startTime = this.startTime.plusSeconds(time);
+    }
 }

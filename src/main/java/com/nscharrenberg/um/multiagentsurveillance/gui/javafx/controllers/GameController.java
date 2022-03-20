@@ -14,19 +14,16 @@ import java.io.IOException;
 
 public class GameController {
     private GameBoardGUI boardGUI;
-    private static int timeDelay = 250;
 
     public GameController(){
         Factory.init();
 
-        importMap();
+        Factory.getGameRepository().startGame();
 
         boardGUI = new GameBoardGUI();
 
         // I guess here we would first call the start method on the home-/main screen right?
         boardGUI.start(new Stage());
-
-        setupAgents();
 
         Task task = new Task() {
             @Override
@@ -63,18 +60,13 @@ public class GameController {
     }
 
     private void gameFinished() {
+        Factory.getGameRepository().stopGame();
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle("Game is Finished");
         alert.setHeaderText("Game Finished");
         String s =" gone over all steps";
         alert.setContentText(s);
         alert.show();
-    }
-
-    private void setupAgents() {
-        for (int i = 0; i < Factory.getGameRepository().getGuardCount(); i++) {
-            Factory.getPlayerRepository().spawn(Guard.class);
-        }
     }
 
     private void gameLoop() {
@@ -88,13 +80,9 @@ public class GameController {
                 }
             }
 
-            Platform.runLater(() -> boardGUI.updateGUI());
-
-            try {
-                Thread.sleep(timeDelay);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
+            Platform.runLater(() -> {
+                boardGUI.updateGUI();
+            });
         }
     }
 

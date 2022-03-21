@@ -115,8 +115,9 @@ public class PlayerRepository implements IPlayerRepository {
             }
         }
 
+
         // no tiles = 100% (division by 0 not possible)
-        if (totalTileCount <= 0) {
+        if (totalTileCount <= 0 || explorationPercentage >= 100) {
             explorationPercentage = 100;
             //end game
             Factory.getGameRepository().setRunning(false);

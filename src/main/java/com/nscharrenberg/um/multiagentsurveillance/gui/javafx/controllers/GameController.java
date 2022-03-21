@@ -54,7 +54,6 @@ public class GameController {
     }
 
     private void gameLoop() {
-        Factory.getGameRepository().setRunning(true);
         while (Factory.getGameRepository().isRunning()) {
             for (Agent agent : Factory.getPlayerRepository().getAgents()) {
                 try {

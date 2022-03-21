@@ -10,8 +10,10 @@ import javafx.geometry.Insets;
 import javafx.scene.SnapshotParameters;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.control.Alert;
 import javafx.scene.image.Image;
 import javafx.scene.image.WritableImage;
+import javafx.scene.input.KeyCode;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
@@ -84,6 +86,7 @@ public class GameView extends StackPane {
                 gameLoop();
 
                 System.out.println(" Game Finished ");
+                gameFinished();
                 Factory.getGameRepository().setRunning(false);
 
                 return null;
@@ -97,11 +100,23 @@ public class GameView extends StackPane {
         AnimationTimer timer = new AnimationTimer() {
             @Override
             public void handle(long now) {
-                updateAndDraw();
+                if (Factory.getGameRepository().isRunning()) {
+                    updateAndDraw();
+                }
             }
         };
 
         timer.start();
+    }
+
+    private void gameFinished() {
+        Factory.getGameRepository().stopGame();
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("Game is Finished");
+        alert.setHeaderText("Game Finished");
+        String s =" gone over all steps";
+        alert.setContentText(s);
+        alert.show();
     }
 
     private void gameLoop() {
@@ -198,7 +213,13 @@ public class GameView extends StackPane {
         graphicsContext.drawImage(initialBoard, 0, 0);
         DecimalFormat decimalFormat = new DecimalFormat("##.00");
 
-        stage.setTitle("Exploration Percentage: " + decimalFormat.format(Factory.getPlayerRepository().getExplorationPercentage()) + "%");
+        if (Factory.getPlayerRepository().getExplorationPercentage() >= 100) {
+            stage.setTitle("Map Explored. Game Finished!");
+        } else if (!Factory.getGameRepository().isRunning()) {
+            stage.setTitle("Game Stopped at an exploration rate of " + decimalFormat.format(Factory.getPlayerRepository().getExplorationPercentage()) + "%");
+        } else {
+            stage.setTitle("Exploration Percentage: " + decimalFormat.format(Factory.getPlayerRepository().getExplorationPercentage()) + "%");
+        }
 
         drawAllKnowledge();
 

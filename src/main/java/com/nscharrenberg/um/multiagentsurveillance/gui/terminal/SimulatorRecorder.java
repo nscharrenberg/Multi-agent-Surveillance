@@ -30,30 +30,9 @@ public class SimulatorRecorder {
 
     public SimulatorRecorder() throws Exception {
         Factory.init();
-        importMap();
-        spawn();
+        Factory.getGameRepository().startGame();
         new GameConfigurationRecorder().setUpConfFiles();
         gameLoop();
-    }
-
-    private void importMap() {
-        File file = new File("src/test/resources/maps/testmap4.txt");
-        String path = file.getAbsolutePath();
-        MapImporter importer = new MapImporter();
-
-        Factory.getGameRepository().setRunning(true);
-
-        try {
-            importer.load(path);
-        } catch (IOException e) {
-//            Factory.getGameRepository().setRunning(false);
-        }
-    }
-
-    private void spawn() {
-        for (int i = 0; i <= Factory.getGameRepository().getGuardCount(); i++) {
-            Factory.getPlayerRepository().spawn(Guard.class);
-        }
     }
 
     private void gameLoop() throws Exception {

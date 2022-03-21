@@ -17,7 +17,7 @@ import static com.nscharrenberg.um.multiagentsurveillance.headless.utils.recorde
 
 public class SimulatorRecorder {
 
-    private int RECORD = 4;
+    private final double RECORD_PERCENTAGE = 10.0;
 
     public SimulatorRecorder() throws Exception {
         Factory.init();
@@ -36,6 +36,7 @@ public class SimulatorRecorder {
         List<List<AgentJSON>> data = createJsonAgentList(agents, playerRepository);
 
         int moveCount = 1;
+        long splits = 0;
 
         while (Factory.getGameRepository().isRunning()) {
             int agentId = 0;
@@ -55,6 +56,11 @@ public class SimulatorRecorder {
                         playerRepository.getExplorationPercentage(), playerRepository.calculateAgentExplorationRate(agent)));
 
                 agentId++;
+            }
+
+            if(playerRepository.getExplorationPercentage() - splits >= RECORD_PERCENTAGE){
+                splits = (long) playerRepository.getExplorationPercentage();
+                writeJsonData(data);
             }
 
             moveCount++;

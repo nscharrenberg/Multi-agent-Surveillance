@@ -70,6 +70,8 @@ public interface IPlayerRepository {
 
     void setExplorationPercentage(float explorationPercentage);
 
+    TileArea getCompleteKnowledgeProgress();
+
     StopWatch getStopWatch();
 
     void setStopWatch(StopWatch stopWatch);

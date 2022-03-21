@@ -43,22 +43,6 @@ public class GameController {
         thread.start();
     }
 
-    private void importMap() {
-        File file = new File("src/test/resources/maps/exam_test.txt");
-        String path = file.getAbsolutePath();
-        MapImporter importer = new MapImporter();
-
-        Factory.getGameRepository().setRunning(true);
-
-        try {
-            importer.load(path);
-            Factory.getPlayerRepository().calculateInaccessibleTiles();
-        } catch (IOException e) {
-            e.printStackTrace();
-//            Factory.getGameRepository().setRunning(false);
-        }
-    }
-
     private void gameFinished() {
         Factory.getGameRepository().stopGame();
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
@@ -70,7 +54,6 @@ public class GameController {
     }
 
     private void gameLoop() {
-        Factory.getGameRepository().setRunning(true);
         while (Factory.getGameRepository().isRunning()) {
             for (Agent agent : Factory.getPlayerRepository().getAgents()) {
                 try {

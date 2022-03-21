@@ -28,7 +28,7 @@ public class YamauchiAgent extends Agent {
     private final IWeightComparator weightDetector = new MinDistanceUnknownAreaComparator();
 
     private int consecutiveNoFrontier = 0;
-    private static final int MAX_CONSECUTIVE_NO_FRONTIER_COUNT = 3;
+    private static final int MAX_CONSECUTIVE_NO_FRONTIER_COUNT = 5;
 
     public YamauchiAgent(Player player) {
         super(player);
@@ -157,10 +157,10 @@ public class YamauchiAgent extends Agent {
 
         Angle finalPosition = bestFrontier.getQueueNode().getEntrancePosition();
 
-        for (Angle angle : Angle.values()) {
-            if (angle.equals(finalPosition)) continue;
-            bestFrontier.getQueueNode().getMoves().add(angle);
-        }
+//        for (Angle angle : Angle.values()) {
+//            if (angle.equals(finalPosition)) continue;
+//            bestFrontier.getQueueNode().getMoves().add(angle);
+//        }
 
         chosenFrontier = bestFrontier;
 

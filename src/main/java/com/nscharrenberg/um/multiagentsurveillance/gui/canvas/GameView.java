@@ -25,16 +25,34 @@ import java.util.Map;
 import java.util.Objects;
 
 public class GameView extends StackPane {
-    private static Color BASIC_TILE_COLOR = Color.FORESTGREEN;
-    private static Color WALL_TILE_COLOR = Color.BROWN;
-    private static Color TELEPORT_INPUT_TILE_COLOR = Color.PURPLE;
-    private static Color TELEPORT_OUT_TILE_COLOR = Color.MEDIUMPURPLE;
-    private static Color SHADED_TILE_COLOR = Color.BLACK;
-    private static Color GUARD_COLOR = Color.BLUE;
-    private static Color INTRUDER_COLOR = Color.INDIANRED;
-    private static Color VISION_COLOR = Color.LIGHTGOLDENRODYELLOW;
-    private static Color KNOWLEDGE_COLOR = Color.LAWNGREEN;
-    private static Color TARGET_COLOR = Color.TEAL;
+    protected static Color BASIC_TILE_COLOR = Color.FORESTGREEN;
+    protected static Color WALL_TILE_COLOR = Color.BROWN;
+    protected static Color TELEPORT_INPUT_TILE_COLOR = Color.PURPLE;
+    protected static Color TELEPORT_OUT_TILE_COLOR = Color.MEDIUMPURPLE;
+    protected static Color SHADED_TILE_COLOR = Color.BLACK;
+    protected static Color GUARD_COLOR = Color.BLUE;
+    protected static Color INTRUDER_COLOR = Color.INDIANRED;
+    protected static Color VISION_COLOR = Color.LIGHTGOLDENRODYELLOW;
+    protected static Color KNOWLEDGE_COLOR = Color.LAWNGREEN;
+    protected static Color TARGET_COLOR = Color.TEAL;
+
+
+    public static HashMap<String, Color> getMapColours(){
+        HashMap<String, Color> out = new HashMap<>();
+
+        out.put("Basic Tile", BASIC_TILE_COLOR);
+        out.put("Wall Tile", WALL_TILE_COLOR);
+        out.put("Teleport In", TELEPORT_INPUT_TILE_COLOR);
+        out.put("Teleport Out", TELEPORT_OUT_TILE_COLOR);
+        out.put("Shaded Tile", SHADED_TILE_COLOR);
+        out.put("Guard", GUARD_COLOR);
+        out.put("Intruder", INTRUDER_COLOR);
+        out.put("Vision", VISION_COLOR);
+        out.put("Knowledge", KNOWLEDGE_COLOR);
+        out.put("Target", TARGET_COLOR);
+
+        return out;
+    }
 
     private Stage stage;
 

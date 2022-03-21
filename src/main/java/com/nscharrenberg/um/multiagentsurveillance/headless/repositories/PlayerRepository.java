@@ -31,6 +31,8 @@ public class PlayerRepository implements IPlayerRepository {
     private TileArea completeKnowledgeProgress;
     private StopWatch stopWatch;
 
+    private static double TOLERANCE_RATE = 0.01;
+
     private List<Agent> agents;
 
     private static final Class<? extends Agent> agentType = YamauchiAgent.class;
@@ -117,7 +119,7 @@ public class PlayerRepository implements IPlayerRepository {
 
 
         // no tiles = 100% (division by 0 not possible)
-        if (totalTileCount <= 0 || explorationPercentage >= 100) {
+        if (totalTileCount <= 0 || explorationPercentage >= (100 - TOLERANCE_RATE)) {
             explorationPercentage = 100;
             //end game
             Factory.getGameRepository().setRunning(false);

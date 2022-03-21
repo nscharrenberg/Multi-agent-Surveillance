@@ -12,6 +12,7 @@ import java.io.File;
 import java.io.IOException;
 
 public class GameRepository implements IGameRepository {
+    private static String MAP_PATH = "src/test/resources/maps/exam.txt";
     private IMapRepository mapRepository;
     private IPlayerRepository playerRepository;
 
@@ -56,7 +57,7 @@ public class GameRepository implements IGameRepository {
     }
 
     private void importMap() {
-        File file = new File("src/test/resources/maps/exam.txt");
+        File file = new File(MAP_PATH);
         String path = file.getAbsolutePath();
         MapImporter importer = new MapImporter();
 

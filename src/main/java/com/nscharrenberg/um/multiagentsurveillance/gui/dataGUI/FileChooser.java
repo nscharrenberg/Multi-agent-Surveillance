@@ -8,7 +8,7 @@ import javafx.stage.Stage;
 import javafx.scene.control.Button;
 import javafx.scene.layout.VBox;
 import javafx.stage.DirectoryChooser;
-import org.json.JSONException;
+
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -16,13 +16,13 @@ import java.io.FileNotFoundException;
 
 public class FileChooser extends Application {
 
-
-
     @Override
     public void start(Stage primaryStage) {
+        DataHelper dataHelper = new DataHelper();
+
         primaryStage.setTitle("File Chooser");
 
-        File parentDirectory = new File(System.getProperty("user.dir") + "\\Recorder");
+        File parentDirectory = new File(System.getProperty("user.dir") + "\\DataRecorder");
         parentDirectory.mkdir();
 
         DirectoryChooser directoryChooser = new DirectoryChooser();
@@ -37,25 +37,24 @@ public class FileChooser extends Application {
                 parentAlert.show();
             }
 
-            File selectedDirectory = null;
-
-            selectedDirectory = directoryChooser.showDialog(primaryStage);
+            File selectedDirectory = directoryChooser.showDialog(primaryStage);
 
             if(selectedDirectory == null)
                 return;
             else if(selectedDirectory.getParent() == null)
-                selectedDirectory = null;
+                return;
             else if(!selectedDirectory.getParent().equals(parentDirectory.getAbsolutePath()))
-                selectedDirectory = null;
+                return;
 
             System.out.println(selectedDirectory.getAbsolutePath());
             primaryStage.close();
             try {
 
-                if(DataHelper.X_and_Y[0].equals("X") && DataHelper.X_and_Y[1].equals("Y"))
+                if(dataHelper.X_and_Y[0].equals("X") && dataHelper.X_and_Y[1].equals("Y"))
                     new PathData().start(primaryStage, selectedDirectory);
                 else
                     new DataCharts().start(primaryStage, selectedDirectory);
+
             } catch (Exception exception) {
                 exception.printStackTrace();
             }

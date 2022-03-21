@@ -9,10 +9,7 @@ import javafx.scene.control.Button;
 import javafx.scene.layout.VBox;
 import javafx.stage.DirectoryChooser;
 
-
 import java.io.File;
-import java.io.FileNotFoundException;
-
 
 public class FileChooser extends Application {
 

@@ -1,6 +1,5 @@
 package com.nscharrenberg.um.multiagentsurveillance.headless.utils.recorder;
 
-
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.nscharrenberg.um.multiagentsurveillance.headless.utils.recorder.json.AgentJSON;
@@ -9,11 +8,9 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.nscharrenberg.um.multiagentsurveillance.headless.utils.recorder.RecordHelper.GAME_ID;
-
 public class ParseJSONData {
 
-    public List<List<AgentJSON>> parseData(String directoryPath) throws Exception {
+    public List<List<AgentJSON>> parseData(String directoryPath) {
 
         List<List<AgentJSON>> data = new ArrayList<>();
 

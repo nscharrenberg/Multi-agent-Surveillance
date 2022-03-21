@@ -488,7 +488,7 @@ public class GameBoardGUI extends Application {
     }
 
     private Double[] createIntruderLegend(double size){
-        return new Double[]{size / 2.0, size / 6.0, size * 5.0 / 6.0, size * 5.0 / 6.0, size / 2.0, size * 2.0 / 3.0, size * 5.0 / 6.0, size * 5.0 / 6.0, size / 2.0, size / 6.0};
+        return new Double[]{size / 6.0, size * 5.0 / 6.0, size / 2.0, size / 6.0, size * 5.0 / 6.0, size * 5.0 / 6.0, size / 2.0, size * 2.0 / 3.0, size / 6.0, size * 5.0 / 6.0};
     }
 
 

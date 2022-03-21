@@ -14,8 +14,10 @@ import javafx.scene.image.Image;
 import javafx.scene.image.WritableImage;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
 import javafx.stage.Stage;
 
+import java.text.DecimalFormat;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -31,6 +33,8 @@ public class GameView extends StackPane {
     private static Color VISION_COLOR = Color.LIGHTGOLDENRODYELLOW;
     private static Color KNOWLEDGE_COLOR = Color.LAWNGREEN;
     private static Color TARGET_COLOR = Color.TEAL;
+
+    private Stage stage;
 
     private Image guardImage;
 
@@ -53,10 +57,11 @@ public class GameView extends StackPane {
             e.printStackTrace();
         }
 
+        this.stage = stage;
         Factory.init();
         Factory.getGameRepository().startGame();
-        WIDTH = Factory.getGameRepository().getWidth();
-        HEIGHT = Factory.getGameRepository().getHeight();
+        WIDTH = Factory.getGameRepository().getWidth() + 1;
+        HEIGHT = Factory.getGameRepository().getHeight() + 1;
 
         screenWidth = (int) stage.getWidth();
         screenHeight = (int) stage.getHeight();
@@ -110,6 +115,12 @@ public class GameView extends StackPane {
                 }
             }
         }
+    }
+
+    private void drawText(String text) {
+        graphicsContext.setFill(Color.BLACK);
+        graphicsContext.setFont(new Font(12));
+        graphicsContext.fillText(text, 10, 10);
     }
 
     private int getPoint(int point) {
@@ -185,6 +196,9 @@ public class GameView extends StackPane {
         graphicsContext.setGlobalAlpha(1);
         graphicsContext.clearRect(0, 0, screenWidth, screenHeight);
         graphicsContext.drawImage(initialBoard, 0, 0);
+        DecimalFormat decimalFormat = new DecimalFormat("##.00");
+
+        stage.setTitle("Exploration Percentage: " + decimalFormat.format(Factory.getPlayerRepository().getExplorationPercentage()) + "%");
 
         drawAllKnowledge();
 

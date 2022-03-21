@@ -75,6 +75,11 @@ jlinkZip {
     group = 'distribution'
 }
 
+task(original, dependsOn: 'classes', type: JavaExec) {
+    mainClass = 'com.nscharrenberg.um.multiagentsurveillance.gui.javafx.controllers.HomeScreen'
+    classpath = sourceSets.main.runtimeClasspath
+}
+
 task(canvas, dependsOn: 'classes', type: JavaExec) {
     mainClass = 'com.nscharrenberg.um.multiagentsurveillance.gui.canvas.CanvasLauncher'
     classpath = sourceSets.main.runtimeClasspath

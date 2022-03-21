@@ -56,7 +56,7 @@ public class GameRepository implements IGameRepository {
     }
 
     private void importMap() {
-        File file = new File("src/test/resources/maps/testmap.txt");
+        File file = new File("src/test/resources/maps/exam.txt");
         String path = file.getAbsolutePath();
         MapImporter importer = new MapImporter();
 

@@ -1,41 +1,36 @@
 package com.nscharrenberg.um.multiagentsurveillance.gui.canvas;
 
-import com.nscharrenberg.um.multiagentsurveillance.gui.javafx.controllers.HomeScreen;
+import com.nscharrenberg.um.multiagentsurveillance.agents.shared.Agent;
 import com.nscharrenberg.um.multiagentsurveillance.headless.Factory;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.*;
+import javafx.animation.AnimationTimer;
+import javafx.application.Platform;
+import javafx.concurrent.Task;
 import javafx.geometry.Insets;
+import javafx.scene.SnapshotParameters;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
+import javafx.scene.image.WritableImage;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Polygon;
 import javafx.stage.Stage;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 public class GameView extends StackPane {
     private static Color BASIC_TILE_COLOR = Color.FORESTGREEN;
     private static Color WALL_TILE_COLOR = Color.BROWN;
     private static Color TELEPORT_INPUT_TILE_COLOR = Color.PURPLE;
     private static Color TELEPORT_OUT_TILE_COLOR = Color.MEDIUMPURPLE;
-    private static Color SHADED_TILE_COLOR = Color.GRAY;
-    private static Color GUARD_COLOR = Color.ALICEBLUE;
+    private static Color SHADED_TILE_COLOR = Color.BLACK;
+    private static Color GUARD_COLOR = Color.BLUE;
     private static Color INTRUDER_COLOR = Color.INDIANRED;
     private static Color VISION_COLOR = Color.LIGHTGOLDENRODYELLOW;
     private static Color KNOWLEDGE_COLOR = Color.LAWNGREEN;
-
-    private Double[] faceUP_Intruder;
-    private Double[] faceDOWN_Intruder;
-    private Double[] faceLEFT_Intruder;
-    private Double[] faceRIGHT_Intruder;
-
-    private Double[] faceUP_Guard;
-    private Double[] faceDOWN_Guard;
-    private Double[] faceLEFT_Guard;
-    private Double[] faceRIGHT_Guard;
+    private static Color TARGET_COLOR = Color.TEAL;
 
     private Image guardImage;
 
@@ -43,13 +38,17 @@ public class GameView extends StackPane {
 
     private static int WIDTH;
     private static int HEIGHT;
+    private int screenWidth;
+    private int screenHeight;
 
     private Canvas canvas;
     private GraphicsContext graphicsContext;
 
+    private WritableImage initialBoard;
+
     public GameView(Stage stage) {
         try {
-            guardImage = new Image(getClass().getResource("../../images/guard.png").toString());
+            guardImage = new Image(Objects.requireNonNull(getClass().getResource("../../images/guard.png")).toString());
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -59,18 +58,13 @@ public class GameView extends StackPane {
         WIDTH = Factory.getGameRepository().getWidth();
         HEIGHT = Factory.getGameRepository().getHeight();
 
+        screenWidth = (int) stage.getWidth();
+        screenHeight = (int) stage.getHeight();
 
-        int lowestWidthOrHeight = (int) stage.getWidth();
-        if (stage.getHeight() < stage.getWidth()) {
-            lowestWidthOrHeight = (int) stage.getHeight();
-        }
+        int tileWidth = screenWidth / WIDTH;
+        int tileHeight = screenHeight / HEIGHT;
 
-        GSSD = Math.min((int) (lowestWidthOrHeight / WIDTH-1), (int) (lowestWidthOrHeight / HEIGHT-1));
-        GSSD = 10;
-
-        System.out.println(WIDTH);
-        System.out.println(lowestWidthOrHeight);
-        System.out.println(GSSD);
+        GSSD = Math.min(tileWidth, tileHeight);
 
         init(stage);
 
@@ -79,73 +73,178 @@ public class GameView extends StackPane {
 
         getChildren().add(pane);
 
-        updateAndDraw();
+        Task task = new Task() {
+            @Override
+            protected Object call() throws Exception {
+                gameLoop();
+
+                System.out.println(" Game Finished ");
+                Factory.getGameRepository().setRunning(false);
+
+                return null;
+            }
+        };
+
+        Thread thread = new Thread(task);
+        thread.setDaemon(true);
+        thread.start();
+
+        AnimationTimer timer = new AnimationTimer() {
+            @Override
+            public void handle(long now) {
+                updateAndDraw();
+            }
+        };
+
+        timer.start();
     }
 
-    public void init(Stage stage) {
-        canvas = new Canvas(WIDTH, HEIGHT);
-        graphicsContext = canvas.getGraphicsContext2D();
-        graphicsContext.scale(5, 5);
-
-//        Factory.getGameRepository().setRunning(true);
-//
-//        for (int i = 0; i < 5; i++) {
-//            for (Agent agent : Factory.getPlayerRepository().getAgents()) {
-//                agent.execute();
-//            }
-//        }
-    }
-
-    private void initMap() {
-        graphicsContext.clearRect(0, 0, WIDTH, HEIGHT);
-
-        for (Map.Entry<Integer, HashMap<Integer, Tile>> rowEntry : Factory.getMapRepository().getBoard().getRegion().entrySet()) {
-            for (Map.Entry<Integer, Tile> colEntry : rowEntry.getValue().entrySet()) {
-                Tile tile = colEntry.getValue();
-
-                for (Item item : tile.getItems()) {
-                    if (item instanceof Wall) {
-                        drawWall(tile);
-                    } else if (item instanceof Guard) {
-                        Player player = (Player) item;
-                        drawAgent(tile, player.getDirection());
-                    }
-                }
-
-                if (tile instanceof ShadowTile) {
-                    drawShadow(tile);
+    private void gameLoop() {
+        Factory.getGameRepository().setRunning(true);
+        while (Factory.getGameRepository().isRunning()) {
+            for (Agent agent : Factory.getPlayerRepository().getAgents()) {
+                try {
+                    agent.execute();
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
             }
         }
     }
 
-    public void updateAndDraw() {
-        graphicsContext.clearRect(0, 0, WIDTH, HEIGHT);
+    private int getPoint(int point) {
+        return point * GSSD;
+    }
+
+    public void init(Stage stage) {
+        canvas = new Canvas(stage.getWidth(), stage.getHeight());
+        graphicsContext = canvas.getGraphicsContext2D();
 
         initMap();
 
-//        for (Map.Entry<Integer, HashMap<Integer, Tile>> rowEntry : Factory.getPlayerRepository().getCompleteKnowledgeProgress().getRegion().entrySet()) {
-//            for (Map.Entry<Integer, Tile> colEntry : rowEntry.getValue().entrySet()) {
-//                drawKnowledge(colEntry.getValue());
-//            }
-//        }
+        Factory.getGameRepository().setRunning(true);
+
+        for (int i = 0; i < 5; i++) {
+            for (Agent agent : Factory.getPlayerRepository().getAgents()) {
+                agent.execute();
+            }
+        }
+    }
+
+    private void initMap() {
+        graphicsContext.clearRect(0, 0, screenWidth, screenHeight);
+
+        // Fill Background
+        graphicsContext.setFill(BASIC_TILE_COLOR);
+        graphicsContext.fillRect(0, 0, screenWidth, screenHeight);
+
+        for (Map.Entry<Integer, HashMap<Integer, Tile>> rowEntry : Factory.getMapRepository().getBoard().getRegion().entrySet()) {
+            for (Map.Entry<Integer, Tile> colEntry : rowEntry.getValue().entrySet()) {
+                Tile tile = colEntry.getValue();
+
+                detectAndDrawTile(tile);
+            }
+        }
+
+        drawTargetArea();
+
+        SnapshotParameters sp = new SnapshotParameters();
+        sp.setFill(Color.TRANSPARENT);
+
+        initialBoard = canvas.snapshot(new SnapshotParameters(), null);
+    }
+
+    private void detectAndDrawTile(Tile tile) {
+        for (Item item : tile.getItems()) {
+            if (item instanceof Wall) {
+                drawWall(tile);
+            } else if (item instanceof Teleporter teleporter) {
+                if (teleporter.getTile().equals(tile)) {
+                    drawTeleportOutput(tile);
+                } else {
+                    drawTeleportInput(tile);
+                }
+            }
+        }
+
+        if (tile instanceof ShadowTile) {
+            drawShadow(tile);
+        }
+    }
+
+    private void drawAgents(Tile tile) {
+        for (Item item : tile.getItems()) {
+            if (item instanceof Guard) {
+                Player player = (Player) item;
+                drawAgent(tile, player.getDirection());
+            }
+        }
+    }
+
+    public void updateAndDraw() {
+        graphicsContext.setGlobalAlpha(1);
+        graphicsContext.clearRect(0, 0, screenWidth, screenHeight);
+        graphicsContext.drawImage(initialBoard, 0, 0);
+
+        drawAllKnowledge();
+
+        for (Agent agent : Factory.getPlayerRepository().getAgents()) {
+            drawAgents(agent.getPlayer().getTile());
+
+            if (agent.getPlayer().getVision() != null) {
+                for (Map.Entry<Integer, HashMap<Integer, Tile>> rowEntry : agent.getPlayer().getVision().getRegion().entrySet()) {
+                    for (Map.Entry<Integer, Tile> colEntry : rowEntry.getValue().entrySet()) {
+                        drawVision(colEntry.getValue());
+                    }
+                }
+            }
+        }
+    }
+
+    private void drawTargetArea() {
+        TileArea targetArea = Factory.getMapRepository().getTargetArea();
+
+        if (targetArea != null) {
+            for (Map.Entry<Integer, HashMap<Integer, Tile>> rowEntry : targetArea.getRegion().entrySet()) {
+                for (Map.Entry<Integer, Tile> colEntry : rowEntry.getValue().entrySet()) {
+                    Tile tile = colEntry.getValue();
+
+                    drawTarget(tile);
+                }
+            }
+        }
+    }
+
+    private void drawTarget(Tile tile) {
+        drawTile(tile, TARGET_COLOR, .5);
+    }
+
+    public void drawAllKnowledge() {
+        for (Map.Entry<Integer, HashMap<Integer, Tile>> rowEntry : Factory.getPlayerRepository().getCompleteKnowledgeProgress().getRegion().entrySet()) {
+            for (Map.Entry<Integer, Tile> colEntry : rowEntry.getValue().entrySet()) {
+                drawKnowledge(colEntry.getValue());
+            }
+        }
+    }
+
+    private void drawVision(Tile tile) {
+        drawTile(tile, VISION_COLOR, .1);
+    }
+
+    private void drawTeleportInput(Tile tile) {
+        drawTile(tile, TELEPORT_INPUT_TILE_COLOR);
+    }
+
+    private void drawTeleportOutput(Tile tile) {
+        drawTile(tile, TELEPORT_OUT_TILE_COLOR);
     }
 
     private void drawKnowledge(Tile tile) {
-        drawTile(tile, KNOWLEDGE_COLOR);
+        drawTile(tile, KNOWLEDGE_COLOR, .1);
     }
 
     private void drawAgent(Tile tile, Angle angle) {
-        if (angle == Angle.UP)
-            graphicsContext.rotate(0);
-        else if (angle == Angle.DOWN)
-            graphicsContext.rotate(180);
-        else if (angle == Angle.LEFT)
-            graphicsContext.rotate(-90);
-        else if (angle == Angle.RIGHT)
-            graphicsContext.rotate(90);
-
-        graphicsContext.drawImage(guardImage, tile.getX(), tile.getY() , 1, 1);
+        drawTile(tile, GUARD_COLOR);
     }
 
     private void drawWall(Tile tile) {
@@ -153,13 +252,16 @@ public class GameView extends StackPane {
     }
 
     private void drawShadow(Tile tile) {
-        graphicsContext.setGlobalAlpha(0.25);
-        drawTile(tile, SHADED_TILE_COLOR);
-        graphicsContext.setGlobalAlpha(0.25);
+        drawTile(tile, SHADED_TILE_COLOR, 0.25);
     }
 
-    private void drawTile(Tile tile, Color color) {
+    private void drawTile(Tile tile, Color color) {;
+        drawTile(tile, color, 1);
+    }
+
+    private void drawTile(Tile tile, Color color, double alpha) {
+        graphicsContext.setGlobalAlpha(alpha);
         graphicsContext.setFill(color);
-        graphicsContext.fillRect(tile.getX(), tile.getY(), 1, 1);
+        graphicsContext.fillRect(getPoint(tile.getX()), getPoint(tile.getY()), GSSD, GSSD);
     }
 }

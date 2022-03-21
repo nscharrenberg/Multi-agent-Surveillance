@@ -1,45 +1,44 @@
 package com.nscharrenberg.um.multiagentsurveillance.gui.dataGUI;
 
+import com.nscharrenberg.um.multiagentsurveillance.headless.utils.recorder.ParseJSONData;
+import com.nscharrenberg.um.multiagentsurveillance.headless.utils.recorder.json.AgentJSON;
+import com.nscharrenberg.um.multiagentsurveillance.headless.utils.recorder.json.Coordinates;
 import javafx.scene.Scene;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
-import org.json.JSONArray;
-import org.json.JSONObject;
-import org.json.JSONTokener;
-
 
 import java.io.File;
-import java.io.FileReader;
-import java.util.ArrayList;
 import java.util.List;
 
 public class DataCharts {
 
-    private ParseJSONData parseData = new ParseJSONData();
-
     public void start(Stage stage, File directoryPath) throws Exception {
 
+        ParseJSONData parseData = new ParseJSONData();
+        DataHelper dataHelper = new DataHelper();
 
-        List<List<Coordinates>> data = parseData.parseData(directoryPath.getAbsolutePath());
+        List<List<AgentJSON>> data = parseData.parseData(directoryPath.getAbsolutePath());
+
+        List<List<Coordinates>> xyCoordinates = dataHelper.createXYCoordinates(data);
 
         stage.setTitle("Data Chart");
         //defining the axes
         final NumberAxis xAxis = new NumberAxis();
         final NumberAxis yAxis = new NumberAxis();
-        xAxis.setLabel(DataHelper.X_and_Y[0]);
-        yAxis.setLabel(DataHelper.X_and_Y[1]);
+        xAxis.setLabel(dataHelper.X_and_Y[0]);
+        yAxis.setLabel(dataHelper.X_and_Y[1]);
         //creating the chart
         final LineChart<Number,Number> lineChart =
                 new LineChart<Number,Number>(xAxis,yAxis);
 
-        for (int i = 0; i < DataHelper.agentToCompare.length; i++) {
+        for (int i = 0; i < dataHelper.agentToCompare.length; i++) {
             //defining a series
             XYChart.Series series = new XYChart.Series();
-            series.setName("Agent#" + DataHelper.agentToCompare[i]);
-            List<Coordinates> agentData = data.get(i);
+            series.setName("Agent#" + dataHelper.agentToCompare[i]);
+            List<Coordinates> agentData = xyCoordinates.get(i);
             for (int j = 0; j < agentData.size(); j++) {
                 Coordinates coordinates = agentData.get(j);
                 series.getData().add(new XYChart.Data(coordinates.x, coordinates.y));

@@ -67,10 +67,6 @@ public class SBOAgent extends Agent {
         System.out.println("Current goal Tile: " + goal.getX() +"  "+ goal.getY());
         System.out.println("Stack size: " + scanned.size());
 
-        if(knowledge.getByCoordinates(goal.getX(), goal.getY()).isPresent()) {
-            System.out.println("goal is already seen? ");
-        }
-
         // Turn goal tile into Queue angle
         BFS bfs = new BFS();
         if(bfs.execute(mapRepository.getBoard(), this.player, goal).isPresent()) {

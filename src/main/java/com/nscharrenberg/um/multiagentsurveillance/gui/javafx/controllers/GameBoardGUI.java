@@ -92,7 +92,7 @@ public class GameBoardGUI extends Application {
         scene = new Scene(borderPane, FRAME_WIDTH, FRAME_HEIGHT);
 
         this.stage = st;
-        //stage.setMaximized(true);
+        stage.setMaximized(true);
 
         stage.setTitle(" Multi-Agent Surveillance ");
         stage.setScene(scene);

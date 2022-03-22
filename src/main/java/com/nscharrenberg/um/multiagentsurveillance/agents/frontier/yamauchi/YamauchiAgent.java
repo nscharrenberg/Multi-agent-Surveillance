@@ -301,6 +301,11 @@ public class YamauchiAgent extends Agent {
         }
     }
 
+    @Override
+    public IPathFinding getPathFindingAlgorithm(){
+        return pathFindingAlgorithm;
+    }
+
     private void addUnknownArea(Frontier frontier, Optional<Tile> opt) {
         if (opt.isEmpty()) frontier.addUnknownArea();
     }

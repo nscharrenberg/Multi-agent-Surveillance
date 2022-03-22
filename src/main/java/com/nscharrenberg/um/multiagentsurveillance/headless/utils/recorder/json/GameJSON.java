@@ -1,14 +1,15 @@
 package com.nscharrenberg.um.multiagentsurveillance.headless.utils.recorder.json;
 
+import java.util.List;
 import java.util.Map;
 
 public class GameJSON {
 
     private int gameId;
     private int agentNum;
-    private Map<Integer, String> agentDescription;
+    private Map<Integer, List<String>> agentDescription;
 
-    public GameJSON(int gameId, int agentNum, Map<Integer, String> agentDescription) {
+    public GameJSON(int gameId, int agentNum, Map<Integer, List<String>> agentDescription) {
         this.gameId = gameId;
         this.agentNum = agentNum;
         this.agentDescription = agentDescription;
@@ -30,11 +31,11 @@ public class GameJSON {
         this.agentNum = agentNum;
     }
 
-    public Map<Integer, String> getAgentDescription() {
+    public Map<Integer, List<String>> getAgentDescription() {
         return agentDescription;
     }
 
-    public void setAgentDescription(Map<Integer, String> agentDescription) {
+    public void setAgentDescription(Map<Integer, List<String>> agentDescription) {
         this.agentDescription = agentDescription;
     }
 }

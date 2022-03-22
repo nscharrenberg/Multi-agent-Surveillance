@@ -501,6 +501,7 @@ public class GameBoardGUI extends Application {
                 int y = (int) coordinates.y;
 
                 Rectangle r = new Rectangle(GRID_SQUARE_SIZE, GRID_SQUARE_SIZE);
+                r.setOpacity(.5);
                 r.setFill(colors[point]);
 
                 gameGrid.add(r, x, y);

@@ -15,10 +15,9 @@ import java.util.List;
 
 public class DataCharts {
 
-    public void start(Stage stage, File directoryPath) throws Exception {
+    public void start(Stage stage, File directoryPath, DataHelper dataHelper) throws Exception {
 
         ParseJSONData parseData = new ParseJSONData();
-        DataHelper dataHelper = new DataHelper();
 
         List<List<AgentJSON>> data = parseData.parseData(directoryPath.getAbsolutePath());
 
@@ -34,10 +33,10 @@ public class DataCharts {
         final LineChart<Number,Number> lineChart =
                 new LineChart<Number,Number>(xAxis,yAxis);
 
-        for (int i = 0; i < dataHelper.agentToCompare.length; i++) {
+        for (int i = 0; i < dataHelper.agentToCompare.size(); i++) {
             //defining a series
             XYChart.Series series = new XYChart.Series();
-            series.setName("Agent#" + dataHelper.agentToCompare[i]);
+            series.setName("Agent#" + dataHelper.agentToCompare.get(i));
             List<Coordinates> agentData = xyCoordinates.get(i);
             for (int j = 0; j < agentData.size(); j++) {
                 Coordinates coordinates = agentData.get(j);

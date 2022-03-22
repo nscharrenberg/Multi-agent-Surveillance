@@ -112,6 +112,7 @@ public class GameView extends StackPane {
             @Override
             public void handle(long now) {
                 if (Factory.getGameRepository().isRunning()) {
+                    Factory.getPlayerRepository().calculateExplorationPercentage();
                     updateAndDraw();
                 }
             }

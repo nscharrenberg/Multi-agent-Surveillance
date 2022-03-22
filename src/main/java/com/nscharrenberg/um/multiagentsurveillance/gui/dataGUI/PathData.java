@@ -14,10 +14,9 @@ import java.util.List;
 
 public class PathData {
 
-    public void start(Stage stage, File directoryPath) throws Exception {
+    public void start(Stage stage, File directoryPath, DataHelper dataHelper) throws Exception {
 
         ParseJSONData parseData = new ParseJSONData();
-        DataHelper dataHelper = new DataHelper();
 
         List<List<AgentJSON>> data = parseData.parseData(directoryPath.getAbsolutePath());
 

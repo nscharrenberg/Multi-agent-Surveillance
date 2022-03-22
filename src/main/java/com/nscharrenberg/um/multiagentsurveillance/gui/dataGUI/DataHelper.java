@@ -8,25 +8,18 @@ import java.util.List;
 
 public class DataHelper {
 
-    protected final int[] agentToCompare = {0};
+    protected final List<Integer> agentToCompare;
+    protected final String[] X_and_Y;
 
-    /*
-    ~~~~~Choose X and Y~~~~~~
-
-    "Steps"
-    "Time"
-    "Time To Decide"
-    "Coordinates" -> "X", "Y"
-    "Total Exploration Rate"
-    "Agent Exploration Rate"
-     */
-    protected final String[] X_and_Y = {"Time", "Total Exploration Rate"};
-
+    public DataHelper(List<Integer> agentToCompare, String[] x_and_Y) {
+        this.agentToCompare = agentToCompare;
+        this.X_and_Y = x_and_Y;
+    }
 
     public List<List<Coordinates>> createXYCoordinates(List<List<AgentJSON>> data){
         List<List<Coordinates>> xyCoordinates = new ArrayList<>();
-        for (int i = 0; i < agentToCompare.length; i++) {
-            List<AgentJSON> agentJsonData = data.get(agentToCompare[i]);
+        for (int i = 0; i < agentToCompare.size(); i++) {
+            List<AgentJSON> agentJsonData = data.get(agentToCompare.get(i));
 
             xyCoordinates.add(new ArrayList<>());
 

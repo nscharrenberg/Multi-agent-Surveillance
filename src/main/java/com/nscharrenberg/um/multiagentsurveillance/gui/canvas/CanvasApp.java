@@ -22,26 +22,30 @@ public class CanvasApp extends Application {
 
     @Override
     public void start(Stage primaryStage) {
-        primaryStage.setWidth(WIDTH);
-        primaryStage.setHeight(HEIGHT);
-        view = new GameView(primaryStage);
+        try {
+            primaryStage.setWidth(WIDTH);
+            primaryStage.setHeight(HEIGHT);
+            view = new GameView(primaryStage);
 
-        Scene scene = new Scene(view, 800, 800);
+            Scene scene = new Scene(view, 800, 800);
 
-        scene.setOnKeyPressed(e -> {
-            if (e.getCode() == KeyCode.L) {
-                Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            scene.setOnKeyPressed(e -> {
+                if (e.getCode() == KeyCode.L) {
+                    Alert alert = new Alert(Alert.AlertType.INFORMATION);
                 alert.setTitle("Legend");
                 alert.setHeaderText("");
                 //alert.setContentText(" FOREST GREEN = NORMAL TILE \n BROWN = WALL \n PURPLE = Teleport entrance \n LIGHT PURPLE = Teleport exit \n Black = Shadow \n Light Green = Knowledge \n Yellow/White = Vision \n Blue = Guard");
                 alert.setGraphic(createLegend());
                 alert.show();
-            }
-        });
+                }
+            });
 
-        primaryStage.setScene(scene);
-        primaryStage.setResizable(false);
-        primaryStage.show();
+            primaryStage.setScene(scene);
+            primaryStage.setResizable(false);
+            primaryStage.show();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @Override

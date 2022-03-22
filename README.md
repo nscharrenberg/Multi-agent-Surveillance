@@ -130,3 +130,12 @@ Contributions are what make the open source community such an amazing place to b
 * [Bill Gates](https://nl.wikipedia.org/wiki/Bill_Gates)
 * [Steve Jobs](https://nl.wikipedia.org/wiki/Steve_Jobs)
 * [Linus Torvalds](https://nl.wikipedia.org/wiki/Linus_Torvalds)
+* Esam Ghaleb
+* Katharina Schneider
+* Steven Kelk
+* Tom Pepels (for his crypto)
+* [Alan Turing](https://en.wikipedia.org/wiki/Alan_Turing)
+* [Brian Yamauchi](https://robotfrontier.com/)
+* [Vitalik Buterin](https://en.wikipedia.org/wiki/Vitalik_Buterin)
+* [Andrew NG](https://en.wikipedia.org/wiki/Andrew_Ng)
+* [Gilbert Strang](https://math.mit.edu/~gs/)

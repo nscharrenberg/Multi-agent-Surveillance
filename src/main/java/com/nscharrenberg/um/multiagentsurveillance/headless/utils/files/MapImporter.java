@@ -47,6 +47,7 @@ public class MapImporter {
         // Retrieve ID and Value and remove excess spaces
         String id = split[0].trim();
         String value = split[1].trim();
+        value = value.split("//")[0].trim();
 
         if (isConfiguration(id)) {
             try {

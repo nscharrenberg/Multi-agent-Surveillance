@@ -1,5 +1,6 @@
 package com.nscharrenberg.um.multiagentsurveillance.agents.shared;
 
+import com.nscharrenberg.um.multiagentsurveillance.agents.shared.algorithms.pathfinding.IPathFinding;
 import com.nscharrenberg.um.multiagentsurveillance.headless.Factory;
 import com.nscharrenberg.um.multiagentsurveillance.headless.contracts.repositories.IGameRepository;
 import com.nscharrenberg.um.multiagentsurveillance.headless.contracts.repositories.IMapRepository;
@@ -113,6 +114,10 @@ public abstract class Agent {
 
     public Player getPlayer() {
         return player;
+    }
+
+    public IPathFinding getPathFindingAlgorithm(){
+        return null;
     }
 
     public abstract void execute(Angle angle);

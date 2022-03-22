@@ -14,19 +14,16 @@ import java.io.IOException;
 
 public class GameController {
     private GameBoardGUI boardGUI;
-    private static int timeDelay = 250;
 
     public GameController(){
         Factory.init();
 
-        importMap();
+        Factory.getGameRepository().startGame();
 
         boardGUI = new GameBoardGUI();
 
         // I guess here we would first call the start method on the home-/main screen right?
         boardGUI.start(new Stage());
-
-        setupAgents();
 
         Task task = new Task() {
             @Override
@@ -46,23 +43,8 @@ public class GameController {
         thread.start();
     }
 
-    private void importMap() {
-        File file = new File("src/test/resources/maps/testmap2.txt");
-        String path = file.getAbsolutePath();
-        MapImporter importer = new MapImporter();
-
-        Factory.getGameRepository().setRunning(true);
-
-        try {
-            importer.load(path);
-            Factory.getPlayerRepository().calculateInaccessibleTiles();
-        } catch (IOException e) {
-            e.printStackTrace();
-//            Factory.getGameRepository().setRunning(false);
-        }
-    }
-
     private void gameFinished() {
+        Factory.getGameRepository().stopGame();
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle("Game is Finished");
         alert.setHeaderText("Game Finished");
@@ -71,14 +53,7 @@ public class GameController {
         alert.show();
     }
 
-    private void setupAgents() {
-        for (int i = 0; i < Factory.getGameRepository().getGuardCount(); i++) {
-            Factory.getPlayerRepository().spawn(Guard.class);
-        }
-    }
-
     private void gameLoop() {
-        Factory.getGameRepository().setRunning(true);
         while (Factory.getGameRepository().isRunning()) {
             for (Agent agent : Factory.getPlayerRepository().getAgents()) {
                 try {
@@ -88,13 +63,9 @@ public class GameController {
                 }
             }
 
-            Platform.runLater(() -> boardGUI.updateGUI());
-
-            try {
-                Thread.sleep(timeDelay);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
+            Platform.runLater(() -> {
+                boardGUI.updateGUI();
+            });
         }
     }
 

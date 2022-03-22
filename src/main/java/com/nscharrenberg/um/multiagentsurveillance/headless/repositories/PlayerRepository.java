@@ -1,6 +1,5 @@
 package com.nscharrenberg.um.multiagentsurveillance.headless.repositories;
 
-import com.nscharrenberg.um.multiagentsurveillance.agents.SBO.SBOAgent;
 import com.nscharrenberg.um.multiagentsurveillance.agents.frontier.yamauchi.YamauchiAgent;
 import com.nscharrenberg.um.multiagentsurveillance.agents.random.RandomAgent;
 import com.nscharrenberg.um.multiagentsurveillance.agents.shared.Agent;
@@ -15,6 +14,7 @@ import com.nscharrenberg.um.multiagentsurveillance.headless.exceptions.ItemNotOn
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.*;
 import com.nscharrenberg.um.multiagentsurveillance.headless.utils.BoardUtils;
 import com.nscharrenberg.um.multiagentsurveillance.headless.utils.CharacterVision;
+import com.nscharrenberg.um.multiagentsurveillance.headless.utils.StopWatch;
 
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
@@ -28,12 +28,14 @@ public class PlayerRepository implements IPlayerRepository {
     private List<Intruder> intruders;
     private List<Guard> guards;
 
-    private TileArea completeKnowledgeProgress = new TileArea();
+    private TileArea completeKnowledgeProgress;
+    private StopWatch stopWatch;
+
+    private static double TOLERANCE_RATE = 0.01;
 
     private List<Agent> agents;
 
     private static final Class<? extends Agent> agentType = YamauchiAgent.class;
-    private static final Class<? extends Agent> agentType2 = SBOAgent.class;
 
     private float explorationPercentage = 0;
 
@@ -44,6 +46,8 @@ public class PlayerRepository implements IPlayerRepository {
         this.intruders = new ArrayList<>();
         this.guards = new ArrayList<>();
         this.agents = new ArrayList<>();
+        this.completeKnowledgeProgress = new TileArea();
+        this.stopWatch = new StopWatch();
 
         try {
             this.random = SecureRandom.getInstanceStrong();
@@ -80,9 +84,27 @@ public class PlayerRepository implements IPlayerRepository {
     }
 
     @Override
+    public float calculateAgentExplorationRate(Agent agent){
+        float totalTileCount = mapRepository.getBoard().height() * mapRepository.getBoard().width();
+        float discoveredAreaTileCount = 0;
+
+        // TODO: Could probably do with some optimization
+        for (Map.Entry<Integer, HashMap<Integer, Tile>> rowEntry : agent.getKnowledge().getRegion().entrySet()) {
+            for (Map.Entry<Integer, Tile> colEntry : rowEntry.getValue().entrySet()) {
+                discoveredAreaTileCount += 1;
+            }
+        }
+        return (discoveredAreaTileCount / totalTileCount) * 100;
+    }
+
+    @Override
     public float calculateExplorationPercentage() {
         for (Agent agent : agents) {
-            completeKnowledgeProgress = (TileArea) completeKnowledgeProgress.merge(agent.getKnowledge());
+            try {
+                completeKnowledgeProgress = (TileArea) completeKnowledgeProgress.merge(agent.getKnowledge());
+            } catch (ConcurrentModificationException ex) {
+                // do nothing
+            }
         }
 
         float totalTileCount = mapRepository.getBoard().height() * mapRepository.getBoard().width();
@@ -95,8 +117,9 @@ public class PlayerRepository implements IPlayerRepository {
             }
         }
 
+
         // no tiles = 100% (division by 0 not possible)
-        if (totalTileCount <= 0) {
+        if (totalTileCount <= 0 || explorationPercentage >= (100 - TOLERANCE_RATE)) {
             explorationPercentage = 100;
             //end game
             Factory.getGameRepository().setRunning(false);
@@ -109,6 +132,12 @@ public class PlayerRepository implements IPlayerRepository {
         // TODO: Remove this when UI elements are present
         System.out.println("Explored: " + explorationPercentage + "%");
 
+        try {
+            stopWatch.saveOrIgnoreSplit(explorationPercentage);
+        } catch (Exception e) {
+            System.out.println("Stopwatch Error: " + e.getMessage());
+        }
+
         return percentage;
     }
 
@@ -119,6 +148,8 @@ public class PlayerRepository implements IPlayerRepository {
         this.intruders = new ArrayList<>();
         this.guards = new ArrayList<>();
         this.agents = new ArrayList<>();
+        this.completeKnowledgeProgress = new TileArea();
+        this.stopWatch = new StopWatch();
 
         try {
             this.random = SecureRandom.getInstanceStrong();
@@ -183,10 +214,7 @@ public class PlayerRepository implements IPlayerRepository {
                         Guard guard = new Guard(tile, Angle.UP);
                         tile.add(guard);
                         guards.add(guard);
-                        //agent = spawnAgent(guard, agentType);
-
-                        agent = spawnAgent(guard, agentType2);
-                        // Changed this ^ to SBO agent
+                        agent = spawnAgent(guard, agentType);
                     }
 
                     agent.addKnowledge(tile);
@@ -205,8 +233,6 @@ public class PlayerRepository implements IPlayerRepository {
             agent = new RandomAgent(player);
         } else if (agentClass.equals(YamauchiAgent.class)) {
             agent = new YamauchiAgent(player);
-        } else if (agentClass.equals(SBOAgent.class)) {
-            agent = new SBOAgent(player);
         }
 
         if (agent == null) {
@@ -231,10 +257,8 @@ public class PlayerRepository implements IPlayerRepository {
                 CharacterVision characterVision = new CharacterVision(6, player.getDirection());
                 List<Tile> vision = characterVision.getVision(mapRepository.getBoard(), player.getTile());
                 player.getAgent().addKnowledge(vision);
+                player.setVision(new TileArea(vision));
 
-                List<Tile> vision2 = characterVision.getVision(mapRepository.getBoard(), player.getTile());
-                player.getAgent().addKnowledge(vision2);
-                player.setVision(new TileArea(vision2));
                 calculateExplorationPercentage();
             }
 
@@ -384,5 +408,20 @@ public class PlayerRepository implements IPlayerRepository {
     @Override
     public void setExplorationPercentage(float explorationPercentage) {
         this.explorationPercentage = explorationPercentage;
+    }
+
+    @Override
+    public TileArea getCompleteKnowledgeProgress() {
+        return completeKnowledgeProgress;
+    }
+
+    @Override
+    public StopWatch getStopWatch() {
+        return stopWatch;
+    }
+
+    @Override
+    public void setStopWatch(StopWatch stopWatch) {
+        this.stopWatch = stopWatch;
     }
 }

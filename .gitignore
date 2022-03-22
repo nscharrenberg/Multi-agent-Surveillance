@@ -27,6 +27,8 @@
 .idea/**/usage.statistics.xml
 .idea/**/dictionaries
 .idea/**/shelf
+DataRecorder/*
+DataRecorder
 
 # AWS User-specific
 .idea/**/aws.xml

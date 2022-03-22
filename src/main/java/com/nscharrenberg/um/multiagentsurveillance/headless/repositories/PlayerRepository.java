@@ -108,7 +108,6 @@ public class PlayerRepository implements IPlayerRepository {
 
         // TODO: Remove this when UI elements are present
         System.out.println("Explored: " + explorationPercentage + "%");
-        System.out.println("Knowledgesize: " + completeKnowledgeProgress.getRegion().entrySet().size());
 
         return percentage;
     }

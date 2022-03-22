@@ -44,94 +44,72 @@ public class SBOAgent extends Agent {
     @Override
     public Angle decide() {
 
-        int SBOversion = 1;
+        // TODO: need to update this to skip to next tile in stack if goal tile has entered the knowledge
+        if (!plannedMoves.isEmpty()) {
+            return plannedMoves.poll();
+        }
+
         Tile goal = this.player.getTile();
-        try {
-            //System.out.println("knowledgesize: " + this.knowledge.getRegion().entrySet().size());
-            //System.out.println("vissize: " + this.player.getVision().getRegion().entrySet().size());
-        } catch (Exception exc) {
-            System.out.println("Shits empty bruh");
-            System.out.println(exc.getMessage());
-        }
+        gatherV2();
 
-        // V1:
-        if(SBOversion == 1) {
-            visited.add(this.player.getTile());
-            gather();
-
-            while(!scanned.isEmpty()) {
-                Tile top = scanned.peek();
-                if(this.visited.getByCoordinates(top.getX(), top.getY()).isPresent()) {
-                    scanned.pop();
-                } else {
-                    goal = scanned.peek();
-                    break;
-                }
+        while(!scanned.isEmpty()) {
+            Tile top = scanned.peek();
+            if(this.knowledge.getByCoordinates(top.getX(), top.getY()).isPresent()) {
+                scanned.pop();
+            } else {
+                goal = scanned.peek();
+                break;
             }
-        }
-
-        // V2:
-        if(SBOversion == 2) {
-            gatherV2();
-
-            while(!scanned.isEmpty()) {
-                Tile top = scanned.peek();
-                if(this.knowledge.getByCoordinates(top.getX(), top.getY()).isPresent()) {
-                    scanned.pop();
-                } else {
-                    goal = scanned.peek();
-                    break;
-                }
-            }
-
-            // If goal tile is outside the knowledge, get the adjacent tile thats inside the knowledge
-//            if(knowledge.getByCoordinates(goal.getX(), goal.getY()).isEmpty()) {
-//                for (Tile at: getAdjacent(goal)) {
-//                    if(knowledge.getByCoordinates(at.getX(),at.getY()).isPresent())
-//                        goal = at;
-//                }
-//            }
         }
 
         // TODO: If stack is empty, search for teleporter
-        //System.out.println("Current goal Tile: " + goal.getX() +"  "+ goal.getY());
-        //System.out.println("Stack size: " + scanned.size());
+        System.out.println("Players Tile: " + player.getTile().getX() +"  "+ player.getTile().getY());
+        System.out.println("Current goal Tile: " + goal.getX() +"  "+ goal.getY());
+        System.out.println("Stack size: " + scanned.size());
 
-
-//        for (Tile st:scanned){
-//            System.out.println("Stack tile: " + st.getX() +"  "+ st.getY());
-//        }
+        if(knowledge.getByCoordinates(goal.getX(), goal.getY()).isPresent()) {
+            System.out.println("goal is already seen? ");
+        }
 
         // Turn goal tile into Queue angle
         BFS bfs = new BFS();
-        plannedMoves = bfs.execute(mapRepository.getBoard(), this.player, goal).get().getMoves();
-
-        return plannedMoves.poll();
-    }
-
-    private void gather() {
-        Tile current = player.getTile();
-        for (Tile t : getAdjacent(current)) {
-            if(this.visited.getByCoordinates(t.getX(),t.getY()).isEmpty()) {
-                if(unobstructedTile(this.mapRepository.getBoard(), t)) {
-                    scanned.push(t);
-                }
-            }
-        }
-    }
-
-    private void gatherV2() {
-        if(this.player.getVision() != null) {
-            for (Map.Entry<Integer, HashMap<Integer, Tile>> intHashMapEntry : this.player.getVision().getRegion().entrySet()) {
-                Tile vt = intHashMapEntry.getValue().get(intHashMapEntry.getKey());
-                if(vt != null) {
-                    if(this.knowledge.getByCoordinates(vt.getX(), vt.getY()).isEmpty()) {
-                        if(unobstructedTile(mapRepository.getBoard(), vt))
-                            scanned.addAll(getAdjacent(vt));
+        if(bfs.execute(mapRepository.getBoard(), this.player, goal).isPresent()) {
+            plannedMoves = bfs.execute(mapRepository.getBoard(), this.player, goal).get().getMoves();
+        } else if(knowledge.getByCoordinates(goal.getX(), goal.getY()).isEmpty()) {
+            for (Tile agt: getAdjacent(goal)) {
+                if(knowledge.getByCoordinates(agt.getX(),agt.getY()).isPresent()) {
+                    if(bfs.execute(mapRepository.getBoard(), this.player, agt).isPresent()) {
+                        plannedMoves = bfs.execute(mapRepository.getBoard(), this.player, agt).get().getMoves();
+                        break;
                     }
                 }
             }
         } else {
+            System.out.println("invalid goal?");
+        }
+
+        return plannedMoves.poll();
+    }
+
+
+    private void gatherV2() {
+        if(this.player.getVision() != null) {
+            for (Map.Entry<Integer, HashMap<Integer, Tile>> rowEntry : this.player.getVision().getRegion().entrySet()) {
+                for (Map.Entry<Integer, Tile> colEntry : rowEntry.getValue().entrySet()) {
+                    Tile vt = colEntry.getValue();
+                    if(vt != null) {
+                        if(unobstructedTile(mapRepository.getBoard(), vt)) {
+                            for (Tile at:getAdjacent(vt)) {
+                                if(this.knowledge.getByCoordinates(at.getX(), at.getY()).isEmpty()) {
+                                    scanned.add(at);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        } else {
+            System.out.println("Vision not updated! ");
             scanned.addAll(getAdjacent(this.player.getTile()));
         }
     }

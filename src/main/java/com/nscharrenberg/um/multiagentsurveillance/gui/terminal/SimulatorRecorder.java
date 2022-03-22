@@ -1,32 +1,23 @@
 package com.nscharrenberg.um.multiagentsurveillance.gui.terminal;
 
+import com.google.gson.Gson;
 import com.nscharrenberg.um.multiagentsurveillance.agents.shared.Agent;
 import com.nscharrenberg.um.multiagentsurveillance.headless.Factory;
 import com.nscharrenberg.um.multiagentsurveillance.headless.contracts.repositories.IPlayerRepository;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Angle;
-import com.nscharrenberg.um.multiagentsurveillance.headless.models.Guard;
-import com.nscharrenberg.um.multiagentsurveillance.headless.models.Tile;
-import com.nscharrenberg.um.multiagentsurveillance.headless.models.TileArea;
-import com.nscharrenberg.um.multiagentsurveillance.headless.repositories.PlayerRepository;
-import com.nscharrenberg.um.multiagentsurveillance.headless.utils.StopWatch;
-import com.nscharrenberg.um.multiagentsurveillance.headless.utils.files.MapImporter;
 import com.nscharrenberg.um.multiagentsurveillance.headless.utils.recorder.GameConfigurationRecorder;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.json.JSONTokener;
+import com.nscharrenberg.um.multiagentsurveillance.headless.utils.recorder.json.AgentJSON;
+import com.nscharrenberg.um.multiagentsurveillance.headless.utils.recorder.json.Coordinates;
 
 import java.io.*;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import static com.nscharrenberg.um.multiagentsurveillance.headless.utils.recorder.RecordHelper.GAME_ID;
 
 public class SimulatorRecorder {
 
-    private int RECORD = 4;
+    private final double RECORD_PERCENTAGE = 10.0;
 
     public SimulatorRecorder() throws Exception {
         Factory.init();
@@ -36,99 +27,76 @@ public class SimulatorRecorder {
     }
 
     private void gameLoop() throws Exception {
-        String directoryPath = System.getProperty("user.dir") + "\\Recorder\\Game#" + GAME_ID + "\\Agents";
+        IPlayerRepository playerRepository = Factory.getPlayerRepository();
+        List<Agent> agents = playerRepository.getAgents();
 
         Factory.getGameRepository().setRunning(true);
-        Factory.getPlayerRepository().getStopWatch().start();
+        playerRepository.getStopWatch().start();
 
-        List<JSONArray> JSONList = createJSONArrayAgent(Factory.getPlayerRepository().getAgents().size(), directoryPath);
+        List<List<AgentJSON>> data = createJsonAgentList(agents, playerRepository);
 
         int moveCount = 1;
-        int point = 0;
-
-        IPlayerRepository playerRepository = Factory.getPlayerRepository();
-
-        Angle[] agentAngles = new Angle[playerRepository.getAgents().size()];
-        int agentNum = 0;
-        for (Agent agent : playerRepository.getAgents()) {
-            agentAngles[agentNum] = agent.getPlayer().getDirection();
-            agentNum++;
-        }
-
+        long splits = 0;
 
         while (Factory.getGameRepository().isRunning()) {
             int agentId = 0;
-            Long time = playerRepository.getStopWatch().getDurationInMillis();
-            for (Agent agent : playerRepository.getAgents()) {
+            long time = (long) (playerRepository.getStopWatch().getDurationInMillis()/1000.0);
+            for (Agent agent : agents) {
 
-                Long startTime = playerRepository.getStopWatch().getDurationInMillis();
+                long startTime = playerRepository.getStopWatch().getDurationInMillis();
                 Angle move = agent.decide();
 
-                Long endTime = playerRepository.getStopWatch().getDurationInMillis();
-                Long moveTimeDecide = endTime - startTime;
+                long endTime = playerRepository.getStopWatch().getDurationInMillis();
+                long moveTimeDecide = (long) ((endTime - startTime)/1000.0);
                 agent.execute(move);
 
-                if(agentAngles[agentId].equals(move)) {
-                    Long recordedStartTime = playerRepository.getStopWatch().getDurationInMillis();
-                    JSONArray agentJSON = JSONList.get(agentId);
-
-                    JSONObject moveJSON = new JSONObject();
-                    moveJSON.put("Move", moveCount);
-                    moveJSON.put("X", agent.getPlayer().getTile().getX());
-                    moveJSON.put("Y", agent.getPlayer().getTile().getY());
-                    moveJSON.put("Time", time / 1000.0);
-                    moveJSON.put("Time to decide", moveTimeDecide / 1000.0);
-                    moveJSON.put("Exploration rate %", playerRepository.calculateAgentExplorationRate(agent));
-                    moveJSON.put("Total Exploration rate %", playerRepository.getExplorationPercentage());
-
-                    agentJSON.put(moveJSON);
-                    Long recordedEndTime = playerRepository.getStopWatch().getDurationInMillis();
-
-                    Factory.getPlayerRepository().getStopWatch().minusMillis(recordedEndTime - recordedStartTime);
-                }
-
-                agentAngles[agentId] = move;
+                List<AgentJSON> listAgentJSON = data.get(agentId);
+                listAgentJSON.add(new AgentJSON(moveCount, time, moveTimeDecide,
+                        new Coordinates(agent.getPlayer().getTile().getX(), agent.getPlayer().getTile().getY()),
+                        playerRepository.getExplorationPercentage(), playerRepository.calculateAgentExplorationRate(agent)));
 
                 agentId++;
             }
 
+            if(playerRepository.getExplorationPercentage() - splits >= RECORD_PERCENTAGE){
+                splits = (long) playerRepository.getExplorationPercentage();
+                writeJsonData(data);
+            }
+
             moveCount++;
-
-            if(point == RECORD){
-                Long recordedStartTime = playerRepository.getStopWatch().getDurationInMillis();
-                System.out.println("Successfully stored recordings");
-                writeData(JSONList, directoryPath);
-                JSONList = createJSONArrayAgent(playerRepository.getAgents().size(), directoryPath);
-                Long recordedEndTime = playerRepository.getStopWatch().getDurationInMillis();
-
-                Factory.getPlayerRepository().getStopWatch().minusMillis(recordedEndTime - recordedStartTime);
-
-                point = 0;
-            } else {
-                point++;
-            }
-
-            if (Factory.getPlayerRepository().getExplorationPercentage() >= 100) {
-                System.out.println("Out of Iterations - Game Over");
-                break;
-            }
         }
+
+        System.out.println("100% Achieved");
+
+        writeJsonData(data);
     }
 
-    private List<JSONArray> createJSONArrayAgent(int agentNum, String directoryPath) throws FileNotFoundException, JSONException {
-        ArrayList<JSONArray> JSONArray = new ArrayList<>();
-        for (int i = 0; i < agentNum; i++) {
-            JSONArray.add(new JSONArray(new JSONTokener(new FileReader(directoryPath + "\\Agent#" + i))));
+    private List<List<AgentJSON>> createJsonAgentList(List<Agent> agents, IPlayerRepository playerRepository) {
+        List<List<AgentJSON>> data = new ArrayList<>();
+
+        for (int i = 0; i < agents.size(); i++) {
+            data.add(new ArrayList<>());
+            data.get(i).add(new AgentJSON(0, 0, 0,
+                    new Coordinates(agents.get(i).getPlayer().getTile().getX(), agents.get(i).getPlayer().getTile().getY()),
+                    playerRepository.getExplorationPercentage(), playerRepository.calculateAgentExplorationRate(agents.get(i))));
         }
-        return JSONArray;
+
+        return data;
     }
 
-    private void writeData(List<JSONArray> agentJSON, String directoryPath){
-        for (int i = 0; i < agentJSON.size(); i++) {
-            try (FileWriter file = new FileWriter(directoryPath + "\\Agent#" + i)) {
-                file.write(agentJSON.get(i).toString());
-            } catch (Exception e) {
-                throw new RuntimeException("Error Agents recorder in GameConfigurationRecorder.java");
+    private void writeJsonData(List<List<AgentJSON>> data){
+        String directoryPath = System.getProperty("user.dir") + "\\DataRecorder\\Game#" + GAME_ID + "\\Agents";
+        File agents = new File(directoryPath);
+        agents.mkdir();
+
+        Gson gson = new Gson();
+        //Write the file in JSON format
+        for (int i = 0; i < data.size(); i++) {
+            try (FileWriter writer = new FileWriter(directoryPath + "\\Agent#" + i + ".json")) {
+                gson.toJson(data.get(i), writer);
+                System.out.println("Successfully created the Agent#" + i + ".json");
+            } catch (IOException e) {
+                e.printStackTrace();
             }
         }
     }

@@ -100,7 +100,7 @@ public class AStar implements IPathFinding {
         int pathCost = 0;
 
         while (tree.getParent() != null) {
-            pathCost += unknownAreaCalculate.calculateUnknownArea(board, tree.getTile());
+//            pathCost += unknownAreaCalculate.calculateUnknownArea(board, tree.getTile());
             sequenceMoves.addFirst(tree.getEntrancePosition());
             tree = tree.getParent();
         }

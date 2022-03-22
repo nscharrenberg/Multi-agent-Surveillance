@@ -3,6 +3,9 @@ package com.nscharrenberg.um.multiagentsurveillance.gui.dataGUI;
 import com.nscharrenberg.um.multiagentsurveillance.gui.javafx.controllers.GameBoardGUI;
 import com.nscharrenberg.um.multiagentsurveillance.headless.Factory;
 import com.nscharrenberg.um.multiagentsurveillance.headless.utils.files.MapImporter;
+import com.nscharrenberg.um.multiagentsurveillance.headless.utils.recorder.ParseJSONData;
+import com.nscharrenberg.um.multiagentsurveillance.headless.utils.recorder.json.AgentJSON;
+import com.nscharrenberg.um.multiagentsurveillance.headless.utils.recorder.json.Coordinates;
 import javafx.stage.Stage;
 
 import java.io.File;
@@ -10,11 +13,15 @@ import java.io.IOException;
 import java.util.List;
 
 public class PathData {
-    private ParseJSONData parseData = new ParseJSONData();
 
     public void start(Stage stage, File directoryPath) throws Exception {
 
-        List<List<Coordinates>> data = parseData.parseData(directoryPath.getAbsolutePath());
+        ParseJSONData parseData = new ParseJSONData();
+        DataHelper dataHelper = new DataHelper();
+
+        List<List<AgentJSON>> data = parseData.parseData(directoryPath.getAbsolutePath());
+
+        List<List<Coordinates>> xyCoordinates = dataHelper.createXYCoordinates(data);
 
         Factory.init();
 
@@ -22,7 +29,7 @@ public class PathData {
 
         GameBoardGUI boardGUI = new GameBoardGUI();
 
-        boardGUI.showPath(stage, data);
+        boardGUI.showPath(stage, xyCoordinates);
     }
 
     private void importMap() {

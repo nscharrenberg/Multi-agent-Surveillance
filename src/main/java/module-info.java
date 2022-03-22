@@ -2,11 +2,10 @@ module com.nscharrenberg.um.multiagentsurveillance {
     requires javafx.controls;
     requires javafx.fxml;
     requires cloning;
-    requires json;
+    requires com.google.gson;
 
     opens com.nscharrenberg.um.multiagentsurveillance to javafx.fxml, cloning;
     exports com.nscharrenberg.um.multiagentsurveillance;
-    exports com.nscharrenberg.um.multiagentsurveillance.gui.javafx.controllers;
     opens com.nscharrenberg.um.multiagentsurveillance.gui.dataGUI to javafx.fxml;
     exports com.nscharrenberg.um.multiagentsurveillance.gui.dataGUI;
     opens com.nscharrenberg.um.multiagentsurveillance.gui.javafx.controllers to javafx.fxml;
@@ -23,4 +22,8 @@ module com.nscharrenberg.um.multiagentsurveillance {
     opens com.nscharrenberg.um.multiagentsurveillance.agents.frontier.yamauchi.comparator to cloning;
     opens com.nscharrenberg.um.multiagentsurveillance.agents.shared.algorithms.pathfinding.AStar to cloning;
     opens com.nscharrenberg.um.multiagentsurveillance.headless.utils to cloning;
+    exports com.nscharrenberg.um.multiagentsurveillance.headless.utils.recorder;
+    opens com.nscharrenberg.um.multiagentsurveillance.headless.utils.recorder to com.google.gson, javafx.fxml;
+    exports com.nscharrenberg.um.multiagentsurveillance.headless.utils.recorder.json;
+    opens com.nscharrenberg.um.multiagentsurveillance.headless.utils.recorder.json to com.google.gson, javafx.fxml;
 }

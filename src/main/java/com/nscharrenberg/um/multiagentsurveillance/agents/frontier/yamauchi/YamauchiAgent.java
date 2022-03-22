@@ -4,6 +4,7 @@ import com.nscharrenberg.um.multiagentsurveillance.agents.frontier.yamauchi.comp
 import com.nscharrenberg.um.multiagentsurveillance.agents.frontier.yamauchi.comparator.MinDistanceUnknownAreaComparator;
 import com.nscharrenberg.um.multiagentsurveillance.agents.shared.Agent;
 import com.nscharrenberg.um.multiagentsurveillance.agents.shared.algorithms.pathfinding.AStar.AStar;
+import com.nscharrenberg.um.multiagentsurveillance.agents.shared.algorithms.pathfinding.BFS.BFS;
 import com.nscharrenberg.um.multiagentsurveillance.agents.shared.algorithms.pathfinding.IPathFinding;
 import com.nscharrenberg.um.multiagentsurveillance.agents.shared.utils.QueueNode;
 import com.nscharrenberg.um.multiagentsurveillance.headless.contracts.repositories.IGameRepository;
@@ -24,7 +25,7 @@ public class YamauchiAgent extends Agent {
     private final List<Frontier> frontiers = new ArrayList<>();
     private Frontier chosenFrontier = null;
     private SecureRandom random;
-    private final IPathFinding pathFindingAlgorithm = new AStar();
+    private final IPathFinding pathFindingAlgorithm = new BFS();
     private final IWeightComparator weightDetector = new MinDistanceUnknownAreaComparator();
 
     private int consecutiveNoFrontier = 0;

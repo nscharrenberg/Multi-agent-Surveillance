@@ -197,6 +197,13 @@ public class TileArea extends Area<Tile> {
     }
 
     @Override
+    public void add(List<Tile> tiles) {
+        for (Tile tile : tiles) {
+            add(tile);
+        }
+    }
+
+    @Override
     public void add(Tile tile, boolean overwrite) {
         Optional<Tile> existing = getByCoordinates(tile.getX(), tile.getY());
 

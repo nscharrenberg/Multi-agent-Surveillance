@@ -52,6 +52,8 @@ public abstract class Area<T> {
 
     public abstract void add(Tile... tiles);
 
+    public abstract void add(List<Tile> tiles);
+
     public abstract void add(Tile tile, boolean overwrite);
 
     public abstract Area<Tile> merge(Area<Tile> target);

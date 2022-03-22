@@ -33,6 +33,7 @@ public class DataSettings {
         int length = directory.list().length;
         for (int i = 0; i < length; i++) {
             CheckBox tmp = new CheckBox("Agents#" + i);
+            tmp.setSelected(true);
             checkBoxList.add(tmp);
             vBoxAgents.getChildren().add(tmp);
         }

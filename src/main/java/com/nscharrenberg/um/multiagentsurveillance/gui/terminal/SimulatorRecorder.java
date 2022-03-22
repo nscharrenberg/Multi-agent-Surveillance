@@ -8,6 +8,7 @@ import com.nscharrenberg.um.multiagentsurveillance.headless.models.Angle;
 import com.nscharrenberg.um.multiagentsurveillance.headless.utils.recorder.GameConfigurationRecorder;
 import com.nscharrenberg.um.multiagentsurveillance.headless.utils.recorder.json.AgentJSON;
 import com.nscharrenberg.um.multiagentsurveillance.headless.utils.recorder.json.Coordinates;
+import javafx.concurrent.Task;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -23,7 +24,10 @@ public class SimulatorRecorder {
         Factory.init();
         Factory.getGameRepository().startGame();
         new GameConfigurationRecorder().setUpConfFiles();
+
         gameLoop();
+
+
     }
 
     private void gameLoop() throws Exception {
@@ -35,10 +39,21 @@ public class SimulatorRecorder {
 
         List<List<AgentJSON>> data = createJsonAgentList(agents, playerRepository);
 
+        Thread thread = new Thread(() -> {
+            while (Factory.getGameRepository().isRunning()) {
+                Factory.getPlayerRepository().calculateExplorationPercentage();
+            }
+        });
+        thread.setDaemon(true);
+        thread.start();
+
+
         int moveCount = 1;
         long splits = 0;
 
         while (Factory.getGameRepository().isRunning()) {
+            System.out.println("Exploration Percentage: " + Factory.getPlayerRepository().getExplorationPercentage());
+
             int agentId = 0;
             long time = (long) (playerRepository.getStopWatch().getDurationInMillis()/1000.0);
             for (Agent agent : agents) {

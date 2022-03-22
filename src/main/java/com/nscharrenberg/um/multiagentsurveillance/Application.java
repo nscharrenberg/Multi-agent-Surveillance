@@ -10,7 +10,7 @@ import java.io.IOException;
 public class Application extends javafx.application.Application {
     @Override
     public void start(Stage stage) throws IOException {
-        new CanvasApp();
+        (new CanvasApp()).start(stage);
     }
 
     public static void main(String[] args) {

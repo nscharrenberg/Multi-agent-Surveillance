@@ -25,7 +25,7 @@ public class YamauchiAgent extends Agent {
     private final List<Frontier> frontiers = new ArrayList<>();
     private Frontier chosenFrontier = null;
     private SecureRandom random;
-    private final IPathFinding pathFindingAlgorithm = new BFS();
+    private final IPathFinding pathFindingAlgorithm = new AStar();
     private final IWeightComparator weightDetector = new MinDistanceUnknownAreaComparator();
 
     private int consecutiveNoFrontier = 0;

@@ -3,6 +3,7 @@ package com.nscharrenberg.um.multiagentsurveillance.headless.models;
 import com.rits.cloning.Cloner;
 
 import java.security.SecureRandom;
+import java.time.Instant;
 import java.util.*;
 
 public class TileArea extends Area<Tile> {
@@ -196,6 +197,13 @@ public class TileArea extends Area<Tile> {
     }
 
     @Override
+    public void add(List<Tile> tiles) {
+        for (Tile tile : tiles) {
+            add(tile);
+        }
+    }
+
+    @Override
     public void add(Tile tile, boolean overwrite) {
         Optional<Tile> existing = getByCoordinates(tile.getX(), tile.getY());
 
@@ -216,7 +224,7 @@ public class TileArea extends Area<Tile> {
     }
 
     @Override
-    public Area<Tile> merge(Area<Tile> target) {
+    public Area<Tile> merge(Area<Tile> target) throws ConcurrentModificationException {
         Cloner cloner = new Cloner();
         cloner.deepCloneDontCloneInstances(SecureRandom.class);
         cloner.deepCloneDontCloneInstances(LinkedList.class);
@@ -228,6 +236,7 @@ public class TileArea extends Area<Tile> {
         cloner.dontCloneInstanceOf(List.class);
         cloner.dontCloneInstanceOf(ArrayList.class);
         cloner.dontCloneInstanceOf(PriorityQueue.class);
+        cloner.dontCloneInstanceOf(Instant.class);
         HashMap<Integer, HashMap<Integer, Tile>> cloned = cloner.deepClone(region);
 
         TileArea newArea = new TileArea(cloned);

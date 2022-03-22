@@ -45,6 +45,7 @@ javafx {
 }
 
 dependencies {
+    implementation 'com.google.code.gson:gson:2.9.0'
     implementation('io.github.kostaskougios:cloning:1.10.3')
     testImplementation("org.junit.jupiter:junit-jupiter-api:${junitVersion}")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:${junitVersion}")
@@ -72,4 +73,24 @@ jlink {
 
 jlinkZip {
     group = 'distribution'
+}
+
+task(original, dependsOn: 'classes', type: JavaExec) {
+    mainClass = 'com.nscharrenberg.um.multiagentsurveillance.gui.javafx.controllers.HomeScreen'
+    classpath = sourceSets.main.runtimeClasspath
+}
+
+task(canvas, dependsOn: 'classes', type: JavaExec) {
+    mainClass = 'com.nscharrenberg.um.multiagentsurveillance.gui.canvas.CanvasLauncher'
+    classpath = sourceSets.main.runtimeClasspath
+}
+
+task(dataManager, dependsOn: 'classes', type: JavaExec) {
+    mainClass = 'com.nscharrenberg.um.multiagentsurveillance.gui.dataGUI.FileChooser'
+    classpath = sourceSets.main.runtimeClasspath
+}
+
+task(terminal, dependsOn: 'classes', type: JavaExec) {
+    mainClass = 'com.nscharrenberg.um.multiagentsurveillance.gui.terminal.TerminalApp'
+    classpath = sourceSets.main.runtimeClasspath
 }

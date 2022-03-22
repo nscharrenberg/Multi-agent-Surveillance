@@ -63,7 +63,6 @@ Build with stress and sleepless nights
 
 ## Getting Started
 
-
 ### Prerequisites
 
 Before running the application make sure you have Java 17 and Gradle installed.
@@ -71,23 +70,32 @@ Before running the application make sure you have Java 17 and Gradle installed.
 ### Installation
 
 1. clone or download:
-   `git clone git@github.com:nscharrenberg/COVID-21.git`
+   `git clone git@github.com:nscharrenberg/Multi-agent-Surveillance.git`
 
-2. run `maven install` to install al required libraries
-3. run `maven compile` to compile the game
-   4a. run `maven exec:java` to run the game
-   4b. run `maven test` to run the tests
+2. run `gradle build` to install al required libraries & build the app
+3. run `gradle run` to compile the game
 
+In case you want to run experiments perform steps 1 and 2 above, following by:
+4. run `gradle terminal` to simulate a game and record important data
+5. run `gradle dataManager` to get analytical data from the terminal simulation
 
-## Usage
+**Note:** You can change the map by putting the map in `test/resources/maps/{your_map_here}` and changing the path in `MAP_PATH` of `com.nscharrenberg.um.multiagentsurveillance.headless.repositories.GameRepository`.
+Make sure to also redo step 2 of the steps above.
 
-Use this space to show useful examples of how a project can be used. Additional screenshots, code examples and demos work well in this space. You may also link to more resources.
-
-_For more examples, please refer to the [Documentation](https://example.com)_
+**Note:** Experiment screens have to be changed in `com.nscharrenberg.um.multiagentsurveillance.gui.dataGUI.DataHelper` X and Y values can be changed to any of the properties mentioned in the comments of this file.
 
 ## Roadmap
 
 See the [open issues](https://github.com/nscharrenberg/Multi-agent-Surveillance/issues) for a list of proposed features (and known issues).
+
+## Known Issues
+- It takes very long for 5 agents to complete the exam map (+- 80 minutes) --> Multi-threading might fix this
+- File Importing uses hardcoded file path
+- Menu isn't correctly working
+- Experiments require you to change parameters through the code
+- Frontier sometimes gives Concurrency Exception (Temporary workaround is to rerun the game a few times)
+- Agent doesn't work properly with Basic Vision
+- Orthagonal Agent throws NPE on empty stack
 
 ## Contributing
 
@@ -122,3 +130,13 @@ Contributions are what make the open source community such an amazing place to b
 * [Bill Gates](https://nl.wikipedia.org/wiki/Bill_Gates)
 * [Steve Jobs](https://nl.wikipedia.org/wiki/Steve_Jobs)
 * [Linus Torvalds](https://nl.wikipedia.org/wiki/Linus_Torvalds)
+* Esam Ghaleb
+* Katharina Schneider
+* Steven Kelk
+* Tom Pepels (for his crypto)
+* [Alan Turing](https://en.wikipedia.org/wiki/Alan_Turing)
+* [Brian Yamauchi](https://robotfrontier.com/)
+* [Vitalik Buterin](https://en.wikipedia.org/wiki/Vitalik_Buterin)
+* [Andrew NG](https://en.wikipedia.org/wiki/Andrew_Ng)
+* [Gilbert Strang](https://math.mit.edu/~gs/)
+* [Paul Syverson](https://en.wikipedia.org/wiki/Paul_Syverson)

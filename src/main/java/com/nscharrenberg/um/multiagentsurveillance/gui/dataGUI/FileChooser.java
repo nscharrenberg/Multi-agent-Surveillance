@@ -15,7 +15,6 @@ public class FileChooser extends Application {
 
     @Override
     public void start(Stage primaryStage) {
-        DataHelper dataHelper = new DataHelper();
 
         primaryStage.setTitle("File Chooser");
 
@@ -46,12 +45,7 @@ public class FileChooser extends Application {
             System.out.println(selectedDirectory.getAbsolutePath());
             primaryStage.close();
             try {
-
-                if(dataHelper.X_and_Y[0].equals("X") && dataHelper.X_and_Y[1].equals("Y"))
-                    new PathData().start(primaryStage, selectedDirectory);
-                else
-                    new DataCharts().start(primaryStage, selectedDirectory);
-
+                new DataSettings().start(primaryStage, selectedDirectory);
             } catch (Exception exception) {
                 exception.printStackTrace();
             }

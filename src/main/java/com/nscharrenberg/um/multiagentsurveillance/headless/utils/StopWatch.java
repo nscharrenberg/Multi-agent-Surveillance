@@ -63,6 +63,10 @@ public class StopWatch {
         return Duration.between(startTime, endTime);
     }
 
+    public Long getDurationInNano() throws Exception {
+        return getDuration().toNanos();
+    }
+
     public Long getDurationInMillis() throws Exception {
         return getDuration().toMillis();
     }

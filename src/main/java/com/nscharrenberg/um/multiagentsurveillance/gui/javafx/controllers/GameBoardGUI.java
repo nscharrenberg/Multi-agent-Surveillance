@@ -324,7 +324,8 @@ public class GameBoardGUI extends Application {
         if (tile instanceof ShadowTile)
             rectangle.setFill(Color.GREY);
         else
-            rectangle.setFill(Color.BURLYWOOD);
+            rectangle.setFill(Color.SILVER);
+            rectangle.setOpacity(0.6);
 
         ArrayList<Item> orderedList = orderList((ArrayList<Item>) tile.getItems());
 
@@ -338,7 +339,7 @@ public class GameBoardGUI extends Application {
         for (Item item : orderedList) {
             if (item instanceof Wall) {
                 rectangle.setFill(Color.DARKGRAY);
-                rectangle.setOpacity(0.5);
+                rectangle.setOpacity(0.8);
             } else if (item instanceof Window) {
                 rectangle.setFill(Color.BLUE);
             } else if (item instanceof Door) {

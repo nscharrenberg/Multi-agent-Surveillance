@@ -139,3 +139,4 @@ Contributions are what make the open source community such an amazing place to b
 * [Vitalik Buterin](https://en.wikipedia.org/wiki/Vitalik_Buterin)
 * [Andrew NG](https://en.wikipedia.org/wiki/Andrew_Ng)
 * [Gilbert Strang](https://math.mit.edu/~gs/)
+* [Paul Syverson](https://en.wikipedia.org/wiki/Paul_Syverson)

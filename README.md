@@ -70,7 +70,7 @@ Before running the application make sure you have Java 17 and Gradle installed.
 ### Installation
 
 1. clone or download:
-   `git clone git@github.com:nscharrenberg/COVID-21.git`
+   `git clone git@github.com:nscharrenberg/Multi-agent-Surveillance.git`
 
 2. run `gradle build` to install al required libraries & build the app
 3. run `gradle run` to compile the game

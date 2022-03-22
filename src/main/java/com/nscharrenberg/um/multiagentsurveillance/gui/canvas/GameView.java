@@ -38,8 +38,6 @@ public class GameView extends StackPane {
 
     private Stage stage;
 
-    private Image guardImage;
-
     private int GSSD;
 
     private static int WIDTH;
@@ -53,11 +51,6 @@ public class GameView extends StackPane {
     private WritableImage initialBoard;
 
     public GameView(Stage stage) {
-        try {
-            guardImage = new Image(Objects.requireNonNull(getClass().getResource("../../images/guard.png")).toString());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
 
         this.stage = stage;
         Factory.init();

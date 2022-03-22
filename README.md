@@ -95,6 +95,7 @@ See the [open issues](https://github.com/nscharrenberg/Multi-agent-Surveillance/
 - Experiments require you to change parameters through the code
 - Frontier sometimes gives Concurrency Exception (Temporary workaround is to rerun the game a few times)
 - Agent doesn't work properly with Basic Vision
+- Orthagonal Agent throws NPE on empty stack
 
 ## Contributing
 

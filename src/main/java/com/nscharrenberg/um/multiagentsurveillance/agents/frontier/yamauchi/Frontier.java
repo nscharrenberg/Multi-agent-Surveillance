@@ -11,7 +11,7 @@ public class Frontier {
     private HashMap<Integer, HashMap<Integer, Tile>> frontier;
     private int unknownAreas = 0;
     private QueueNode queueNode;
-    private int maxSize = Integer.MAX_VALUE;
+    private int maxSize = 3;
     private int distance;
     private Tile target;
 
@@ -20,7 +20,6 @@ public class Frontier {
     }
 
     public Frontier(Tile tile) {
-        this.distance = distance;
         this.frontier = new HashMap<>();
         this.frontier.put(tile.getX(), new HashMap<>());
         this.frontier.get(tile.getX()).put(tile.getY(), tile);

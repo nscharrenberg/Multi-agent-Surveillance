@@ -11,13 +11,16 @@ public class Frontier {
     private HashMap<Integer, HashMap<Integer, Tile>> frontier;
     private int unknownAreas = 0;
     private QueueNode queueNode;
-    private int maxSize = 3;
+    private int maxSize = Integer.MAX_VALUE;
+    private int distance;
+    private Tile target;
 
     public Frontier() {
         this.frontier = new HashMap<>();
     }
 
     public Frontier(Tile tile) {
+        this.distance = distance;
         this.frontier = new HashMap<>();
         this.frontier.put(tile.getX(), new HashMap<>());
         this.frontier.get(tile.getX()).put(tile.getY(), tile);
@@ -93,6 +96,30 @@ public class Frontier {
         return false;
     }
 
+    public int getMaxSize() {
+        return maxSize;
+    }
+
+    public void setMaxSize(int maxSize) {
+        this.maxSize = maxSize;
+    }
+
+    public Tile getTarget() {
+        return target;
+    }
+
+    public void setTarget(Tile target) {
+        this.target = target;
+    }
+
+    public int getDistance() {
+        return distance;
+    }
+
+    public void setDistance(int distance) {
+        this.distance = distance;
+    }
+
     public HashMap<Integer, HashMap<Integer, Tile>> getFrontier() {
         return frontier;
     }
@@ -121,7 +148,8 @@ public class Frontier {
         if (this.queueNode != null && (queueNode.getDistance() <= this.queueNode.getDistance() || queueNode.getMoves().size() <= this.queueNode.getMoves().size())) {
             return;
         }
-
+        this.target = queueNode.getTile();
+        this.distance = queueNode.getDistance();
         this.queueNode = queueNode;
     }
 }

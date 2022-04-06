@@ -52,8 +52,6 @@ public class SimulatorRecorder {
         long splits = 0;
 
         while (Factory.getGameRepository().isRunning()) {
-            System.out.println("Exploration Percentage: " + Factory.getPlayerRepository().getExplorationPercentage());
-
             int agentId = 0;
             long time = (long) (playerRepository.getStopWatch().getDurationInMillis()/1000.0);
             for (Agent agent : agents) {
@@ -76,6 +74,13 @@ public class SimulatorRecorder {
             if(playerRepository.getExplorationPercentage() - splits >= RECORD_PERCENTAGE){
                 splits = (long) playerRepository.getExplorationPercentage();
                 writeJsonData(data);
+                System.out.println("Exploration Percentage: " + Factory.getPlayerRepository().getExplorationPercentage());
+            }
+
+            if(playerRepository.getExplorationPercentage() >= 99.70){
+                writeJsonData(data);
+                System.out.println("Exploration Percentage: " + Factory.getPlayerRepository().getExplorationPercentage());
+                break;
             }
 
             moveCount++;

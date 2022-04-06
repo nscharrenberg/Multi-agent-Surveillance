@@ -49,6 +49,10 @@ public class QueueNode {
         return moves;
     }
 
+    public void addMove(Angle move){
+        this.moves.add(move);
+    }
+
     public void setMoves(Queue<Angle> moves) {
         this.moves = moves;
     }

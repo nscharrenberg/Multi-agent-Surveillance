@@ -53,4 +53,10 @@ public class Geometrics {
         return linetiles;
     }
 
+    // Used for agent audio
+    public ArrayList<Tile> getSurroundingTiles() {
+
+        return null;
+    }
+
 }

@@ -19,7 +19,7 @@ import java.util.Stack;
 //
 public class StackTest {
 
-    @DisplayName("Raw Vision Test")
+    @DisplayName("Stack Test")
     @Test
     void testStackTiles() {
 
@@ -39,8 +39,6 @@ public class StackTest {
 
         boolean match =  tiles.stream().noneMatch(t -> (t.getX() == dum.getX() && t.getY() == dum.getY()));
         System.out.println(match);
-
-        //tiles.removeIf(t -> t.getX() == && t.getY() == )
 
         Tile testt = tiles.stream().filter(t -> (t.getX() == dum.getX() && t.getY() == dum.getY())).findFirst().get();
         System.out.println(exist +" - "+ exist2+ " - "+ exist3);

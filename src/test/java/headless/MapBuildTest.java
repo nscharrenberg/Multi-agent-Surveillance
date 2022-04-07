@@ -1,16 +1,19 @@
 package headless;
 
-import com.nscharrenberg.um.multiagentsurveillance.agents.random.RandomAgent;
-import com.nscharrenberg.um.multiagentsurveillance.agents.shared.Agent;
 import com.nscharrenberg.um.multiagentsurveillance.headless.Factory;
 import com.nscharrenberg.um.multiagentsurveillance.headless.exceptions.*;
-import com.nscharrenberg.um.multiagentsurveillance.headless.models.*;
+import com.nscharrenberg.um.multiagentsurveillance.headless.models.Angle.Angle;
+import com.nscharrenberg.um.multiagentsurveillance.headless.models.Items.Item;
+import com.nscharrenberg.um.multiagentsurveillance.headless.models.Items.Teleporter;
+import com.nscharrenberg.um.multiagentsurveillance.headless.models.Items.Collision.Wall;
+import com.nscharrenberg.um.multiagentsurveillance.headless.models.Map.Tile;
+import com.nscharrenberg.um.multiagentsurveillance.headless.models.Player.Guard;
+import com.nscharrenberg.um.multiagentsurveillance.headless.models.Player.Player;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import java.util.List;
 import java.util.Optional;
 
 public class MapBuildTest {

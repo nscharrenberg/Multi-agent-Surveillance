@@ -4,11 +4,10 @@ import com.google.gson.Gson;
 import com.nscharrenberg.um.multiagentsurveillance.agents.shared.Agent;
 import com.nscharrenberg.um.multiagentsurveillance.headless.Factory;
 import com.nscharrenberg.um.multiagentsurveillance.headless.contracts.repositories.IPlayerRepository;
-import com.nscharrenberg.um.multiagentsurveillance.headless.models.Angle;
+import com.nscharrenberg.um.multiagentsurveillance.headless.models.Angle.Angle;
 import com.nscharrenberg.um.multiagentsurveillance.headless.utils.recorder.GameConfigurationRecorder;
 import com.nscharrenberg.um.multiagentsurveillance.headless.utils.recorder.json.AgentJSON;
 import com.nscharrenberg.um.multiagentsurveillance.headless.utils.recorder.json.Coordinates;
-import javafx.concurrent.Task;
 
 import java.io.*;
 import java.util.ArrayList;

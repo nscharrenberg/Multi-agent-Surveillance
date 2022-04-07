@@ -1,4 +1,9 @@
-package com.nscharrenberg.um.multiagentsurveillance.headless.models;
+package com.nscharrenberg.um.multiagentsurveillance.headless.models.Items;
+
+import com.nscharrenberg.um.multiagentsurveillance.headless.models.Angle.Angle;
+import com.nscharrenberg.um.multiagentsurveillance.headless.models.Items.Item;
+import com.nscharrenberg.um.multiagentsurveillance.headless.models.Map.Tile;
+import com.nscharrenberg.um.multiagentsurveillance.headless.models.Map.TileArea;
 
 public class Teleporter extends Item {
     private TileArea source;

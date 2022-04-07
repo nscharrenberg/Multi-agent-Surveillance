@@ -1,8 +1,8 @@
 package com.nscharrenberg.um.multiagentsurveillance.agents.frontier.yamauchi;
 
 import com.nscharrenberg.um.multiagentsurveillance.agents.shared.utils.QueueNode;
-import com.nscharrenberg.um.multiagentsurveillance.headless.models.Angle;
-import com.nscharrenberg.um.multiagentsurveillance.headless.models.Tile;
+import com.nscharrenberg.um.multiagentsurveillance.headless.models.Angle.Angle;
+import com.nscharrenberg.um.multiagentsurveillance.headless.models.Map.Tile;
 
 import java.util.HashMap;
 import java.util.Map;

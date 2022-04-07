@@ -6,14 +6,15 @@ import com.nscharrenberg.um.multiagentsurveillance.agents.shared.Agent;
 import com.nscharrenberg.um.multiagentsurveillance.agents.shared.algorithms.pathfinding.AStar.AStar;
 import com.nscharrenberg.um.multiagentsurveillance.agents.shared.algorithms.pathfinding.IPathFinding;
 import com.nscharrenberg.um.multiagentsurveillance.agents.shared.utils.QueueNode;
-import com.nscharrenberg.um.multiagentsurveillance.headless.contracts.repositories.IGameRepository;
-import com.nscharrenberg.um.multiagentsurveillance.headless.contracts.repositories.IMapRepository;
-import com.nscharrenberg.um.multiagentsurveillance.headless.contracts.repositories.IPlayerRepository;
 import com.nscharrenberg.um.multiagentsurveillance.headless.exceptions.CollisionException;
 import com.nscharrenberg.um.multiagentsurveillance.headless.exceptions.InvalidTileException;
 import com.nscharrenberg.um.multiagentsurveillance.headless.exceptions.ItemAlreadyOnTileException;
 import com.nscharrenberg.um.multiagentsurveillance.headless.exceptions.ItemNotOnTileException;
-import com.nscharrenberg.um.multiagentsurveillance.headless.models.*;
+import com.nscharrenberg.um.multiagentsurveillance.headless.models.Angle.Angle;
+import com.nscharrenberg.um.multiagentsurveillance.headless.models.Items.Collision.Collision;
+import com.nscharrenberg.um.multiagentsurveillance.headless.models.Items.Item;
+import com.nscharrenberg.um.multiagentsurveillance.headless.models.Map.Tile;
+import com.nscharrenberg.um.multiagentsurveillance.headless.models.Player.Player;
 import com.nscharrenberg.um.multiagentsurveillance.headless.utils.BoardUtils;
 
 import java.security.NoSuchAlgorithmException;
@@ -191,8 +192,6 @@ public class YamauchiAgent extends Agent {
                 }
             }
         }
-
-
 
         // If No frontiers are found but teleporter is in knowledge, go to teleporter.
         if (frontiers.size() == 0 && possibleTeleport != null) {

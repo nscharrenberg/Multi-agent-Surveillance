@@ -2,18 +2,23 @@ package com.nscharrenberg.um.multiagentsurveillance.gui.canvas;
 
 import com.nscharrenberg.um.multiagentsurveillance.agents.shared.Agent;
 import com.nscharrenberg.um.multiagentsurveillance.headless.Factory;
-import com.nscharrenberg.um.multiagentsurveillance.headless.models.*;
+import com.nscharrenberg.um.multiagentsurveillance.headless.models.Angle.Angle;
+import com.nscharrenberg.um.multiagentsurveillance.headless.models.Items.Item;
+import com.nscharrenberg.um.multiagentsurveillance.headless.models.Items.Teleporter;
+import com.nscharrenberg.um.multiagentsurveillance.headless.models.Items.Collision.Wall;
+import com.nscharrenberg.um.multiagentsurveillance.headless.models.Map.ShadowTile;
+import com.nscharrenberg.um.multiagentsurveillance.headless.models.Map.Tile;
+import com.nscharrenberg.um.multiagentsurveillance.headless.models.Map.TileArea;
+import com.nscharrenberg.um.multiagentsurveillance.headless.models.Player.Guard;
+import com.nscharrenberg.um.multiagentsurveillance.headless.models.Player.Player;
 import javafx.animation.AnimationTimer;
-import javafx.application.Platform;
 import javafx.concurrent.Task;
 import javafx.geometry.Insets;
 import javafx.scene.SnapshotParameters;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Alert;
-import javafx.scene.image.Image;
 import javafx.scene.image.WritableImage;
-import javafx.scene.input.KeyCode;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
@@ -22,7 +27,6 @@ import javafx.stage.Stage;
 import java.text.DecimalFormat;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 
 public class GameView extends StackPane {
     protected static Color BASIC_TILE_COLOR = Color.FORESTGREEN;

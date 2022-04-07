@@ -1,8 +1,6 @@
 package com.nscharrenberg.um.multiagentsurveillance.agents.shared.algorithms.structures.FibonacciHeap;
 
 import com.nscharrenberg.um.multiagentsurveillance.agents.shared.utils.TreeNode;
-import com.nscharrenberg.um.multiagentsurveillance.headless.models.Angle;
-import com.nscharrenberg.um.multiagentsurveillance.headless.models.Tile;
 
 public class Node{
 

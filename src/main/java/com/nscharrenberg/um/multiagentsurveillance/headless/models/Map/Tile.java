@@ -1,7 +1,10 @@
-package com.nscharrenberg.um.multiagentsurveillance.headless.models;
+package com.nscharrenberg.um.multiagentsurveillance.headless.models.Map;
 
 import com.nscharrenberg.um.multiagentsurveillance.headless.exceptions.ItemAlreadyOnTileException;
 import com.nscharrenberg.um.multiagentsurveillance.headless.exceptions.ItemNotOnTileException;
+import com.nscharrenberg.um.multiagentsurveillance.headless.models.Items.Collision.Collision;
+import com.nscharrenberg.um.multiagentsurveillance.headless.models.Items.Item;
+import com.nscharrenberg.um.multiagentsurveillance.headless.models.Items.Teleporter;
 
 import java.util.ArrayList;
 import java.util.List;

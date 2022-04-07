@@ -1,9 +1,9 @@
 package com.nscharrenberg.um.multiagentsurveillance.agents.shared.algorithms.pathfinding;
 
 import com.nscharrenberg.um.multiagentsurveillance.agents.shared.utils.QueueNode;
-import com.nscharrenberg.um.multiagentsurveillance.headless.models.Area;
-import com.nscharrenberg.um.multiagentsurveillance.headless.models.Player;
-import com.nscharrenberg.um.multiagentsurveillance.headless.models.Tile;
+import com.nscharrenberg.um.multiagentsurveillance.headless.models.Map.Area;
+import com.nscharrenberg.um.multiagentsurveillance.headless.models.Player.Player;
+import com.nscharrenberg.um.multiagentsurveillance.headless.models.Map.Tile;
 
 import java.util.Optional;
 

@@ -1,4 +1,8 @@
-package com.nscharrenberg.um.multiagentsurveillance.headless.models;
+package com.nscharrenberg.um.multiagentsurveillance.headless.models.Items;
+
+import com.nscharrenberg.um.multiagentsurveillance.headless.models.Items.Collision.Wall;
+import com.nscharrenberg.um.multiagentsurveillance.headless.models.Map.ShadowTile;
+import com.nscharrenberg.um.multiagentsurveillance.headless.models.Map.Tile;
 
 public enum ItemType {
     TILE(1, Tile.class),

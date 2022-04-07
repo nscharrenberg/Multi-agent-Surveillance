@@ -1,7 +1,7 @@
 package com.nscharrenberg.um.multiagentsurveillance.agents.shared.utils;
 
-import com.nscharrenberg.um.multiagentsurveillance.headless.models.Angle;
-import com.nscharrenberg.um.multiagentsurveillance.headless.models.Tile;
+import com.nscharrenberg.um.multiagentsurveillance.headless.models.Angle.Angle;
+import com.nscharrenberg.um.multiagentsurveillance.headless.models.Map.Tile;
 
 import java.util.LinkedList;
 import java.util.Queue;

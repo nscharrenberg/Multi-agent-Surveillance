@@ -1,9 +1,9 @@
 package com.nscharrenberg.um.multiagentsurveillance.headless.utils;
 
-import com.nscharrenberg.um.multiagentsurveillance.headless.models.AdvancedAngle;
-import com.nscharrenberg.um.multiagentsurveillance.headless.models.Angle;
-import com.nscharrenberg.um.multiagentsurveillance.headless.models.Area;
-import com.nscharrenberg.um.multiagentsurveillance.headless.models.Tile;
+import com.nscharrenberg.um.multiagentsurveillance.headless.models.Angle.AdvancedAngle;
+import com.nscharrenberg.um.multiagentsurveillance.headless.models.Angle.Angle;
+import com.nscharrenberg.um.multiagentsurveillance.headless.models.Map.Area;
+import com.nscharrenberg.um.multiagentsurveillance.headless.models.Map.Tile;
 
 import java.util.HashMap;
 import java.util.Optional;

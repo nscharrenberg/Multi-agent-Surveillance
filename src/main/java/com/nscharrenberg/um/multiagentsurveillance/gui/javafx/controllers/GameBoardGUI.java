@@ -2,9 +2,20 @@ package com.nscharrenberg.um.multiagentsurveillance.gui.javafx.controllers;
 
 import com.nscharrenberg.um.multiagentsurveillance.agents.frontier.yamauchi.Frontier;
 import com.nscharrenberg.um.multiagentsurveillance.agents.frontier.yamauchi.YamauchiAgent;
+import com.nscharrenberg.um.multiagentsurveillance.headless.models.Angle.Angle;
+import com.nscharrenberg.um.multiagentsurveillance.headless.models.Items.*;
+import com.nscharrenberg.um.multiagentsurveillance.headless.models.Items.Collision.Door;
+import com.nscharrenberg.um.multiagentsurveillance.headless.models.Items.Collision.Wall;
+import com.nscharrenberg.um.multiagentsurveillance.headless.models.Items.Collision.Window;
+import com.nscharrenberg.um.multiagentsurveillance.headless.models.Map.Area;
+import com.nscharrenberg.um.multiagentsurveillance.headless.models.Map.ShadowTile;
+import com.nscharrenberg.um.multiagentsurveillance.headless.models.Map.Tile;
+import com.nscharrenberg.um.multiagentsurveillance.headless.models.Map.TileArea;
+import com.nscharrenberg.um.multiagentsurveillance.headless.models.Player.Guard;
+import com.nscharrenberg.um.multiagentsurveillance.headless.models.Player.Intruder;
+import com.nscharrenberg.um.multiagentsurveillance.headless.models.Player.Player;
 import com.nscharrenberg.um.multiagentsurveillance.headless.utils.recorder.json.Coordinates;
 import com.nscharrenberg.um.multiagentsurveillance.headless.Factory;
-import com.nscharrenberg.um.multiagentsurveillance.headless.models.*;
 import javafx.application.Application ;
 import javafx.application.Platform;
 import javafx.scene.Group;
@@ -352,7 +363,7 @@ public class GameBoardGUI extends Application {
                 player = (Player) item;
                 polygon = createIntruder(player.getDirection());
                 polygon.setFill(Color.BLUE);
-            } else if (item instanceof  Teleporter){
+            } else if (item instanceof Teleporter){
                 rectangle.setFill(Color.PURPLE);
             }
         }

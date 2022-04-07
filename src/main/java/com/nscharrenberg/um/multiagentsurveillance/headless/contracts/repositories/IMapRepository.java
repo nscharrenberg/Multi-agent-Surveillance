@@ -1,7 +1,9 @@
 package com.nscharrenberg.um.multiagentsurveillance.headless.contracts.repositories;
 
 import com.nscharrenberg.um.multiagentsurveillance.headless.exceptions.*;
-import com.nscharrenberg.um.multiagentsurveillance.headless.models.*;
+import com.nscharrenberg.um.multiagentsurveillance.headless.models.Angle.Angle;
+import com.nscharrenberg.um.multiagentsurveillance.headless.models.Map.Tile;
+import com.nscharrenberg.um.multiagentsurveillance.headless.models.Map.TileArea;
 
 import java.util.HashMap;
 

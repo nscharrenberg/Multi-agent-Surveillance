@@ -27,4 +27,14 @@ module com.nscharrenberg.um.multiagentsurveillance {
     opens com.nscharrenberg.um.multiagentsurveillance.headless.utils.recorder to com.google.gson, javafx.fxml;
     exports com.nscharrenberg.um.multiagentsurveillance.headless.utils.recorder.json;
     opens com.nscharrenberg.um.multiagentsurveillance.headless.utils.recorder.json to com.google.gson, javafx.fxml;
+    exports com.nscharrenberg.um.multiagentsurveillance.headless.models.Items;
+    opens com.nscharrenberg.um.multiagentsurveillance.headless.models.Items to cloning;
+    exports com.nscharrenberg.um.multiagentsurveillance.headless.models.Player;
+    opens com.nscharrenberg.um.multiagentsurveillance.headless.models.Player to cloning;
+    exports com.nscharrenberg.um.multiagentsurveillance.headless.models.Map;
+    opens com.nscharrenberg.um.multiagentsurveillance.headless.models.Map to cloning;
+    exports com.nscharrenberg.um.multiagentsurveillance.headless.models.Angle;
+    opens com.nscharrenberg.um.multiagentsurveillance.headless.models.Angle to cloning;
+    exports com.nscharrenberg.um.multiagentsurveillance.headless.models.Items.Collision;
+    opens com.nscharrenberg.um.multiagentsurveillance.headless.models.Items.Collision to cloning;
 }

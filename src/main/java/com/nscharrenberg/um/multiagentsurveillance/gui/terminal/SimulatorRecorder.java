@@ -77,12 +77,6 @@ public class SimulatorRecorder {
                 System.out.println("Exploration Percentage: " + Factory.getPlayerRepository().getExplorationPercentage());
             }
 
-            if(playerRepository.getExplorationPercentage() >= 99.70){
-                writeJsonData(data);
-                System.out.println("Exploration Percentage: " + Factory.getPlayerRepository().getExplorationPercentage());
-                break;
-            }
-
             moveCount++;
         }
 

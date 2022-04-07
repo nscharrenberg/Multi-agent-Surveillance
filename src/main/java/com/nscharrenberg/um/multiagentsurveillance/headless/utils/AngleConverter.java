@@ -1,6 +1,6 @@
 package com.nscharrenberg.um.multiagentsurveillance.headless.utils;
 
-import com.nscharrenberg.um.multiagentsurveillance.headless.models.Angle;
+import com.nscharrenberg.um.multiagentsurveillance.headless.models.Angle.Angle;
 
 public class AngleConverter {
 

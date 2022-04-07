@@ -1,4 +1,4 @@
-package com.nscharrenberg.um.multiagentsurveillance.headless.models;
+package com.nscharrenberg.um.multiagentsurveillance.headless.models.Angle;
 
 public enum AdvancedAngle {
     UP(0, -1),

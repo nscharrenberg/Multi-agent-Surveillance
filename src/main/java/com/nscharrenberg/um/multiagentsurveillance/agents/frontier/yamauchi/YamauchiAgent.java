@@ -177,9 +177,7 @@ public class YamauchiAgent extends Agent {
                     possibleTeleport = colEntry.getValue();
                     continue;
                 }
-
                 // Check if it is a fully known tile
-
                 List<Optional<Tile>> neighbours = getAllNeighbours(colEntry, rowEntry);
 
 

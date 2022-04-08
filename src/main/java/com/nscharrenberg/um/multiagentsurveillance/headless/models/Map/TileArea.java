@@ -215,6 +215,9 @@ public class TileArea extends Area<Tile> {
             return;
         }
 
+        if(existing.isEmpty())
+            size++;
+
         region.get(tile.getX()).put(tile.getY(), tile);
     }
 

@@ -6,6 +6,8 @@ import java.util.*;
 public abstract class Area<T> {
     protected HashMap<Integer, HashMap<Integer, T>> region;
 
+    protected int size;
+
     public Area() {
         this.region = new HashMap<>();
     }
@@ -57,6 +59,10 @@ public abstract class Area<T> {
     public abstract void add(Tile tile, boolean overwrite);
 
     public abstract Area<Tile> merge(Area<Tile> target);
+
+    public int size(){
+        return size;
+    }
 
     @Override
     public boolean equals(Object o) {

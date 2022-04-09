@@ -1,12 +1,14 @@
 package com.nscharrenberg.um.multiagentsurveillance.headless.utils.recorder.json;
 
-public class Coordinates {
+public record Coordinates(float x, float y) {
 
-    public float x;
-    public float y;
+    @Override
+    public float x() {
+        return x;
+    }
 
-    public Coordinates(float x, float y) {
-        this.x = x;
-        this.y = y;
+    @Override
+    public float y() {
+        return y;
     }
 }

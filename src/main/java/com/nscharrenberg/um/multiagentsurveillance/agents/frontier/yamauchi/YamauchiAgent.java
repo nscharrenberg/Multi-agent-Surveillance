@@ -3,6 +3,7 @@ package com.nscharrenberg.um.multiagentsurveillance.agents.frontier.yamauchi;
 import com.nscharrenberg.um.multiagentsurveillance.agents.frontier.yamauchi.comparator.IWeightComparator;
 import com.nscharrenberg.um.multiagentsurveillance.agents.frontier.yamauchi.comparator.MinDistanceUnknownAreaComparator;
 import com.nscharrenberg.um.multiagentsurveillance.agents.shared.Agent;
+import com.nscharrenberg.um.multiagentsurveillance.agents.shared.algorithms.distanceCalculator.ManhattanDistance;
 import com.nscharrenberg.um.multiagentsurveillance.agents.shared.algorithms.pathfinding.AStar.AStar;
 import com.nscharrenberg.um.multiagentsurveillance.agents.shared.algorithms.pathfinding.IPathFinding;
 import com.nscharrenberg.um.multiagentsurveillance.agents.shared.utils.QueueNode;
@@ -48,7 +49,7 @@ public class YamauchiAgent extends Agent {
             // If any of the above errors is thrown we can't continue with our planned moves, and need to recalculate our frontiers
             plannedMoves.clear();
             frontiers.clear();
-            if(!detectFrontierByRegion())
+            if(detectFrontierByRegion())
                 detectFrontiers();
         } catch (ItemAlreadyOnTileException e) {
             e.printStackTrace();
@@ -107,7 +108,7 @@ public class YamauchiAgent extends Agent {
 
     private Optional<Frontier> pickBestFrontier() {
         if (frontiers.isEmpty() && plannedMoves.isEmpty()) {
-            if(!detectFrontierByRegion())
+            if(detectFrontierByRegion())
                 detectFrontiers();
         }
 
@@ -185,7 +186,7 @@ public class YamauchiAgent extends Agent {
                     continue;
                 }
 
-                if (!addTileToFrontier(colEntry, neighbours)) {
+                if (addTileToFrontier(colEntry, neighbours)) {
                     createNewFrontier(colEntry, neighbours);
                 }
             }
@@ -246,13 +247,13 @@ public class YamauchiAgent extends Agent {
                     continue;
                 }
 
-                if (!addTileToFrontier(colEntry, neighbours)) {
+                if (addTileToFrontier(colEntry, neighbours)) {
                     createNewFrontier(colEntry, neighbours);
                 }
             }
         }
 
-        return frontiers.size() != 0;
+        return frontiers.size() == 0;
     }
 
     private boolean addTileToFrontier(Map.Entry<Integer, Tile> colEntry, List<Optional<Tile>> neighbours){
@@ -261,7 +262,7 @@ public class YamauchiAgent extends Agent {
                 addUnknownArea(frontier, neighbours);
 
                 if(PATH_NOT_FOR_ALL) {
-                    int distance = computeDistance(player.getTile(), colEntry.getValue());
+                    int distance = (int) ManhattanDistance.compute(player.getTile(), colEntry.getValue());
                     if (frontier.getDistance() > distance) {
                         frontier.setTarget(colEntry.getValue());
                         frontier.setDistance(distance);
@@ -273,16 +274,16 @@ public class YamauchiAgent extends Agent {
                     if (queueNodeOpt.isPresent()) {
                         QueueNode queueNode = queueNodeOpt.get();
 
-                        if (queueNode.getTile().isCollision()) return true;
+                        if (queueNode.getTile().isCollision()) return false;
                         if (frontier.getQueueNode() == null || (queueNode.getDistance() < frontier.getQueueNode().getDistance())) {
                             frontier.setQueueNode(queueNode);
                         }
                     }
                 }
-                return true;
+                return false;
             }
         }
-        return false;
+        return true;
     }
 
     private void createNewFrontier(Map.Entry<Integer, Tile> colEntry, List<Optional<Tile>> neighbours){
@@ -320,12 +321,6 @@ public class YamauchiAgent extends Agent {
         Optional<Tile> bottomRightOpt = knowledge.getByCoordinates(colEntry.getKey() + Angle.RIGHT.getxIncrement(), rowEntry.getKey() + Angle.DOWN.getyIncrement());
 
         return Arrays.asList(upOpt, rightOpt, leftOpt, downOpt, upLeftOpt, upRightOpt, bottomLeftOpt, bottomRightOpt);
-    }
-
-    private int computeDistance(Tile tileX, Tile tileY){
-        int x = Math.abs(tileX.getX() - tileY.getX());
-        int y = Math.abs(tileX.getY() - tileY.getY());
-        return x + y;
     }
 
     @Override

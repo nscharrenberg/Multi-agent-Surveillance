@@ -10,7 +10,8 @@ import com.nscharrenberg.um.multiagentsurveillance.headless.models.Map.Area;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Map.Tile;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Map.TileArea;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Player.Player;
-import com.nscharrenberg.um.multiagentsurveillance.headless.utils.AreaEffects.Effect.Effect;
+import com.nscharrenberg.um.multiagentsurveillance.headless.utils.AreaEffects.Effect.Audio;
+import com.nscharrenberg.um.multiagentsurveillance.headless.utils.AreaEffects.Effect.IAudioEffect;
 
 import java.util.*;
 
@@ -18,7 +19,6 @@ public abstract class Agent {
     protected final Player player;
     protected Area<Tile> knowledge;
     protected Area<Tile> vision;
-    private List<Effect> effects = new ArrayList<>();
     protected Queue<Angle> plannedMoves;
 
     protected final IMapRepository mapRepository;
@@ -88,10 +88,6 @@ public abstract class Agent {
                 knowledge.add(colEntry.getValue(), false);
             }
         }
-    }
-
-    public List<Effect> getEffects() {
-        return effects;
     }
 
     public void addKnowledge(List<Tile> tiles) {

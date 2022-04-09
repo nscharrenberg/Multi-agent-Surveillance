@@ -1,68 +1,35 @@
 package com.nscharrenberg.um.multiagentsurveillance.headless.utils.recorder.json;
 
-public class AgentJSON {
+public record AgentJSON(int moveNum, long gameTime, long timeToDecide,
+                        Coordinates coordinates, float totalExplorationRate, float agentExplorationRate) {
 
-    private int moveNum;
-    private long gameTime;
-    private long timeToDecide;
-    private Coordinates coordinates;
-    private float totalExplorationRate;
-    private float agentExplorationRate;
-
-    public AgentJSON(int moveNum, long gameTime, long timeToDecide, Coordinates coordinates, float totalExplorationRate, float agentExplorationRate) {
-        this.moveNum = moveNum;
-        this.gameTime = gameTime;
-        this.timeToDecide = timeToDecide;
-        this.coordinates = coordinates;
-        this.totalExplorationRate = totalExplorationRate;
-        this.agentExplorationRate = agentExplorationRate;
-    }
-
-    public int getMoveNum() {
+    @Override
+    public int moveNum() {
         return moveNum;
     }
 
-    public void setMoveNum(int moveNum) {
-        this.moveNum = moveNum;
-    }
-
-    public long getGameTime() {
+    @Override
+    public long gameTime() {
         return gameTime;
     }
 
-    public void setGameTime(long gameTime) {
-        this.gameTime = gameTime;
-    }
-
-    public long getTimeToDecide() {
+    @Override
+    public long timeToDecide() {
         return timeToDecide;
     }
 
-    public void setTimeToDecide(long timeToDecide) {
-        this.timeToDecide = timeToDecide;
-    }
-
-    public Coordinates getCoordinates() {
+    @Override
+    public Coordinates coordinates() {
         return coordinates;
     }
 
-    public void setCoordinates(Coordinates coordinates) {
-        this.coordinates = coordinates;
-    }
-
-    public float getTotalExplorationRate() {
+    @Override
+    public float totalExplorationRate() {
         return totalExplorationRate;
     }
 
-    public void setTotalExplorationRate(float totalExplorationRate) {
-        this.totalExplorationRate = totalExplorationRate;
-    }
-
-    public float getAgentExplorationRate() {
+    @Override
+    public float agentExplorationRate() {
         return agentExplorationRate;
-    }
-
-    public void setAgentExplorationRate(float agentExplorationRate) {
-        this.agentExplorationRate = agentExplorationRate;
     }
 }

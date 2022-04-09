@@ -17,6 +17,7 @@ import java.util.*;
 public class SBOAgent extends Agent {
     private final Stack<Tile> scanned = new Stack<>();
     private final TileArea visited = new TileArea();
+    Tile goal = this.player.getTile();
 
     public SBOAgent(Player agent) {
         super(agent);
@@ -45,11 +46,10 @@ public class SBOAgent extends Agent {
     public Angle decide() {
 
         // TODO: need to update this to skip to next tile in stack if goal tile has entered the knowledge
-        if (!plannedMoves.isEmpty()) {
+        if (!plannedMoves.isEmpty() && knowledge.getByCoordinates(goal.getX(), goal.getY()).isEmpty()) {
             return plannedMoves.poll();
         }
 
-        Tile goal = this.player.getTile();
         gatherV2();
 
         while(!scanned.isEmpty()) {

@@ -1,5 +1,6 @@
 package com.nscharrenberg.um.multiagentsurveillance.headless.repositories;
 
+import com.nscharrenberg.um.multiagentsurveillance.agents.SBO.SBOAgent;
 import com.nscharrenberg.um.multiagentsurveillance.agents.frontier.yamauchi.YamauchiAgent;
 import com.nscharrenberg.um.multiagentsurveillance.agents.random.RandomAgent;
 import com.nscharrenberg.um.multiagentsurveillance.agents.shared.Agent;
@@ -36,6 +37,7 @@ public class PlayerRepository implements IPlayerRepository {
     private List<Agent> agents;
 
     private static final Class<? extends Agent> agentType = YamauchiAgent.class;
+    private static final Class<? extends Agent> agentType2 = SBOAgent.class;
 
     private float explorationPercentage = 0;
 
@@ -197,12 +199,12 @@ public class PlayerRepository implements IPlayerRepository {
                         Intruder intruder = new Intruder(tile, Angle.UP);
                         tile.add(intruder);
                         intruders.add(intruder);
-                        agent = spawnAgent(intruder, agentType);
+                        agent = spawnAgent(intruder, agentType2);
                     } else {
                         Guard guard = new Guard(tile, Angle.UP);
                         tile.add(guard);
                         guards.add(guard);
-                        agent = spawnAgent(guard, agentType);
+                        agent = spawnAgent(guard, agentType2);
                     }
 
                     agent.addKnowledge(tile);
@@ -221,6 +223,8 @@ public class PlayerRepository implements IPlayerRepository {
             agent = new RandomAgent(player);
         } else if (agentClass.equals(YamauchiAgent.class)) {
             agent = new YamauchiAgent(player);
+        } else if(agentClass.equals(SBOAgent.class)) {
+            agent = new SBOAgent(player);
         }
 
         if (agent == null) {

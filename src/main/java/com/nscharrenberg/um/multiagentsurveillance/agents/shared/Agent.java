@@ -19,8 +19,31 @@ public abstract class Agent {
     protected final IGameRepository gameRepository;
     protected final IPlayerRepository playerRepository;
 
+    protected int deadEndMarkers;
+    protected int targetMarkers;
+    protected int teleporterMarkers;
+    protected int intruderSpottedMarkers;
+    protected int guardSpottedMarkers;
+    protected int guardStructureMarkers;
+
     public Agent(Player player) {
         this.player = player;
+        if (player instanceof Guard) {
+            deadEndMarkers = 5;
+            targetMarkers = 5;
+            teleporterMarkers = 5;
+            intruderSpottedMarkers = 5;
+            guardStructureMarkers = 5;
+        }
+
+        else if (player instanceof Intruder) {
+            deadEndMarkers = 5;
+            targetMarkers = 5;
+            teleporterMarkers = 5;
+            guardSpottedMarkers = 5;
+            guardStructureMarkers = 5;
+        }
+
         this.knowledge = new TileArea();
         this.vision = new TileArea();
         this.plannedMoves = new PriorityQueue<>();
@@ -32,6 +55,22 @@ public abstract class Agent {
 
     public Agent(Player player, IMapRepository mapRepository, IGameRepository gameRepository, IPlayerRepository playerRepository) {
         this.player = player;
+        if (player instanceof Guard) {
+            deadEndMarkers = 5;
+            targetMarkers = 5;
+            teleporterMarkers = 5;
+            intruderSpottedMarkers = 5;
+            guardStructureMarkers = 5;
+        }
+
+        else if (player instanceof Intruder) {
+            deadEndMarkers = 5;
+            targetMarkers = 5;
+            teleporterMarkers = 5;
+            guardSpottedMarkers = 5;
+            guardStructureMarkers = 5;
+        }
+
         this.knowledge = new TileArea();
         this.vision = new TileArea();
         this.plannedMoves = new PriorityQueue<>();
@@ -43,6 +82,22 @@ public abstract class Agent {
 
     public Agent(Player player, Area<Tile> knowledge, Queue<Angle> plannedMoves, IMapRepository mapRepository, IGameRepository gameRepository, IPlayerRepository playerRepository) {
         this.player = player;
+        if (player instanceof Guard) {
+            deadEndMarkers = 5;
+            targetMarkers = 5;
+            teleporterMarkers = 5;
+            intruderSpottedMarkers = 5;
+            guardStructureMarkers = 5;
+        }
+
+        else if (player instanceof Intruder) {
+            deadEndMarkers = 5;
+            targetMarkers = 5;
+            teleporterMarkers = 5;
+            guardSpottedMarkers = 5;
+            guardStructureMarkers = 5;
+        }
+
         this.knowledge = knowledge;
         this.vision = new TileArea();
         this.plannedMoves = plannedMoves;
@@ -121,9 +176,58 @@ public abstract class Agent {
     }
 
     public abstract void execute(Angle angle);
+
     public abstract Angle decide();
 
     public void execute() {
         execute(decide());
+    }
+
+    public int getDeadEndMarkers() {
+        return deadEndMarkers;
+    }
+
+    public void decrementDeadEndMarkers() {
+        deadEndMarkers--;
+    }
+
+    public int getTargetMarkers() {
+        return targetMarkers;
+    }
+
+    public void decrementTargetMarkers() {
+        targetMarkers--;
+    }
+
+    public int getTeleporterMarkers() {
+        return teleporterMarkers;
+    }
+
+    public void decrementTeleporterMarkers() {
+        teleporterMarkers--;
+    }
+
+    public int getIntruderSpottedMarkers() {
+        return intruderSpottedMarkers;
+    }
+
+    public void decrementIntruderSpottedMarkers() {
+        intruderSpottedMarkers--;
+    }
+
+    public int getGuardSpottedMarkers() {
+        return guardSpottedMarkers;
+    }
+
+    public void decrementGuardSpottedMarkers() {
+        guardSpottedMarkers--;
+    }
+
+    public int getGuardStructureMarkers() {
+        return guardStructureMarkers;
+    }
+
+    public void decrementGuardStructureMarkers() {
+        guardStructureMarkers--;
     }
 }

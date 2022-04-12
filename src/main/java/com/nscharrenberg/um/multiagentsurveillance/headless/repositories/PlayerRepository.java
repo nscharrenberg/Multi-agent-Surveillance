@@ -120,11 +120,6 @@ public class PlayerRepository implements IPlayerRepository {
         // TODO: Remove this when UI elements are present
 //        System.out.println("Explored: " + explorationPercentage + "%");
 
-        try {
-            stopWatch.saveOrIgnoreSplit(explorationPercentage);
-        } catch (Exception e) {
-            System.out.println("Stopwatch Error: " + e.getMessage());
-        }
 
         return percentage;
     }

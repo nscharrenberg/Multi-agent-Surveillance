@@ -2,15 +2,10 @@ package com.nscharrenberg.um.multiagentsurveillance.gui.javafx.controllers;
 
 import com.nscharrenberg.um.multiagentsurveillance.agents.shared.Agent;
 import com.nscharrenberg.um.multiagentsurveillance.headless.Factory;
-import com.nscharrenberg.um.multiagentsurveillance.headless.models.Guard;
-import com.nscharrenberg.um.multiagentsurveillance.headless.utils.files.MapImporter;
 import javafx.application.Platform;
 import javafx.concurrent.Task;
 import javafx.scene.control.Alert;
 import javafx.stage.Stage;
-
-import java.io.File;
-import java.io.IOException;
 
 public class GameController {
     private GameBoardGUI boardGUI;

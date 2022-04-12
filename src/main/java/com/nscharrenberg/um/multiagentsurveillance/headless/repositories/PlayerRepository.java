@@ -11,9 +11,18 @@ import com.nscharrenberg.um.multiagentsurveillance.headless.exceptions.Collision
 import com.nscharrenberg.um.multiagentsurveillance.headless.exceptions.InvalidTileException;
 import com.nscharrenberg.um.multiagentsurveillance.headless.exceptions.ItemAlreadyOnTileException;
 import com.nscharrenberg.um.multiagentsurveillance.headless.exceptions.ItemNotOnTileException;
-import com.nscharrenberg.um.multiagentsurveillance.headless.models.*;
+import com.nscharrenberg.um.multiagentsurveillance.headless.models.Angle.AdvancedAngle;
+import com.nscharrenberg.um.multiagentsurveillance.headless.models.Angle.Angle;
+import com.nscharrenberg.um.multiagentsurveillance.headless.models.Items.Collision.Collision;
+import com.nscharrenberg.um.multiagentsurveillance.headless.models.Items.Item;
+import com.nscharrenberg.um.multiagentsurveillance.headless.models.Items.Teleporter;
+import com.nscharrenberg.um.multiagentsurveillance.headless.models.Map.Tile;
+import com.nscharrenberg.um.multiagentsurveillance.headless.models.Map.TileArea;
+import com.nscharrenberg.um.multiagentsurveillance.headless.models.Player.Guard;
+import com.nscharrenberg.um.multiagentsurveillance.headless.models.Player.Intruder;
+import com.nscharrenberg.um.multiagentsurveillance.headless.models.Player.Player;
 import com.nscharrenberg.um.multiagentsurveillance.headless.utils.BoardUtils;
-import com.nscharrenberg.um.multiagentsurveillance.headless.utils.CharacterVision;
+import com.nscharrenberg.um.multiagentsurveillance.headless.utils.Vision.CharacterVision;
 import com.nscharrenberg.um.multiagentsurveillance.headless.utils.StopWatch;
 
 import java.security.NoSuchAlgorithmException;
@@ -86,24 +95,15 @@ public class PlayerRepository implements IPlayerRepository {
     @Override
     public float calculateAgentExplorationRate(Agent agent){
         float totalTileCount = mapRepository.getBoard().height() * mapRepository.getBoard().width();
-        float discoveredAreaTileCount = 0;
+        float discoveredAreaTileCount = agent.getKnowledge().size();
 
-        // TODO: Could probably do with some optimization
-        for (Map.Entry<Integer, HashMap<Integer, Tile>> rowEntry : agent.getKnowledge().getRegion().entrySet()) {
-            discoveredAreaTileCount += rowEntry.getValue().size();
-        }
         return (discoveredAreaTileCount / totalTileCount) * 100;
     }
 
     @Override
     public float calculateExplorationPercentage() {
         float totalTileCount = mapRepository.getBoard().height() * mapRepository.getBoard().width();
-        float discoveredAreaTileCount = 0;
-
-        // TODO: Could probably do with some optimization
-        for (Map.Entry<Integer, HashMap<Integer, Tile>> rowEntry : completeKnowledgeProgress.getRegion().entrySet()) {
-            discoveredAreaTileCount += rowEntry.getValue().size();
-        }
+        float discoveredAreaTileCount = completeKnowledgeProgress.size();
 
 
         // no tiles = 100% (division by 0 not possible)
@@ -118,13 +118,8 @@ public class PlayerRepository implements IPlayerRepository {
         explorationPercentage = percentage;
 
         // TODO: Remove this when UI elements are present
-        System.out.println("Explored: " + explorationPercentage + "%");
+//        System.out.println("Explored: " + explorationPercentage + "%");
 
-        try {
-            stopWatch.saveOrIgnoreSplit(explorationPercentage);
-        } catch (Exception e) {
-            System.out.println("Stopwatch Error: " + e.getMessage());
-        }
 
         return percentage;
     }

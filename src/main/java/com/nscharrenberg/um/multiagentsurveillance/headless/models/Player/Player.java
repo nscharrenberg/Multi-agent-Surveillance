@@ -1,7 +1,16 @@
-package com.nscharrenberg.um.multiagentsurveillance.headless.models;
+package com.nscharrenberg.um.multiagentsurveillance.headless.models.Player;
 
 import com.nscharrenberg.um.multiagentsurveillance.agents.shared.Agent;
+import com.nscharrenberg.um.multiagentsurveillance.headless.models.Angle.Angle;
+import com.nscharrenberg.um.multiagentsurveillance.headless.models.Map.Area;
+import com.nscharrenberg.um.multiagentsurveillance.headless.models.Items.Collision.Collision;
+import com.nscharrenberg.um.multiagentsurveillance.headless.models.Map.Tile;
+import com.nscharrenberg.um.multiagentsurveillance.headless.utils.AreaEffects.AudioEffect.Audio;
+import com.nscharrenberg.um.multiagentsurveillance.headless.utils.AreaEffects.AudioEffect.AudioEffect;
+import com.nscharrenberg.um.multiagentsurveillance.headless.utils.AreaEffects.AudioEffect.IAudioEffect;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 public abstract class Player extends Collision {
@@ -9,6 +18,8 @@ public abstract class Player extends Collision {
     private double speed;
     private Area<Tile> vision;
     private Agent agent;
+    private final List<Audio> audioEffects;
+    private IAudioEffect representedSound;
 
     // TODO: Keep track of the state the player is in (moving, standing still, climbing, on_target)
 
@@ -17,6 +28,8 @@ public abstract class Player extends Collision {
         this.direction = direction;
         this.speed = speed;
         this.agent = null;
+        this.audioEffects = new ArrayList<>();
+        this.representedSound = new AudioEffect(10);
     }
 
     public Player(Tile tile, Angle direction, double speed, Area<Tile> observation) {
@@ -25,6 +38,24 @@ public abstract class Player extends Collision {
         this.speed = speed;
         this.vision = observation;
         this.agent = null;
+        this.audioEffects = new ArrayList<>();
+        this.representedSound = new AudioEffect(10);
+    }
+
+    public List<Audio> getAudioEffects() {
+        return audioEffects;
+    }
+
+    public void setRepresentedSoundRange(double range) {
+        representedSound.setRange(range);
+    }
+
+    public IAudioEffect getRepresentedSound() {
+        return representedSound;
+    }
+
+    public void setRepresentedSound(IAudioEffect representedSound) {
+        this.representedSound = representedSound;
     }
 
     public Angle getDirection() {

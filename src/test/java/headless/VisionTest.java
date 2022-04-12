@@ -2,7 +2,7 @@
 //
 //import com.nscharrenberg.um.multiagentsurveillance.headless.Factory;
 //import com.nscharrenberg.um.multiagentsurveillance.headless.models.*;
-//import com.nscharrenberg.um.multiagentsurveillance.headless.utils.CharacterVision;
+//import com.nscharrenberg.um.multiagentsurveillance.headless.utils.Vision.CharacterVision;
 //import com.nscharrenberg.um.multiagentsurveillance.headless.utils.Geometrics;
 //import org.junit.jupiter.api.Assertions;
 //import org.junit.jupiter.api.BeforeEach;

@@ -40,7 +40,7 @@ public class DataCharts {
             List<Coordinates> agentData = xyCoordinates.get(i);
             for (int j = 0; j < agentData.size(); j++) {
                 Coordinates coordinates = agentData.get(j);
-                series.getData().add(new XYChart.Data(coordinates.x, coordinates.y));
+                series.getData().add(new XYChart.Data(coordinates.x(), coordinates.y()));
             }
             lineChart.getData().add(series);
         }

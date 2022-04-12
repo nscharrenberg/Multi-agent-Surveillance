@@ -21,7 +21,7 @@ public class AudioAgent extends Agent {
         try {
             playerRepository.move(getPlayer(), angle);
         } catch (CollisionException | InvalidTileException | ItemNotOnTileException | ItemAlreadyOnTileException e) {
-            e.printStackTrace();
+            e.getCause();
         }
     }
 

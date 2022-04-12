@@ -1,4 +1,4 @@
-package com.nscharrenberg.um.multiagentsurveillance.agents.audioAgent;
+package com.nscharrenberg.um.multiagentsurveillance.agents.AudioAgent;
 
 import com.nscharrenberg.um.multiagentsurveillance.agents.shared.Agent;
 import com.nscharrenberg.um.multiagentsurveillance.headless.exceptions.CollisionException;
@@ -21,8 +21,7 @@ public class AudioAgent extends Agent {
         try {
             playerRepository.move(getPlayer(), angle);
         } catch (CollisionException | InvalidTileException | ItemNotOnTileException | ItemAlreadyOnTileException e) {
-
-            throw new RuntimeException("Error");
+            e.printStackTrace();
         }
     }
 

@@ -49,30 +49,34 @@ public class CharacterVision{
                 for(int i = 0; i < this.length; i++) {
                     current = new Tile(px,py-i);
                     vision.add(current);
-                    if(!unobstructedTile(board, current))
+                    if(unobstructedTile(board, current))
                         break;
                 }
+                break;
             case DOWN:
                 for(int i = 0; i < this.length; i++) {
                     current = new Tile(px,py+i);
                     vision.add(current);
-                    if(!unobstructedTile(board, current))
+                    if(unobstructedTile(board, current))
                         break;
                 }
+                break;
             case RIGHT:
                 for(int i = 0; i < this.length; i++) {
                     current = new Tile(px+i, py);
                     vision.add(current);
-                    if(!unobstructedTile(board, current))
+                    if(unobstructedTile(board, current))
                         break;
                 }
+                break;
             case LEFT:
                 for(int i = 0; i < this.length; i++) {
                     current = new Tile(px-i, py);
                     vision.add(current);
-                    if(!unobstructedTile(board, current))
+                    if(unobstructedTile(board, current))
                         break;
                 }
+                break;
         }
 
         return vision;
@@ -134,7 +138,7 @@ public class CharacterVision{
         // Check remaining tiles for items
         for (Tile t : rawvision) {
             for (Tile it : gm.getIntersectingTiles(position, t)) {
-                if (!unobstructedTile(board, it)) {
+                if (unobstructedTile(board, it)) {
                     validtile = false;
                     break;
                 }
@@ -157,17 +161,19 @@ public class CharacterVision{
     }
 
     private boolean unobstructedTile(TileArea board, Tile t) {
-        if(board.getByCoordinates(t.getX(), t.getY()).isPresent()) {
-            if (board.getByCoordinates(t.getX(), t.getY()).get().getItems().size() != 0) {
-                for (Item im : board.getByCoordinates(t.getX(), t.getY()).get().getItems()) {
+        Optional<Tile> optTile = board.getByCoordinates(t.getX(), t.getY());
+        if(optTile.isPresent()) {
+            Tile tile = optTile.get();
+            if (tile.getItems().size() != 0) {
+                for (Item im : tile.getItems()) {
                     if (im instanceof Wall) {   // Might have to add other checks to this later
-                        return false;
+                        return true;
                     }
                 }
             }
-            return true;
+            return false;
         }
-        return false;
+        return true;
     }
 
     public int getLength() {

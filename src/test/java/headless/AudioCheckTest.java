@@ -1,7 +1,7 @@
 package headless;
 
 import com.google.gson.Gson;
-import com.nscharrenberg.um.multiagentsurveillance.agents.audioAgent.AudioAgent;
+import com.nscharrenberg.um.multiagentsurveillance.agents.AudioAgent.AudioAgent;
 import com.nscharrenberg.um.multiagentsurveillance.agents.shared.Agent;
 import com.nscharrenberg.um.multiagentsurveillance.headless.Factory;
 import com.nscharrenberg.um.multiagentsurveillance.headless.contracts.repositories.IPlayerRepository;
@@ -14,6 +14,7 @@ import com.nscharrenberg.um.multiagentsurveillance.headless.utils.files.MapImpor
 import com.nscharrenberg.um.multiagentsurveillance.headless.utils.recorder.GameConfigurationRecorder;
 import com.nscharrenberg.um.multiagentsurveillance.headless.utils.recorder.json.AgentJSON;
 import com.nscharrenberg.um.multiagentsurveillance.headless.utils.recorder.json.Coordinates;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
@@ -28,6 +29,8 @@ import static com.nscharrenberg.um.multiagentsurveillance.headless.utils.recorde
 
 
 public class AudioCheckTest {
+
+    private boolean FLAG = false;
 
     @Test
     void testNavigationByAudio() throws Exception {
@@ -54,7 +57,7 @@ public class AudioCheckTest {
         } else {
             throw new RuntimeException("Tile not Found test");
         }
-
+        Assertions.assertTrue(FLAG);
     }
 
     private void gameLoop(Agent agent) {
@@ -88,8 +91,10 @@ public class AudioCheckTest {
                 throw new RuntimeException("Audio is Empty");
 
             Audio audio = audioList.get(0);
-            if(audio.effectLevel() >= 91.5)
+            if(audio.effectLevel() >= 91.5) {
+                FLAG = true;
                 break;
+            }
 
             agent.execute(audio.angleDirection());
 

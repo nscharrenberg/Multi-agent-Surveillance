@@ -1,34 +1,67 @@
 package com.nscharrenberg.um.multiagentsurveillance.headless.utils.recorder.json;
 
-public record AgentJSON(int moveNum, long gameTime, long timeToDecide,
-                        Coordinates coordinates, float totalExplorationRate, float agentExplorationRate) {
+public class AgentJSON {
 
-    @Override
+    private int moveNum;
+    private long gameTime;
+    private long timeToDecide;
+    private Coordinates coordinates;
+    private float totalExplorationRate;
+    private float agentExplorationRate;
+
+    public AgentJSON(int moveNum, long gameTime, long timeToDecide, Coordinates coordinates, float totalExplorationRate, float agentExplorationRate) {
+        this.moveNum = moveNum;
+        this.gameTime = gameTime;
+        this.timeToDecide = timeToDecide;
+        this.coordinates = coordinates;
+        this.totalExplorationRate = totalExplorationRate;
+        this.agentExplorationRate = agentExplorationRate;
+    }
+
+    public void setMoveNum(int moveNum) {
+        this.moveNum = moveNum;
+    }
+
+    public void setGameTime(long gameTime) {
+        this.gameTime = gameTime;
+    }
+
+    public void setTimeToDecide(long timeToDecide) {
+        this.timeToDecide = timeToDecide;
+    }
+
+    public void setCoordinates(Coordinates coordinates) {
+        this.coordinates = coordinates;
+    }
+
+    public void setTotalExplorationRate(float totalExplorationRate) {
+        this.totalExplorationRate = totalExplorationRate;
+    }
+
+    public void setAgentExplorationRate(float agentExplorationRate) {
+        this.agentExplorationRate = agentExplorationRate;
+    }
+
     public int moveNum() {
         return moveNum;
     }
 
-    @Override
     public long gameTime() {
         return gameTime;
     }
 
-    @Override
     public long timeToDecide() {
         return timeToDecide;
     }
 
-    @Override
     public Coordinates coordinates() {
         return coordinates;
     }
 
-    @Override
     public float totalExplorationRate() {
         return totalExplorationRate;
     }
 
-    @Override
     public float agentExplorationRate() {
         return agentExplorationRate;
     }

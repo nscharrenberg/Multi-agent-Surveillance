@@ -10,8 +10,6 @@ import com.nscharrenberg.um.multiagentsurveillance.headless.models.Map.Area;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Map.Tile;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Map.TileArea;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Player.Player;
-import com.nscharrenberg.um.multiagentsurveillance.headless.utils.AreaEffects.Effect.Audio;
-import com.nscharrenberg.um.multiagentsurveillance.headless.utils.AreaEffects.Effect.IAudioEffect;
 
 import java.util.*;
 

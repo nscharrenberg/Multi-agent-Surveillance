@@ -509,8 +509,8 @@ public class GameBoardGUI extends Application {
         int point = 0;
         for (List<Coordinates> listCoordinates : data) {
             for (Coordinates coordinates : listCoordinates) {
-                int x = (int) coordinates.x;
-                int y = (int) coordinates.y;
+                int x = (int) coordinates.x();
+                int y = (int) coordinates.y();
 
                 Rectangle r = new Rectangle(GRID_SQUARE_SIZE, GRID_SQUARE_SIZE);
                 r.setOpacity(.5);

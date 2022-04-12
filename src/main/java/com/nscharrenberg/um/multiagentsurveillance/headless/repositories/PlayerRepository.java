@@ -118,7 +118,7 @@ public class PlayerRepository implements IPlayerRepository {
         explorationPercentage = percentage;
 
         // TODO: Remove this when UI elements are present
-        System.out.println("Explored: " + explorationPercentage + "%");
+//        System.out.println("Explored: " + explorationPercentage + "%");
 
         try {
             stopWatch.saveOrIgnoreSplit(explorationPercentage);

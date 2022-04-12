@@ -5,8 +5,9 @@ import com.nscharrenberg.um.multiagentsurveillance.headless.models.Angle.Angle;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Map.Area;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Items.Collision.Collision;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Map.Tile;
-import com.nscharrenberg.um.multiagentsurveillance.headless.utils.AreaEffects.Effect.Audio;
-import com.nscharrenberg.um.multiagentsurveillance.headless.utils.AreaEffects.Effect.IAudioEffect;
+import com.nscharrenberg.um.multiagentsurveillance.headless.utils.AreaEffects.AudioEffect.Audio;
+import com.nscharrenberg.um.multiagentsurveillance.headless.utils.AreaEffects.AudioEffect.AudioEffect;
+import com.nscharrenberg.um.multiagentsurveillance.headless.utils.AreaEffects.AudioEffect.IAudioEffect;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,6 +29,7 @@ public abstract class Player extends Collision {
         this.speed = speed;
         this.agent = null;
         this.audioEffects = new ArrayList<>();
+        this.representedSound = new AudioEffect(10);
     }
 
     public Player(Tile tile, Angle direction, double speed, Area<Tile> observation) {
@@ -37,10 +39,15 @@ public abstract class Player extends Collision {
         this.vision = observation;
         this.agent = null;
         this.audioEffects = new ArrayList<>();
+        this.representedSound = new AudioEffect(10);
     }
 
     public List<Audio> getAudioEffects() {
         return audioEffects;
+    }
+
+    public void setRepresentedSoundRange(double range) {
+        representedSound.setRange(range);
     }
 
     public IAudioEffect getRepresentedSound() {

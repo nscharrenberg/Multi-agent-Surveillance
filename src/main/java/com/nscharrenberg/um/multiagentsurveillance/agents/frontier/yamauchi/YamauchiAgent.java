@@ -3,6 +3,7 @@ package com.nscharrenberg.um.multiagentsurveillance.agents.frontier.yamauchi;
 import com.nscharrenberg.um.multiagentsurveillance.agents.frontier.yamauchi.comparator.IWeightComparator;
 import com.nscharrenberg.um.multiagentsurveillance.agents.frontier.yamauchi.comparator.MinDistanceUnknownAreaComparator;
 import com.nscharrenberg.um.multiagentsurveillance.agents.shared.Agent;
+import com.nscharrenberg.um.multiagentsurveillance.agents.shared.algorithms.distanceCalculator.ManhattanDistance;
 import com.nscharrenberg.um.multiagentsurveillance.agents.shared.algorithms.pathfinding.AStar.AStar;
 import com.nscharrenberg.um.multiagentsurveillance.agents.shared.algorithms.pathfinding.IPathFinding;
 import com.nscharrenberg.um.multiagentsurveillance.agents.shared.utils.QueueNode;
@@ -27,7 +28,7 @@ public class YamauchiAgent extends Agent {
     private SecureRandom random;
     private final IPathFinding pathFindingAlgorithm = new AStar();
     private final IWeightComparator weightDetector = new MinDistanceUnknownAreaComparator();
-    private final boolean PATH_NOT_FOR_ALL = true;
+    private final static boolean pathNotForAll = true;
 
     public YamauchiAgent(Player player) {
         super(player);
@@ -48,8 +49,7 @@ public class YamauchiAgent extends Agent {
             // If any of the above errors is thrown we can't continue with our planned moves, and need to recalculate our frontiers
             plannedMoves.clear();
             frontiers.clear();
-            if(!detectFrontierByRegion())
-                detectFrontiers();
+            detect();
         } catch (ItemAlreadyOnTileException e) {
             e.printStackTrace();
         }
@@ -58,8 +58,8 @@ public class YamauchiAgent extends Agent {
     @Override
     public Angle decide() {
 
-        // Incosistent with explorer% ????
-//        System.out.println("knowledgesize: " + this.knowledge.getRegion().entrySet().size());
+        // Inconsistent with explorer% ????
+//        System.out.println("Knowledge Size: " + this.knowledge.getRegion().entrySet().size());
 
         // If moves are alread planned just continue deciding them.
         if (!plannedMoves.isEmpty()) {
@@ -107,8 +107,7 @@ public class YamauchiAgent extends Agent {
 
     private Optional<Frontier> pickBestFrontier() {
         if (frontiers.isEmpty() && plannedMoves.isEmpty()) {
-            if(!detectFrontierByRegion())
-                detectFrontiers();
+            detect();
         }
 
         if (frontiers.isEmpty()) {
@@ -139,7 +138,7 @@ public class YamauchiAgent extends Agent {
             return Optional.empty();
         }
 
-        if(PATH_NOT_FOR_ALL) findTheBestPath(bestFrontier);
+        if(pathNotForAll) findTheBestPath(bestFrontier);
 
         chosenFrontier = bestFrontier;
 
@@ -156,6 +155,11 @@ public class YamauchiAgent extends Agent {
         }
     }
 
+    private void detect(){
+        if(detectFrontierByRegion())
+            detectFrontiers();
+    }
+
     private void detectFrontiers() {
         frontiers.clear();
         chosenFrontier = null;
@@ -167,7 +171,6 @@ public class YamauchiAgent extends Agent {
                 if (colEntry.getValue().isCollision() && !colEntry.getValue().getItems().contains(player)) {
                     continue;
                 }
-
                 // Reject if all tile is surrounded by collision objects or teleports
                 if (BoardUtils.isSurrounded(knowledge, colEntry.getValue())) {
                     continue;
@@ -185,14 +188,14 @@ public class YamauchiAgent extends Agent {
                     continue;
                 }
 
-                if (!addTileToFrontier(colEntry, neighbours)) {
+                if (addTileToFrontier(colEntry, neighbours)) {
                     createNewFrontier(colEntry, neighbours);
                 }
             }
         }
 
         // If No frontiers are found but teleporter is in knowledge, go to teleporter.
-        if (frontiers.size() == 0 && possibleTeleport != null) {
+        if (frontiers.isEmpty() && possibleTeleport != null) {
             Frontier newFrontier = new Frontier(possibleTeleport);
             newFrontier.setUnknownAreas(1);
             frontiers.add(newFrontier);
@@ -246,13 +249,13 @@ public class YamauchiAgent extends Agent {
                     continue;
                 }
 
-                if (!addTileToFrontier(colEntry, neighbours)) {
+                if (addTileToFrontier(colEntry, neighbours)) {
                     createNewFrontier(colEntry, neighbours);
                 }
             }
         }
 
-        return frontiers.size() != 0;
+        return frontiers.isEmpty();
     }
 
     private boolean addTileToFrontier(Map.Entry<Integer, Tile> colEntry, List<Optional<Tile>> neighbours){
@@ -260,8 +263,8 @@ public class YamauchiAgent extends Agent {
             if (frontier.add(colEntry.getValue())) {
                 addUnknownArea(frontier, neighbours);
 
-                if(PATH_NOT_FOR_ALL) {
-                    int distance = computeDistance(player.getTile(), colEntry.getValue());
+                if(pathNotForAll) {
+                    int distance = (int) ManhattanDistance.compute(player.getTile(), colEntry.getValue());
                     if (frontier.getDistance() > distance) {
                         frontier.setTarget(colEntry.getValue());
                         frontier.setDistance(distance);
@@ -273,16 +276,16 @@ public class YamauchiAgent extends Agent {
                     if (queueNodeOpt.isPresent()) {
                         QueueNode queueNode = queueNodeOpt.get();
 
-                        if (queueNode.getTile().isCollision()) return true;
+                        if (queueNode.getTile().isCollision()) return false;
                         if (frontier.getQueueNode() == null || (queueNode.getDistance() < frontier.getQueueNode().getDistance())) {
                             frontier.setQueueNode(queueNode);
                         }
                     }
                 }
-                return true;
+                return false;
             }
         }
-        return false;
+        return true;
     }
 
     private void createNewFrontier(Map.Entry<Integer, Tile> colEntry, List<Optional<Tile>> neighbours){
@@ -320,12 +323,6 @@ public class YamauchiAgent extends Agent {
         Optional<Tile> bottomRightOpt = knowledge.getByCoordinates(colEntry.getKey() + Angle.RIGHT.getxIncrement(), rowEntry.getKey() + Angle.DOWN.getyIncrement());
 
         return Arrays.asList(upOpt, rightOpt, leftOpt, downOpt, upLeftOpt, upRightOpt, bottomLeftOpt, bottomRightOpt);
-    }
-
-    private int computeDistance(Tile tileX, Tile tileY){
-        int x = Math.abs(tileX.getX() - tileY.getX());
-        int y = Math.abs(tileX.getY() - tileY.getY());
-        return x + y;
     }
 
     @Override

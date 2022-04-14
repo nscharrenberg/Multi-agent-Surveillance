@@ -14,8 +14,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Polygon;
-import javafx.scene.shape.Rectangle;
+import javafx.scene.shape.*;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 
@@ -399,6 +398,7 @@ public class GameBoardGUI extends Application {
 
     }
 
+
     private ArrayList<Item> orderList(ArrayList<Item> itemList){
 
         ArrayList<Item> out = new ArrayList<>(Collections.nCopies(6, null));
@@ -444,6 +444,29 @@ public class GameBoardGUI extends Application {
         faceLEFT_Guard = new Double[]{GSSD / 6.0, GSSD / 2.0, GSSD / 2.0, GSSD * 5.0 / 6.0, GSSD * 5.0 / 6.0, GSSD * 5.0 / 6.0, GSSD * 5.0 / 6.0, GSSD / 6.0, GSSD / 2.0, GSSD / 6.0, GSSD / 6.0, GSSD / 2.0};
         faceRIGHT_Guard = new Double[]{GSSD * 5.0 / 6.0, GSSD / 2.0, GSSD / 2.0, GSSD / 6.0, GSSD / 6.0, GSSD / 6.0, GSSD / 6.0, GSSD * 5.0 / 6.0, GSSD / 2.0, GSSD * 5.0/ 6.0, GSSD * 5.0 / 6.0, GSSD / 2.0};
     }
+
+
+    private Circle createMarkerIntruderLegend() {
+        Circle marker_Intruder = new Circle(GSSD/2.0, GSSD/2.0, GSSD/3.0);
+        return marker_Intruder;
+    }
+
+
+    public void drawMarkers(Tile tile, Player player) {
+        if (player instanceof Guard) {
+            Line line1 = new Line(GSSD/6.0, GSSD*5.0/6.0, GSSD*5.0/6.0, GSSD/6.0);
+            Line line2 = new Line(GSSD/6.0, GSSD/6.0, GSSD*5.0/6.0, GSSD*5.0/6.0);
+            //TODO: Check which type of marker and assign the correct color to each of the two lines.
+            //TODO: Add this to the current tile for each of the two lines.
+        }
+        else {
+            Circle intruder_marker = createMarkerIntruderLegend();
+            //TODO: Check which type of marker and assign the correct color.
+            //TODO: Add this to the current tile
+        }
+
+    }
+
 
     public void showPath(Stage st, List<List<Coordinates>> data){
         TileArea board = Factory.getMapRepository().getBoardAsArea();

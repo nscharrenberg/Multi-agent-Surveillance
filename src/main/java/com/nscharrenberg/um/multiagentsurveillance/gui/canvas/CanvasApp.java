@@ -9,6 +9,8 @@ import javafx.scene.control.Label;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Circle;
+import javafx.scene.shape.Line;
 import javafx.scene.shape.Polygon;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
@@ -86,6 +88,20 @@ public class CanvasApp extends Application {
             legend.add(new Label("= " + item), 1, row++);
         }
 
+        Circle circle = createMarkerIntruderLegend(size);
+        circle.setFill(Color.TRANSPARENT);
+        circle.setStroke(Color.RED);
+        legend.add(circle, 0, 20);
+
+        Line line1 = new Line(size/6.0, size*5.0/6.0, size*5.0/6.0, size/6.0);
+        Line line2 = new Line(size/6.0, size/6.0, size*5.0/6.0, size*5.0/6.0);
+        line1.setFill(Color.BLACK);
+        line1.setStrokeWidth(2);
+        legend.add(line1, 0, 30);
+        line2.setFill(Color.BLACK);
+        line2.setStrokeWidth(2);
+        legend.add(line2, 0, 30);
+
         legend.setVgap(2);
         legend.setHgap(10);
 
@@ -117,4 +133,12 @@ public class CanvasApp extends Application {
     private Double[] createIntruderLegend(double size){
         return new Double[]{size / 6.0, size * 5.0 / 6.0, size / 2.0, size / 6.0, size * 5.0 / 6.0, size * 5.0 / 6.0, size / 2.0, size * 2.0 / 3.0, size / 6.0, size * 5.0 / 6.0};
     }
+
+    private Circle createMarkerIntruderLegend(double size) {
+        Circle marker_Intruder = new Circle(size/2.0, size/2.0, size/3.0);
+        return marker_Intruder;
+    }
+    
+    
+
 }

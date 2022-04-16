@@ -29,7 +29,7 @@ public abstract class Player extends Collision {
         this.speed = speed;
         this.agent = null;
         this.audioEffects = new ArrayList<>();
-        this.representedSound = new AudioEffect(10);
+        this.representedSound = new AudioEffect(0);
     }
 
     public Player(Tile tile, Angle direction, double speed, Area<Tile> observation) {
@@ -39,7 +39,7 @@ public abstract class Player extends Collision {
         this.vision = observation;
         this.agent = null;
         this.audioEffects = new ArrayList<>();
-        this.representedSound = new AudioEffect(10);
+        this.representedSound = new AudioEffect(0);
     }
 
     public List<Audio> getAudioEffects() {

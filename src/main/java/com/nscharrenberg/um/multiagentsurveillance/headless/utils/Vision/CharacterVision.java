@@ -3,6 +3,7 @@ package com.nscharrenberg.um.multiagentsurveillance.headless.utils.Vision;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Angle.Angle;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Items.Item;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Items.Collision.Wall;
+import com.nscharrenberg.um.multiagentsurveillance.headless.models.Map.ShadowTile;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Map.Tile;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Map.TileArea;
 import com.nscharrenberg.um.multiagentsurveillance.headless.utils.Geometrics;
@@ -135,6 +136,10 @@ public class CharacterVision{
         rawvision.removeIf(tc -> (tc.getX() < 0 || tc.getY() < 0));
         rawvision.removeIf(tc -> (tc.getX() > board.width() || tc.getY() > board.height()));
 
+        int xBound = 0;
+        int yBound = 0;
+        boolean flag = true;
+
         // Check remaining tiles for items
         for (Tile t : rawvision) {
             for (Tile it : gm.getIntersectingTiles(position, t)) {
@@ -151,6 +156,19 @@ public class CharacterVision{
                     continue;
                 }
 
+                if(tileAddOpt.get() instanceof ShadowTile){
+                    Tile tileAdd = tileAddOpt.get();
+                    if(flag){
+                        flag = false;
+                        xBound = tileAdd.getX();
+                        yBound = tileAdd.getY();
+                    }
+
+                    if(checkShadowTile(position, xBound, yBound))
+                        continue;
+
+                }
+
                 finalvision.add(tileAddOpt.get());
             } else {
                 validtile = true;
@@ -159,6 +177,32 @@ public class CharacterVision{
 
         return finalvision;
     }
+
+    private boolean checkShadowTile(Tile tile, int xBound, int yBound){
+
+        int shadowBound = 1;
+
+        if(this.direction == Angle.UP){
+
+            return tile.getY() >= yBound - shadowBound;
+
+        } else if(this.direction == Angle.DOWN){
+
+            return tile.getY() <= yBound + shadowBound;
+
+        } else if(this.direction == Angle.LEFT){
+
+            return tile.getX() >= xBound - shadowBound;
+
+        } else if(this.direction == Angle.RIGHT){
+
+            return tile.getX() <= xBound + shadowBound;
+
+        }
+
+        return false;
+    }
+
 
     private boolean unobstructedTile(TileArea board, Tile t) {
         Optional<Tile> optTile = board.getByCoordinates(t.getX(), t.getY());

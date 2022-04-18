@@ -1,5 +1,6 @@
 package com.nscharrenberg.um.multiagentsurveillance.headless.models.Items;
 
+import com.nscharrenberg.um.multiagentsurveillance.headless.Factory;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Map.Tile;
 
 import java.util.Objects;

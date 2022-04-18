@@ -26,6 +26,10 @@ public class GameRepository implements IGameRepository {
     private double baseSpeedIntruders;
     private double springSpeedIntruders;
     private double baseSpeedGuards;
+    private int smellingDistance;
+    private int hearingDistance;
+    private int lightDistance;
+    private int distanceViewing;
     private double timeStep;
     private boolean isRunning = false;
 
@@ -196,5 +200,46 @@ public class GameRepository implements IGameRepository {
     @Override
     public void setRunning(boolean running) {
         isRunning = running;
+    }
+
+    @Override
+    public int getSmellingDistance() {
+        return smellingDistance;
+    }
+
+    @Override
+    public void setSmellingDistance(int smellingDistance) {
+        this.smellingDistance = smellingDistance;
+    }
+
+    @Override
+    public int getHearingDistance() {
+        return hearingDistance;
+    }
+
+    @Override
+    public void setHearingDistance(int hearingDistance) {
+        this.hearingDistance = hearingDistance;
+    }
+
+
+    @Override
+    public int getLightDistance() {
+        return lightDistance;
+    }
+
+    @Override
+    public void setLightDistance(int lightDistance) {
+        this.lightDistance = lightDistance;
+    }
+
+    @Override
+    public int getDistanceViewing() {
+        return distanceViewing;
+    }
+
+    @Override
+    public void setDistanceViewing(int distanceViewing) {
+        this.distanceViewing = distanceViewing;
     }
 }

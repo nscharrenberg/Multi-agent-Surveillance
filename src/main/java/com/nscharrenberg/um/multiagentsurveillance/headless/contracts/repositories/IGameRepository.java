@@ -54,4 +54,20 @@ public interface IGameRepository {
     boolean isRunning();
 
     void setRunning(boolean running);
+
+    int getSmellingDistance();
+
+    void setSmellingDistance(int smellingDistance);
+
+    int getHearingDistance();
+
+    void setHearingDistance(int hearingDistance);
+
+    int getLightDistance();
+
+    void setLightDistance(int lightDistance);
+
+    int getDistanceViewing();
+
+    void setDistanceViewing(int distanceViewing);
 }

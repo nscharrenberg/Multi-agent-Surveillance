@@ -235,6 +235,12 @@ public class PlayerRepository implements IPlayerRepository {
 
     @Override
     public void move(Player player, Angle direction) throws CollisionException, InvalidTileException, ItemNotOnTileException, ItemAlreadyOnTileException {
+
+        // Check if Intruder is already on target
+        if ((player instanceof Intruder intruder) && intruder.isFoundTarget()) {
+            return;
+        }
+
         Angle currentDirection = player.getDirection();
         Tile currentTilePlayer = player.getTile();
         int visionLength = 6;
@@ -333,6 +339,19 @@ public class PlayerRepository implements IPlayerRepository {
         nextPosition.add(player);
         player.setTile(nextPosition);
 
+        // Mark intruder as found in target
+        if ((player instanceof Intruder intruder) && Factory.getMapRepository().getTargetArea().within(nextPosition.getX(), nextPosition.getY())) {
+            intruder.setFoundTarget(true);
+
+            // Check if all intruders are on target
+            boolean gameOver = Factory.getPlayerRepository().getIntruders().stream().anyMatch(i -> !i.isFoundTarget());
+
+            if (gameOver) {
+                Factory.getGameRepository().setRunning(false);
+                // TODO: Give better indication that this game was won by the intruders.
+            }
+        }
+
         if (player.getAgent() != null) {
             //Vision
             CharacterVision characterVision = new CharacterVision(visionLength, player.getDirection());
@@ -349,7 +368,6 @@ public class PlayerRepository implements IPlayerRepository {
 
             //Set the represented sound range
             player.setRepresentedSoundRange(WALK);
-
         }
     }
 

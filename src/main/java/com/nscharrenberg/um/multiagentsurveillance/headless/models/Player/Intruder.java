@@ -8,6 +8,7 @@ import java.util.Objects;
 public class Intruder extends Player {
     private double sprintSpeed;
     private boolean isSprinting = false;
+    private boolean foundTarget = false;
 
     public Intruder(Tile position, Angle direction) {
         // TODO: Read speed from Configuration
@@ -31,6 +32,14 @@ public class Intruder extends Player {
 
     public void setSprinting(boolean sprinting) {
         isSprinting = sprinting;
+    }
+
+    public boolean isFoundTarget() {
+        return foundTarget;
+    }
+
+    public void setFoundTarget(boolean foundTarget) {
+        this.foundTarget = foundTarget;
     }
 
     @Override

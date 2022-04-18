@@ -18,7 +18,11 @@ public enum FileItems {
     WALL("wall"),
     TELEPORT("teleport"),
     SHADED("shaded"),
-    TEXTURE("texture");
+    TEXTURE("texture"),
+    DISTANCE_VIEWING("distanceViewing"),
+    DISTANCE_HEARING("distanceHearing"),
+    DISTANCE_SMELLING("distanceSmelling"),
+    DISTANCE_LIGHT("distanceLight");
 
     FileItems(String key) {
         this.key = key;

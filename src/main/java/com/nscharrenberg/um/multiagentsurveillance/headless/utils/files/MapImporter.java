@@ -91,6 +91,14 @@ public class MapImporter {
             Factory.getGameRepository().setSpringSpeedIntruders(Double.parseDouble(value));
         } else if (id.equals(FileItems.TIME_STEP.getKey())) {
             Factory.getGameRepository().setTimeStep(Double.parseDouble(value));
+        } else if (id.equals(FileItems.DISTANCE_HEARING.getKey())) {
+            Factory.getGameRepository().setHearingDistance(Integer.parseInt(value));
+        } else if (id.equals(FileItems.DISTANCE_SMELLING.getKey())) {
+            Factory.getGameRepository().setSmellingDistance(Integer.parseInt(value));
+        } else if (id.equals(FileItems.DISTANCE_VIEWING.getKey())) {
+            Factory.getGameRepository().setDistanceViewing(Integer.parseInt(value));
+        } else if (id.equals(FileItems.DISTANCE_LIGHT.getKey())) {
+            Factory.getGameRepository().setLightDistance(Integer.parseInt(value));
         } else {
             if (!this.tilesInitialized && Factory.getGameRepository().getHeight() > 0 && Factory.getGameRepository().getWidth() > 0) {
                 initTiles();

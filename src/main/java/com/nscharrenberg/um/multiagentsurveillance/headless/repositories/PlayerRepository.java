@@ -239,8 +239,8 @@ public class PlayerRepository implements IPlayerRepository {
         Tile currentTilePlayer = player.getTile();
         int visionLength = 6;
 
-        if(currentTilePlayer instanceof ShadowTile)
-            visionLength /= 2;
+//        if(currentTilePlayer instanceof ShadowTile)
+//            visionLength /= 2;
 
         // Rotate the player when it's not facing the same direction as it wants to go to.
         if (!currentDirection.equals(direction)) {

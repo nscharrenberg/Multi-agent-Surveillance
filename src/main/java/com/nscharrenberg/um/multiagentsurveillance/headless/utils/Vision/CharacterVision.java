@@ -164,7 +164,7 @@ public class CharacterVision{
                         yBound = tileAdd.getY();
                     }
 
-                    if(checkShadowTile(position, xBound, yBound))
+                    if(!checkShadowTile(position, xBound, yBound))
                         continue;
 
                 }

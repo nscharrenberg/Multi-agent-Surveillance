@@ -17,8 +17,8 @@ import java.util.HashMap;
 
 public class CanvasApp extends Application {
     private GameView view;
-    private static int WIDTH = 800;
-    private static int HEIGHT = 800;
+    private static int WIDTH = 1200;
+    private static int HEIGHT = 1000;
 
     @Override
     public void start(Stage primaryStage) {

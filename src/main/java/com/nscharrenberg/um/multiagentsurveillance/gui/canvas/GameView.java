@@ -29,15 +29,15 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class GameView extends StackPane {
-    protected static Color BASIC_TILE_COLOR = Color.FORESTGREEN;
-    protected static Color WALL_TILE_COLOR = Color.BROWN;
+    protected static Color BASIC_TILE_COLOR = Color.MINTCREAM;
+    protected static Color WALL_TILE_COLOR = Color.DARKBLUE.darker().darker();
     protected static Color TELEPORT_INPUT_TILE_COLOR = Color.PURPLE;
     protected static Color TELEPORT_OUT_TILE_COLOR = Color.MEDIUMPURPLE;
     protected static Color SHADED_TILE_COLOR = Color.BLACK;
     protected static Color GUARD_COLOR = Color.BLUE;
     protected static Color INTRUDER_COLOR = Color.INDIANRED;
     protected static Color VISION_COLOR = Color.LIGHTGOLDENRODYELLOW;
-    protected static Color KNOWLEDGE_COLOR = Color.LAWNGREEN;
+    protected static Color KNOWLEDGE_COLOR = Color.LIGHTBLUE;
     protected static Color TARGET_COLOR = Color.TEAL;
 
 
@@ -291,7 +291,7 @@ public class GameView extends StackPane {
     }
 
     private void drawKnowledge(Tile tile) {
-        drawTile(tile, KNOWLEDGE_COLOR, .1);
+        drawTile(tile, KNOWLEDGE_COLOR, .3);
     }
 
     private void drawAgent(Tile tile, Angle angle) {

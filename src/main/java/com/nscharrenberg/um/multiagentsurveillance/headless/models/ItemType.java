@@ -3,7 +3,8 @@ package com.nscharrenberg.um.multiagentsurveillance.headless.models;
 public enum ItemType {
     TILE(1, Tile.class),
     SHADOW(2, ShadowTile.class),
-    WALL(3, Wall.class);
+    WALL(3, Wall.class),
+    SOUNDWAVE(4, SoundWave.class);
 
     ItemType(int order, Class<?> instance) {
         this.order = order;

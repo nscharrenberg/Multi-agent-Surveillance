@@ -1,0 +1,7 @@
+name = test scenario
+gameFile = /Users/joel/Documents/gamefile.txt
+gameMode = 0
+height = 20
+width = 20
+scaling = 0.1
+targetArea = 5 4 5 4

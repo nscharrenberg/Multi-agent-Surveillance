@@ -64,6 +64,23 @@ public class Intruder extends Player {
     }
 
     public Angle computeTargetDirection(int x1, int y1) {
+        
+        File file = new File("src/test/resources/maps/exam.txt");
+
+        if (!file.exists()) {
+            throw new RuntimeException("Resource not found");
+        }
+
+        String path = file.getAbsolutePath();
+
+        MapImporter importer = new MapImporter();
+
+        try {
+            importer.load(path);
+
+        } catch (IOException e) {
+            throw new RuntimeException("Importer failed");
+        }
 
         TileArea targetArea = Factory.getMapRepository().getTargetArea();
         List<Tile> bounds = targetArea.getBounds();

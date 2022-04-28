@@ -452,16 +452,61 @@ public class GameBoardGUI extends Application {
     }
 
 
-    public void drawMarkers(Tile tile, Player player) {
+    // TODO: I think that this needs to be the general method that actually draws the markers but we need another method that creates a new marker and adds it to the tile (or we can do this in the general logic since it is just one line)
+    public void drawMarkers(Tile tile, Player player, Marker.MarkerType marker) {
         if (player instanceof Guard) {
             Line line1 = new Line(GSSD/6.0, GSSD*5.0/6.0, GSSD*5.0/6.0, GSSD/6.0);
             Line line2 = new Line(GSSD/6.0, GSSD/6.0, GSSD*5.0/6.0, GSSD*5.0/6.0);
-            //TODO: Check which type of marker and assign the correct color to each of the two lines.
+            line1.setStrokeWidth(2);
+            line2.setStrokeWidth(2);
+            if (marker == Marker.MarkerType.DEAD_END) {
+                line1.setFill(Color.RED);
+                line2.setFill(Color.RED);
+            }
+            else if (marker == Marker.MarkerType.TARGET) {
+                line1.setFill(Color.RED);
+                line2.setFill(Color.RED);
+            }
+            else if (marker == Marker.MarkerType.GUARD_SPOTTED) {
+                line1.setFill(Color.RED);
+                line2.setFill(Color.RED);
+            }
+            else if (marker == Marker.MarkerType.INTRUDER_SPOTTED) {
+                line1.setFill(Color.RED);
+                line2.setFill(Color.RED);
+            }
+            else if (marker == Marker.MarkerType.GUARD_STRUCTURE) {
+                line1.setFill(Color.RED);
+                line2.setFill(Color.RED);
+            }
+            else if (marker == Marker.MarkerType.TELEPORTER) {
+                line1.setFill(Color.RED);
+                line2.setFill(Color.RED);
+            }
+
             //TODO: Add this to the current tile for each of the two lines.
         }
         else {
             Circle intruder_marker = createMarkerIntruderLegend();
-            //TODO: Check which type of marker and assign the correct color.
+            if (marker == Marker.MarkerType.DEAD_END) {
+                intruder_marker.setFill(Color.RED);
+            }
+            else if (marker == Marker.MarkerType.TARGET) {
+                intruder_marker.setFill(Color.RED);
+            }
+            else if (marker == Marker.MarkerType.GUARD_SPOTTED) {
+                intruder_marker.setFill(Color.RED);
+            }
+            else if (marker == Marker.MarkerType.INTRUDER_SPOTTED) {
+                intruder_marker.setFill(Color.RED);
+            }
+            else if (marker == Marker.MarkerType.GUARD_STRUCTURE) {
+                intruder_marker.setFill(Color.RED);
+            }
+            else if (marker == Marker.MarkerType.TELEPORTER) {
+                intruder_marker.setFill(Color.RED);
+            }
+
             //TODO: Add this to the current tile
         }
 

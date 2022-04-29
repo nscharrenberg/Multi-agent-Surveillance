@@ -475,10 +475,6 @@ public class GameBoardGUI extends Application {
                 line1.setFill(Color.RED);
                 line2.setFill(Color.RED);
             }
-            else if (marker == Marker.MarkerType.GUARD_STRUCTURE) {
-                line1.setFill(Color.RED);
-                line2.setFill(Color.RED);
-            }
             else if (marker == Marker.MarkerType.TELEPORTER) {
                 line1.setFill(Color.RED);
                 line2.setFill(Color.RED);
@@ -498,9 +494,6 @@ public class GameBoardGUI extends Application {
                 intruder_marker.setFill(Color.RED);
             }
             else if (marker == Marker.MarkerType.INTRUDER_SPOTTED) {
-                intruder_marker.setFill(Color.RED);
-            }
-            else if (marker == Marker.MarkerType.GUARD_STRUCTURE) {
                 intruder_marker.setFill(Color.RED);
             }
             else if (marker == Marker.MarkerType.TELEPORTER) {

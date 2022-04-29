@@ -24,7 +24,7 @@ public abstract class Agent {
     protected int teleporterMarkers;
     protected int intruderSpottedMarkers;
     protected int guardSpottedMarkers;
-    protected int guardStructureMarkers;
+    protected int shadedMarkers;
 
     public Agent(Player player) {
         this.player = player;
@@ -33,7 +33,7 @@ public abstract class Agent {
             targetMarkers = 5;
             teleporterMarkers = 5;
             intruderSpottedMarkers = 5;
-            guardStructureMarkers = 5;
+            shadedMarkers = 5;
         }
 
         else if (player instanceof Intruder) {
@@ -41,7 +41,7 @@ public abstract class Agent {
             targetMarkers = 5;
             teleporterMarkers = 5;
             guardSpottedMarkers = 5;
-            guardStructureMarkers = 5;
+            shadedMarkers = 5;
         }
 
         this.knowledge = new TileArea();
@@ -60,7 +60,7 @@ public abstract class Agent {
             targetMarkers = 5;
             teleporterMarkers = 5;
             intruderSpottedMarkers = 5;
-            guardStructureMarkers = 5;
+            shadedMarkers = 5;
         }
 
         else if (player instanceof Intruder) {
@@ -68,7 +68,7 @@ public abstract class Agent {
             targetMarkers = 5;
             teleporterMarkers = 5;
             guardSpottedMarkers = 5;
-            guardStructureMarkers = 5;
+            shadedMarkers = 5;
         }
 
         this.knowledge = new TileArea();
@@ -87,7 +87,7 @@ public abstract class Agent {
             targetMarkers = 5;
             teleporterMarkers = 5;
             intruderSpottedMarkers = 5;
-            guardStructureMarkers = 5;
+            shadedMarkers = 5;
         }
 
         else if (player instanceof Intruder) {
@@ -95,7 +95,7 @@ public abstract class Agent {
             targetMarkers = 5;
             teleporterMarkers = 5;
             guardSpottedMarkers = 5;
-            guardStructureMarkers = 5;
+            shadedMarkers = 5;
         }
 
         this.knowledge = knowledge;
@@ -238,11 +238,4 @@ public abstract class Agent {
         shadedMarkers--;
     }
 
-    public int getGuardStructureMarkers() {
-        return guardStructureMarkers;
-    }
-
-    public void decrementGuardStructureMarkers() {
-        guardStructureMarkers--;
-    }
 }

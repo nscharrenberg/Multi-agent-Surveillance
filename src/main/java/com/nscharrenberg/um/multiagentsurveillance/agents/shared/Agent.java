@@ -183,6 +183,13 @@ public abstract class Agent {
         execute(decide());
     }
 
+    public boolean placeMarker(){
+        //TODO: Here loop through the current vision and check when to place a marker?
+
+        //TODO: A different check for the dead-end (something with looping through knowledge).
+        return true;
+    }
+
     public int getDeadEndMarkers() {
         return deadEndMarkers;
     }
@@ -221,6 +228,14 @@ public abstract class Agent {
 
     public void decrementGuardSpottedMarkers() {
         guardSpottedMarkers--;
+    }
+
+    public int getShadedMarkers() {
+        return shadedMarkers;
+    }
+
+    public void decrementShadedMarkers() {
+        shadedMarkers--;
     }
 
     public int getGuardStructureMarkers() {

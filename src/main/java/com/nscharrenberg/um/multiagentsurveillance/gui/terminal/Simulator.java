@@ -25,8 +25,9 @@ public class Simulator {
                 int oldX = agent.getPlayer().getTile().getX();
                 int oldY = agent.getPlayer().getTile().getY();
                 Angle move = agent.decide();
-                // TODO: Is the event of placing a marker a separate move --> If yes, then we need to implement that in the decide methods.
-                agent.execute(move);
+                if (move != Angle.STOP) {
+                    agent.execute(move);
+                }
                 System.out.println("Agent " + agentId
                         + " going from (" + oldX + ", " + oldY + ") to move "
                         + move + " to (" + agent.getPlayer().getTile().getX() + ", "

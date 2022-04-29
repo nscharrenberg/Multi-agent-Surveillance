@@ -77,54 +77,61 @@ public class YamauchiAgent extends Agent {
     @Override
     public Angle decide() {
 
-        // Incosistent with explorer% ????
-        System.out.println("knowledgesize: " + this.knowledge.getRegion().entrySet().size());
-
-        // If moves are alread planned just continue deciding them.
-        if (!plannedMoves.isEmpty()) {
-            return plannedMoves.poll();
+        if (player.getAgent().placeMarker()) {
+            return Angle.STOP;
         }
 
-        frontiers.clear();
+        else {
 
-        Optional<Frontier> chosenFrontierOpt = pickBestFrontier();
+            // Incosistent with explorer% ????
+            System.out.println("knowledgesize: " + this.knowledge.getRegion().entrySet().size());
 
-        // No Frontier found, just do a random move for now
-        if (chosenFrontierOpt.isEmpty() || chosenFrontierOpt.get().getQueueNode() == null) {
-            consecutiveNoFrontier++;
-            int value = this.random.nextInt(100);
+            // If moves are alread planned just continue deciding them.
+            if (!plannedMoves.isEmpty()) {
+                return plannedMoves.poll();
+            }
 
-            Angle move = player.getDirection();
+            frontiers.clear();
 
-            Optional<Tile> nextTileOpt = knowledge.getByCoordinates(player.getTile().getX() + move.getxIncrement(), player.getTile().getY() + player.getDirection().getyIncrement());
+            Optional<Frontier> chosenFrontierOpt = pickBestFrontier();
 
-            boolean nextBlocked = false;
-            if (nextTileOpt.isPresent()) {
-                Tile nextTile = nextTileOpt.get();
+            // No Frontier found, just do a random move for now
+            if (chosenFrontierOpt.isEmpty() || chosenFrontierOpt.get().getQueueNode() == null) {
+                consecutiveNoFrontier++;
+                int value = this.random.nextInt(100);
 
-                for (Item items : nextTile.getItems()) {
-                    if (items instanceof Collision) {
-                        nextBlocked = true;
-                        break;
+                Angle move = player.getDirection();
+
+                Optional<Tile> nextTileOpt = knowledge.getByCoordinates(player.getTile().getX() + move.getxIncrement(), player.getTile().getY() + player.getDirection().getyIncrement());
+
+                boolean nextBlocked = false;
+                if (nextTileOpt.isPresent()) {
+                    Tile nextTile = nextTileOpt.get();
+
+                    for (Item items : nextTile.getItems()) {
+                        if (items instanceof Collision) {
+                            nextBlocked = true;
+                            break;
+                        }
                     }
                 }
+
+                if (value <= 30 || nextBlocked) {
+                    int pick = this.random.nextInt(Angle.values().length);
+                    move = Angle.values()[pick];
+                }
+
+                return move;
             }
 
-            if (value <= 30 || nextBlocked) {
-                int pick = this.random.nextInt(Angle.values().length);
-                move = Angle.values()[pick];
-            }
+            consecutiveNoFrontier = 0;
 
-            return move;
+            Frontier chosenFrontier = chosenFrontierOpt.get();
+
+            plannedMoves = chosenFrontier.getQueueNode().getMoves();
+
+            return plannedMoves.poll();
         }
-
-        consecutiveNoFrontier = 0;
-
-        Frontier chosenFrontier = chosenFrontierOpt.get();
-
-        plannedMoves = chosenFrontier.getQueueNode().getMoves();
-
-        return plannedMoves.poll();
     }
 
     private Optional<Frontier> pickBestFrontier() {

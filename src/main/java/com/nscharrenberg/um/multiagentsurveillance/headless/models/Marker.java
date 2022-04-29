@@ -11,7 +11,8 @@ public class Marker {
         TARGET,
         GUARD_SPOTTED,
         INTRUDER_SPOTTED,
-        TELEPORTER
+        TELEPORTER,
+        SHADED
     }
 
     //TODO: Drop marker whenever there is a teammate nearby --> keep kind of short term memory

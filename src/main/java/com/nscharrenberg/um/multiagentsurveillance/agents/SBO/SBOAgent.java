@@ -44,53 +44,51 @@ public class SBOAgent extends Agent {
     public Action decide() {
 
         if (player.getAgent().placeMarker() != null) {
-            //TODO: Return the type of marker. In general: Adjust code in placeMarker method, decide and move methods.
-            //TODO: Change else such that Noah is happy.
-            return ;
-        } else {
+            //TODO: Return the type of marker. In general: Adjust code in placeMarker method, decide and move method.
+            return player.getAgent().placeMarker();
+        }
 
-            // TODO: need to update this to skip to next tile in stack if goal tile has entered the knowledge
-            if (!plannedMoves.isEmpty()) {
-                return plannedMoves.poll();
-            }
-
-            Tile goal = this.player.getTile();
-            gatherV2();
-
-            while (!scanned.isEmpty()) {
-                Tile top = scanned.peek();
-                if (this.knowledge.getByCoordinates(top.getX(), top.getY()).isPresent()) {
-                    scanned.pop();
-                } else {
-                    goal = scanned.peek();
-                    break;
-                }
-            }
-
-            // TODO: If stack is empty, search for teleporter
-            System.out.println("Players Tile: " + player.getTile().getX() + "  " + player.getTile().getY());
-            System.out.println("Current goal Tile: " + goal.getX() + "  " + goal.getY());
-            System.out.println("Stack size: " + scanned.size());
-
-            // Turn goal tile into Queue angle
-            BFS bfs = new BFS();
-            if (bfs.execute(mapRepository.getBoard(), this.player, goal).isPresent()) {
-                plannedMoves = bfs.execute(mapRepository.getBoard(), this.player, goal).get().getMoves();
-            } else if (knowledge.getByCoordinates(goal.getX(), goal.getY()).isEmpty()) {
-                for (Tile agt : getAdjacent(goal)) {
-                    if (knowledge.getByCoordinates(agt.getX(), agt.getY()).isPresent()) {
-                        if (bfs.execute(mapRepository.getBoard(), this.player, agt).isPresent()) {
-                            plannedMoves = bfs.execute(mapRepository.getBoard(), this.player, agt).get().getMoves();
-                            break;
-                        }
-                    }
-                }
-            } else {
-                System.out.println("invalid goal?");
-            }
-
+        // TODO: need to update this to skip to next tile in stack if goal tile has entered the knowledge
+        if (!plannedMoves.isEmpty()) {
             return plannedMoves.poll();
         }
+
+        Tile goal = this.player.getTile();
+        gatherV2();
+
+        while (!scanned.isEmpty()) {
+            Tile top = scanned.peek();
+            if (this.knowledge.getByCoordinates(top.getX(), top.getY()).isPresent()) {
+                scanned.pop();
+            } else {
+                goal = scanned.peek();
+                break;
+            }
+        }
+
+        // TODO: If stack is empty, search for teleporter
+        System.out.println("Players Tile: " + player.getTile().getX() + "  " + player.getTile().getY());
+        System.out.println("Current goal Tile: " + goal.getX() + "  " + goal.getY());
+        System.out.println("Stack size: " + scanned.size());
+
+        // Turn goal tile into Queue angle
+        BFS bfs = new BFS();
+        if (bfs.execute(mapRepository.getBoard(), this.player, goal).isPresent()) {
+            plannedMoves = bfs.execute(mapRepository.getBoard(), this.player, goal).get().getMoves();
+        } else if (knowledge.getByCoordinates(goal.getX(), goal.getY()).isEmpty()) {
+            for (Tile agt : getAdjacent(goal)) {
+                if (knowledge.getByCoordinates(agt.getX(), agt.getY()).isPresent()) {
+                    if (bfs.execute(mapRepository.getBoard(), this.player, agt).isPresent()) {
+                        plannedMoves = bfs.execute(mapRepository.getBoard(), this.player, agt).get().getMoves();
+                        break;
+                    }
+                }
+            }
+        } else {
+            System.out.println("invalid goal?");
+        }
+
+        return plannedMoves.poll();
     }
 
 

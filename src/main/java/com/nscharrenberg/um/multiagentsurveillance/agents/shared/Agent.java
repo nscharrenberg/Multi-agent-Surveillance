@@ -183,11 +183,32 @@ public abstract class Agent {
         execute(decide());
     }
 
-    public boolean placeMarker(){
-        //TODO: Here loop through the current vision and check when to place a marker?
+    public Action placeMarker(){
+        //TODO: Here loop through the current vision and check when to place a marker
+        Action move;
+        HashMap<Integer, HashMap<Integer, Tile>> vision = player.getVision().getRegion();
+
+        List<Item> currentTileItems= new ArrayList<Item>();
+
+        for (Map.Entry<Integer, HashMap<Integer, Tile>> rowEntry : vision.entrySet()) {
+            for (Map.Entry<Integer, Tile> colEntry : rowEntry.getValue().entrySet()) {
+                for (Item item : colEntry.getValue().getItems()) {
+                    if (player instanceof Guard) {
+                        if (item instanceof Intruder) {
+
+                        }
+                    }
+                    else if (player instanceof Intruder) {
+
+                    }
+                }
+            }
+
+        }
+
 
         //TODO: A different check for the dead-end (something with looping through knowledge).
-        return true;
+        return null;
     }
 
     public int getDeadEndMarkers() {

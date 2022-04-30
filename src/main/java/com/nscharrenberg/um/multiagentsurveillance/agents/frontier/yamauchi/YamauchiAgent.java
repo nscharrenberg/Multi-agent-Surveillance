@@ -81,57 +81,55 @@ public class YamauchiAgent extends Agent {
             return player.getAgent().placeMarker();
         }
 
-        else {
+        // Incosistent with explorer% ????
+        System.out.println("knowledgesize: " + this.knowledge.getRegion().entrySet().size());
 
-            // Incosistent with explorer% ????
-            System.out.println("knowledgesize: " + this.knowledge.getRegion().entrySet().size());
+        // If moves are alread planned just continue deciding them.
+        if (!plannedMoves.isEmpty()) {
+            return plannedMoves.poll();
+        }
 
-            // If moves are alread planned just continue deciding them.
-            if (!plannedMoves.isEmpty()) {
-                return plannedMoves.poll();
-            }
+        frontiers.clear();
 
-            frontiers.clear();
+        Optional<Frontier> chosenFrontierOpt = pickBestFrontier();
 
-            Optional<Frontier> chosenFrontierOpt = pickBestFrontier();
-
-            // No Frontier found, just do a random move for now
-            if (chosenFrontierOpt.isEmpty() || chosenFrontierOpt.get().getQueueNode() == null) {
-                consecutiveNoFrontier++;
-                int value = this.random.nextInt(100);
+        // No Frontier found, just do a random move for now
+        if (chosenFrontierOpt.isEmpty() || chosenFrontierOpt.get().getQueueNode() == null) {
+            consecutiveNoFrontier++;
+            int value = this.random.nextInt(100);
 
             Action move = player.getDirection();
 
-                Optional<Tile> nextTileOpt = knowledge.getByCoordinates(player.getTile().getX() + move.getxIncrement(), player.getTile().getY() + player.getDirection().getyIncrement());
+            Optional<Tile> nextTileOpt = knowledge.getByCoordinates(player.getTile().getX() + move.getxIncrement(), player.getTile().getY() + player.getDirection().getyIncrement());
 
-                boolean nextBlocked = false;
-                if (nextTileOpt.isPresent()) {
-                    Tile nextTile = nextTileOpt.get();
+            boolean nextBlocked = false;
+            if (nextTileOpt.isPresent()) {
+                Tile nextTile = nextTileOpt.get();
 
-                    for (Item items : nextTile.getItems()) {
-                        if (items instanceof Collision) {
-                            nextBlocked = true;
-                            break;
-                        }
+                for (Item items : nextTile.getItems()) {
+                    if (items instanceof Collision) {
+                        nextBlocked = true;
+                        break;
                     }
                 }
+            }
 
             if (value <= 30 || nextBlocked) {
                 int pick = this.random.nextInt(Action.values().length);
                 move = Action.values()[pick];
             }
 
-                return move;
-            }
-
-            consecutiveNoFrontier = 0;
-
-            Frontier chosenFrontier = chosenFrontierOpt.get();
-
-            plannedMoves = chosenFrontier.getQueueNode().getMoves();
-
-            return plannedMoves.poll();
+            return move;
         }
+
+        consecutiveNoFrontier = 0;
+
+        Frontier chosenFrontier = chosenFrontierOpt.get();
+
+        plannedMoves = chosenFrontier.getQueueNode().getMoves();
+
+        return plannedMoves.poll();
+
     }
 
     private Optional<Frontier> pickBestFrontier() {

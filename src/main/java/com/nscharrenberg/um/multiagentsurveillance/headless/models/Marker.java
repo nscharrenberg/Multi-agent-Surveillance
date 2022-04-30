@@ -4,7 +4,6 @@ public class Marker {
     private MarkerType type;
     private final int RANGE = 5;
     private final int DURATION = 10;
-    private AdvancedAngle direction;
 
     public enum MarkerType {
         DEAD_END,
@@ -18,9 +17,8 @@ public class Marker {
     //TODO: Drop marker whenever there is a teammate nearby --> keep kind of short term memory
 
 
-    public Marker(MarkerType type, AdvancedAngle direction) {
+    public Marker(MarkerType type) {
         this.type = type;
-        this.direction = direction;
     }
 
     public MarkerType getType() {
@@ -39,7 +37,7 @@ public class Marker {
         return DURATION;
     }
 
-    public AdvancedAngle getDirection() { return direction; }
-
-    public void setDirection(AdvancedAngle direction) { this.direction = direction;}
+//    public AdvancedAngle getDirection() { return direction; }
+//
+//    public void setDirection(AdvancedAngle direction) { this.direction = direction;}
 }

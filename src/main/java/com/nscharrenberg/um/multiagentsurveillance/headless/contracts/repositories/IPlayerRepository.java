@@ -33,7 +33,7 @@ public interface IPlayerRepository {
      * @throws ItemNotOnTileException - Thrown when the player is not on the tile (Should not happen)
      * @throws ItemAlreadyOnTileException - Thrown when the player is already on the tile its trying to move to (should not happen)
      */
-    void move(Player player, Angle direction) throws CollisionException, InvalidTileException, ItemNotOnTileException, ItemAlreadyOnTileException;
+    void move(Player player, Action direction) throws CollisionException, InvalidTileException, ItemNotOnTileException, ItemAlreadyOnTileException;
 
     /**
      * Validates whether the move the player wants to make is a valid move
@@ -42,7 +42,7 @@ public interface IPlayerRepository {
      * @param direction - the direction to move to
      * @return whether it is a valid move or not
      */
-    boolean isLegalMove(Player player, Angle direction);
+    boolean isLegalMove(Player player, Action direction);
 
     List<Intruder> getIntruders();
 

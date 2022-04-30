@@ -72,7 +72,7 @@ public interface IMapRepository {
      * @throws InvalidTileException - Thrown when there is at least one tile that is not within the board.
      * @throws ItemAlreadyOnTileException - Thrown when the item is already present on the given tile.
      */
-    void addTeleporter(int x1, int y1, int x2, int y2, int destX, int destY, Angle direction) throws InvalidTileException, BoardNotBuildException, ItemAlreadyOnTileException;
+    void addTeleporter(int x1, int y1, int x2, int y2, int destX, int destY, Action direction) throws InvalidTileException, BoardNotBuildException, ItemAlreadyOnTileException;
 
     /**
      * Turns a group of Tiles into shaded tiles

@@ -1,13 +1,8 @@
-package com.nscharrenberg.um.multiagentsurveillance.gui.terminal;
+package com.nscharrenberg.um.multiagentsurveillance.headless.models.gui.terminal;
 
 import com.nscharrenberg.um.multiagentsurveillance.agents.shared.Agent;
 import com.nscharrenberg.um.multiagentsurveillance.headless.Factory;
-import com.nscharrenberg.um.multiagentsurveillance.headless.models.Angle;
-import com.nscharrenberg.um.multiagentsurveillance.headless.models.Guard;
-import com.nscharrenberg.um.multiagentsurveillance.headless.utils.files.MapImporter;
-
-import java.io.File;
-import java.io.IOException;
+import com.nscharrenberg.um.multiagentsurveillance.headless.models.Action;
 
 public class Simulator {
 
@@ -24,10 +19,11 @@ public class Simulator {
             for (Agent agent : Factory.getPlayerRepository().getAgents()) {
                 int oldX = agent.getPlayer().getTile().getX();
                 int oldY = agent.getPlayer().getTile().getY();
-                Angle move = agent.decide();
-                if (move != Angle.STOP) {
-                    agent.execute(move);
-                }
+                Action move = agent.decide();
+                // TODO: We need to somehow store our placed markers with their initial duration (which is going to be
+                // TODO: a constant) and the coordinates of the placement and then each game loop run over the placed markers to check if the duration left
+                // TODO: equals 0 (and decrement the durations). Then it is removed (by removing it from the list of items of the corresponding tile) and a method in the GUI is called which removes it from the board visually.
+                agent.execute(move);,
                 System.out.println("Agent " + agentId
                         + " going from (" + oldX + ", " + oldY + ") to move "
                         + move + " to (" + agent.getPlayer().getTile().getX() + ", "

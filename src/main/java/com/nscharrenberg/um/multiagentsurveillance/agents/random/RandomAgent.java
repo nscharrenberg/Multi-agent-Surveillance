@@ -38,7 +38,7 @@ public class RandomAgent extends Agent {
     }
 
     @Override
-    public void execute(Angle move) {
+    public void execute(Action move) {
         try {
             playerRepository.move(player, move);
         } catch (CollisionException | InvalidTileException | ItemNotOnTileException | ItemAlreadyOnTileException e) {
@@ -47,10 +47,10 @@ public class RandomAgent extends Agent {
     }
 
     @Override
-    public Angle decide() {
+    public Action decide() {
         int value = this.random.nextInt(100);
 
-        Angle move = player.getDirection();
+        Action move = player.getDirection();
 
         Optional<Tile> nextTileOpt = knowledge.getByCoordinates(player.getTile().getX() + move.getxIncrement(), player.getTile().getY() + player.getDirection().getyIncrement());
 
@@ -67,8 +67,8 @@ public class RandomAgent extends Agent {
         }
 
         if (value <= 30 || nextBlocked) {
-            int pick = this.random.nextInt(Angle.values().length);
-            move = Angle.values()[pick];
+            int pick = this.random.nextInt(Action.values().length);
+            move = Action.values()[pick];
         }
 
         return move;

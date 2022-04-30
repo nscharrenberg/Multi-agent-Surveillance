@@ -1,4 +1,4 @@
-package com.nscharrenberg.um.multiagentsurveillance.gui.dataGUI;
+package com.nscharrenberg.um.multiagentsurveillance.headless.models.gui.dataGUI;
 
 import com.nscharrenberg.um.multiagentsurveillance.headless.utils.recorder.ParseJSONData;
 import com.nscharrenberg.um.multiagentsurveillance.headless.utils.recorder.json.AgentJSON;

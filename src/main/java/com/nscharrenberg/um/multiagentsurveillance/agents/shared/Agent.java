@@ -13,7 +13,7 @@ public abstract class Agent {
     protected final Player player;
     protected Area<Tile> knowledge;
     protected Area<Tile> vision;
-    protected Queue<Angle> plannedMoves;
+    protected Queue<Action> plannedMoves;
 
     protected final IMapRepository mapRepository;
     protected final IGameRepository gameRepository;
@@ -80,7 +80,7 @@ public abstract class Agent {
         this.playerRepository = playerRepository;
     }
 
-    public Agent(Player player, Area<Tile> knowledge, Queue<Angle> plannedMoves, IMapRepository mapRepository, IGameRepository gameRepository, IPlayerRepository playerRepository) {
+    public Agent(Player player, Area<Tile> knowledge, Queue<Action> plannedMoves, IMapRepository mapRepository, IGameRepository gameRepository, IPlayerRepository playerRepository) {
         this.player = player;
         if (player instanceof Guard) {
             deadEndMarkers = 5;
@@ -115,11 +115,11 @@ public abstract class Agent {
         this.knowledge = knowledge;
     }
 
-    public Queue<Angle> getPlannedMoves() {
+    public Queue<Action> getPlannedMoves() {
         return plannedMoves;
     }
 
-    public void setPlannedMoves(Queue<Angle> plannedMoves) {
+    public void setPlannedMoves(Queue<Action> plannedMoves) {
         this.plannedMoves = plannedMoves;
     }
 
@@ -127,8 +127,8 @@ public abstract class Agent {
         knowledge.add(tile, false);
     }
 
-    public void addMove(Angle angle) {
-        plannedMoves.add(angle);
+    public void addMove(Action action) {
+        plannedMoves.add(action);
     }
 
     public void addKnowledge(HashMap<Integer, HashMap<Integer, Tile>> tiles) {
@@ -151,7 +151,7 @@ public abstract class Agent {
         }
     }
 
-    public Angle move() {
+    public Action move() {
         return plannedMoves.poll();
     }
 
@@ -175,9 +175,9 @@ public abstract class Agent {
         return null;
     }
 
-    public abstract void execute(Angle angle);
+    public abstract void execute(Action action);
 
-    public abstract Angle decide();
+    public abstract Action decide();
 
     public void execute() {
         execute(decide());

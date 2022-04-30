@@ -5,21 +5,21 @@ import com.nscharrenberg.um.multiagentsurveillance.agents.shared.Agent;
 import java.util.Objects;
 
 public abstract class Player extends Collision {
-    private Angle direction;
+    private Action direction;
     private double speed;
     private Area<Tile> vision;
     private Agent agent;
 
     // TODO: Keep track of the state the player is in (moving, standing still, climbing, on_target)
 
-    public Player(Tile tile, Angle direction, double speed) {
+    public Player(Tile tile, Action direction, double speed) {
         super(tile);
         this.direction = direction;
         this.speed = speed;
         this.agent = null;
     }
 
-    public Player(Tile tile, Angle direction, double speed, Area<Tile> observation) {
+    public Player(Tile tile, Action direction, double speed, Area<Tile> observation) {
         super(tile);
         this.direction = direction;
         this.speed = speed;
@@ -27,11 +27,11 @@ public abstract class Player extends Collision {
         this.agent = null;
     }
 
-    public Angle getDirection() {
+    public Action getDirection() {
         return direction;
     }
 
-    public void setDirection(Angle direction) {
+    public void setDirection(Action direction) {
         this.direction = direction;
     }
 

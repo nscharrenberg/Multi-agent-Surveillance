@@ -1,6 +1,6 @@
-package com.nscharrenberg.um.multiagentsurveillance.gui.dataGUI;
+package com.nscharrenberg.um.multiagentsurveillance.headless.models.gui.dataGUI;
 
-import com.nscharrenberg.um.multiagentsurveillance.gui.javafx.controllers.GameBoardGUI;
+import com.nscharrenberg.um.multiagentsurveillance.headless.models.gui.javafx.controllers.GameBoardGUI;
 import com.nscharrenberg.um.multiagentsurveillance.headless.Factory;
 import com.nscharrenberg.um.multiagentsurveillance.headless.utils.files.MapImporter;
 import com.nscharrenberg.um.multiagentsurveillance.headless.utils.recorder.ParseJSONData;

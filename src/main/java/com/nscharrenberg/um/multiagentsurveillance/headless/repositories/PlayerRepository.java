@@ -194,12 +194,12 @@ public class PlayerRepository implements IPlayerRepository {
 
                     Agent agent = null;
                     if (playerClass.equals(Intruder.class)) {
-                        Intruder intruder = new Intruder(tile, Angle.UP);
+                        Intruder intruder = new Intruder(tile, Action.UP);
                         tile.add(intruder);
                         intruders.add(intruder);
                         agent = spawnAgent(intruder, agentType);
                     } else {
-                        Guard guard = new Guard(tile, Angle.UP);
+                        Guard guard = new Guard(tile, Action.UP);
                         tile.add(guard);
                         guards.add(guard);
                         agent = spawnAgent(guard, agentType);
@@ -234,8 +234,8 @@ public class PlayerRepository implements IPlayerRepository {
     }
 
     @Override
-    public void move(Player player, Angle direction) throws CollisionException, InvalidTileException, ItemNotOnTileException, ItemAlreadyOnTileException {
-        Angle currentDirection = player.getDirection();
+    public void move(Player player, Action direction) throws CollisionException, InvalidTileException, ItemNotOnTileException, ItemAlreadyOnTileException {
+        Action currentDirection = player.getDirection();
 
         // Rotate the player when it's not facing the same direction as it wants to go to.
         if (!currentDirection.equals(direction)) {
@@ -318,8 +318,8 @@ public class PlayerRepository implements IPlayerRepository {
     }
 
     @Override
-    public boolean isLegalMove(Player player, Angle direction) {
-        Angle currentDirection = player.getDirection();
+    public boolean isLegalMove(Player player, Action direction) {
+        Action currentDirection = player.getDirection();
 
         // Rotate the player when it's not facing the same direction as it wants to go to.
         if (!currentDirection.equals(direction)) {

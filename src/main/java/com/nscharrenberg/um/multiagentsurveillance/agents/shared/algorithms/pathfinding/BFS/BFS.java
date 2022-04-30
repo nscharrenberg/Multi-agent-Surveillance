@@ -52,8 +52,8 @@ public class BFS implements IPathFinding {
                 return  Optional.of(currentNode);
             }
 
-            for (Angle angle : Angle.values()) {
-                Optional<Tile> nextTileOpt = BoardUtils.nextPosition(board, currentNode.getTile(), angle);
+            for (Action action : Action.values()) {
+                Optional<Tile> nextTileOpt = BoardUtils.nextPosition(board, currentNode.getTile(), action);
 
                 if (nextTileOpt.isPresent() && !nextTileOpt.get().isCollision() && visited.get(nextTileOpt.get().getX()).get(nextTileOpt.get().getY()).equals(Boolean.FALSE)) {
                     if (!target.isTeleport() && nextTileOpt.get().isTeleport()) {
@@ -62,14 +62,14 @@ public class BFS implements IPathFinding {
 
                     visited.get(nextTileOpt.get().getX()).put(nextTileOpt.get().getY(), Boolean.TRUE);
 
-                    QueueNode adj = new QueueNode(nextTileOpt.get(), angle, cloner.deepClone(currentNode.getMoves()), 0);
+                    QueueNode adj = new QueueNode(nextTileOpt.get(), action, cloner.deepClone(currentNode.getMoves()), 0);
 
                     // If player is not looking at this direction, then it takes 2 timesteps to get to this tile
-                    if (!currentNode.getEntrancePosition().equals(angle)) {
-                        adj.getMoves().add(angle);
+                    if (!currentNode.getEntrancePosition().equals(action)) {
+                        adj.getMoves().add(action);
                     }
 
-                    adj.getMoves().add(angle);
+                    adj.getMoves().add(action);
                     queue.add(adj);
                 }
             }

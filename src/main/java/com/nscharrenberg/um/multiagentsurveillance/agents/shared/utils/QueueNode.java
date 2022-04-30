@@ -1,6 +1,6 @@
 package com.nscharrenberg.um.multiagentsurveillance.agents.shared.utils;
 
-import com.nscharrenberg.um.multiagentsurveillance.headless.models.Angle;
+import com.nscharrenberg.um.multiagentsurveillance.headless.models.Action;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Tile;
 
 import java.util.LinkedList;
@@ -9,16 +9,16 @@ import java.util.Queue;
 public class QueueNode {
     int pathCost;
     Tile tile;
-    Angle entrancePosition;
-    Queue<Angle> moves;
+    Action entrancePosition;
+    Queue<Action> moves;
 
-    public QueueNode(Tile tile, Angle entrancePosition) {
+    public QueueNode(Tile tile, Action entrancePosition) {
         this.tile = tile;
         this.moves = new LinkedList<>();
         this.entrancePosition = entrancePosition;
     }
 
-    public QueueNode(Tile tile, Angle entrancePosition, Queue<Angle> moves, int pathCost) {
+    public QueueNode(Tile tile, Action entrancePosition, Queue<Action> moves, int pathCost) {
         this.tile = tile;
         this.moves = moves;
         this.entrancePosition = entrancePosition;
@@ -45,19 +45,19 @@ public class QueueNode {
         return moves.size();
     }
 
-    public Queue<Angle> getMoves() {
+    public Queue<Action> getMoves() {
         return moves;
     }
 
-    public void setMoves(Queue<Angle> moves) {
+    public void setMoves(Queue<Action> moves) {
         this.moves = moves;
     }
 
-    public Angle getEntrancePosition() {
+    public Action getEntrancePosition() {
         return entrancePosition;
     }
 
-    public void setEntrancePosition(Angle entrancePosition) {
+    public void setEntrancePosition(Action entrancePosition) {
         this.entrancePosition = entrancePosition;
     }
 }

@@ -3,17 +3,15 @@ package com.nscharrenberg.um.multiagentsurveillance.headless.utils;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.*;
 
 import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 // probably have players inherit this class later
 public class CharacterVision{
     private int length;
-    private Angle direction;
+    private Action direction;
     private Geometrics gm;
 
-    public CharacterVision(int length, Angle direction) {
+    public CharacterVision(int length, Action direction) {
         this.length = length;
         this.direction = direction;
         gm = new Geometrics();
@@ -31,10 +29,10 @@ public class CharacterVision{
         int py = position.getY();
 
         // Add left and right tiles
-        if (this.direction == Angle.UP || this.direction == Angle.DOWN) {
+        if (this.direction == Action.UP || this.direction == Action.DOWN) {
             vision.add(new Tile(px+1,py));
             vision.add(new Tile(px-1,py));
-        } else if(this.direction == Angle.RIGHT || this.direction == Angle.LEFT) {
+        } else if(this.direction == Action.RIGHT || this.direction == Action.LEFT) {
             vision.add(new Tile(px,py+1));
             vision.add(new Tile(px,py-1));
         }
@@ -83,7 +81,7 @@ public class CharacterVision{
         ArrayList<Tile> observation = new ArrayList<Tile>();
         observation.add(position);
 
-        if(this.direction == Angle.DOWN) {
+        if(this.direction == Action.DOWN) {
             for(int k=0; k < length; k++) {
                 for(int r=0; r < s; r++) {
                     observation.add(new Tile((px+length)-k-r, (py+length)-k));
@@ -91,7 +89,7 @@ public class CharacterVision{
                 s -= 2;
             }
         }
-        else if(this.direction == Angle.RIGHT) {
+        else if(this.direction == Action.RIGHT) {
             for(int k=0; k < length; k++) {
                 for(int r=0; r < s; r++) {
                     observation.add(new Tile((px+length)-k, (py+length)-k-r));
@@ -99,7 +97,7 @@ public class CharacterVision{
                 s -= 2;
             }
         }
-        else if(this.direction == Angle.UP) {
+        else if(this.direction == Action.UP) {
             for(int k=0; k < length; k++) {
                 for(int r=0; r < s; r++) {
                     observation.add(new Tile((px-length)+k+r, (py-length)+k));
@@ -107,7 +105,7 @@ public class CharacterVision{
                 s -= 2;
             }
         }
-        else if(this.direction == Angle.LEFT) {
+        else if(this.direction == Action.LEFT) {
             for(int k=0; k < length; k++) {
                 for(int r=0; r < s; r++) {
                     observation.add(new Tile((px-length)+k, (py-length)+k+r));
@@ -175,11 +173,11 @@ public class CharacterVision{
         this.length = length;
     }
 
-    public Angle getDirection() {
+    public Action getDirection() {
         return direction;
     }
 
-    public void setDirection(Angle direction) {
+    public void setDirection(Action direction) {
         this.direction = direction;
     }
 }

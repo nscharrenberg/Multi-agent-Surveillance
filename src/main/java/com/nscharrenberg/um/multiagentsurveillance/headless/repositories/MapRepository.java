@@ -103,7 +103,7 @@ public class MapRepository implements IMapRepository {
     }
 
     @Override
-    public void addTeleporter(int x1, int y1, int x2, int y2, int destX, int destY, Angle direction) throws InvalidTileException, BoardNotBuildException, ItemAlreadyOnTileException {
+    public void addTeleporter(int x1, int y1, int x2, int y2, int destX, int destY, Action direction) throws InvalidTileException, BoardNotBuildException, ItemAlreadyOnTileException {
         boardInitCheck();
 
         TileArea found = findTileAreaByBoundaries(x1, y1, x2, y2);

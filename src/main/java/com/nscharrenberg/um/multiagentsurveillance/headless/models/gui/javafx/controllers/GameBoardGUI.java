@@ -1,4 +1,4 @@
-package com.nscharrenberg.um.multiagentsurveillance.gui.javafx.controllers;
+package com.nscharrenberg.um.multiagentsurveillance.headless.models.gui.javafx.controllers;
 
 import com.nscharrenberg.um.multiagentsurveillance.agents.frontier.yamauchi.Frontier;
 import com.nscharrenberg.um.multiagentsurveillance.agents.frontier.yamauchi.YamauchiAgent;
@@ -365,33 +365,33 @@ public class GameBoardGUI extends Application {
             return new StackPane(rectangle, polygon);
     }
 
-    private Polygon createGuard(Angle angle){
+    private Polygon createGuard(Action action){
 
         Polygon polygon = new Polygon();
 
-        if (angle == Angle.UP)
+        if (action == Action.UP)
             polygon.getPoints().addAll(faceUP_Guard);
-        else if (angle == Angle.DOWN)
+        else if (action == Action.DOWN)
             polygon.getPoints().addAll(faceDOWN_Guard);
-        else if (angle == Angle.LEFT)
+        else if (action == Action.LEFT)
             polygon.getPoints().addAll(faceLEFT_Guard);
-        else if (angle == Angle.RIGHT)
+        else if (action == Action.RIGHT)
             polygon.getPoints().addAll(faceRIGHT_Guard);
 
         return polygon;
     }
 
-    private Polygon createIntruder(Angle angle){
+    private Polygon createIntruder(Action action){
 
         Polygon polygon = new Polygon();
 
-        if (angle == Angle.UP)
+        if (action == Action.UP)
             polygon.getPoints().addAll(faceUP_Intruder);
-        else if (angle == Angle.DOWN)
+        else if (action == Action.DOWN)
             polygon.getPoints().addAll(faceDOWN_Intruder);
-        else if (angle == Angle.LEFT)
+        else if (action == Action.LEFT)
             polygon.getPoints().addAll(faceLEFT_Intruder);
-        else if (angle == Angle.RIGHT)
+        else if (action == Action.RIGHT)
             polygon.getPoints().addAll(faceRIGHT_Intruder);
 
         return polygon;

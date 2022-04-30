@@ -1,4 +1,4 @@
-package com.nscharrenberg.um.multiagentsurveillance.gui.dataGUI;
+package com.nscharrenberg.um.multiagentsurveillance.headless.models.gui.dataGUI;
 
 import javafx.application.Application;
 import javafx.geometry.Pos;

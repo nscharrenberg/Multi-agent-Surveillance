@@ -55,8 +55,8 @@ public class MapImporterTest {
 
             Assertions.assertEquals(Factory.getPlayerRepository().getGuards().get(0), playerRepository.getGuards().get(0));
 
-            playerRepository.move(playerRepository.getGuards().get(0), Angle.DOWN);
-            playerRepository.move(playerRepository.getGuards().get(0), Angle.DOWN);
+            playerRepository.move(playerRepository.getGuards().get(0), Action.DOWN);
+            playerRepository.move(playerRepository.getGuards().get(0), Action.DOWN);
 
             Assertions.assertNotEquals(Factory.getPlayerRepository().getGuards().get(0), playerRepository.getGuards().get(0));
         } catch (IOException | CollisionException | ItemAlreadyOnTileException | InvalidTileException | ItemNotOnTileException e) {
@@ -99,7 +99,7 @@ public class MapImporterTest {
             checkIfWallsBuildCorrectly(119, 0, 120, 80, 2, 81);
             checkIfWallsBuildCorrectly(0, 0, 120, 1, 121, 2);
 
-            checkIfTeleporterBuildCorrectly(20, 70, 25, 75, 90, 50, Angle.UP, 6, 6);
+            checkIfTeleporterBuildCorrectly(20, 70, 25, 75, 90, 50, Action.UP, 6, 6);
 
             checkIfShaded(10, 20, 20, 40, 11, 21, true);
             checkIfShaded(21, 20, 22, 40, 2, 21, false);
@@ -108,7 +108,7 @@ public class MapImporterTest {
         }
     }
 
-    void checkIfTeleporterBuildCorrectly(int x1, int y1, int x2, int y2, int destX, int destY, Angle direction, int expectedWidht, int expectedHeight) {
+    void checkIfTeleporterBuildCorrectly(int x1, int y1, int x2, int y2, int destX, int destY, Action direction, int expectedWidht, int expectedHeight) {
         // Test if the target area is imported properly
         TileArea board = Factory.getMapRepository().getBoardAsArea();
         HashMap<Integer, HashMap<Integer, Tile>> sourceArea = board.subset(x1, y1, x2, y2);

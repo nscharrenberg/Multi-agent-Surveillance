@@ -1,14 +1,13 @@
-package com.nscharrenberg.um.multiagentsurveillance.gui.terminal;
+package com.nscharrenberg.um.multiagentsurveillance.headless.models.gui.terminal;
 
 import com.google.gson.Gson;
 import com.nscharrenberg.um.multiagentsurveillance.agents.shared.Agent;
 import com.nscharrenberg.um.multiagentsurveillance.headless.Factory;
 import com.nscharrenberg.um.multiagentsurveillance.headless.contracts.repositories.IPlayerRepository;
-import com.nscharrenberg.um.multiagentsurveillance.headless.models.Angle;
+import com.nscharrenberg.um.multiagentsurveillance.headless.models.Action;
 import com.nscharrenberg.um.multiagentsurveillance.headless.utils.recorder.GameConfigurationRecorder;
 import com.nscharrenberg.um.multiagentsurveillance.headless.utils.recorder.json.AgentJSON;
 import com.nscharrenberg.um.multiagentsurveillance.headless.utils.recorder.json.Coordinates;
-import javafx.concurrent.Task;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -59,7 +58,7 @@ public class SimulatorRecorder {
             for (Agent agent : agents) {
 
                 long startTime = playerRepository.getStopWatch().getDurationInMillis();
-                Angle move = agent.decide();
+                Action move = agent.decide();
 
                 long endTime = playerRepository.getStopWatch().getDurationInMillis();
                 long moveTimeDecide = (long) ((endTime - startTime)/1000.0);

@@ -18,7 +18,7 @@
 //    @Test
 //    void testRawVisionTiles() {
 //
-//        CharacterVision cvup = new CharacterVision(3, Angle.RIGHT);
+//        CharacterVision cvup = new CharacterVision(3, Action.RIGHT);
 //        Tile pos = new Tile(3,3);
 //
 //        int[][] correctTiles = new int[10][2];

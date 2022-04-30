@@ -10,7 +10,6 @@ import com.nscharrenberg.um.multiagentsurveillance.headless.exceptions.InvalidTi
 import com.nscharrenberg.um.multiagentsurveillance.headless.exceptions.ItemAlreadyOnTileException;
 import com.nscharrenberg.um.multiagentsurveillance.headless.exceptions.ItemNotOnTileException;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.*;
-import com.nscharrenberg.um.multiagentsurveillance.headless.utils.CharacterVision;
 
 import java.util.*;
 
@@ -32,7 +31,7 @@ public class SBOAgent extends Agent {
     }
 
     @Override
-    public void execute(Angle move) {
+    public void execute(Action move) {
         try {
             playerRepository.move(player, move);
         } catch (CollisionException | InvalidTileException | ItemNotOnTileException | ItemAlreadyOnTileException e) {
@@ -42,7 +41,7 @@ public class SBOAgent extends Agent {
     }
 
     @Override
-    public Angle decide() {
+    public Action decide() {
 
         if (player.getAgent().placeMarker() != null) {
             //TODO: Return the type of marker. In general: Adjust code in placeMarker method, decide and move methods.

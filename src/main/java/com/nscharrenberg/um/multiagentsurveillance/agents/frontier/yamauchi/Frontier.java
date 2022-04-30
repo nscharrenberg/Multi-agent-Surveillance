@@ -1,7 +1,7 @@
 package com.nscharrenberg.um.multiagentsurveillance.agents.frontier.yamauchi;
 
 import com.nscharrenberg.um.multiagentsurveillance.agents.shared.utils.QueueNode;
-import com.nscharrenberg.um.multiagentsurveillance.headless.models.Angle;
+import com.nscharrenberg.um.multiagentsurveillance.headless.models.Action;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Tile;
 
 import java.util.HashMap;
@@ -29,10 +29,10 @@ public class Frontier {
      * @return whether a Tile is Adjacent to the frontier
      */
     public boolean isAdjacent(Tile tile) {
-        int up = tile.getY() + Angle.UP.getyIncrement();
-        int down = tile.getY() + Angle.DOWN.getyIncrement();
-        int right = tile.getX() + Angle.RIGHT.getxIncrement();
-        int left = tile.getX() + Angle.LEFT.getxIncrement();
+        int up = tile.getY() + Action.UP.getyIncrement();
+        int down = tile.getY() + Action.DOWN.getyIncrement();
+        int right = tile.getX() + Action.RIGHT.getxIncrement();
+        int left = tile.getX() + Action.LEFT.getxIncrement();
 
         if (frontier.containsKey(tile.getX())) {
             // Check if there is an adjacent tile up/down of current tile in the frontier

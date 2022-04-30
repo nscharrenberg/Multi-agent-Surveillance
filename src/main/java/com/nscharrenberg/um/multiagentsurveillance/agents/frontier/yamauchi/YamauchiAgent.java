@@ -4,7 +4,6 @@ import com.nscharrenberg.um.multiagentsurveillance.agents.frontier.yamauchi.comp
 import com.nscharrenberg.um.multiagentsurveillance.agents.frontier.yamauchi.comparator.MinDistanceUnknownAreaComparator;
 import com.nscharrenberg.um.multiagentsurveillance.agents.shared.Agent;
 import com.nscharrenberg.um.multiagentsurveillance.agents.shared.algorithms.pathfinding.AStar.AStar;
-import com.nscharrenberg.um.multiagentsurveillance.agents.shared.algorithms.pathfinding.BFS.BFS;
 import com.nscharrenberg.um.multiagentsurveillance.agents.shared.algorithms.pathfinding.IPathFinding;
 import com.nscharrenberg.um.multiagentsurveillance.agents.shared.utils.QueueNode;
 import com.nscharrenberg.um.multiagentsurveillance.headless.contracts.repositories.IGameRepository;
@@ -49,7 +48,7 @@ public class YamauchiAgent extends Agent {
         }
     }
 
-    public YamauchiAgent(Player player, Area<Tile> knowledge, Queue<Angle> plannedMoves, IMapRepository mapRepository, IGameRepository gameRepository, IPlayerRepository playerRepository) {
+    public YamauchiAgent(Player player, Area<Tile> knowledge, Queue<Action> plannedMoves, IMapRepository mapRepository, IGameRepository gameRepository, IPlayerRepository playerRepository) {
         super(player, knowledge, plannedMoves, mapRepository, gameRepository, playerRepository);
         try {
             this.random = SecureRandom.getInstanceStrong();
@@ -59,9 +58,9 @@ public class YamauchiAgent extends Agent {
     }
 
     @Override
-    public void execute(Angle angle) {
+    public void execute(Action action) {
         try {
-            playerRepository.move(player, angle);
+            playerRepository.move(player, action);
         } catch (CollisionException | InvalidTileException | ItemNotOnTileException e) {
             System.out.println(e.getMessage());
 
@@ -75,10 +74,11 @@ public class YamauchiAgent extends Agent {
     }
 
     @Override
-    public Angle decide() {
+    public Action decide() {
 
-        if (player.getAgent().placeMarker()) {
-            return Angle.STOP;
+        if (player.getAgent().placeMarker() != null) {
+            //TODO: Return the type of marker. In general: Adjust code in placeMarker method, decide and move method.
+            return player.getAgent().placeMarker();
         }
 
         else {
@@ -100,7 +100,7 @@ public class YamauchiAgent extends Agent {
                 consecutiveNoFrontier++;
                 int value = this.random.nextInt(100);
 
-                Angle move = player.getDirection();
+            Action move = player.getDirection();
 
                 Optional<Tile> nextTileOpt = knowledge.getByCoordinates(player.getTile().getX() + move.getxIncrement(), player.getTile().getY() + player.getDirection().getyIncrement());
 
@@ -116,10 +116,10 @@ public class YamauchiAgent extends Agent {
                     }
                 }
 
-                if (value <= 30 || nextBlocked) {
-                    int pick = this.random.nextInt(Angle.values().length);
-                    move = Angle.values()[pick];
-                }
+            if (value <= 30 || nextBlocked) {
+                int pick = this.random.nextInt(Action.values().length);
+                move = Action.values()[pick];
+            }
 
                 return move;
             }
@@ -167,9 +167,9 @@ public class YamauchiAgent extends Agent {
             return Optional.empty();
         }
 
-        Angle finalPosition = bestFrontier.getQueueNode().getEntrancePosition();
+        Action finalPosition = bestFrontier.getQueueNode().getEntrancePosition();
 
-//        for (Angle angle : Angle.values()) {
+//        for (Action angle : Action.values()) {
 //            if (angle.equals(finalPosition)) continue;
 //            bestFrontier.getQueueNode().getMoves().add(angle);
 //        }
@@ -219,14 +219,14 @@ public class YamauchiAgent extends Agent {
 
                 // Check if it is a fully known tile
 
-                Optional<Tile> upOpt = BoardUtils.nextPosition(knowledge, colEntry.getValue(), Angle.UP);
-                Optional<Tile> rightOpt = BoardUtils.nextPosition(knowledge, colEntry.getValue(), Angle.RIGHT);
-                Optional<Tile> leftOpt = BoardUtils.nextPosition(knowledge, colEntry.getValue(), Angle.LEFT);
-                Optional<Tile> downOpt = BoardUtils.nextPosition(knowledge, colEntry.getValue(), Angle.DOWN);
-                Optional<Tile> upLeftOpt = knowledge.getByCoordinates(colEntry.getKey() + Angle.LEFT.getxIncrement(), rowEntry.getKey() + Angle.UP.getyIncrement());
-                Optional<Tile> upRightOpt = knowledge.getByCoordinates(colEntry.getKey() + Angle.RIGHT.getxIncrement(), rowEntry.getKey() + Angle.UP.getyIncrement());
-                Optional<Tile> bottomLeftOpt = knowledge.getByCoordinates(colEntry.getKey() + Angle.LEFT.getxIncrement(), rowEntry.getKey() + Angle.DOWN.getyIncrement());
-                Optional<Tile> bottomRightOpt = knowledge.getByCoordinates(colEntry.getKey() + Angle.RIGHT.getxIncrement(), rowEntry.getKey() + Angle.DOWN.getyIncrement());
+                Optional<Tile> upOpt = BoardUtils.nextPosition(knowledge, colEntry.getValue(), Action.UP);
+                Optional<Tile> rightOpt = BoardUtils.nextPosition(knowledge, colEntry.getValue(), Action.RIGHT);
+                Optional<Tile> leftOpt = BoardUtils.nextPosition(knowledge, colEntry.getValue(), Action.LEFT);
+                Optional<Tile> downOpt = BoardUtils.nextPosition(knowledge, colEntry.getValue(), Action.DOWN);
+                Optional<Tile> upLeftOpt = knowledge.getByCoordinates(colEntry.getKey() + Action.LEFT.getxIncrement(), rowEntry.getKey() + Action.UP.getyIncrement());
+                Optional<Tile> upRightOpt = knowledge.getByCoordinates(colEntry.getKey() + Action.RIGHT.getxIncrement(), rowEntry.getKey() + Action.UP.getyIncrement());
+                Optional<Tile> bottomLeftOpt = knowledge.getByCoordinates(colEntry.getKey() + Action.LEFT.getxIncrement(), rowEntry.getKey() + Action.DOWN.getyIncrement());
+                Optional<Tile> bottomRightOpt = knowledge.getByCoordinates(colEntry.getKey() + Action.RIGHT.getxIncrement(), rowEntry.getKey() + Action.DOWN.getyIncrement());
 
                 if (upOpt.isPresent() && rightOpt.isPresent() && leftOpt.isPresent()
                         && downOpt.isPresent()) {

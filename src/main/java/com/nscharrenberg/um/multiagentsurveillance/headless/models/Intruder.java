@@ -7,7 +7,7 @@ public class Intruder extends Player {
     private boolean isSprinting = false;
 
 
-    public Intruder(Tile position, Angle direction) {
+    public Intruder(Tile position, Action direction) {
         // TODO: Read speed from Configuration
         super(position, direction, 10);
 

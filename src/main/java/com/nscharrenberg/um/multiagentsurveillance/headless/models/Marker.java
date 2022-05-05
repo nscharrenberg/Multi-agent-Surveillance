@@ -1,9 +1,11 @@
 package com.nscharrenberg.um.multiagentsurveillance.headless.models;
 
-public class Marker {
+public class Marker extends Item {
     private MarkerType type;
-    private final int RANGE = 5;
-    private final int DURATION = 10;
+    private Tile tile;
+    private int currentDuration;
+    public final int RANGE = 5;
+    public final int DURATION = 10;
 
     public enum MarkerType {
         DEAD_END,
@@ -17,7 +19,10 @@ public class Marker {
     //TODO: Drop marker whenever there is a teammate nearby --> keep kind of short term memory
 
 
-    public Marker(MarkerType type) {
+    public Marker(MarkerType type, Tile tile) {
+        super(tile);
+        currentDuration = DURATION;
+        this.tile = tile;
         this.type = type;
     }
 
@@ -33,11 +38,15 @@ public class Marker {
         return RANGE;
     }
 
-    public int getDuration() {
-        return DURATION;
+    public int getCurrentDuration() {
+        return currentDuration;
     }
 
-//    public AdvancedAngle getDirection() { return direction; }
-//
-//    public void setDirection(AdvancedAngle direction) { this.direction = direction;}
+    public Tile getTile() {
+        return tile;
+    }
+
+    public void decrementCurrentDuration() {
+        currentDuration--;
+    }
 }

@@ -7,11 +7,10 @@ import com.nscharrenberg.um.multiagentsurveillance.headless.contracts.repositori
 import com.nscharrenberg.um.multiagentsurveillance.headless.exceptions.BoardNotBuildException;
 import com.nscharrenberg.um.multiagentsurveillance.headless.exceptions.InvalidTileException;
 import com.nscharrenberg.um.multiagentsurveillance.headless.exceptions.ItemAlreadyOnTileException;
+import com.nscharrenberg.um.multiagentsurveillance.headless.exceptions.ItemNotOnTileException;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.*;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 public class MapRepository implements IMapRepository {
     private IGameRepository gameRepository;
@@ -21,6 +20,9 @@ public class MapRepository implements IMapRepository {
     private TileArea targetArea;
     private TileArea guardSpawnArea;
     private TileArea intruderSpawnArea;
+
+    private HashMap<Integer, Marker> placed_markers;
+    private int hashmapCounter;
 
     public MapRepository(IGameRepository gameRepository, IPlayerRepository playerRepository) {
         this.playerRepository = playerRepository;
@@ -201,6 +203,70 @@ public class MapRepository implements IMapRepository {
         }
 
         intruderSpawnArea = found;
+    }
+
+    @Override
+    public void addMarker(Marker.MarkerType type, int x1, int y1) throws BoardNotBuildException, InvalidTileException, ItemAlreadyOnTileException {
+        boardInitCheck();
+
+        Tile found = findTileByCoordinates(x1, y1);
+        Marker marker = new Marker(type, found);
+
+        Tile[] neighboringTiles = calculateNeigboringTiles(marker);
+        for (int i = 0; i < neighboringTiles.length; i++) {
+            neighboringTiles[i].add(marker);
+            placed_markers.put(hashmapCounter, marker);
+            hashmapCounter++;
+        }
+    }
+
+    @Override
+    public Tile[] calculateNeigboringTiles(Marker marker) throws InvalidTileException, BoardNotBuildException {
+        int distance = marker.RANGE;
+        int current_x = marker.getTile().getX();
+        int current_y = marker.getTile().getX();
+        int top_left_x = current_x - distance;
+        int top_left_y = current_y - distance;
+        int top_right_x = current_x + distance;
+        int bottom_left_y = current_y + distance;
+        int manhattanDistance;
+        Tile[] listOfTiles = new Tile[]{};
+        int k = 0;
+
+        for (int i = top_left_x; i > top_right_x; i++) {
+            for (int j = top_left_y; j > bottom_left_y; j++) {
+                manhattanDistance = Math.abs(current_x - i) + Math.abs(current_y - j);
+                if (manhattanDistance <= distance) {
+                    listOfTiles[k] = findTileByCoordinates(i, j);;
+                    k++;
+                }
+            }
+        }
+        return listOfTiles;
+    }
+
+    @Override
+    public void removeMarker(Marker marker) throws BoardNotBuildException, InvalidTileException, ItemNotOnTileException {
+        boardInitCheck();
+
+        int x_position = marker.getTile().getX();
+        int y_position = marker.getTile().getY();
+
+        Tile found = findTileByCoordinates(x_position, y_position);
+        found.remove(marker);
+    }
+
+    @Override
+    public void checkMarkers() throws BoardNotBuildException, InvalidTileException, ItemNotOnTileException {
+        boardInitCheck();
+
+        for (Map.Entry<Integer, Marker> entry : placed_markers.entrySet()) {
+            if (entry.getValue().getCurrentDuration() == 0) {
+                removeMarker(entry.getValue());
+                placed_markers.remove(entry);
+            }
+            entry.getValue().decrementCurrentDuration();
+        }
     }
 
     @Override

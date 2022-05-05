@@ -1,10 +1,7 @@
 package com.nscharrenberg.um.multiagentsurveillance.headless.contracts.repositories;
 
 import com.nscharrenberg.um.multiagentsurveillance.agents.shared.Agent;
-import com.nscharrenberg.um.multiagentsurveillance.headless.exceptions.CollisionException;
-import com.nscharrenberg.um.multiagentsurveillance.headless.exceptions.InvalidTileException;
-import com.nscharrenberg.um.multiagentsurveillance.headless.exceptions.ItemAlreadyOnTileException;
-import com.nscharrenberg.um.multiagentsurveillance.headless.exceptions.ItemNotOnTileException;
+import com.nscharrenberg.um.multiagentsurveillance.headless.exceptions.*;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.*;
 import com.nscharrenberg.um.multiagentsurveillance.headless.utils.StopWatch;
 
@@ -33,7 +30,7 @@ public interface IPlayerRepository {
      * @throws ItemNotOnTileException - Thrown when the player is not on the tile (Should not happen)
      * @throws ItemAlreadyOnTileException - Thrown when the player is already on the tile its trying to move to (should not happen)
      */
-    void move(Player player, Action direction) throws CollisionException, InvalidTileException, ItemNotOnTileException, ItemAlreadyOnTileException;
+    void move(Player player, Action direction) throws CollisionException, InvalidTileException, ItemNotOnTileException, ItemAlreadyOnTileException, BoardNotBuildException;
 
     /**
      * Validates whether the move the player wants to make is a valid move

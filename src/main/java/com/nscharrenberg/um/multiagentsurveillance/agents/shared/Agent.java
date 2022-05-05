@@ -185,6 +185,8 @@ public abstract class Agent {
 
     public Action placeMarker(){
         //TODO: Here loop through the current vision and check when to place a marker
+        //TODO: Since only one marker can be placed on a tile, check whether there is a overlapping --> Return null
+        //TODO: Also check whether a marker of that type is already in the vision of the player.
         Action move;
         HashMap<Integer, HashMap<Integer, Tile>> vision = player.getVision().getRegion();
 
@@ -199,7 +201,9 @@ public abstract class Agent {
                         }
                     }
                     else if (player instanceof Intruder) {
-
+                        if (item instanceof Intruder) {
+                            //TODO: Return
+                        }
                     }
                 }
             }

@@ -4,6 +4,8 @@ public class Marker extends Item {
     private MarkerType type;
     private Tile tile;
     private int currentDuration;
+    private Player player;
+
     public final int RANGE = 5;
     public final int DURATION = 10;
 
@@ -19,11 +21,12 @@ public class Marker extends Item {
     //TODO: Drop marker whenever there is a teammate nearby --> keep kind of short term memory
 
 
-    public Marker(MarkerType type, Tile tile) {
+    public Marker(MarkerType type, Tile tile, Player player) {
         super(tile);
         currentDuration = DURATION;
-        this.tile = tile;
         this.type = type;
+        this.tile = tile;
+        this.player = player;
     }
 
     public MarkerType getType() {
@@ -48,5 +51,9 @@ public class Marker extends Item {
 
     public void decrementCurrentDuration() {
         currentDuration--;
+    }
+
+    public Player getPlayer() {
+        return player;
     }
 }

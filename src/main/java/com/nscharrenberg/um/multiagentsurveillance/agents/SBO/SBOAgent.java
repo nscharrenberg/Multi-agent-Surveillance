@@ -5,10 +5,7 @@ import com.nscharrenberg.um.multiagentsurveillance.agents.shared.algorithms.path
 import com.nscharrenberg.um.multiagentsurveillance.headless.contracts.repositories.IGameRepository;
 import com.nscharrenberg.um.multiagentsurveillance.headless.contracts.repositories.IMapRepository;
 import com.nscharrenberg.um.multiagentsurveillance.headless.contracts.repositories.IPlayerRepository;
-import com.nscharrenberg.um.multiagentsurveillance.headless.exceptions.CollisionException;
-import com.nscharrenberg.um.multiagentsurveillance.headless.exceptions.InvalidTileException;
-import com.nscharrenberg.um.multiagentsurveillance.headless.exceptions.ItemAlreadyOnTileException;
-import com.nscharrenberg.um.multiagentsurveillance.headless.exceptions.ItemNotOnTileException;
+import com.nscharrenberg.um.multiagentsurveillance.headless.exceptions.*;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.*;
 
 import java.util.*;
@@ -26,7 +23,7 @@ public class SBOAgent extends Agent {
     }
 
     @Override
-    public void execute() {
+    public void execute() throws InvalidTileException, BoardNotBuildException {
         execute(decide());
     }
 
@@ -34,18 +31,17 @@ public class SBOAgent extends Agent {
     public void execute(Action move) {
         try {
             playerRepository.move(player, move);
-        } catch (CollisionException | InvalidTileException | ItemNotOnTileException | ItemAlreadyOnTileException e) {
+        } catch (CollisionException | InvalidTileException | ItemNotOnTileException | ItemAlreadyOnTileException | BoardNotBuildException e) {
             gameRepository.setRunning(false);
             System.out.println(e.getMessage());
         }
     }
 
     @Override
-    public Action decide() {
+    public Action decide() throws InvalidTileException, BoardNotBuildException {
 
-        if (player.getAgent().placeMarker() != null) {
-            //TODO: Return the type of marker. In general: Adjust code in placeMarker method, decide and move method.
-            return player.getAgent().placeMarker();
+        if (player.getAgent().markerCheck() != null) {
+            return player.getAgent().markerCheck();
         }
 
         // TODO: need to update this to skip to next tile in stack if goal tile has entered the knowledge

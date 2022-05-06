@@ -206,11 +206,11 @@ public class MapRepository implements IMapRepository {
     }
 
     @Override
-    public void addMarker(Marker.MarkerType type, int x1, int y1) throws BoardNotBuildException, InvalidTileException, ItemAlreadyOnTileException {
+    public void addMarker(Marker.MarkerType type, int x1, int y1, Player player) throws BoardNotBuildException, InvalidTileException, ItemAlreadyOnTileException {
         boardInitCheck();
 
         Tile found = findTileByCoordinates(x1, y1);
-        Marker marker = new Marker(type, found);
+        Marker marker = new Marker(type, found, player);
 
         Tile[] neighboringTiles = calculateNeigboringTiles(marker);
         for (int i = 0; i < neighboringTiles.length; i++) {
@@ -267,6 +267,11 @@ public class MapRepository implements IMapRepository {
             }
             entry.getValue().decrementCurrentDuration();
         }
+    }
+
+    @Override
+    public HashMap<Integer, Marker> getListOfPlacedMarkers() {
+        return placed_markers;
     }
 
     @Override

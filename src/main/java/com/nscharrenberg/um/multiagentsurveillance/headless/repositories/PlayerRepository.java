@@ -265,22 +265,28 @@ public class PlayerRepository implements IPlayerRepository {
 
         if ((nextPosition.getX() == currentPosition.getX()) && (nextPosition.getY() == currentPosition.getY())) {
             if (direction == Action.PLACE_MARKER_DEADEND) {
-                Factory.getMapRepository().addMarker(Marker.MarkerType.DEAD_END, currentPosition.getX(), currentPosition.getY());
+                Factory.getMapRepository().addMarker(Marker.MarkerType.DEAD_END, currentPosition.getX(), currentPosition.getY(), player);
+                player.getAgent().decrementDeadEndMarkers();
             }
-            if (direction == Action.PLACE_MARKER_GUARDSPOTTED) {
-                Factory.getMapRepository().addMarker(Marker.MarkerType.GUARD_SPOTTED, currentPosition.getX(), currentPosition.getY());
+            else if (direction == Action.PLACE_MARKER_GUARDSPOTTED) {
+                Factory.getMapRepository().addMarker(Marker.MarkerType.GUARD_SPOTTED, currentPosition.getX(), currentPosition.getY(), player);
+                player.getAgent().decrementGuardSpottedMarkers();
             }
-            if (direction == Action.PLACE_MARKER_INTRUDERSPOTTED) {
-                Factory.getMapRepository().addMarker(Marker.MarkerType.INTRUDER_SPOTTED, currentPosition.getX(), currentPosition.getY());
+            else if (direction == Action.PLACE_MARKER_INTRUDERSPOTTED) {
+                Factory.getMapRepository().addMarker(Marker.MarkerType.INTRUDER_SPOTTED, currentPosition.getX(), currentPosition.getY(), player);
+                player.getAgent().decrementIntruderSpottedMarkers();
             }
-            if (direction == Action.PLACE_MARKER_SHADED) {
-                Factory.getMapRepository().addMarker(Marker.MarkerType.SHADED, currentPosition.getX(), currentPosition.getY());
+            else if (direction == Action.PLACE_MARKER_SHADED) {
+                Factory.getMapRepository().addMarker(Marker.MarkerType.SHADED, currentPosition.getX(), currentPosition.getY(), player);
+                player.getAgent().decrementShadedMarkers();
             }
-            if (direction == Action.PLACE_MARKER_TARGET) {
-                Factory.getMapRepository().addMarker(Marker.MarkerType.TARGET, currentPosition.getX(), currentPosition.getY());
+            else if (direction == Action.PLACE_MARKER_TARGET) {
+                Factory.getMapRepository().addMarker(Marker.MarkerType.TARGET, currentPosition.getX(), currentPosition.getY(), player);
+                player.getAgent().decrementTargetMarkers();
             }
-            if (direction == Action.PLACE_MARKER_TELEPORTER) {
-                Factory.getMapRepository().addMarker(Marker.MarkerType.TELEPORTER, currentPosition.getX(), currentPosition.getY());
+            else if (direction == Action.PLACE_MARKER_TELEPORTER) {
+                Factory.getMapRepository().addMarker(Marker.MarkerType.TELEPORTER, currentPosition.getX(), currentPosition.getY(), player);
+                player.getAgent().decrementTeleporterMarkers();
             }
 
         }

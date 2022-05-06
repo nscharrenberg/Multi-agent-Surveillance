@@ -140,13 +140,15 @@ public interface IMapRepository {
      */
     void addIntruderSpawnArea(int x1, int y1, int x2, int y2) throws BoardNotBuildException, InvalidTileException;
 
-    void addMarker(Marker.MarkerType type, int x1, int y1) throws BoardNotBuildException, ItemAlreadyOnTileException, InvalidTileException;
+    void addMarker(Marker.MarkerType type, int x1, int y1, Player player) throws BoardNotBuildException, InvalidTileException, ItemAlreadyOnTileException;
 
     Tile[] calculateNeigboringTiles(Marker marker) throws InvalidTileException, BoardNotBuildException;
 
     void removeMarker(Marker marker) throws BoardNotBuildException, InvalidTileException, ItemNotOnTileException;
 
     void checkMarkers() throws BoardNotBuildException, InvalidTileException, ItemNotOnTileException;
+
+    HashMap<Integer, Marker> getListOfPlacedMarkers();
 
     TileArea getBoard();
 

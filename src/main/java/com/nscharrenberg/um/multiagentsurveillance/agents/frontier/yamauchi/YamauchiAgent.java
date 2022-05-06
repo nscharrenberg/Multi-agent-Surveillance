@@ -9,10 +9,7 @@ import com.nscharrenberg.um.multiagentsurveillance.agents.shared.utils.QueueNode
 import com.nscharrenberg.um.multiagentsurveillance.headless.contracts.repositories.IGameRepository;
 import com.nscharrenberg.um.multiagentsurveillance.headless.contracts.repositories.IMapRepository;
 import com.nscharrenberg.um.multiagentsurveillance.headless.contracts.repositories.IPlayerRepository;
-import com.nscharrenberg.um.multiagentsurveillance.headless.exceptions.CollisionException;
-import com.nscharrenberg.um.multiagentsurveillance.headless.exceptions.InvalidTileException;
-import com.nscharrenberg.um.multiagentsurveillance.headless.exceptions.ItemAlreadyOnTileException;
-import com.nscharrenberg.um.multiagentsurveillance.headless.exceptions.ItemNotOnTileException;
+import com.nscharrenberg.um.multiagentsurveillance.headless.exceptions.*;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.*;
 import com.nscharrenberg.um.multiagentsurveillance.headless.utils.BoardUtils;
 
@@ -61,24 +58,22 @@ public class YamauchiAgent extends Agent {
     public void execute(Action action) {
         try {
             playerRepository.move(player, action);
-        } catch (CollisionException | InvalidTileException | ItemNotOnTileException e) {
+        } catch (CollisionException | InvalidTileException | ItemNotOnTileException | ItemAlreadyOnTileException | BoardNotBuildException e) {
             System.out.println(e.getMessage());
 
             // If any of the above errors is thrown we can't continue with our planned moves, and need to recalculate our frontiers
             plannedMoves.clear();
             frontiers.clear();
             detectFrontiers();
-        } catch (ItemAlreadyOnTileException e) {
-            e.printStackTrace();
         }
     }
 
     @Override
-    public Action decide() {
+    public Action decide() throws InvalidTileException, BoardNotBuildException {
 
-        if (player.getAgent().placeMarker() != null) {
+        if (player.getAgent().markerCheck() != null) {
             //TODO: Return the type of marker. In general: Adjust code in placeMarker method, decide and move method.
-            return player.getAgent().placeMarker();
+            return player.getAgent().markerCheck();
         }
 
         // Incosistent with explorer% ????

@@ -5,8 +5,12 @@ import com.nscharrenberg.um.multiagentsurveillance.headless.Factory;
 import com.nscharrenberg.um.multiagentsurveillance.headless.contracts.repositories.IGameRepository;
 import com.nscharrenberg.um.multiagentsurveillance.headless.contracts.repositories.IMapRepository;
 import com.nscharrenberg.um.multiagentsurveillance.headless.contracts.repositories.IPlayerRepository;
+import com.nscharrenberg.um.multiagentsurveillance.headless.exceptions.BoardNotBuildException;
+import com.nscharrenberg.um.multiagentsurveillance.headless.exceptions.InvalidTileException;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.*;
+import java.awt.Point;
 
+import java.lang.annotation.Target;
 import java.util.*;
 
 public abstract class Agent {
@@ -177,42 +181,246 @@ public abstract class Agent {
 
     public abstract void execute(Action action);
 
-    public abstract Action decide();
+    public abstract Action decide() throws InvalidTileException, BoardNotBuildException;
 
-    public void execute() {
+    public void execute() throws InvalidTileException, BoardNotBuildException {
         execute(decide());
     }
 
-    public Action placeMarker(){
-        //TODO: Here loop through the current vision and check when to place a marker
-        //TODO: Since only one marker can be placed on a tile, check whether there is a overlapping --> Return null
-        //TODO: Also check whether a marker of that type is already in the vision of the player.
-        Action move;
+    //TODO: Mind that here I depend on a class called Target which extends Item (which would still need to be added).
+    public Action markerCheck() throws InvalidTileException, BoardNotBuildException {
         HashMap<Integer, HashMap<Integer, Tile>> vision = player.getVision().getRegion();
-
-        List<Item> currentTileItems= new ArrayList<Item>();
 
         for (Map.Entry<Integer, HashMap<Integer, Tile>> rowEntry : vision.entrySet()) {
             for (Map.Entry<Integer, Tile> colEntry : rowEntry.getValue().entrySet()) {
-                for (Item item : colEntry.getValue().getItems()) {
-                    if (player instanceof Guard) {
-                        if (item instanceof Intruder) {
-
+                if (player instanceof Guard) {
+                    if (colEntry.getValue() instanceof ShadowTile) {
+                        if (!lookForSameMarker(vision, Marker.MarkerType.SHADED, player)) {
+                            if (!lookForMarkerPlacedByPlayer(player, Marker.MarkerType.SHADED)) {
+                                return Action.PLACE_MARKER_SHADED;
+                            }
                         }
                     }
-                    else if (player instanceof Intruder) {
+                    for (Item item : colEntry.getValue().getItems()) {
                         if (item instanceof Intruder) {
-                            //TODO: Return
+                            if (!lookForSameMarker(vision, Marker.MarkerType.INTRUDER_SPOTTED, player)) {
+                                if (!lookForMarkerPlacedByPlayer(player, Marker.MarkerType.INTRUDER_SPOTTED)) {
+                                    return Action.PLACE_MARKER_INTRUDERSPOTTED;
+                                }
+                            }
+                        }
+                        if (item instanceof Target) {
+                            if (!lookForSameMarker(vision, Marker.MarkerType.TARGET, player)) {
+                                if (!lookForMarkerPlacedByPlayer(player, Marker.MarkerType.TARGET)) {
+                                    return Action.PLACE_MARKER_TARGET;
+                                }
+                            }
+                        }
+                        if (item instanceof Teleporter) {
+                            if (!lookForSameMarker(vision, Marker.MarkerType.TELEPORTER, player)) {
+                                if (!lookForMarkerPlacedByPlayer(player, Marker.MarkerType.TELEPORTER)) {
+                                    return Action.PLACE_MARKER_TELEPORTER;
+                                }
+                            }
+                        }
+                    }
+                }
+
+                else if (player instanceof Intruder) {
+                    if (colEntry.getValue() instanceof ShadowTile) {
+                        if (!lookForSameMarker(vision, Marker.MarkerType.SHADED, player)) {
+                            if (!lookForMarkerPlacedByPlayer(player, Marker.MarkerType.SHADED)) {
+                                return Action.PLACE_MARKER_SHADED;
+                            }
+                        }
+                    }
+                    for (Item item : colEntry.getValue().getItems()) {
+                        if (item instanceof Intruder) {
+                            if (!lookForSameMarker(vision, Marker.MarkerType.INTRUDER_SPOTTED, player)) {
+                                if (!lookForMarkerPlacedByPlayer(player, Marker.MarkerType.INTRUDER_SPOTTED)) {
+                                    return Action.PLACE_MARKER_INTRUDERSPOTTED;
+                                }
+                            }
+                        }
+                        if (item instanceof Target) {
+                            if (!lookForSameMarker(vision, Marker.MarkerType.TARGET, player)) {
+                                if (!lookForMarkerPlacedByPlayer(player, Marker.MarkerType.TARGET)) {
+                                    return Action.PLACE_MARKER_TARGET;
+                                }
+                            }
+                        }
+                        if (item instanceof Teleporter) {
+                            if (!lookForSameMarker(vision, Marker.MarkerType.TELEPORTER, player)) {
+                                if (!lookForMarkerPlacedByPlayer(player, Marker.MarkerType.TELEPORTER)) {
+                                    return Action.PLACE_MARKER_TELEPORTER;
+                                }
+                            }
+                        }
+                        if (item instanceof Wall) {
+                            if (!lookForSameMarker(vision, Marker.MarkerType.DEAD_END, player)) {
+                                if (!lookForMarkerPlacedByPlayer(player, Marker.MarkerType.DEAD_END)) {
+                                    if (checkForDeadEnd(player, vision, colEntry.getValue())) {
+                                        return Action.PLACE_MARKER_DEADEND;
+                                    }
+                                }
+                            }
                         }
                     }
                 }
             }
-
         }
 
-
-        //TODO: A different check for the dead-end (something with looping through knowledge).
         return null;
+    }
+
+    public boolean lookForSameMarker(HashMap<Integer, HashMap<Integer, Tile>> vision, Marker.MarkerType typeOfMarker, Player player) {
+        for (Map.Entry<Integer, HashMap<Integer, Tile>> rowEntry : vision.entrySet()) {
+            for (Map.Entry<Integer, Tile> colEntry : rowEntry.getValue().entrySet()) {
+                for (Item item : colEntry.getValue().getItems()) {
+                    if ((item instanceof Marker) && (((Marker) item).getType() == typeOfMarker) && (((Marker) item).getPlayer().getClass().equals(player.getClass()))) {
+                        return true;
+                    }
+                }
+            }
+        }
+
+        return false;
+    }
+
+    public boolean lookForMarkerPlacedByPlayer(Player player, Marker.MarkerType typeOfMarker) {
+        HashMap<Integer, Marker> listOfPlacedMarkers = Factory.getMapRepository().getListOfPlacedMarkers();
+
+        for (Map.Entry<Integer, Marker> entry : listOfPlacedMarkers.entrySet()) {
+            if ((entry.getValue().getType() == typeOfMarker) && (entry.getValue().getPlayer() == player)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+
+    public boolean checkForDeadEnd(Player player, HashMap<Integer, HashMap<Integer, Tile>> vision, Tile wallTile) throws InvalidTileException, BoardNotBuildException {
+        int wallX = wallTile.getX();
+        int wallY = wallTile.getY();
+        int currentX = player.getTile().getX();
+        int currentY = player.getTile().getY();
+        Point[] deadEndTilesTopLeft = new Point[]{new Point(wallX, wallY-1), new Point(wallX, wallY-2), new Point(wallX, wallY-3), new Point(wallX, wallY-4), new Point(wallX-1, wallY), new Point(wallX-2, wallY), new Point(wallX-3, wallY), new Point(wallX-4, wallY)};
+        Point[] deadEndTilesTopRight = new Point[]{new Point(wallX, wallY-1), new Point(wallX, wallY-2), new Point(wallX, wallY-3), new Point(wallX, wallY-4), new Point(wallX+1, wallY), new Point(wallX+2, wallY), new Point(wallX+3, wallY), new Point(wallX+4, wallY)};
+        Point[] deadEndTilesBottomLeft = new Point[]{new Point(wallX, wallY+1), new Point(wallX, wallY+2), new Point(wallX, wallY+3), new Point(wallX, wallY+4), new Point(wallX-1, wallY), new Point(wallX-2, wallY), new Point(wallX-3, wallY), new Point(wallX-4, wallY)};
+        Point[] deadEndTilesBottomRight = new Point[]{new Point(wallX, wallY+1), new Point(wallX, wallY+2), new Point(wallX, wallY+3), new Point(wallX, wallY+4), new Point(wallX+1, wallY), new Point(wallX+2, wallY), new Point(wallX+3, wallY), new Point(wallX+4, wallY)};
+
+        int differenceFromWallToCurrentX = currentX - wallX;
+        int differenceFromWallToCurrentY = currentY - wallY;
+
+        if (differenceFromWallToCurrentX > 0 && differenceFromWallToCurrentY >= 0) {
+            for (Point coordinate : deadEndTilesTopLeft) {
+                boolean tileFound = false;
+                Tile currentTile = Factory.getMapRepository().findTileByCoordinates((int) coordinate.getX(), (int) coordinate.getY());
+                for (Map.Entry<Integer, HashMap<Integer, Tile>> rowEntry : vision.entrySet()) {
+                    for (Map.Entry<Integer, Tile> colEntry : rowEntry.getValue().entrySet()) {
+                        if (colEntry.getValue() == currentTile) {
+                            tileFound = true;
+                            break;
+                        }
+                    }
+                }
+                boolean wallFound = false;
+                if (tileFound) {
+                    for (Item item : currentTile.getItems()) {
+                        if (item instanceof Wall) {
+                            wallFound = true;
+                            break;
+                        }
+                    }
+                    if (wallFound) {
+                        continue;
+                    } else { return false; }
+                } else { return false; }
+            }
+        }
+
+        else if (differenceFromWallToCurrentX <= 0 && differenceFromWallToCurrentY > 0) {
+            for (Point coordinate : deadEndTilesTopRight) {
+                boolean tileFound = false;
+                Tile currentTile = Factory.getMapRepository().findTileByCoordinates((int) coordinate.getX(), (int) coordinate.getY());
+                for (Map.Entry<Integer, HashMap<Integer, Tile>> rowEntry : vision.entrySet()) {
+                    for (Map.Entry<Integer, Tile> colEntry : rowEntry.getValue().entrySet()) {
+                        if (colEntry.getValue() == currentTile) {
+                            tileFound = true;
+                            break;
+                        }
+                    }
+                }
+                boolean wallFound = false;
+                if (tileFound) {
+                    for (Item item : currentTile.getItems()) {
+                        if (item instanceof Wall) {
+                            wallFound = true;
+                            break;
+                        }
+                    }
+                    if (wallFound) {
+                        continue;
+                    } else { return false; }
+                } else { return false; }
+            }
+        }
+
+        else if (differenceFromWallToCurrentX >= 0 && differenceFromWallToCurrentY < 0) {
+            for (Point coordinate : deadEndTilesBottomLeft) {
+                boolean tileFound = false;
+                Tile currentTile = Factory.getMapRepository().findTileByCoordinates((int) coordinate.getX(), (int) coordinate.getY());
+                for (Map.Entry<Integer, HashMap<Integer, Tile>> rowEntry : vision.entrySet()) {
+                    for (Map.Entry<Integer, Tile> colEntry : rowEntry.getValue().entrySet()) {
+                        if (colEntry.getValue() == currentTile) {
+                            tileFound = true;
+                            break;
+                        }
+                    }
+                }
+                boolean wallFound = false;
+                if (tileFound) {
+                    for (Item item : currentTile.getItems()) {
+                        if (item instanceof Wall) {
+                            wallFound = true;
+                            break;
+                        }
+                    }
+                    if (wallFound) {
+                        continue;
+                    } else { return false; }
+                } else { return false; }
+            }
+        }
+
+        else if (differenceFromWallToCurrentX < 0 && differenceFromWallToCurrentY <= 0) {
+            for (Point coordinate : deadEndTilesBottomRight) {
+                boolean tileFound = false;
+                Tile currentTile = Factory.getMapRepository().findTileByCoordinates((int) coordinate.getX(), (int) coordinate.getY());
+                for (Map.Entry<Integer, HashMap<Integer, Tile>> rowEntry : vision.entrySet()) {
+                    for (Map.Entry<Integer, Tile> colEntry : rowEntry.getValue().entrySet()) {
+                        if (colEntry.getValue() == currentTile) {
+                            tileFound = true;
+                            break;
+                        }
+                    }
+                }
+                boolean wallFound = false;
+                if (tileFound) {
+                    for (Item item : currentTile.getItems()) {
+                        if (item instanceof Wall) {
+                            wallFound = true;
+                            break;
+                        }
+                    }
+                    if (wallFound) {
+                        continue;
+                    } else { return false; }
+                } else { return false; }
+            }
+        }
+
+        return true;
     }
 
     public int getDeadEndMarkers() {

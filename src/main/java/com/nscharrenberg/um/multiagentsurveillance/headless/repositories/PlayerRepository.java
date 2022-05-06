@@ -239,8 +239,8 @@ public class PlayerRepository implements IPlayerRepository {
         Tile currentTilePlayer = player.getTile();
         int visionLength = 6;
 
-//        if(currentTilePlayer instanceof ShadowTile)
-//            visionLength /= 2;
+        if(currentTilePlayer instanceof ShadowTile)
+            visionLength /= 2;
 
         // Rotate the player when it's not facing the same direction as it wants to go to.
         if (!currentDirection.equals(direction)) {
@@ -248,7 +248,7 @@ public class PlayerRepository implements IPlayerRepository {
 
             if (player.getAgent() != null) {
                 //Vision
-                CharacterVision characterVision = new CharacterVision(visionLength, player.getDirection());
+                CharacterVision characterVision = new CharacterVision(visionLength, player.getDirection(), player);
                 List<Tile> vision = characterVision.getVision(mapRepository.getBoard(), player.getTile());
 
                 //Add knowledge to the player
@@ -300,7 +300,7 @@ public class PlayerRepository implements IPlayerRepository {
 
             if (player.getAgent() != null) {
                 //Vision
-                CharacterVision characterVision = new CharacterVision(visionLength, player.getDirection());
+                CharacterVision characterVision = new CharacterVision(visionLength, player.getDirection(), player);
                 List<Tile> vision = characterVision.getVision(mapRepository.getBoard(), nextPosition);
 
                 //Add tiles to the progress
@@ -335,7 +335,7 @@ public class PlayerRepository implements IPlayerRepository {
 
         if (player.getAgent() != null) {
             //Vision
-            CharacterVision characterVision = new CharacterVision(visionLength, player.getDirection());
+            CharacterVision characterVision = new CharacterVision(visionLength, player.getDirection(), player);
             List<Tile> vision = characterVision.getVision(mapRepository.getBoard(), player.getTile());
 
             //Add knowledge to the player

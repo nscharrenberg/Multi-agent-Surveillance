@@ -45,7 +45,7 @@ public class GameBoardGUI extends Application {
     private HashMap<Integer, HashMap<Integer, StackPane>> gridPanes = new HashMap<>();
 
 
-    private ArrayList<TileComponents> components = new ArrayList<TileComponents>(Arrays.asList(TileComponents.SHADED, TileComponents.WALL, TileComponents.DOOR, TileComponents.WINDOW, TileComponents.TELEPORTER,
+    private ArrayList<TileComponents> components = new ArrayList<TileComponents>(Arrays.asList(TileComponents.SHADED, TileComponents.MARKER, TileComponents.WALL, TileComponents.DOOR, TileComponents.WINDOW, TileComponents.TELEPORTER,
             TileComponents.GUARD, TileComponents.INTRUDER));
 
     public enum TileComponents {
@@ -53,6 +53,7 @@ public class GameBoardGUI extends Application {
         SHADED,
         GUARD,
         INTRUDER,
+        MARKER,
         TELEPORTER,
         WALL,
         WINDOW;
@@ -334,11 +335,21 @@ public class GameBoardGUI extends Application {
         } else if (isKnowledge)
             rectangle.setStroke(Color.AQUA);
 
+        Line[] markerLines = new Line[0];
+        Circle markerCircle = null;
+
 
         for (Item item : orderedList) {
             if (item instanceof Wall) {
                 rectangle.setFill(Color.DARKGRAY);
                 rectangle.setOpacity(0.8);
+            } else if (item instanceof Marker) {
+                if (((Marker) item).getPlayer() instanceof Guard) {
+                    markerLines = drawMarkersGuard(((Marker) item).getType());
+                }
+                else if (((Marker) item).getPlayer() instanceof Intruder) {
+                    markerCircle = drawMarkersIntruders(((Marker) item).getType());
+                }
             } else if (item instanceof Window) {
                 rectangle.setFill(Color.BLUE);
             } else if (item instanceof Door) {
@@ -351,7 +362,7 @@ public class GameBoardGUI extends Application {
                 player = (Player) item;
                 polygon = createIntruder(player.getDirection());
                 polygon.setFill(Color.BLUE);
-            } else if (item instanceof  Teleporter){
+            } else if (item instanceof Teleporter){
                 rectangle.setFill(Color.PURPLE);
             }
         }
@@ -359,10 +370,22 @@ public class GameBoardGUI extends Application {
         if (!isKnowledge && !isVision)
             rectangle.setStroke(Color.BLACK);
 
-        if (polygon == null)
+        if (polygon == null && markerLines.length == 0 && markerCircle == null)
             return new StackPane(rectangle);
-        else
+        else if (markerLines.length == 0 && markerCircle == null)
             return new StackPane(rectangle, polygon);
+        else if (polygon == null && markerCircle == null)
+            return new StackPane(rectangle, markerLines[0], markerLines[1]);
+        else if (polygon == null && markerLines.length == 0)
+            return new StackPane(rectangle, markerCircle);
+        else if (polygon == null)
+            return new StackPane(rectangle, markerLines[0], markerLines[1], markerCircle);
+        else if (markerLines.length == 0)
+            return new StackPane(rectangle, polygon, markerCircle);
+        else if (markerCircle == null)
+            return new StackPane(rectangle, polygon, markerLines[0], markerLines[1]);
+        else
+            return new StackPane(rectangle, polygon, markerLines[0], markerLines[1], markerCircle);
     }
 
     private Polygon createGuard(Action action){
@@ -409,6 +432,9 @@ public class GameBoardGUI extends Application {
             if (item instanceof Wall) {
                 index = components.indexOf(TileComponents.WALL);
                 out.set(index, item);
+            } else if (item instanceof Marker) {
+                index = components.indexOf(TileComponents.MARKER);
+                out.set(index, item);
             } else if (item instanceof Window) {
                 index = components.indexOf(TileComponents.WINDOW);
                 out.set(index, item);
@@ -451,58 +477,55 @@ public class GameBoardGUI extends Application {
         return marker_Intruder;
     }
 
-
-    // TODO: I think that this needs to be the general method that actually draws the markers but we need another method that creates a new marker and adds it to the tile (or we can do this in the general logic since it is just one line)
-    public void drawMarkers(Tile tile, Player player, Marker.MarkerType marker) {
-        if (player instanceof Guard) {
-            Line line1 = new Line(GSSD/6.0, GSSD*5.0/6.0, GSSD*5.0/6.0, GSSD/6.0);
-            Line line2 = new Line(GSSD/6.0, GSSD/6.0, GSSD*5.0/6.0, GSSD*5.0/6.0);
-            line1.setStrokeWidth(2);
-            line2.setStrokeWidth(2);
-            if (marker == Marker.MarkerType.DEAD_END) {
-                line1.setFill(Color.RED);
-                line2.setFill(Color.RED);
-            }
-            else if (marker == Marker.MarkerType.TARGET) {
-                line1.setFill(Color.RED);
-                line2.setFill(Color.RED);
-            }
-            else if (marker == Marker.MarkerType.GUARD_SPOTTED) {
-                line1.setFill(Color.RED);
-                line2.setFill(Color.RED);
-            }
-            else if (marker == Marker.MarkerType.INTRUDER_SPOTTED) {
-                line1.setFill(Color.RED);
-                line2.setFill(Color.RED);
-            }
-            else if (marker == Marker.MarkerType.TELEPORTER) {
-                line1.setFill(Color.RED);
-                line2.setFill(Color.RED);
-            }
-
-            //TODO: Add this to the current tile for each of the two lines.
+    public Line[] drawMarkersGuard(Marker.MarkerType markerType) {
+        Line line1 = new Line(GSSD/6.0, GSSD*5.0/6.0, GSSD*5.0/6.0, GSSD/6.0);
+        Line line2 = new Line(GSSD/6.0, GSSD/6.0, GSSD*5.0/6.0, GSSD*5.0/6.0);
+        line1.setStrokeWidth(2);
+        line2.setStrokeWidth(2);
+        if (markerType == Marker.MarkerType.DEAD_END) {
+            line1.setFill(Color.RED);
+            line2.setFill(Color.RED);
         }
-        else {
-            Circle intruder_marker = createMarkerIntruderLegend();
-            if (marker == Marker.MarkerType.DEAD_END) {
-                intruder_marker.setFill(Color.RED);
-            }
-            else if (marker == Marker.MarkerType.TARGET) {
-                intruder_marker.setFill(Color.RED);
-            }
-            else if (marker == Marker.MarkerType.GUARD_SPOTTED) {
-                intruder_marker.setFill(Color.RED);
-            }
-            else if (marker == Marker.MarkerType.INTRUDER_SPOTTED) {
-                intruder_marker.setFill(Color.RED);
-            }
-            else if (marker == Marker.MarkerType.TELEPORTER) {
-                intruder_marker.setFill(Color.RED);
-            }
-
-            //TODO: Add this to the current tile
+        else if (markerType == Marker.MarkerType.TARGET) {
+            line1.setFill(Color.RED);
+            line2.setFill(Color.RED);
+        }
+        else if (markerType == Marker.MarkerType.GUARD_SPOTTED) {
+            line1.setFill(Color.RED);
+            line2.setFill(Color.RED);
+        }
+        else if (markerType == Marker.MarkerType.INTRUDER_SPOTTED) {
+            line1.setFill(Color.RED);
+            line2.setFill(Color.RED);
+        }
+        else if (markerType == Marker.MarkerType.TELEPORTER) {
+            line1.setFill(Color.RED);
+            line2.setFill(Color.RED);
         }
 
+        return new Line[]{line1, line2};
+    }
+
+
+    public Circle drawMarkersIntruders(Marker.MarkerType marker) {
+        Circle intruderMarker = createMarkerIntruderLegend();
+        if (marker == Marker.MarkerType.DEAD_END) {
+            intruderMarker.setFill(Color.RED);
+        }
+        else if (marker == Marker.MarkerType.TARGET) {
+            intruderMarker.setFill(Color.RED);
+        }
+        else if (marker == Marker.MarkerType.GUARD_SPOTTED) {
+            intruderMarker.setFill(Color.RED);
+        }
+        else if (marker == Marker.MarkerType.INTRUDER_SPOTTED) {
+            intruderMarker.setFill(Color.RED);
+        }
+        else if (marker == Marker.MarkerType.TELEPORTER) {
+            intruderMarker.setFill(Color.RED);
+        }
+        
+        return intruderMarker;
     }
 
 

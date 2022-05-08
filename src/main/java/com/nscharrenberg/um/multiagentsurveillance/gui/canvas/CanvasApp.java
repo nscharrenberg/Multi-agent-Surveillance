@@ -22,7 +22,7 @@ import java.util.List;
 public class CanvasApp extends Application {
     private static final int WIDTH = 800;
     private static final int HEIGHT = 800;
-    public static final boolean MANUAL_PLAYER = true;
+    public static final boolean MANUAL_PLAYER = false;
 
     @Override
     public void start(Stage primaryStage) {

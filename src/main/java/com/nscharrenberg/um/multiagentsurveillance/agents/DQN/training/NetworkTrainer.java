@@ -3,7 +3,7 @@ package com.nscharrenberg.um.multiagentsurveillance.agents.DQN.training;
 import com.nscharrenberg.um.multiagentsurveillance.headless.Factory;
 import com.nscharrenberg.um.multiagentsurveillance.headless.exceptions.BoardNotBuildException;
 import com.nscharrenberg.um.multiagentsurveillance.headless.exceptions.InvalidTileException;
-import com.nscharrenberg.um.multiagentsurveillance.headless.models.Angle.Angle;
+import com.nscharrenberg.um.multiagentsurveillance.headless.models.Action;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Map.Tile;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Player.Player;
 
@@ -24,7 +24,7 @@ public class NetworkTrainer {
         error = new double[output.length];
         this.output = output;
 
-        Angle direction = player.getDirection();
+        Action direction = player.getDirection();
 
         int x = player.getTile().getX();
         int y = player.getTile().getY();

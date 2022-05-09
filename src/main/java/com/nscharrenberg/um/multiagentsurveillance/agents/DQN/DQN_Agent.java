@@ -1,7 +1,7 @@
 package com.nscharrenberg.um.multiagentsurveillance.agents.DQN;
 
 import com.nscharrenberg.um.multiagentsurveillance.headless.Factory;
-import com.nscharrenberg.um.multiagentsurveillance.headless.models.Angle.Angle;
+import com.nscharrenberg.um.multiagentsurveillance.headless.models.Action;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Items.Collision.Wall;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Items.Item;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Map.Tile;
@@ -30,7 +30,7 @@ public class DQN_Agent {
 
     public void preformMove(Player player) throws Exception {
         int move = calculateMove(player);
-        Angle currentDirection = player.getDirection();
+        Action currentDirection = player.getDirection();
         List<Tile> vision = (List<Tile>) player.getVision();
         switch (move){
             case 0 -> Factory.getPlayerRepository().move(player, currentDirection);
@@ -46,28 +46,28 @@ public class DQN_Agent {
 
     }
 
-    private Angle turnRight(Angle playerDirection) throws Exception{
-        if (playerDirection.equals(Angle.UP))
-            return Angle.RIGHT;
-        if (playerDirection.equals(Angle.DOWN))
-            return Angle.LEFT;
-        if (playerDirection.equals(Angle.LEFT))
-            return Angle.UP;
-        if (playerDirection.equals(Angle.RIGHT))
-            return Angle.DOWN;
+    private Action turnRight(Action playerDirection) throws Exception{
+        if (playerDirection.equals(Action.UP))
+            return Action.RIGHT;
+        if (playerDirection.equals(Action.DOWN))
+            return Action.LEFT;
+        if (playerDirection.equals(Action.LEFT))
+            return Action.UP;
+        if (playerDirection.equals(Action.RIGHT))
+            return Action.DOWN;
         else
             throw new Exception("Player has no direction");
     }
 
-    private Angle turnLeft(Angle playerDirection) throws Exception{
-        if (playerDirection.equals(Angle.UP))
-            return Angle.LEFT;
-        if (playerDirection.equals(Angle.DOWN))
-            return Angle.RIGHT;
-        if (playerDirection.equals(Angle.LEFT))
-            return Angle.DOWN;
-        if (playerDirection.equals(Angle.RIGHT))
-            return Angle.UP;
+    private Action turnLeft(Action playerDirection) throws Exception{
+        if (playerDirection.equals(Action.UP))
+            return Action.LEFT;
+        if (playerDirection.equals(Action.DOWN))
+            return Action.RIGHT;
+        if (playerDirection.equals(Action.LEFT))
+            return Action.DOWN;
+        if (playerDirection.equals(Action.RIGHT))
+            return Action.UP;
         else
             throw new Exception("Player has no direction");
     }

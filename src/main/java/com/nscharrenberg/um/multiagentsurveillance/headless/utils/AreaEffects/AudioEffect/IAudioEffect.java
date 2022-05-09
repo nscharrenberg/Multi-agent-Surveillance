@@ -1,7 +1,7 @@
 package com.nscharrenberg.um.multiagentsurveillance.headless.utils.AreaEffects.AudioEffect;
 
 import com.nscharrenberg.um.multiagentsurveillance.agents.shared.Agent;
-import com.nscharrenberg.um.multiagentsurveillance.headless.models.Angle.Angle;
+import com.nscharrenberg.um.multiagentsurveillance.headless.models.Action;
 
 public interface IAudioEffect {
 
@@ -11,7 +11,7 @@ public interface IAudioEffect {
 
     double computeEffectLevel(double distance);
 
-    Angle computeSoundAngle(int x1, int y1, int x2, int y2);
+    Action computeSoundAction(int x1, int y1, int x2, int y2);
 
     void setRange(double range);
 

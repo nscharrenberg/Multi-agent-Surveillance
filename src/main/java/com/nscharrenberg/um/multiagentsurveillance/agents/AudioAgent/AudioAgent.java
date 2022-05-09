@@ -1,11 +1,8 @@
 package com.nscharrenberg.um.multiagentsurveillance.agents.AudioAgent;
 
 import com.nscharrenberg.um.multiagentsurveillance.agents.shared.Agent;
-import com.nscharrenberg.um.multiagentsurveillance.headless.exceptions.CollisionException;
-import com.nscharrenberg.um.multiagentsurveillance.headless.exceptions.InvalidTileException;
-import com.nscharrenberg.um.multiagentsurveillance.headless.exceptions.ItemAlreadyOnTileException;
-import com.nscharrenberg.um.multiagentsurveillance.headless.exceptions.ItemNotOnTileException;
-import com.nscharrenberg.um.multiagentsurveillance.headless.models.Angle.Angle;
+import com.nscharrenberg.um.multiagentsurveillance.headless.exceptions.*;
+import com.nscharrenberg.um.multiagentsurveillance.headless.models.Action;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Player.Player;
 
 
@@ -17,16 +14,16 @@ public class AudioAgent extends Agent {
     }
 
     @Override
-    public void execute(Angle angle) {
+    public void execute(Action Action) {
         try {
-            playerRepository.move(getPlayer(), angle);
-        } catch (CollisionException | InvalidTileException | ItemNotOnTileException | ItemAlreadyOnTileException e) {
+            playerRepository.move(getPlayer(), Action);
+        } catch (CollisionException | InvalidTileException | ItemNotOnTileException | ItemAlreadyOnTileException | BoardNotBuildException e) {
             e.getCause();
         }
     }
 
     @Override
-    public Angle decide() {
+    public Action decide() {
         return null;
     }
 }

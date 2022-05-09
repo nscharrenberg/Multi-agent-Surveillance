@@ -32,11 +32,11 @@ public class CanvasApp extends Application {
             scene.setOnKeyPressed(e -> {
                 if (e.getCode() == KeyCode.L) {
                     Alert alert = new Alert(Alert.AlertType.INFORMATION);
-                alert.setTitle("Legend");
-                alert.setHeaderText("");
-                //alert.setContentText(" FOREST GREEN = NORMAL TILE \n BROWN = WALL \n PURPLE = Teleport entrance \n LIGHT PURPLE = Teleport exit \n Black = Shadow \n Light Green = Knowledge \n Yellow/White = Vision \n Blue = Guard");
-                alert.setGraphic(createLegend());
-                alert.show();
+                    alert.setTitle("Legend");
+                    alert.setHeaderText("");
+                    //alert.setContentText(" FOREST GREEN = NORMAL TILE \n BROWN = WALL \n PURPLE = Teleport entrance \n LIGHT PURPLE = Teleport exit \n Black = Shadow \n Light Green = Knowledge \n Yellow/White = Vision \n Blue = Guard");
+                    alert.setGraphic(createLegend());
+                    alert.show();
                 }
             });
 

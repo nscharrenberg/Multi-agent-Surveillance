@@ -1,7 +1,7 @@
 package com.nscharrenberg.um.multiagentsurveillance.headless.utils.AreaEffects.AudioEffect;
 
 import com.nscharrenberg.um.multiagentsurveillance.agents.shared.Agent;
-import com.nscharrenberg.um.multiagentsurveillance.headless.models.Angle.Angle;
+import com.nscharrenberg.um.multiagentsurveillance.headless.models.Action;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Map.Tile;
 
 public class AudioEffect implements IAudioEffect {
@@ -22,11 +22,11 @@ public class AudioEffect implements IAudioEffect {
         Tile tileX = x.getPlayer().getTile();
         Tile tileY = y.getPlayer().getTile();
 
-        Angle soundAngle = computeSoundAngle(tileX.getX(), tileX.getY(), tileY.getX(), tileY.getY());
+        Action soundAction = computeSoundAction(tileX.getX(), tileX.getY(), tileY.getX(), tileY.getY());
 
         double effectLevel = computeEffectLevel(distance);
 
-        return new Audio(effectLevel, soundAngle);
+        return new Audio(effectLevel, soundAction);
     }
 
     @Override
@@ -35,7 +35,7 @@ public class AudioEffect implements IAudioEffect {
     }
 
     @Override
-    public Angle computeSoundAngle(int x1, int y1, int x2, int y2) {
+    public Action computeSoundAction(int x1, int y1, int x2, int y2) {
         int x = x2 - x1;
         int y = y2 - y1;
 
@@ -43,37 +43,37 @@ public class AudioEffect implements IAudioEffect {
         int absY = Math.abs(y);
 
         if(x == 0 && y == 0)
-            throw new RuntimeException("Sound Angle Error");
+            throw new RuntimeException("Sound Action Error");
 
 
         if(x == 0){
 
-            if(y > 0) return Angle.DOWN;
-             else return Angle.UP;
+            if(y > 0) return Action.DOWN;
+             else return Action.UP;
 
         } else if(y == 0){
 
-            if(x > 0) return Angle.RIGHT;
-             else return Angle.LEFT;
+            if(x > 0) return Action.RIGHT;
+             else return Action.LEFT;
 
         } else if(x > 0){
 
             if(y > 0) {
-                if (absX > absY) return Angle.RIGHT;
-                else return Angle.DOWN;
+                if (absX > absY) return Action.RIGHT;
+                else return Action.DOWN;
             } else {
-                if(absX > absY) return Angle.RIGHT;
-                else return Angle.UP;
+                if(absX > absY) return Action.RIGHT;
+                else return Action.UP;
             }
 
         } else {
 
             if(y > 0) {
-                if (absX > absY) return Angle.LEFT;
-                else return Angle.DOWN;
+                if (absX > absY) return Action.LEFT;
+                else return Action.DOWN;
             } else {
-                if(absX > absY) return Angle.LEFT;
-                else return Angle.UP;
+                if(absX > absY) return Action.LEFT;
+                else return Action.UP;
             }
 
         }

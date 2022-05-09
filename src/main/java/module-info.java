@@ -3,6 +3,7 @@ module com.nscharrenberg.um.multiagentsurveillance {
     requires javafx.fxml;
     requires cloning;
     requires com.google.gson;
+    requires java.desktop;
 
     opens com.nscharrenberg.um.multiagentsurveillance to javafx.fxml, cloning;
     exports com.nscharrenberg.um.multiagentsurveillance;

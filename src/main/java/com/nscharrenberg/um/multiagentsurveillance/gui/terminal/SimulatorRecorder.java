@@ -4,7 +4,7 @@ import com.google.gson.Gson;
 import com.nscharrenberg.um.multiagentsurveillance.agents.shared.Agent;
 import com.nscharrenberg.um.multiagentsurveillance.headless.Factory;
 import com.nscharrenberg.um.multiagentsurveillance.headless.contracts.repositories.IPlayerRepository;
-import com.nscharrenberg.um.multiagentsurveillance.headless.models.Angle.Angle;
+import com.nscharrenberg.um.multiagentsurveillance.headless.models.Action;
 import com.nscharrenberg.um.multiagentsurveillance.headless.utils.recorder.GameConfigurationRecorder;
 import com.nscharrenberg.um.multiagentsurveillance.headless.utils.recorder.json.AgentJSON;
 import com.nscharrenberg.um.multiagentsurveillance.headless.utils.recorder.json.Coordinates;
@@ -51,12 +51,14 @@ public class SimulatorRecorder {
         long splits = 0;
 
         while (Factory.getGameRepository().isRunning()) {
+            System.out.println("Exploration Percentage: " + Factory.getPlayerRepository().getExplorationPercentage());
+
             int agentId = 0;
             long time = (long) (playerRepository.getStopWatch().getDurationInMillis()/1000.0);
             for (Agent agent : agents) {
 
                 long startTime = playerRepository.getStopWatch().getDurationInMillis();
-                Angle move = agent.decide();
+                Action move = agent.decide();
 
                 long endTime = playerRepository.getStopWatch().getDurationInMillis();
                 long moveTimeDecide = (long) ((endTime - startTime)/1000.0);
@@ -73,7 +75,6 @@ public class SimulatorRecorder {
             if(playerRepository.getExplorationPercentage() - splits >= RECORD_PERCENTAGE){
                 splits = (long) playerRepository.getExplorationPercentage();
                 writeJsonData(data);
-                System.out.println("Exploration Percentage: " + Factory.getPlayerRepository().getExplorationPercentage());
             }
 
             moveCount++;

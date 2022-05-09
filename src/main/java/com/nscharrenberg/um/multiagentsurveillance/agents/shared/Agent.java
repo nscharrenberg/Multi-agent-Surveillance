@@ -125,9 +125,9 @@ public abstract class Agent {
     }
 
     public abstract void execute(Angle angle);
-    public abstract Angle decide();
+    public abstract Angle decide() throws Exception;
 
-    public void execute() {
+    public void execute() throws Exception {
         execute(decide());
     }
 }

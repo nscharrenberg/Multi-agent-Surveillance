@@ -19,7 +19,12 @@ public class Simulator {
             for (Agent agent : Factory.getPlayerRepository().getAgents()) {
                 int oldX = agent.getPlayer().getTile().getX();
                 int oldY = agent.getPlayer().getTile().getY();
-                Angle move = agent.decide();
+                Angle move = null;
+                try {
+                    move = agent.decide();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
                 agent.execute(move);
                 System.out.println("Agent " + agentId
                         + " going from (" + oldX + ", " + oldY + ") to move "

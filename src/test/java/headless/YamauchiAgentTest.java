@@ -6,8 +6,8 @@ import com.nscharrenberg.um.multiagentsurveillance.agents.frontier.yamauchi.Yama
 import com.nscharrenberg.um.multiagentsurveillance.agents.shared.algorithms.pathfinding.BFS.BFS;
 import com.nscharrenberg.um.multiagentsurveillance.headless.Factory;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Action;
-import com.nscharrenberg.um.multiagentsurveillance.headless.models.Guard;
-import com.nscharrenberg.um.multiagentsurveillance.headless.models.Tile;
+import com.nscharrenberg.um.multiagentsurveillance.headless.models.Player.Guard;
+import com.nscharrenberg.um.multiagentsurveillance.headless.models.Map.Tile;
 import com.nscharrenberg.um.multiagentsurveillance.headless.utils.files.MapImporter;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;

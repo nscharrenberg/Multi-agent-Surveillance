@@ -8,7 +8,15 @@ import com.nscharrenberg.um.multiagentsurveillance.headless.exceptions.BoardNotB
 import com.nscharrenberg.um.multiagentsurveillance.headless.exceptions.InvalidTileException;
 import com.nscharrenberg.um.multiagentsurveillance.headless.exceptions.ItemAlreadyOnTileException;
 import com.nscharrenberg.um.multiagentsurveillance.headless.exceptions.ItemNotOnTileException;
-import com.nscharrenberg.um.multiagentsurveillance.headless.models.*;
+import com.nscharrenberg.um.multiagentsurveillance.headless.models.Action;
+import com.nscharrenberg.um.multiagentsurveillance.headless.models.Items.Item;
+import com.nscharrenberg.um.multiagentsurveillance.headless.models.Items.Teleporter;
+import com.nscharrenberg.um.multiagentsurveillance.headless.models.Items.Collision.Wall;
+import com.nscharrenberg.um.multiagentsurveillance.headless.models.Map.ShadowTile;
+import com.nscharrenberg.um.multiagentsurveillance.headless.models.Map.Tile;
+import com.nscharrenberg.um.multiagentsurveillance.headless.models.Map.TileArea;
+import com.nscharrenberg.um.multiagentsurveillance.headless.models.Marker;
+import com.nscharrenberg.um.multiagentsurveillance.headless.models.Player.Player;
 
 import java.util.*;
 

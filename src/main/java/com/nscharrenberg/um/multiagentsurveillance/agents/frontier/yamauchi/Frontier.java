@@ -1,8 +1,8 @@
 package com.nscharrenberg.um.multiagentsurveillance.agents.frontier.yamauchi;
 
 import com.nscharrenberg.um.multiagentsurveillance.agents.shared.utils.QueueNode;
+import com.nscharrenberg.um.multiagentsurveillance.headless.models.Map.Tile;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Action;
-import com.nscharrenberg.um.multiagentsurveillance.headless.models.Tile;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -12,6 +12,8 @@ public class Frontier {
     private int unknownAreas = 0;
     private QueueNode queueNode;
     private int maxSize = 3;
+    private int distance;
+    private Tile target;
 
     public Frontier() {
         this.frontier = new HashMap<>();
@@ -93,6 +95,30 @@ public class Frontier {
         return false;
     }
 
+    public int getMaxSize() {
+        return maxSize;
+    }
+
+    public void setMaxSize(int maxSize) {
+        this.maxSize = maxSize;
+    }
+
+    public Tile getTarget() {
+        return target;
+    }
+
+    public void setTarget(Tile target) {
+        this.target = target;
+    }
+
+    public int getDistance() {
+        return distance;
+    }
+
+    public void setDistance(int distance) {
+        this.distance = distance;
+    }
+
     public HashMap<Integer, HashMap<Integer, Tile>> getFrontier() {
         return frontier;
     }
@@ -121,7 +147,8 @@ public class Frontier {
         if (this.queueNode != null && (queueNode.getDistance() <= this.queueNode.getDistance() || queueNode.getMoves().size() <= this.queueNode.getMoves().size())) {
             return;
         }
-
+        this.target = queueNode.getTile();
+        this.distance = queueNode.getDistance();
         this.queueNode = queueNode;
     }
 }

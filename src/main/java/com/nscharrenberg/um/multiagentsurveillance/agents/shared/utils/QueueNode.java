@@ -1,7 +1,7 @@
 package com.nscharrenberg.um.multiagentsurveillance.agents.shared.utils;
 
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Action;
-import com.nscharrenberg.um.multiagentsurveillance.headless.models.Tile;
+import com.nscharrenberg.um.multiagentsurveillance.headless.models.Map.Tile;
 
 import java.util.LinkedList;
 import java.util.Queue;
@@ -47,6 +47,11 @@ public class QueueNode {
 
     public Queue<Action> getMoves() {
         return moves;
+    }
+
+
+    public void addMove(Action move){
+        this.moves.add(move);
     }
 
     public void setMoves(Queue<Action> moves) {

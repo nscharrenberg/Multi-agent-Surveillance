@@ -5,7 +5,11 @@ import com.nscharrenberg.um.multiagentsurveillance.headless.contracts.repositori
 import com.nscharrenberg.um.multiagentsurveillance.headless.contracts.repositories.IMapRepository;
 import com.nscharrenberg.um.multiagentsurveillance.headless.contracts.repositories.IPlayerRepository;
 import com.nscharrenberg.um.multiagentsurveillance.headless.exceptions.*;
-import com.nscharrenberg.um.multiagentsurveillance.headless.models.*;
+import com.nscharrenberg.um.multiagentsurveillance.headless.models.Action;
+import com.nscharrenberg.um.multiagentsurveillance.headless.models.Items.Collision.Collision;
+import com.nscharrenberg.um.multiagentsurveillance.headless.models.Items.Item;
+import com.nscharrenberg.um.multiagentsurveillance.headless.models.Map.Tile;
+import com.nscharrenberg.um.multiagentsurveillance.headless.models.Player.Player;
 
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
@@ -39,7 +43,8 @@ public class RandomAgent extends Agent {
         try {
             playerRepository.move(player, move);
         } catch (CollisionException | InvalidTileException | ItemNotOnTileException | ItemAlreadyOnTileException | BoardNotBuildException e) {
-            System.out.println(e.getMessage());
+            e.printStackTrace();
+			//System.out.println(e.getMessage());
         }
     }
 

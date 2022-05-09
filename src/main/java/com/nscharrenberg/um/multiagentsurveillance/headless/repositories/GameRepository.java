@@ -5,7 +5,7 @@ import com.nscharrenberg.um.multiagentsurveillance.headless.contracts.repositori
 import com.nscharrenberg.um.multiagentsurveillance.headless.contracts.repositories.IMapRepository;
 import com.nscharrenberg.um.multiagentsurveillance.headless.contracts.repositories.IPlayerRepository;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.GameMode;
-import com.nscharrenberg.um.multiagentsurveillance.headless.models.Guard;
+import com.nscharrenberg.um.multiagentsurveillance.headless.models.Player.Guard;
 import com.nscharrenberg.um.multiagentsurveillance.headless.utils.files.MapImporter;
 
 import java.io.File;
@@ -52,7 +52,8 @@ public class GameRepository implements IGameRepository {
         try {
             playerRepository.getStopWatch().stop();
         } catch (Exception e) {
-            System.out.println(e.getMessage());
+            e.printStackTrace();
+            //System.out.println(e.getMessage());
         }
     }
 

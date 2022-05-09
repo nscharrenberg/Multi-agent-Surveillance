@@ -15,27 +15,29 @@ public class GameJSON {
         this.agentDescription = agentDescription;
     }
 
-    public int getGameId() {
-        return gameId;
-    }
-
     public void setGameId(int gameId) {
         this.gameId = gameId;
-    }
-
-    public int getAgentNum() {
-        return agentNum;
     }
 
     public void setAgentNum(int agentNum) {
         this.agentNum = agentNum;
     }
 
-    public Map<Integer, List<String>> getAgentDescription() {
-        return agentDescription;
-    }
-
     public void setAgentDescription(Map<Integer, List<String>> agentDescription) {
         this.agentDescription = agentDescription;
+    }
+
+    public int gameId() {
+        return gameId;
+    }
+
+
+    public int agentNum() {
+        return agentNum;
+    }
+
+
+    public Map<Integer, List<String>> agentDescription() {
+        return agentDescription;
     }
 }

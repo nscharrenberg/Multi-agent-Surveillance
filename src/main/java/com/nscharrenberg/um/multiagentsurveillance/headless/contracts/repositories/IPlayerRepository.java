@@ -2,7 +2,11 @@ package com.nscharrenberg.um.multiagentsurveillance.headless.contracts.repositor
 
 import com.nscharrenberg.um.multiagentsurveillance.agents.shared.Agent;
 import com.nscharrenberg.um.multiagentsurveillance.headless.exceptions.*;
-import com.nscharrenberg.um.multiagentsurveillance.headless.models.*;
+import com.nscharrenberg.um.multiagentsurveillance.headless.models.Action;
+import com.nscharrenberg.um.multiagentsurveillance.headless.models.Map.TileArea;
+import com.nscharrenberg.um.multiagentsurveillance.headless.models.Player.Guard;
+import com.nscharrenberg.um.multiagentsurveillance.headless.models.Player.Intruder;
+import com.nscharrenberg.um.multiagentsurveillance.headless.models.Player.Player;
 import com.nscharrenberg.um.multiagentsurveillance.headless.utils.StopWatch;
 
 import java.util.List;
@@ -40,6 +44,8 @@ public interface IPlayerRepository {
      * @return whether it is a valid move or not
      */
     boolean isLegalMove(Player player, Action direction);
+
+    void updateSounds(List<Agent> agentList);
 
     List<Intruder> getIntruders();
 

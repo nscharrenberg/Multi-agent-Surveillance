@@ -1,8 +1,6 @@
 package com.nscharrenberg.um.multiagentsurveillance.headless.exceptions;
 
-import com.nscharrenberg.um.multiagentsurveillance.headless.models.Area;
-
-import java.util.List;
+import com.nscharrenberg.um.multiagentsurveillance.headless.models.Map.Area;
 
 public class InvalidTileException extends Exception {
 

@@ -5,7 +5,7 @@ import com.nscharrenberg.um.multiagentsurveillance.headless.exceptions.BoardNotB
 import com.nscharrenberg.um.multiagentsurveillance.headless.exceptions.InvalidTileException;
 import com.nscharrenberg.um.multiagentsurveillance.headless.exceptions.ItemAlreadyOnTileException;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Action;
-import com.nscharrenberg.um.multiagentsurveillance.headless.models.TileArea;
+import com.nscharrenberg.um.multiagentsurveillance.headless.models.Map.TileArea;
 import com.nscharrenberg.um.multiagentsurveillance.headless.utils.AngleConverter;
 
 import java.io.*;

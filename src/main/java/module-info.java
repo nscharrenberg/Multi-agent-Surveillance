@@ -7,11 +7,11 @@ module com.nscharrenberg.um.multiagentsurveillance {
 
     opens com.nscharrenberg.um.multiagentsurveillance to javafx.fxml, cloning;
     exports com.nscharrenberg.um.multiagentsurveillance;
-    opens com.nscharrenberg.um.multiagentsurveillance.headless.models.gui.dataGUI to javafx.fxml;
-    exports com.nscharrenberg.um.multiagentsurveillance.headless.models.gui.dataGUI;
-    opens com.nscharrenberg.um.multiagentsurveillance.headless.models.gui.javafx.controllers to javafx.fxml, javafx.graphics;
-    exports com.nscharrenberg.um.multiagentsurveillance.headless.models.gui.canvas;
-    opens com.nscharrenberg.um.multiagentsurveillance.headless.models.gui.canvas to javafx.fxml;
+    opens com.nscharrenberg.um.multiagentsurveillance.gui.dataGUI to javafx.fxml;
+    exports com.nscharrenberg.um.multiagentsurveillance.gui.dataGUI;
+    opens com.nscharrenberg.um.multiagentsurveillance.gui.javafx.controllers to javafx.fxml, javafx.graphics;
+    exports com.nscharrenberg.um.multiagentsurveillance.gui.canvas;
+    opens com.nscharrenberg.um.multiagentsurveillance.gui.canvas to javafx.fxml;
     exports com.nscharrenberg.um.multiagentsurveillance.headless.repositories;
     opens com.nscharrenberg.um.multiagentsurveillance.headless.repositories to cloning;
     exports com.nscharrenberg.um.multiagentsurveillance.headless.models;
@@ -28,4 +28,16 @@ module com.nscharrenberg.um.multiagentsurveillance {
     opens com.nscharrenberg.um.multiagentsurveillance.headless.utils.recorder to com.google.gson, javafx.fxml;
     exports com.nscharrenberg.um.multiagentsurveillance.headless.utils.recorder.json;
     opens com.nscharrenberg.um.multiagentsurveillance.headless.utils.recorder.json to com.google.gson, javafx.fxml;
+    exports com.nscharrenberg.um.multiagentsurveillance.headless.models.Items;
+    opens com.nscharrenberg.um.multiagentsurveillance.headless.models.Items to cloning;
+    exports com.nscharrenberg.um.multiagentsurveillance.headless.models.Player;
+    opens com.nscharrenberg.um.multiagentsurveillance.headless.models.Player to cloning;
+    exports com.nscharrenberg.um.multiagentsurveillance.headless.models.Map;
+    opens com.nscharrenberg.um.multiagentsurveillance.headless.models.Map to cloning;
+    exports com.nscharrenberg.um.multiagentsurveillance.headless.models.Angle;
+    opens com.nscharrenberg.um.multiagentsurveillance.headless.models.Angle to cloning;
+    exports com.nscharrenberg.um.multiagentsurveillance.headless.models.Items.Collision;
+    opens com.nscharrenberg.um.multiagentsurveillance.headless.models.Items.Collision to cloning;
+    opens com.nscharrenberg.um.multiagentsurveillance.headless.utils.Vision to cloning;
+    opens com.nscharrenberg.um.multiagentsurveillance.headless.utils.AreaEffects.AudioEffect to cloning;
 }

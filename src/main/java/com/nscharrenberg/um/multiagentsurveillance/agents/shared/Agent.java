@@ -7,11 +7,23 @@ import com.nscharrenberg.um.multiagentsurveillance.headless.contracts.repositori
 import com.nscharrenberg.um.multiagentsurveillance.headless.contracts.repositories.IPlayerRepository;
 import com.nscharrenberg.um.multiagentsurveillance.headless.exceptions.BoardNotBuildException;
 import com.nscharrenberg.um.multiagentsurveillance.headless.exceptions.InvalidTileException;
-import com.nscharrenberg.um.multiagentsurveillance.headless.models.*;
-import java.awt.Point;
+import com.nscharrenberg.um.multiagentsurveillance.headless.models.Action;
+import com.nscharrenberg.um.multiagentsurveillance.headless.models.Items.Collision.Wall;
+import com.nscharrenberg.um.multiagentsurveillance.headless.models.Items.Item;
+import com.nscharrenberg.um.multiagentsurveillance.headless.models.Items.Teleporter;
+import com.nscharrenberg.um.multiagentsurveillance.headless.models.Map.Area;
+import com.nscharrenberg.um.multiagentsurveillance.headless.models.Map.ShadowTile;
+import com.nscharrenberg.um.multiagentsurveillance.headless.models.Map.Tile;
+import com.nscharrenberg.um.multiagentsurveillance.headless.models.Map.TileArea;
+import com.nscharrenberg.um.multiagentsurveillance.headless.models.Marker;
+import com.nscharrenberg.um.multiagentsurveillance.headless.models.Player.Guard;
+import com.nscharrenberg.um.multiagentsurveillance.headless.models.Player.Intruder;
+import com.nscharrenberg.um.multiagentsurveillance.headless.models.Player.Player;
 
+import java.awt.*;
 import java.lang.annotation.Target;
 import java.util.*;
+import java.util.List;
 
 public abstract class Agent {
     protected final Player player;
@@ -289,6 +301,10 @@ public abstract class Agent {
 
     public boolean lookForMarkerPlacedByPlayer(Player player, Marker.MarkerType typeOfMarker) {
         HashMap<Integer, Marker> listOfPlacedMarkers = Factory.getMapRepository().getListOfPlacedMarkers();
+
+        if (listOfPlacedMarkers == null) {
+            return false;
+        }
 
         for (Map.Entry<Integer, Marker> entry : listOfPlacedMarkers.entrySet()) {
             if ((entry.getValue().getType() == typeOfMarker) && (entry.getValue().getPlayer() == player)) {

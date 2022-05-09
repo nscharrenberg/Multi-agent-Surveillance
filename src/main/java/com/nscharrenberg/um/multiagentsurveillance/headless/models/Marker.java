@@ -1,5 +1,9 @@
 package com.nscharrenberg.um.multiagentsurveillance.headless.models;
 
+import com.nscharrenberg.um.multiagentsurveillance.headless.models.Items.Item;
+import com.nscharrenberg.um.multiagentsurveillance.headless.models.Map.Tile;
+import com.nscharrenberg.um.multiagentsurveillance.headless.models.Player.Player;
+
 public class Marker extends Item {
     private MarkerType type;
     private Tile tile;

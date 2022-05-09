@@ -1,9 +1,9 @@
 package com.nscharrenberg.um.multiagentsurveillance.headless.utils;
 
-import com.nscharrenberg.um.multiagentsurveillance.headless.models.AdvancedAngle;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Action;
-import com.nscharrenberg.um.multiagentsurveillance.headless.models.Area;
-import com.nscharrenberg.um.multiagentsurveillance.headless.models.Tile;
+import com.nscharrenberg.um.multiagentsurveillance.headless.models.Angle.AdvancedAngle;
+import com.nscharrenberg.um.multiagentsurveillance.headless.models.Map.Area;
+import com.nscharrenberg.um.multiagentsurveillance.headless.models.Map.Tile;
 
 import java.util.HashMap;
 import java.util.Optional;
@@ -80,5 +80,23 @@ public class BoardUtils {
         }
 
         return neighbours;
+    }
+
+    public static boolean isSurrounded(Area<Tile> board, Tile tile) {
+
+        for (AdvancedAngle angle : AdvancedAngle.values()) {
+            Tile neighbourTile;
+
+            Optional<Tile> neighbourTileOpt = BoardUtils.nextPosition(board, tile, angle);
+
+            if (neighbourTileOpt.isPresent()) {
+                neighbourTile = neighbourTileOpt.get();
+                if (!neighbourTile.isCollision() && !neighbourTile.isTeleport()) {
+                    return false;
+                }
+            }
+        }
+
+        return true;
     }
 }

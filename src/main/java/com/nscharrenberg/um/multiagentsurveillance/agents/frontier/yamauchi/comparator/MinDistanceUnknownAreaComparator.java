@@ -7,9 +7,9 @@ public class MinDistanceUnknownAreaComparator implements IWeightComparator {
     @Override
     public Frontier compare(Frontier frontier, Frontier bestFrontier) {
 
-        if (frontier.getQueueNode().getDistance() < bestFrontier.getQueueNode().getDistance()) {
+        if (frontier.getDistance() < bestFrontier.getDistance()) {
             return frontier;
-        } else if(frontier.getQueueNode().getDistance() == bestFrontier.getQueueNode().getDistance()){
+        } else if(frontier.getDistance() == bestFrontier.getDistance()){
             if(frontier.getUnknownAreas() > bestFrontier.getUnknownAreas())
                 return frontier;
         }

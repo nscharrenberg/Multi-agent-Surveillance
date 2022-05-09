@@ -1,0 +1,101 @@
+@font-face {
+    font-family: 'Blokletters Balpen';
+    src: url('Blokletters-Balpen.ttf');
+}
+
+.root {
+    -fx-background-color: #E8DED2;
+    -fx-font-family: 'Blokletters Balpen';
+}
+.button {
+    -fx-background-color: #BFA888;
+    -fx-text-fill: #FFF8EC;
+    -fx-background-radius: 7px;
+}
+.button:disabled {
+    -fx-background-color: #BFA888;
+    -fx-text-fill: #FFF8EC;
+    -fx-background-radius: 7px;
+    -fx-opacity: 1;
+}
+.button:hover {
+    -fx-background-color: #b8995e;
+    -fx-scale-x: 1.035;
+    -fx-scale-y: 1.035
+}
+.button:pressed {
+    -fx-text-fill: #D6C0A4;
+}
+#pause_menu {
+    -fx-background-color: rgba(0, 0, 0, 0.175);
+}
+
+.slider {
+    -fx-control-inner-background: #BFA888;
+}
+.slider:pressed {
+    -fx-control-inner-background: #b8995e;
+}
+.slider:hover {
+    -fx-control-inner-background: #b8995e;
+}
+.slider .thumb {
+    -fx-background-color: #b8995e;
+}
+.slider .thumb:hover {
+    -fx-background-color: #BFA888;
+}
+.slider .thumb:pressed {
+    -fx-background-color: #BFA888;
+}
+#how_to_play_text {
+    -fx-text-box-border: transparent;
+    -fx-highlight-fill: null;
+    -fx-highlight-text-fill: null;
+}
+#how_to_play_text:focused {
+    -fx-focus-color: transparent;
+    -fx-faint-focus-color: transparent;
+}
+#how_to_play_text .content {
+    -fx-cursor: default;
+    -fx-background-color: #E8DED2;
+}
+.text-area .scroll-bar {
+    -fx-background-color: #E8DED2;
+}
+.text-area .thumb {
+    -fx-background-color: #BFA888;
+}
+.text-area .track {
+    -fx-background-color: #E8DED2;
+}
+.text-area .thumb:pressed {
+    -fx-background-color: #b8995e;
+}
+.text-area .decrement-button:hover {
+    -fx-background-color: #BFA888;
+}
+.text-area .increment-button:hover {
+    -fx-background-color: #BFA888;
+}
+.text-area .decrement-button:pressed {
+    -fx-background-color: #b8995e;
+}
+.text-area .increment-button:pressed {
+    -fx-background-color: #b8995e;
+}
+
+#num_of_cards_label {
+    -fx-text-fill: #FFF8EC;
+    -fx-font-weight: 900;
+}
+#gamescreen_borderpane {
+    -fx-background-repeat: no-repeat;
+    -fx-background-position: center center;
+    -fx-background-size: cover;
+}
+#leaderboard_title {
+    -fx-font-size: 50;
+    -fx-font-weight: bold;
+}

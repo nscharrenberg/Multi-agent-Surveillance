@@ -1,5 +1,7 @@
 package com.nscharrenberg.um.multiagentsurveillance.headless.models;
 
+import com.nscharrenberg.um.multiagentsurveillance.headless.models.Angle.AdvancedAngle;
+
 public enum Action {
     UP(0, -1),
     DOWN(0, 1),

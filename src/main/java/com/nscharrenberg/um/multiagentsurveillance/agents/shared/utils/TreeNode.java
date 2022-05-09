@@ -1,7 +1,7 @@
 package com.nscharrenberg.um.multiagentsurveillance.agents.shared.utils;
 
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Action;
-import com.nscharrenberg.um.multiagentsurveillance.headless.models.Tile;
+import com.nscharrenberg.um.multiagentsurveillance.headless.models.Map.Tile;
 
 public class TreeNode extends QueueNode {
     private TreeNode parent;

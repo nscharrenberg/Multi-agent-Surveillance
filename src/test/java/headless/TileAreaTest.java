@@ -1,8 +1,8 @@
 package headless;
 
-import com.nscharrenberg.um.multiagentsurveillance.headless.models.Area;
-import com.nscharrenberg.um.multiagentsurveillance.headless.models.Tile;
-import com.nscharrenberg.um.multiagentsurveillance.headless.models.TileArea;
+import com.nscharrenberg.um.multiagentsurveillance.headless.models.Map.Area;
+import com.nscharrenberg.um.multiagentsurveillance.headless.models.Map.Tile;
+import com.nscharrenberg.um.multiagentsurveillance.headless.models.Map.TileArea;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

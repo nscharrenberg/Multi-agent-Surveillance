@@ -38,8 +38,7 @@ public class SBOAgent extends Agent {
             playerRepository.move(player, move);
         } catch (CollisionException | InvalidTileException | ItemNotOnTileException | ItemAlreadyOnTileException | BoardNotBuildException e) {
             gameRepository.setRunning(false);
-			e.printStackTrace();
-            //System.out.println(e.getMessage());
+            System.out.println(e.getMessage());
         }
     }
 

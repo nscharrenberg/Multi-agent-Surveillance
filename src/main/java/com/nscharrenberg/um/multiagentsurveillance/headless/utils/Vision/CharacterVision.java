@@ -1,8 +1,9 @@
 package com.nscharrenberg.um.multiagentsurveillance.headless.utils.Vision;
 
-import com.nscharrenberg.um.multiagentsurveillance.headless.models.Angle.Angle;
+import com.nscharrenberg.um.multiagentsurveillance.headless.models.Action;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Items.Item;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Items.Collision.Wall;
+import com.nscharrenberg.um.multiagentsurveillance.headless.models.Map.ShadowTile;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Map.Tile;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Map.TileArea;
 import com.nscharrenberg.um.multiagentsurveillance.headless.utils.Geometrics;
@@ -13,10 +14,10 @@ import java.util.Optional;
 // probably have players inherit this class later
 public class CharacterVision{
     private int length;
-    private Angle direction;
+    private Action direction;
     private Geometrics gm;
 
-    public CharacterVision(int length, Angle direction) {
+    public CharacterVision(int length, Action direction) {
         this.length = length;
         this.direction = direction;
         gm = new Geometrics();
@@ -34,10 +35,10 @@ public class CharacterVision{
         int py = position.getY();
 
         // Add left and right tiles
-        if (this.direction == Angle.UP || this.direction == Angle.DOWN) {
+        if (this.direction == Action.UP || this.direction == Action.DOWN) {
             vision.add(new Tile(px+1,py));
             vision.add(new Tile(px-1,py));
-        } else if(this.direction == Angle.RIGHT || this.direction == Angle.LEFT) {
+        } else if(this.direction == Action.RIGHT || this.direction == Action.LEFT) {
             vision.add(new Tile(px,py+1));
             vision.add(new Tile(px,py-1));
         }
@@ -90,7 +91,7 @@ public class CharacterVision{
         ArrayList<Tile> observation = new ArrayList<Tile>();
         observation.add(position);
 
-        if(this.direction == Angle.DOWN) {
+        if(this.direction == Action.DOWN) {
             for(int k=0; k < length; k++) {
                 for(int r=0; r < s; r++) {
                     observation.add(new Tile((px+length)-k-r, (py+length)-k));
@@ -98,7 +99,7 @@ public class CharacterVision{
                 s -= 2;
             }
         }
-        else if(this.direction == Angle.RIGHT) {
+        else if(this.direction == Action.RIGHT) {
             for(int k=0; k < length; k++) {
                 for(int r=0; r < s; r++) {
                     observation.add(new Tile((px+length)-k, (py+length)-k-r));
@@ -106,7 +107,7 @@ public class CharacterVision{
                 s -= 2;
             }
         }
-        else if(this.direction == Angle.UP) {
+        else if(this.direction == Action.UP) {
             for(int k=0; k < length; k++) {
                 for(int r=0; r < s; r++) {
                     observation.add(new Tile((px-length)+k+r, (py-length)+k));
@@ -114,7 +115,7 @@ public class CharacterVision{
                 s -= 2;
             }
         }
-        else if(this.direction == Angle.LEFT) {
+        else if(this.direction == Action.LEFT) {
             for(int k=0; k < length; k++) {
                 for(int r=0; r < s; r++) {
                     observation.add(new Tile((px-length)+k, (py-length)+k+r));
@@ -135,6 +136,10 @@ public class CharacterVision{
         rawvision.removeIf(tc -> (tc.getX() < 0 || tc.getY() < 0));
         rawvision.removeIf(tc -> (tc.getX() > board.width() || tc.getY() > board.height()));
 
+        int xBound = 0;
+        int yBound = 0;
+        boolean flag = true;
+
         // Check remaining tiles for items
         for (Tile t : rawvision) {
             for (Tile it : gm.getIntersectingTiles(position, t)) {
@@ -151,6 +156,19 @@ public class CharacterVision{
                     continue;
                 }
 
+                if(tileAddOpt.get() instanceof ShadowTile){
+                    Tile tileAdd = tileAddOpt.get();
+                    if(flag){
+                        flag = false;
+                        xBound = tileAdd.getX();
+                        yBound = tileAdd.getY();
+                    }
+
+                    if(checkShadowTile(position, xBound, yBound))
+                        continue;
+
+                }
+
                 finalvision.add(tileAddOpt.get());
             } else {
                 validtile = true;
@@ -159,6 +177,32 @@ public class CharacterVision{
 
         return finalvision;
     }
+
+    private boolean checkShadowTile(Tile tile, int xBound, int yBound){
+
+        int shadowBound = 1;
+
+        if(this.direction == Action.UP){
+
+            return tile.getY() >= yBound - shadowBound;
+
+        } else if(this.direction == Action.DOWN){
+
+            return tile.getY() <= yBound + shadowBound;
+
+        } else if(this.direction == Action.LEFT){
+
+            return tile.getX() >= xBound - shadowBound;
+
+        } else if(this.direction == Action.RIGHT){
+
+            return tile.getX() <= xBound + shadowBound;
+
+        }
+
+        return false;
+    }
+
 
     private boolean unobstructedTile(TileArea board, Tile t) {
         Optional<Tile> optTile = board.getByCoordinates(t.getX(), t.getY());
@@ -184,11 +228,11 @@ public class CharacterVision{
         this.length = length;
     }
 
-    public Angle getDirection() {
+    public Action getDirection() {
         return direction;
     }
 
-    public void setDirection(Angle direction) {
+    public void setDirection(Action direction) {
         this.direction = direction;
     }
 }

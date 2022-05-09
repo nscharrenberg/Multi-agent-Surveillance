@@ -31,10 +31,10 @@
 }
 
 .slider {
-	-fx-control-inner-background: #BFA888;
+    -fx-control-inner-background: #BFA888;
 }
 .slider:pressed {
-	-fx-control-inner-background: #b8995e;
+    -fx-control-inner-background: #b8995e;
 }
 .slider:hover {
     -fx-control-inner-background: #b8995e;

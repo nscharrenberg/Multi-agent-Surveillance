@@ -2,10 +2,12 @@ package com.nscharrenberg.um.multiagentsurveillance.gui.canvas;
 
 import com.nscharrenberg.um.multiagentsurveillance.agents.shared.Agent;
 import com.nscharrenberg.um.multiagentsurveillance.headless.Factory;
-import com.nscharrenberg.um.multiagentsurveillance.headless.models.Angle.Angle;
+import com.nscharrenberg.um.multiagentsurveillance.headless.exceptions.BoardNotBuildException;
+import com.nscharrenberg.um.multiagentsurveillance.headless.exceptions.InvalidTileException;
+import com.nscharrenberg.um.multiagentsurveillance.headless.models.*;
+import com.nscharrenberg.um.multiagentsurveillance.headless.models.Items.Collision.Wall;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Items.Item;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Items.Teleporter;
-import com.nscharrenberg.um.multiagentsurveillance.headless.models.Items.Collision.Wall;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Map.ShadowTile;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Map.Tile;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Map.TileArea;
@@ -29,15 +31,15 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class GameView extends StackPane {
-    protected static Color BASIC_TILE_COLOR = Color.FORESTGREEN;
-    protected static Color WALL_TILE_COLOR = Color.BROWN;
+    protected static Color BASIC_TILE_COLOR = Color.MINTCREAM;
+    protected static Color WALL_TILE_COLOR = Color.DARKBLUE.darker().darker();
     protected static Color TELEPORT_INPUT_TILE_COLOR = Color.PURPLE;
     protected static Color TELEPORT_OUT_TILE_COLOR = Color.MEDIUMPURPLE;
     protected static Color SHADED_TILE_COLOR = Color.BLACK;
     protected static Color GUARD_COLOR = Color.BLUE;
     protected static Color INTRUDER_COLOR = Color.INDIANRED;
     protected static Color VISION_COLOR = Color.LIGHTGOLDENRODYELLOW;
-    protected static Color KNOWLEDGE_COLOR = Color.LAWNGREEN;
+    protected static Color KNOWLEDGE_COLOR = Color.LIGHTBLUE;
     protected static Color TARGET_COLOR = Color.TEAL;
 
 
@@ -72,7 +74,7 @@ public class GameView extends StackPane {
 
     private WritableImage initialBoard;
 
-    public GameView(Stage stage) throws Exception {
+    public GameView(Stage stage) throws InvalidTileException, BoardNotBuildException {
 
         this.stage = stage;
         Factory.init();
@@ -158,7 +160,7 @@ public class GameView extends StackPane {
         return point * GSSD;
     }
 
-    public void init(Stage stage) throws Exception {
+    public void init(Stage stage) throws InvalidTileException, BoardNotBuildException {
         canvas = new Canvas(stage.getWidth(), stage.getHeight());
         graphicsContext = canvas.getGraphicsContext2D();
 
@@ -291,10 +293,10 @@ public class GameView extends StackPane {
     }
 
     private void drawKnowledge(Tile tile) {
-        drawTile(tile, KNOWLEDGE_COLOR, .1);
+        drawTile(tile, KNOWLEDGE_COLOR, .3);
     }
 
-    private void drawAgent(Tile tile, Angle angle) {
+    private void drawAgent(Tile tile, Action action) {
         drawTile(tile, GUARD_COLOR);
     }
 

@@ -7,13 +7,14 @@ import com.nscharrenberg.um.multiagentsurveillance.agents.shared.algorithms.dist
 import com.nscharrenberg.um.multiagentsurveillance.agents.shared.algorithms.pathfinding.AStar.AStar;
 import com.nscharrenberg.um.multiagentsurveillance.agents.shared.algorithms.pathfinding.IPathFinding;
 import com.nscharrenberg.um.multiagentsurveillance.agents.shared.utils.QueueNode;
-import com.nscharrenberg.um.multiagentsurveillance.headless.exceptions.CollisionException;
-import com.nscharrenberg.um.multiagentsurveillance.headless.exceptions.InvalidTileException;
-import com.nscharrenberg.um.multiagentsurveillance.headless.exceptions.ItemAlreadyOnTileException;
-import com.nscharrenberg.um.multiagentsurveillance.headless.exceptions.ItemNotOnTileException;
-import com.nscharrenberg.um.multiagentsurveillance.headless.models.Angle.Angle;
+import com.nscharrenberg.um.multiagentsurveillance.headless.contracts.repositories.IGameRepository;
+import com.nscharrenberg.um.multiagentsurveillance.headless.contracts.repositories.IMapRepository;
+import com.nscharrenberg.um.multiagentsurveillance.headless.contracts.repositories.IPlayerRepository;
+import com.nscharrenberg.um.multiagentsurveillance.headless.exceptions.*;
+import com.nscharrenberg.um.multiagentsurveillance.headless.models.Action;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Items.Collision.Collision;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Items.Item;
+import com.nscharrenberg.um.multiagentsurveillance.headless.models.Map.Area;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Map.Tile;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Player.Player;
 import com.nscharrenberg.um.multiagentsurveillance.headless.utils.BoardUtils;
@@ -39,24 +40,47 @@ public class YamauchiAgent extends Agent {
         }
     }
 
-    @Override
-    public void execute(Angle angle) {
+    public YamauchiAgent(Player player, IMapRepository mapRepository, IGameRepository gameRepository, IPlayerRepository playerRepository) {
+        super(player, mapRepository, gameRepository, playerRepository);
         try {
-            playerRepository.move(player, angle);
-        } catch (CollisionException | InvalidTileException | ItemNotOnTileException e) {
-            System.out.println(e.getMessage());
+            this.random = SecureRandom.getInstanceStrong();
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        }
+    }
 
-            // If any of the above errors is thrown we can't continue with our planned moves, and need to recalculate our frontiers
-            plannedMoves.clear();
-            frontiers.clear();
-            detect();
-        } catch (ItemAlreadyOnTileException e) {
+    public YamauchiAgent(Player player, Area<Tile> knowledge, Queue<Action> plannedMoves, IMapRepository mapRepository, IGameRepository gameRepository, IPlayerRepository playerRepository) {
+        super(player, knowledge, plannedMoves, mapRepository, gameRepository, playerRepository);
+        try {
+            this.random = SecureRandom.getInstanceStrong();
+        } catch (NoSuchAlgorithmException e) {
             e.printStackTrace();
         }
     }
 
     @Override
-    public Angle decide() {
+    public void execute(Action action) {
+        try {
+            playerRepository.move(player, action);
+        } catch (CollisionException | InvalidTileException | ItemNotOnTileException | ItemAlreadyOnTileException | BoardNotBuildException e) {
+            e.printStackTrace();
+//            System.out.println(e.getMessage());
+
+            // If any of the above errors is thrown we can't continue with our planned moves, and need to recalculate our frontiers
+            plannedMoves.clear();
+            frontiers.clear();
+
+            detect();
+        }
+    }
+
+    @Override
+    public Action decide() throws InvalidTileException, BoardNotBuildException {
+
+        if (player.getAgent().markerCheck() != null) {
+            //TODO: Return the type of marker. In general: Adjust code in placeMarker method, decide and move method.
+            return player.getAgent().markerCheck();
+        }
 
         // Inconsistent with explorer% ????
 //        System.out.println("Knowledge Size: " + this.knowledge.getRegion().entrySet().size());
@@ -74,7 +98,7 @@ public class YamauchiAgent extends Agent {
         if (chosenFrontierOpt.isEmpty() || chosenFrontierOpt.get().getQueueNode() == null) {
             int value = this.random.nextInt(100);
 
-            Angle move = player.getDirection();
+            Action move = player.getDirection();
 
             Optional<Tile> nextTileOpt = knowledge.getByCoordinates(player.getTile().getX() + move.getxIncrement(), player.getTile().getY() + player.getDirection().getyIncrement());
 
@@ -91,8 +115,8 @@ public class YamauchiAgent extends Agent {
             }
 
             if (value <= 30 || nextBlocked) {
-                int pick = this.random.nextInt(Angle.values().length);
-                move = Angle.values()[pick];
+                int pick = this.random.nextInt(Action.values().length);
+                move = Action.values()[pick];
             }
 
             return move;
@@ -103,6 +127,7 @@ public class YamauchiAgent extends Agent {
         plannedMoves = chosenFrontier.getQueueNode().getMoves();
 
         return plannedMoves.poll();
+
     }
 
     private Optional<Frontier> pickBestFrontier() {
@@ -124,8 +149,6 @@ public class YamauchiAgent extends Agent {
             if (bestFrontier == null)
                 bestFrontier = frontier;
 
-
-
             bestFrontier = weightDetector.compare(frontier, bestFrontier);
 
         }
@@ -137,6 +160,7 @@ public class YamauchiAgent extends Agent {
         if (bestFrontier.getQueueNode().getTile().isCollision()) {
             return Optional.empty();
         }
+
 
         if(pathNotForAll) findTheBestPath(bestFrontier);
 
@@ -220,7 +244,7 @@ public class YamauchiAgent extends Agent {
         int x = player.getTile().getX();
         int y = player.getTile().getY();
         HashMap<Integer, HashMap<Integer, Tile>> region = knowledge.subset(x - 10, y - 10, x + 10, y + 10);
-
+        
         frontiers.clear();
         chosenFrontier = null;
 
@@ -313,14 +337,14 @@ public class YamauchiAgent extends Agent {
     }
 
     private List<Optional<Tile>> getAllNeighbours(Map.Entry<Integer, Tile> colEntry, Map.Entry<Integer, HashMap<Integer, Tile>> rowEntry){
-        Optional<Tile> upOpt = BoardUtils.nextPosition(knowledge, colEntry.getValue(), Angle.UP);
-        Optional<Tile> rightOpt = BoardUtils.nextPosition(knowledge, colEntry.getValue(), Angle.RIGHT);
-        Optional<Tile> leftOpt = BoardUtils.nextPosition(knowledge, colEntry.getValue(), Angle.LEFT);
-        Optional<Tile> downOpt = BoardUtils.nextPosition(knowledge, colEntry.getValue(), Angle.DOWN);
-        Optional<Tile> upLeftOpt = knowledge.getByCoordinates(colEntry.getKey() + Angle.LEFT.getxIncrement(), rowEntry.getKey() + Angle.UP.getyIncrement());
-        Optional<Tile> upRightOpt = knowledge.getByCoordinates(colEntry.getKey() + Angle.RIGHT.getxIncrement(), rowEntry.getKey() + Angle.UP.getyIncrement());
-        Optional<Tile> bottomLeftOpt = knowledge.getByCoordinates(colEntry.getKey() + Angle.LEFT.getxIncrement(), rowEntry.getKey() + Angle.DOWN.getyIncrement());
-        Optional<Tile> bottomRightOpt = knowledge.getByCoordinates(colEntry.getKey() + Angle.RIGHT.getxIncrement(), rowEntry.getKey() + Angle.DOWN.getyIncrement());
+        Optional<Tile> upOpt = BoardUtils.nextPosition(knowledge, colEntry.getValue(), Action.UP);
+        Optional<Tile> rightOpt = BoardUtils.nextPosition(knowledge, colEntry.getValue(), Action.RIGHT);
+        Optional<Tile> leftOpt = BoardUtils.nextPosition(knowledge, colEntry.getValue(), Action.LEFT);
+        Optional<Tile> downOpt = BoardUtils.nextPosition(knowledge, colEntry.getValue(), Action.DOWN);
+        Optional<Tile> upLeftOpt = knowledge.getByCoordinates(colEntry.getKey() + Action.LEFT.getxIncrement(), rowEntry.getKey() + Action.UP.getyIncrement());
+        Optional<Tile> upRightOpt = knowledge.getByCoordinates(colEntry.getKey() + Action.RIGHT.getxIncrement(), rowEntry.getKey() + Action.UP.getyIncrement());
+        Optional<Tile> bottomLeftOpt = knowledge.getByCoordinates(colEntry.getKey() + Action.LEFT.getxIncrement(), rowEntry.getKey() + Action.DOWN.getyIncrement());
+        Optional<Tile> bottomRightOpt = knowledge.getByCoordinates(colEntry.getKey() + Action.RIGHT.getxIncrement(), rowEntry.getKey() + Action.DOWN.getyIncrement());
 
         return Arrays.asList(upOpt, rightOpt, leftOpt, downOpt, upLeftOpt, upRightOpt, bottomLeftOpt, bottomRightOpt);
     }

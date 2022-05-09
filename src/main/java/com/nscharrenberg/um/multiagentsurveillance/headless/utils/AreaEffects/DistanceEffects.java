@@ -10,7 +10,7 @@ import java.util.List;
 
 public class DistanceEffects {
 
-    public void areaEffects(Agent agent, List<Agent> agentList){
+    public static void areaEffects(Agent agent, List<Agent> agentList){
 
         agent.getPlayer().getAudioEffects().clear();
 

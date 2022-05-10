@@ -19,6 +19,7 @@ import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Alert;
 import javafx.scene.image.WritableImage;
+import javafx.scene.input.KeyCode;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
@@ -26,7 +27,10 @@ import javafx.stage.Stage;
 
 import java.text.DecimalFormat;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+
+import static com.nscharrenberg.um.multiagentsurveillance.gui.canvas.CanvasApp.MANUAL_PLAYER;
 
 public class GameView extends StackPane {
     protected static Color BASIC_TILE_COLOR = Color.FORESTGREEN;
@@ -136,13 +140,15 @@ public class GameView extends StackPane {
     }
 
     private void gameLoop() {
-        Factory.getGameRepository().setRunning(true);
-        while (Factory.getGameRepository().isRunning()) {
-            for (Agent agent : Factory.getPlayerRepository().getAgents()) {
-                try {
-                    agent.execute();
-                } catch (Exception e) {
-                    e.printStackTrace();
+        if(!MANUAL_PLAYER) {
+            Factory.getGameRepository().setRunning(true);
+            while (Factory.getGameRepository().isRunning()) {
+                for (Agent agent : Factory.getPlayerRepository().getAgents()) {
+                    try {
+                        agent.execute();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
                 }
             }
         }

@@ -2,7 +2,7 @@ package com.nscharrenberg.um.multiagentsurveillance.headless.utils.AreaEffects;
 
 import com.nscharrenberg.um.multiagentsurveillance.agents.shared.Agent;
 import com.nscharrenberg.um.multiagentsurveillance.agents.shared.algorithms.distanceCalculator.CalculateDistance;
-import com.nscharrenberg.um.multiagentsurveillance.agents.shared.algorithms.distanceCalculator.ManhattanDistance;
+import com.nscharrenberg.um.multiagentsurveillance.agents.shared.algorithms.distanceCalculator.EuclideanDistance;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Map.Tile;
 import com.nscharrenberg.um.multiagentsurveillance.headless.utils.AreaEffects.AudioEffect.Audio;
 import com.nscharrenberg.um.multiagentsurveillance.headless.utils.AreaEffects.AudioEffect.IAudioEffect;
@@ -11,7 +11,7 @@ import java.util.List;
 
 public class DistanceEffects {
 
-    private static final CalculateDistance calculateDistance = new ManhattanDistance();
+    private static final CalculateDistance calculateDistance = new EuclideanDistance();
 
     public static void areaEffects(Agent agent, List<Agent> agentList){
 

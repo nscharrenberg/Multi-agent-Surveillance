@@ -47,10 +47,16 @@ public class SBOAgent extends Agent {
     public Angle decide() {
 
         // TODO: get all parameters from the vision (this might become a global thing)
-        // TODO: Use RL model to compare parameter input
+        for (Item it: player.getTile().getItems()) {
 
+            // TODO: convert all parameter types to their corresponding one
+            Parameter temp = new Parameter(it);
 
+            if(agentmodel.AssessParameter(temp)) {
+                // set new angle
+            }
 
+        }
 
         if (!plannedMoves.isEmpty() && knowledge.getByCoordinates(goal.getX(), goal.getY()).isEmpty()) {
             return plannedMoves.poll();

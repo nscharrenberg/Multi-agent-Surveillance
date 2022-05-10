@@ -5,7 +5,8 @@ import com.nscharrenberg.um.multiagentsurveillance.headless.models.Angle;
 import java.util.ArrayList;
 
 public class RLmodel {
-    double scaler = 0;
+    double prioscaler = 0;
+    double strengthbias = 1;
     double baseline = 0;
     Angle redirect = null;
     ArrayList<Parameter> inputs;
@@ -15,17 +16,20 @@ public class RLmodel {
         inputs = new ArrayList<Parameter>();
     }
 
-    public void AssessParameter(Parameter input) {
+    public boolean AssessParameter(Parameter input) {
         double val = 0;
-        // TODO: Calc priority value
-        val = input.type.getPriority() * scaler - input.strength;
+        // TODO: Calc priority value || will be different for intruders
+        val = (input.type.getPriority() * prioscaler) - (strengthbias * input.strength);
 
         if(val >= baseline) {
             // Set new angle
             // redirect = input.direction;
 
             baseline = val;
+            return true;
         }
+
+        return false;
 
     }
 

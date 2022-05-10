@@ -1,6 +1,7 @@
 package com.nscharrenberg.um.multiagentsurveillance.agents.SBO;
 
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.AdvancedAngle;
+import com.nscharrenberg.um.multiagentsurveillance.headless.models.Item;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.ItemType;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.SoundWave;
 
@@ -10,7 +11,7 @@ public class Parameter {
     TypePriority type;
     int strength;
 
-    public Parameter() {
+    public Parameter(Item par) {
 
     }
 

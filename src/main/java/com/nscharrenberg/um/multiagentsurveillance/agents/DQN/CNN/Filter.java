@@ -1,6 +1,5 @@
 package com.nscharrenberg.um.multiagentsurveillance.agents.DQN.CNN;
 
-
 import static com.nscharrenberg.um.multiagentsurveillance.agents.DQN.DQN_Util.*;
 
 public class Filter {
@@ -76,6 +75,57 @@ public class Filter {
 
         return inputGradient;
     }
+
+    /**
+     * @param input - input channel
+     * @param kernelWeights - kernel matrix weights
+     * @param forward - if true the activation function is applied
+     * @return Either the activated output of the cross correlation or the cross correlation product
+     */
+    private double[][] crossCorrelate2DValid(double[][] input, double[][] kernelWeights, boolean forward){
+
+        int outLength = input.length - kernelWeights.length + 1;
+        double[][] out = new double[outLength][outLength];
+
+        if (forward) {
+            for (int i = 0; i < outLength; i++) {
+                for (int j = 0; j < outLength; j++) {
+                    out[i][j] += relu(ccValid(input, kernelWeights, i, j));
+                }
+            }
+        }
+
+        else {
+            for (int i = 0; i < outLength; i++) {
+                for (int j = 0; j < outLength; j++) {
+                    out[i][j] += ccValid(input, kernelWeights, i, j);
+                }
+            }
+        }
+
+        return out;
+    }
+
+    /**
+     * @param input
+     * @param kernelWeights
+     * @param iOffset
+     * @param jOffset
+     * @return
+     */
+    private double ccValid(double[][] input, double[][] kernelWeights, int iOffset, int jOffset){
+
+        double sum = 0;
+
+        for (int i = 0; i < kernelWeights.length; i++) {
+            for (int j = 0; j < kernelWeights.length; j++) {
+                sum += kernelWeights[i][j] * input[iOffset+i][jOffset+j];
+            }
+        }
+
+        return sum;
+    }
+
 
     public String[] saveFilter(int no){
         String[] out = new String[channels+3];

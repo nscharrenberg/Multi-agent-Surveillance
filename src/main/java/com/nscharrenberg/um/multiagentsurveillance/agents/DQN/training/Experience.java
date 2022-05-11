@@ -1,18 +1,18 @@
 package com.nscharrenberg.um.multiagentsurveillance.agents.DQN.training;
 
-import com.nscharrenberg.um.multiagentsurveillance.headless.models.Angle.Angle;
+import com.nscharrenberg.um.multiagentsurveillance.headless.models.Action;
 
 import java.util.Random;
 
 public class Experience {
 
     private double[][][] state;
-    private Angle action;
+    private Action action;
     private double reward;
     private double[][][] nextState;
 
 
-    public Experience(double[][][] state, Angle action, double reward, double[][][] nextState){
+    public Experience(double[][][] state, Action action, double reward, double[][][] nextState){
         this.state = state;
         this.action = action;
         this.nextState = nextState;
@@ -23,7 +23,7 @@ public class Experience {
         return state;
     }
 
-    public Angle getAction() {
+    public Action getAction() {
         return action;
     }
 

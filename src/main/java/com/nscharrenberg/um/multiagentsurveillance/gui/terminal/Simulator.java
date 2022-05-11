@@ -9,13 +9,13 @@ import com.nscharrenberg.um.multiagentsurveillance.headless.models.Action;
 
 public class Simulator {
 
-    public Simulator() throws InvalidTileException, BoardNotBuildException, ItemNotOnTileException {
+    public Simulator() throws Exception {
         Factory.init();
         Factory.getGameRepository().startGame();
         gameLoop();
     }
 
-    private void gameLoop() throws InvalidTileException, BoardNotBuildException, ItemNotOnTileException {
+    private void gameLoop() throws Exception {
         Factory.getGameRepository().setRunning(true);
         while (Factory.getGameRepository().isRunning()) {
             int agentId = 0;

@@ -27,16 +27,9 @@ public class ConvLayer {
     public double[][][] forward(double[][][] input) {
         this.length = inputLength - kernelSize + 1;
         double[][][] out = new double[numFilters][length][length];
-        double[][] layer;
 
-        for (int i = 0; i < numFilters; i++) {
-             layer = filters[i].calculateForwards(input);
-            for (int j = 0; j < length; j++) {
-                for (int k = 0; k < length; k++) {
-                    out[i][j][k] = layer[j][k];
-                }
-            }
-        }
+        for (int i = 0; i < numFilters; i++)
+            out[i] = filters[i].calculateForwards(input);
 
         this.output = out;
         return out;
@@ -69,6 +62,7 @@ public class ConvLayer {
 
         return dYdE;
     }
+
 
     public String[][] saveLayer(){
         String[][] out = new String[numFilters][channels + 2];

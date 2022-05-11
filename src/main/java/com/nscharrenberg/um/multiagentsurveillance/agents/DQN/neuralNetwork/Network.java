@@ -12,11 +12,16 @@ import static com.nscharrenberg.um.multiagentsurveillance.agents.DQN.neuralNetwo
 
 public class Network {
 
+    // TODO: create a read network method to load saved weights
+
     private ConvLayer[] convLayers;
     private DenseLayer[] denseLayers;
     private ActivationLayer activationLayer;
-    private int kernelSize = 3;
-    private double learningRate;
+    private final int kernelSize = 3;
+    private final double learningRate;
+    private final int outputLength = 3; // TODO: Add markers to decisions
+    private final int c1Filters = 32, c2Filters = 128, c3Filters = 32;
+    private int conv3Length;
 
     private double[] networkOutput;
 
@@ -26,7 +31,7 @@ public class Network {
 
     public void initLayers(int channels, int inputLength){
 
-        int c1Filters = 32, c2Filters = 128, c3Filters = 32;
+
         int input2Length = outDim(inputLength);
         int input3Length = outDim(input2Length);
 
@@ -36,17 +41,24 @@ public class Network {
                 new ConvLayer(c2Filters, input3Length, c3Filters, 6, learningRate),
         };
 
-        int numDenseIn = outDim(input3Length) * outDim(input3Length) * c3Filters;
-        int numFinalOut = 3; // TODO: decide on dis
+        conv3Length = outDim(input3Length);
+        int numDenseIn = conv3Length * conv3Length * c3Filters;
+
 
         denseLayers = new DenseLayer[]{
             denseLayers[0] = new DenseLayer(numDenseIn, numDenseIn, learningRate),
-            denseLayers[1] = new DenseLayer(numDenseIn, numFinalOut, learningRate),
+            denseLayers[1] = new DenseLayer(numDenseIn, outputLength, learningRate),
         };
 
         activationLayer = new ActivationLayer(numDenseIn);
     }
 
+
+    /**
+     * Function controls forward propagation through the network
+     * @param state - tensor of the current state of the agent
+     * @return - networks prediction value vector
+     */
     public double[] forwardPropagate(double[][][] state){
 
         double[][][] convOut = state.clone();
@@ -64,28 +76,30 @@ public class Network {
         return networkOutput;
     }
 
-/*    public void backwardPropagate(double[] validated){
+    // TODO: Implement and validate backward propagation
+
+    public void backwardPropagate(double[] validated){
 
         double[][][] inputGradient;
 
-        double[] dEdY = msePrime(numFinalOut, networkOutput, validated);
+        double[] dEdY = msePrime(outputLength, networkOutput, validated);
 
         dEdY = denseLayers[1].backward(dEdY);
         dEdY = activationLayer.backward(dEdY);
         dEdY = denseLayers[0].backward(dEdY);
 
-        inputGradient = unFlatten3D(dEdY, 32, 2);
+        inputGradient = unFlatten3D(dEdY, c3Filters, conv3Length);
 
         inputGradient = convLayers[2].backward(inputGradient);
         inputGradient = convLayers[1].backward(inputGradient);
         convLayers[0].backward(inputGradient);
-    }*/
+    }
 
-    private double[] msePrime(double n, double[] yP, double[] yA){
+    private double[] msePrime(int n, double[] yP, double[] yA){
 
-        double[] dEdY = new double[yP.length];
+        double[] dEdY = new double[n];
 
-        for (int i = 0; i < dEdY.length; i++) {
+        for (int i = 0; i < n; i++) {
             dEdY[i] = (2 / n) * (yP[i] - yA[i]);
         }
 

@@ -4,7 +4,7 @@ import com.nscharrenberg.um.multiagentsurveillance.agents.DQN.DQN_Agent;
 import com.nscharrenberg.um.multiagentsurveillance.headless.Factory;
 import com.nscharrenberg.um.multiagentsurveillance.headless.exceptions.BoardNotBuildException;
 import com.nscharrenberg.um.multiagentsurveillance.headless.exceptions.InvalidTileException;
-import com.nscharrenberg.um.multiagentsurveillance.headless.models.Angle.Angle;
+import com.nscharrenberg.um.multiagentsurveillance.headless.models.Action;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Map.Tile;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Player.Player;
 
@@ -32,7 +32,7 @@ public class NetworkTrainer {
     }
 
     public void runTraining() throws Exception {
-        Angle action;
+        Action action;
         double reward;
         double[][][] state = agent.getState();
         double[][][] nextState;
@@ -45,6 +45,8 @@ public class NetworkTrainer {
             moveHistory.push(new Experience(state,action,reward,nextState));
             state = nextState;
 
+            // TODO: Add short and long term training methods
+
             if (moveHistory.hasBatch(batchSize)){
                 samples = moveHistory.randomSample(batchSize);
 
@@ -53,13 +55,13 @@ public class NetworkTrainer {
         }
     }
 
-
+    // TODO: Move to agent class or handle error here
 
     public double[] checkMoves(double[] output, Player player) throws InvalidTileException, BoardNotBuildException {
         error = new double[output.length];
         this.output = output;
 
-        Angle direction = player.getDirection();
+        Action direction = player.getDirection();
 
         int x = player.getTile().getX();
         int y = player.getTile().getY();

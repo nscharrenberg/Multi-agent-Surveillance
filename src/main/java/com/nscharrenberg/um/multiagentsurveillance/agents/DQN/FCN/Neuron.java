@@ -3,8 +3,6 @@ package com.nscharrenberg.um.multiagentsurveillance.agents.DQN.FCN;
 import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
 
-import static com.nscharrenberg.um.multiagentsurveillance.agents.DQN.DQN_Util.linear;
-
 public class Neuron {
 
     private double[] weights;
@@ -24,7 +22,15 @@ public class Neuron {
     public double getBias() { return bias; }
 
     public double calculateForward(double[] input){
-        return linear(input, weights, bias);
+        double out = 0;
+
+        for (int i = 0; i < input.length; i++) {
+            out += input[i] * weights[i];
+        }
+        out += bias;
+
+
+        return out;
     }
 
     public void calculateBackward(double dEdY){
@@ -36,6 +42,7 @@ public class Neuron {
 
         bias -= learningRate * dEdY;
     }
+
 
     private double[] dEdW(double dEdY){
         double[] dEdW = new double[weights.length];

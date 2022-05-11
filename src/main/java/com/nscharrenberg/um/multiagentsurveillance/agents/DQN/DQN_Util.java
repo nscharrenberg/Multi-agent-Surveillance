@@ -15,6 +15,27 @@ public class DQN_Util {
         return x + (y * 8);
     }
 
+    private static double matMax(double[] input){
+        double max = 0;
+
+        for (double next : input)
+            if (next > max)
+                max = next;
+
+        return max;
+    }
+
+    private static double matMax(double[][] input){
+        double max = 0;
+
+        for (double[] row : input)
+            for (double next : row)
+                if (next > max)
+                    max = next;
+
+        return max;
+    }
+
 
     public static double[][][] intToDouble3D(int[][][] input){
         assert input[0].length == input[0][0].length : "Input layer not square";
@@ -61,19 +82,6 @@ public class DQN_Util {
         return out;
     }
 
-    public static double linear(double input[], double weights[], double bias){
-        double out = 0;
-
-        for (int i = 0; i < input.length; i++) {
-            out += input[i] * weights[i];
-        }
-        out += bias;
-
-        if (Double.isNaN(out))
-            out = 0;
-
-        return out;
-    }
 
     public static double relu(double x){
         return Math.max(0, x);
@@ -216,7 +224,7 @@ public class DQN_Util {
         for (int i = 0; i < channels; i++) {
             for (int j = 0; j < length; j++) {
                 for (int k = 0; k < length; k++) {
-                    out[i][k][j] = input[ind++];
+                    out[i][j][k] = input[ind++];
                 }
             }
         }
@@ -232,7 +240,7 @@ public class DQN_Util {
         for (int i = 0; i < input.length; i++) {
             for (int j = 0; j < input[0].length; j++) {
                 for (int k = 0; k < input[0].length; k++) {
-                    out[ind++] = input[i][k][j];
+                    out[ind++] = input[i][j][k];
                 }
             }
         }

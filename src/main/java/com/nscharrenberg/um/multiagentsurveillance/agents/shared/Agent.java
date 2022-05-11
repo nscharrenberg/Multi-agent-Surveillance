@@ -193,9 +193,9 @@ public abstract class Agent {
 
     public abstract void execute(Action action);
 
-    public abstract Action decide() throws InvalidTileException, BoardNotBuildException;
+    public abstract Action decide() throws InvalidTileException, BoardNotBuildException, Exception;
 
-    public void execute() throws InvalidTileException, BoardNotBuildException {
+    public void execute() throws Exception {
         execute(decide());
     }
 

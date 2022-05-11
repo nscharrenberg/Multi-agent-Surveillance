@@ -24,9 +24,8 @@ public class DenseLayer {
         this.inputs = inputs;
         double[] out = new double[numOutputs];
 
-        for (int i = 0; i < numOutputs; i++) {
+        for (int i = 0; i < numOutputs; i++)
             out[i] = neurons[i].calculateForward(inputs);
-        }
 
         this.outputs = out;
         return out;

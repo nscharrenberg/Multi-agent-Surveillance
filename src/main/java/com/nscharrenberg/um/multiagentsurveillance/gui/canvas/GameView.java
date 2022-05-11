@@ -74,7 +74,7 @@ public class GameView extends StackPane {
 
     private WritableImage initialBoard;
 
-    public GameView(Stage stage) throws InvalidTileException, BoardNotBuildException {
+    public GameView(Stage stage) throws Exception {
 
         this.stage = stage;
         Factory.init();
@@ -160,7 +160,7 @@ public class GameView extends StackPane {
         return point * GSSD;
     }
 
-    public void init(Stage stage) throws InvalidTileException, BoardNotBuildException {
+    public void init(Stage stage) throws Exception {
         canvas = new Canvas(stage.getWidth(), stage.getHeight());
         graphicsContext = canvas.getGraphicsContext2D();
 

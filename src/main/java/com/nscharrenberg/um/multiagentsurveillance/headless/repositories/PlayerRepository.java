@@ -13,6 +13,7 @@ import com.nscharrenberg.um.multiagentsurveillance.headless.exceptions.ItemAlrea
 import com.nscharrenberg.um.multiagentsurveillance.headless.exceptions.ItemNotOnTileException;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Angle.AdvancedAngle;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Angle.Angle;
+import com.nscharrenberg.um.multiagentsurveillance.headless.models.GameMode;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Items.Collision.Collision;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Items.Item;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Items.Teleporter;
@@ -112,17 +113,16 @@ public class PlayerRepository implements IPlayerRepository {
         // no tiles = 100% (division by 0 not possible)
         if (totalTileCount <= 0 || explorationPercentage >= (100 - TOLERANCE_RATE)) {
             explorationPercentage = 100;
-            //end game
-            Factory.getGameRepository().setRunning(false);
+            if (!getGameRepository().getGameMode().equals(GameMode.EXPLORATION)) {
+                //end game
+                Factory.getGameRepository().setRunning(false);
+            }
+
             return 100;
         }
 
         float percentage = (discoveredAreaTileCount / totalTileCount) * 100;
         explorationPercentage = percentage;
-
-        // TODO: Remove this when UI elements are present
-//        System.out.println("Explored: " + explorationPercentage + "%");
-
 
         return percentage;
     }

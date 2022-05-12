@@ -3,7 +3,6 @@ package com.nscharrenberg.um.multiagentsurveillance.gui.canvas;
 import com.nscharrenberg.um.multiagentsurveillance.agents.shared.Agent;
 import com.nscharrenberg.um.multiagentsurveillance.headless.Factory;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Angle.Angle;
-import com.nscharrenberg.um.multiagentsurveillance.headless.models.GameMode;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Items.Item;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Items.Teleporter;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Items.Collision.Wall;
@@ -11,7 +10,6 @@ import com.nscharrenberg.um.multiagentsurveillance.headless.models.Map.ShadowTil
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Map.Tile;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Map.TileArea;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Player.Guard;
-import com.nscharrenberg.um.multiagentsurveillance.headless.models.Player.Intruder;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Player.Player;
 import javafx.animation.AnimationTimer;
 import javafx.concurrent.Task;
@@ -27,11 +25,8 @@ import javafx.scene.text.Font;
 import javafx.stage.Stage;
 
 import java.text.DecimalFormat;
-import java.util.ConcurrentModificationException;
 import java.util.HashMap;
 import java.util.Map;
-
-import static com.nscharrenberg.um.multiagentsurveillance.gui.canvas.CanvasApp.MANUAL_PLAYER;
 
 public class GameView extends StackPane {
     protected static Color BASIC_TILE_COLOR = Color.FORESTGREEN;
@@ -141,15 +136,13 @@ public class GameView extends StackPane {
     }
 
     private void gameLoop() {
-        if(!MANUAL_PLAYER) {
-            Factory.getGameRepository().setRunning(true);
-            while (Factory.getGameRepository().isRunning()) {
-                for (Agent agent : Factory.getPlayerRepository().getAgents()) {
-                    try {
-                        agent.execute();
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
+        Factory.getGameRepository().setRunning(true);
+        while (Factory.getGameRepository().isRunning()) {
+            for (Agent agent : Factory.getPlayerRepository().getAgents()) {
+                try {
+                    agent.execute();
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
             }
         }
@@ -222,18 +215,11 @@ public class GameView extends StackPane {
     }
 
     private void drawAgents(Tile tile) {
-        try {
-            for (Item item : tile.getItems()) {
-                if (item instanceof Guard) {
-                    Player player = (Player) item;
-                    drawGuard(tile, player.getDirection());
-                } else if (item instanceof Intruder) {
-                    Player player = (Player) item;
-                    drawIntruder(tile, player.getDirection());
-                }
+        for (Item item : tile.getItems()) {
+            if (item instanceof Guard) {
+                Player player = (Player) item;
+                drawAgent(tile, player.getDirection());
             }
-        } catch (ConcurrentModificationException e) {
-            // do nothing
         }
     }
 
@@ -246,14 +232,12 @@ public class GameView extends StackPane {
         if (Factory.getPlayerRepository().getExplorationPercentage() >= 100) {
             stage.setTitle("Map Explored. Game Finished!");
         } else if (!Factory.getGameRepository().isRunning()) {
-            stage.setTitle("Game Stopped at an exploration rate of " + decimalFormat.format(Factory.getPlayerRepository().getExplorationPercentage()) + "% - " + Factory.getGameRepository().getGameMode().getName());
+            stage.setTitle("Game Stopped at an exploration rate of " + decimalFormat.format(Factory.getPlayerRepository().getExplorationPercentage()) + "%");
         } else {
-            stage.setTitle("Exploration Percentage: " + decimalFormat.format(Factory.getPlayerRepository().getExplorationPercentage()) + "% - " + Factory.getGameRepository().getGameMode().getName());
+            stage.setTitle("Exploration Percentage: " + decimalFormat.format(Factory.getPlayerRepository().getExplorationPercentage()) + "%");
         }
 
-        if (Factory.getGameRepository().getGameMode().equals(GameMode.EXPLORATION)) {
-            drawAllKnowledge();
-        }
+        drawAllKnowledge();
 
         for (Agent agent : Factory.getPlayerRepository().getAgents()) {
             drawAgents(agent.getPlayer().getTile());
@@ -288,12 +272,8 @@ public class GameView extends StackPane {
 
     public void drawAllKnowledge() {
         for (Map.Entry<Integer, HashMap<Integer, Tile>> rowEntry : Factory.getPlayerRepository().getCompleteKnowledgeProgress().getRegion().entrySet()) {
-            try {
-                for (Map.Entry<Integer, Tile> colEntry : rowEntry.getValue().entrySet()) {
-                    drawKnowledge(colEntry.getValue());
-                }
-            } catch (ConcurrentModificationException e) {
-                // do nothing
+            for (Map.Entry<Integer, Tile> colEntry : rowEntry.getValue().entrySet()) {
+                drawKnowledge(colEntry.getValue());
             }
         }
     }
@@ -314,12 +294,8 @@ public class GameView extends StackPane {
         drawTile(tile, KNOWLEDGE_COLOR, .1);
     }
 
-    private void drawGuard(Tile tile, Angle angle) {
+    private void drawAgent(Tile tile, Angle angle) {
         drawTile(tile, GUARD_COLOR);
-    }
-
-    private void drawIntruder(Tile tile, Angle angle) {
-        drawTile(tile, INTRUDER_COLOR);
     }
 
     private void drawWall(Tile tile) {

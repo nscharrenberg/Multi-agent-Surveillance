@@ -77,12 +77,14 @@ public class AudioCheckTest {
         thread.setDaemon(true);
         thread.start();
 
+        DistanceEffects distanceEffects = new DistanceEffects();
+
         int moveCount = 1;
         int agentId = 0;
 
         while (Factory.getGameRepository().isRunning()) {
 
-            DistanceEffects.areaEffects(agent, agents);
+            distanceEffects.areaEffects(agent, agents);
             List<Audio> audioList = agent.getPlayer().getAudioEffects();
 
             if(audioList.size() == 0)

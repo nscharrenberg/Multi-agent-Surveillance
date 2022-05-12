@@ -1,6 +1,5 @@
 height = 100
 width = 200
-gameMode = 0
 numGuards = 1
 baseSpeedGuard = 5
 distanceViewing = 10

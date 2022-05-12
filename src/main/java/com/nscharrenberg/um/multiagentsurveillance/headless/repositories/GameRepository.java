@@ -6,14 +6,13 @@ import com.nscharrenberg.um.multiagentsurveillance.headless.contracts.repositori
 import com.nscharrenberg.um.multiagentsurveillance.headless.contracts.repositories.IPlayerRepository;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.GameMode;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Player.Guard;
-import com.nscharrenberg.um.multiagentsurveillance.headless.models.Player.Intruder;
 import com.nscharrenberg.um.multiagentsurveillance.headless.utils.files.MapImporter;
 
 import java.io.File;
 import java.io.IOException;
 
 public class GameRepository implements IGameRepository {
-    private static String MAP_PATH = "src/test/resources/maps/rust.txt";
+    private static String MAP_PATH = "src/test/resources/maps/exam.txt";
     private IMapRepository mapRepository;
     private IPlayerRepository playerRepository;
 
@@ -43,11 +42,6 @@ public class GameRepository implements IGameRepository {
     @Override
     public void startGame() {
         importMap();
-
-        if (gameMode == null) {
-            setGameMode(GameMode.EXPLORATION);
-        }
-
         setupAgents();
 
 //        playerRepository.getStopWatch().start();
@@ -81,12 +75,6 @@ public class GameRepository implements IGameRepository {
     private void setupAgents() {
         for (int i = 0; i < Factory.getGameRepository().getGuardCount(); i++) {
             Factory.getPlayerRepository().spawn(Guard.class);
-        }
-
-        if (Factory.getGameRepository().getGameMode().equals(GameMode.GUARD_INTRUDER)) {
-            for (int i = 0; i < Factory.getGameRepository().getIntruderCount(); i++) {
-                Factory.getPlayerRepository().spawn(Intruder.class);
-            }
         }
     }
 

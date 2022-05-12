@@ -39,5 +39,4 @@ module com.nscharrenberg.um.multiagentsurveillance {
     opens com.nscharrenberg.um.multiagentsurveillance.headless.models.Items.Collision to cloning;
     opens com.nscharrenberg.um.multiagentsurveillance.headless.utils.Vision to cloning;
     opens com.nscharrenberg.um.multiagentsurveillance.headless.utils.AreaEffects.AudioEffect to cloning;
-    opens com.nscharrenberg.um.multiagentsurveillance.headless.utils.AreaEffects to cloning;
 }

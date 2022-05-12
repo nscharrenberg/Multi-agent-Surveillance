@@ -2,14 +2,9 @@ package com.nscharrenberg.um.multiagentsurveillance.agents.shared.algorithms.dis
 
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Map.Tile;
 
+public class ManhattanDistance {
 
-/**
- * Diamond range
- */
-public class ManhattanDistance implements CalculateDistance{
-
-    @Override
-    public double compute(Tile tileX, Tile tileY){
+    public static double compute(Tile tileX, Tile tileY){
         double x = Math.abs(tileX.getX() - tileY.getX());
         double y = Math.abs(tileX.getY() - tileY.getY());
         return x + y;

@@ -9,7 +9,7 @@ import java.util.Stack;
 //import com.nscharrenberg.um.multiagentsurveillance.headless.Factory;
 //import com.nscharrenberg.um.multiagentsurveillance.headless.models.*;
 //import com.nscharrenberg.um.multiagentsurveillance.headless.utils.Vision.CharacterVision;
-//import com.nscharrenberg.um.multiagentsurveillance.headless.utils.Vision.Geometrics;
+//import com.nscharrenberg.um.multiagentsurveillance.headless.utils.Geometrics;
 //import org.junit.jupiter.api.Assertions;
 //import org.junit.jupiter.api.BeforeEach;
 //
@@ -18,7 +18,7 @@ import java.util.Stack;
 //
 public class StackTest {
 
-    @DisplayName("Stack Test")
+    @DisplayName("Raw Vision Test")
     @Test
     void testStackTiles() {
 
@@ -38,6 +38,8 @@ public class StackTest {
 
         boolean match =  tiles.stream().noneMatch(t -> (t.getX() == dum.getX() && t.getY() == dum.getY()));
         System.out.println(match);
+
+        //tiles.removeIf(t -> t.getX() == && t.getY() == )
 
         Tile testt = tiles.stream().filter(t -> (t.getX() == dum.getX() && t.getY() == dum.getY())).findFirst().get();
         System.out.println(exist +" - "+ exist2+ " - "+ exist3);

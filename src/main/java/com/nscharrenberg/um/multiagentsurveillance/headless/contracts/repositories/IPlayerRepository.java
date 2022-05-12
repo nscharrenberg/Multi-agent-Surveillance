@@ -48,8 +48,6 @@ public interface IPlayerRepository {
      */
     boolean isLegalMove(Player player, Angle direction);
 
-    void updateSounds(List<Agent> agentList);
-
     List<Intruder> getIntruders();
 
     void setIntruders(List<Intruder> intruders);

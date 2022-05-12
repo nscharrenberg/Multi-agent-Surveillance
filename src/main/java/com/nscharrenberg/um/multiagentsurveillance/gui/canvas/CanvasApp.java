@@ -1,8 +1,5 @@
 package com.nscharrenberg.um.multiagentsurveillance.gui.canvas;
 
-import com.nscharrenberg.um.multiagentsurveillance.agents.shared.Agent;
-import com.nscharrenberg.um.multiagentsurveillance.headless.Factory;
-import com.nscharrenberg.um.multiagentsurveillance.headless.models.Angle.Angle;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.geometry.HPos;
@@ -17,44 +14,29 @@ import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
 
 import java.util.HashMap;
-import java.util.List;
 
 public class CanvasApp extends Application {
-    private static final int WIDTH = 800;
-    private static final int HEIGHT = 800;
-    public static final boolean MANUAL_PLAYER = false;
+    private GameView view;
+    private static int WIDTH = 800;
+    private static int HEIGHT = 800;
 
     @Override
     public void start(Stage primaryStage) {
         try {
             primaryStage.setWidth(WIDTH);
             primaryStage.setHeight(HEIGHT);
-            GameView view = new GameView(primaryStage);
+            view = new GameView(primaryStage);
 
             Scene scene = new Scene(view, 800, 800);
 
             scene.setOnKeyPressed(e -> {
                 if (e.getCode() == KeyCode.L) {
                     Alert alert = new Alert(Alert.AlertType.INFORMATION);
-                    alert.setTitle("Legend");
-                    alert.setHeaderText("");
-                    //alert.setContentText(" FOREST GREEN = NORMAL TILE \n BROWN = WALL \n PURPLE = Teleport entrance \n LIGHT PURPLE = Teleport exit \n Black = Shadow \n Light Green = Knowledge \n Yellow/White = Vision \n Blue = Guard");
-                    alert.setGraphic(createLegend());
-                    alert.show();
-                }
-
-                if(MANUAL_PLAYER && Factory.getPlayerRepository().getAgents().size() == 1){
-                    List<Agent> listAgent = Factory.getPlayerRepository().getAgents();
-                    Agent agent = listAgent.get(0);
-                    if (e.getCode() == KeyCode.UP) {
-                        agent.execute(Angle.UP);
-                    } else if (e.getCode() == KeyCode.DOWN){
-                        agent.execute(Angle.DOWN);
-                    } else if (e.getCode() == KeyCode.LEFT){
-                        agent.execute(Angle.LEFT);
-                    } else if (e.getCode() == KeyCode.RIGHT){
-                        agent.execute(Angle.RIGHT);
-                    }
+                alert.setTitle("Legend");
+                alert.setHeaderText("");
+                //alert.setContentText(" FOREST GREEN = NORMAL TILE \n BROWN = WALL \n PURPLE = Teleport entrance \n LIGHT PURPLE = Teleport exit \n Black = Shadow \n Light Green = Knowledge \n Yellow/White = Vision \n Blue = Guard");
+                alert.setGraphic(createLegend());
+                alert.show();
                 }
             });
 
@@ -93,7 +75,7 @@ public class CanvasApp extends Application {
         for (String item : legendItems.keySet()) {
             color = legendItems.get(item);
 
-            if (item.equals("Guard") || item.equals("Intruder")) {
+            if (item == "Guard" || item == "Intruder") {
                 polygon = createAgent(item, color, size);
                 legend.add(polygon, 0, row);
                 GridPane.setHalignment(polygon, HPos.CENTER);

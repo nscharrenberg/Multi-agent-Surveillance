@@ -1,6 +1,5 @@
 package com.nscharrenberg.um.multiagentsurveillance.agents.shared.algorithms.pathfinding.AStar;
 
-import com.nscharrenberg.um.multiagentsurveillance.agents.shared.algorithms.distanceCalculator.CalculateDistance;
 import com.nscharrenberg.um.multiagentsurveillance.agents.shared.algorithms.distanceCalculator.ManhattanDistance;
 import com.nscharrenberg.um.multiagentsurveillance.agents.shared.algorithms.pathfinding.IPathFinding;
 import com.nscharrenberg.um.multiagentsurveillance.agents.shared.algorithms.structures.FibonacciHeap.Fibonacci;
@@ -16,8 +15,6 @@ import com.nscharrenberg.um.multiagentsurveillance.headless.utils.BoardUtils;
 import java.util.*;
 
 public class AStar implements IPathFinding {
-
-    private final CalculateDistance calculateDistance = new ManhattanDistance();
 
     @Override
     public Optional<QueueNode> execute(Area<Tile> board, Player player, Tile target) {
@@ -66,7 +63,7 @@ public class AStar implements IPathFinding {
 
                     visited.get(nextTileOpt.get().getX()).put(nextTileOpt.get().getY(), Boolean.TRUE);
 
-                    int distance = (int) calculateDistance.compute(nextTileOpt.get(), target);
+                    int distance = (int) ManhattanDistance.compute(nextTileOpt.get(), target);
 
                     TreeNode childNode = new TreeNode(nextTileOpt.get(), angle, tree);
 

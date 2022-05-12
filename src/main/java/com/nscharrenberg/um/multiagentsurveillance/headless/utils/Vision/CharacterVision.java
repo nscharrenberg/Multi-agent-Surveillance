@@ -3,10 +3,9 @@ package com.nscharrenberg.um.multiagentsurveillance.headless.utils.Vision;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Angle.Angle;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Items.Item;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Items.Collision.Wall;
-import com.nscharrenberg.um.multiagentsurveillance.headless.models.Map.ShadowTile;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Map.Tile;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Map.TileArea;
-import com.nscharrenberg.um.multiagentsurveillance.headless.models.Player.Player;
+import com.nscharrenberg.um.multiagentsurveillance.headless.utils.Geometrics;
 
 import java.util.ArrayList;
 import java.util.Optional;
@@ -16,13 +15,11 @@ public class CharacterVision{
     private int length;
     private Angle direction;
     private Geometrics gm;
-    private Player player;
 
-    public CharacterVision(int length, Angle direction, Player player) {
+    public CharacterVision(int length, Angle direction) {
         this.length = length;
         this.direction = direction;
-        this.gm = new Geometrics();
-        this.player = player;
+        gm = new Geometrics();
     }
 
     public ArrayList<Tile> getVision(TileArea board, Tile position) {
@@ -163,35 +160,10 @@ public class CharacterVision{
         return finalvision;
     }
 
-    private boolean checkDifBetweenPlayerAndShadowTile(Tile tile, Tile playerTile){
-
-        int bound = 2;
-        int yDif = Math.abs(tile.getY() - playerTile.getY());
-        int xDif = Math.abs(tile.getX() - playerTile.getX());
-
-        if(this.direction == Angle.UP || this.direction == Angle.DOWN){
-
-            return bound >= yDif;
-
-        }  else if(this.direction == Angle.LEFT || this.direction == Angle.RIGHT){
-
-            return bound >= xDif;
-
-        }
-
-        return false;
-    }
-
     private boolean unobstructedTile(TileArea board, Tile t) {
         Optional<Tile> optTile = board.getByCoordinates(t.getX(), t.getY());
         if(optTile.isPresent()) {
             Tile tile = optTile.get();
-
-            if(tile instanceof ShadowTile){
-                if(!checkDifBetweenPlayerAndShadowTile(tile, player.getTile()))
-                    return true;
-            }
-
             if (tile.getItems().size() != 0) {
                 for (Item im : tile.getItems()) {
                     if (im instanceof Wall) {   // Might have to add other checks to this later

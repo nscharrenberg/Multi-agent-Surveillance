@@ -13,21 +13,17 @@ import com.nscharrenberg.um.multiagentsurveillance.headless.exceptions.ItemAlrea
 import com.nscharrenberg.um.multiagentsurveillance.headless.exceptions.ItemNotOnTileException;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Angle.AdvancedAngle;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Angle.Angle;
-import com.nscharrenberg.um.multiagentsurveillance.headless.models.GameMode;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Items.Collision.Collision;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Items.Item;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Items.Teleporter;
-import com.nscharrenberg.um.multiagentsurveillance.headless.models.Map.ShadowTile;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Map.Tile;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Map.TileArea;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Player.Guard;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Player.Intruder;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Player.Player;
-import com.nscharrenberg.um.multiagentsurveillance.headless.utils.AreaEffects.DistanceEffects;
 import com.nscharrenberg.um.multiagentsurveillance.headless.utils.BoardUtils;
 import com.nscharrenberg.um.multiagentsurveillance.headless.utils.Vision.CharacterVision;
 import com.nscharrenberg.um.multiagentsurveillance.headless.utils.StopWatch;
-import static com.nscharrenberg.um.multiagentsurveillance.headless.utils.AreaEffects.AudioEffectHelper.*;
 
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
@@ -48,8 +44,7 @@ public class PlayerRepository implements IPlayerRepository {
 
     private List<Agent> agents;
 
-    private static final Class<? extends Agent> guardType = YamauchiAgent.class;
-    private static final Class<? extends Agent> intruderType = YamauchiAgent.class;
+    private static final Class<? extends Agent> agentType = YamauchiAgent.class;
 
     private float explorationPercentage = 0;
 
@@ -114,16 +109,17 @@ public class PlayerRepository implements IPlayerRepository {
         // no tiles = 100% (division by 0 not possible)
         if (totalTileCount <= 0 || explorationPercentage >= (100 - TOLERANCE_RATE)) {
             explorationPercentage = 100;
-            if (!getGameRepository().getGameMode().equals(GameMode.EXPLORATION)) {
-                //end game
-                Factory.getGameRepository().setRunning(false);
-            }
-
+            //end game
+            Factory.getGameRepository().setRunning(false);
             return 100;
         }
 
         float percentage = (discoveredAreaTileCount / totalTileCount) * 100;
         explorationPercentage = percentage;
+
+        // TODO: Remove this when UI elements are present
+//        System.out.println("Explored: " + explorationPercentage + "%");
+
 
         return percentage;
     }
@@ -196,12 +192,12 @@ public class PlayerRepository implements IPlayerRepository {
                         Intruder intruder = new Intruder(tile, Angle.UP);
                         tile.add(intruder);
                         intruders.add(intruder);
-                        agent = spawnAgent(intruder, intruderType);
+                        agent = spawnAgent(intruder, agentType);
                     } else {
                         Guard guard = new Guard(tile, Angle.UP);
                         tile.add(guard);
                         guards.add(guard);
-                        agent = spawnAgent(guard, guardType);
+                        agent = spawnAgent(guard, agentType);
                     }
 
                     agent.addKnowledge(tile);
@@ -232,37 +228,22 @@ public class PlayerRepository implements IPlayerRepository {
         return agent;
     }
 
-
-
     @Override
     public void move(Player player, Angle direction) throws CollisionException, InvalidTileException, ItemNotOnTileException, ItemAlreadyOnTileException {
         Angle currentDirection = player.getDirection();
-        Tile currentTilePlayer = player.getTile();
-        int visionLength = 6;
-
-        if(currentTilePlayer instanceof ShadowTile)
-            visionLength /= 2;
 
         // Rotate the player when it's not facing the same direction as it wants to go to.
         if (!currentDirection.equals(direction)) {
             player.setDirection(direction);
 
             if (player.getAgent() != null) {
-                //Vision
-                CharacterVision characterVision = new CharacterVision(visionLength, player.getDirection(), player);
+                CharacterVision characterVision = new CharacterVision(6, player.getDirection());
                 List<Tile> vision = characterVision.getVision(mapRepository.getBoard(), player.getTile());
-
-                //Add knowledge to the player
                 player.getAgent().addKnowledge(vision);
-
-                //Add tiles to the progress
                 completeKnowledgeProgress.add(vision);
-
-                //Add vision to the player
                 player.setVision(new TileArea(vision));
 
-                //Set the represented sound range
-                player.setRepresentedSoundRange(ROTATE);
+//                calculateExplorationPercentage();
             }
 
             return;
@@ -300,31 +281,17 @@ public class PlayerRepository implements IPlayerRepository {
             player.setDirection(teleporter.getDirection());
 
             if (player.getAgent() != null) {
-                //Vision
-                CharacterVision characterVision = new CharacterVision(visionLength, player.getDirection(), player);
+                CharacterVision characterVision = new CharacterVision(6, player.getDirection());
                 List<Tile> vision = characterVision.getVision(mapRepository.getBoard(), nextPosition);
-
-                //Add tiles to the progress
                 completeKnowledgeProgress.add(vision);
-
-                //Add knowledge to the player
                 player.getAgent().addKnowledge(vision);
 
-                //Vision
                 List<Tile> vision2 = characterVision.getVision(mapRepository.getBoard(), player.getTile());
-
-                //Add knowledge to the player
                 player.getAgent().addKnowledge(vision2);
-
-                //Add tiles to the progress
                 completeKnowledgeProgress.add(vision2);
-
-                //Add vision to the player
                 player.setVision(new TileArea(vision2));
 
-                //Set the represented sound range
-                player.setRepresentedSoundRange(WAIT);
-
+//                calculateExplorationPercentage();
             }
 
             return;
@@ -335,26 +302,15 @@ public class PlayerRepository implements IPlayerRepository {
         player.setTile(nextPosition);
 
         if (player.getAgent() != null) {
-            //Vision
-            CharacterVision characterVision = new CharacterVision(visionLength, player.getDirection(), player);
+            CharacterVision characterVision = new CharacterVision(6, player.getDirection());
             List<Tile> vision = characterVision.getVision(mapRepository.getBoard(), player.getTile());
 
-            //Add knowledge to the player
             player.getAgent().addKnowledge(vision);
-
-            //Add tiles to the progress
             completeKnowledgeProgress.add(vision);
-
-            //Add vision to the player
             player.setVision(new TileArea(vision));
-
-            //Set the represented sound range
-            player.setRepresentedSoundRange(WALK);
-
+//            calculateExplorationPercentage();
         }
     }
-
-
 
     @Override
     public boolean isLegalMove(Player player, Angle direction) {
@@ -379,13 +335,6 @@ public class PlayerRepository implements IPlayerRepository {
         Optional<Item> collisionFound = nextPosition.getItems().stream().filter(item -> item instanceof Collision).findFirst();
 
         return collisionFound.isEmpty();
-    }
-
-    @Override
-    public void updateSounds(List<Agent> agentList) {
-        for(Agent agent : agentList){
-            DistanceEffects.areaEffects(agent, agentList);
-        }
     }
 
     @Override

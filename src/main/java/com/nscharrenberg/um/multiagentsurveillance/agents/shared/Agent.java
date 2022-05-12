@@ -16,6 +16,7 @@ import com.nscharrenberg.um.multiagentsurveillance.headless.models.Map.ShadowTil
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Map.Tile;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Map.TileArea;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Marker;
+import com.nscharrenberg.um.multiagentsurveillance.headless.models.MarkerSmell;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Player.Guard;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Player.Intruder;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Player.Player;
@@ -46,7 +47,6 @@ public abstract class Agent {
         this.player = player;
         if (player instanceof Guard) {
             deadEndMarkers = 5;
-            targetMarkers = 5;
             teleporterMarkers = 5;
             intruderSpottedMarkers = 5;
             shadedMarkers = 5;
@@ -73,7 +73,6 @@ public abstract class Agent {
         this.player = player;
         if (player instanceof Guard) {
             deadEndMarkers = 5;
-            targetMarkers = 5;
             teleporterMarkers = 5;
             intruderSpottedMarkers = 5;
             shadedMarkers = 5;
@@ -100,7 +99,6 @@ public abstract class Agent {
         this.player = player;
         if (player instanceof Guard) {
             deadEndMarkers = 5;
-            targetMarkers = 5;
             teleporterMarkers = 5;
             intruderSpottedMarkers = 5;
             shadedMarkers = 5;
@@ -199,7 +197,6 @@ public abstract class Agent {
         execute(decide());
     }
 
-    //TODO: Mind that here I depend on a class called Target which extends Item (which would still need to be added).
     public Action markerCheck() throws InvalidTileException, BoardNotBuildException {
         HashMap<Integer, HashMap<Integer, Tile>> vision = player.getVision().getRegion();
 
@@ -210,13 +207,6 @@ public abstract class Agent {
                         if (!lookForSameMarker(vision, Marker.MarkerType.SHADED, player)) {
                             if (!lookForMarkerPlacedByPlayer(player, Marker.MarkerType.SHADED)) {
                                 return Action.PLACE_MARKER_SHADED;
-                            }
-                        }
-                    }
-                    else if ((Factory.getMapRepository().getTargetArea().within(colEntry.getValue().getX(), colEntry.getValue().getY())) && getTargetMarkers() > 0) {
-                        if (!lookForSameMarker(vision, Marker.MarkerType.TARGET, player)) {
-                            if (!lookForMarkerPlacedByPlayer(player, Marker.MarkerType.TARGET)) {
-                                return Action.PLACE_MARKER_TARGET;
                             }
                         }
                     }
@@ -310,13 +300,13 @@ public abstract class Agent {
     }
 
     public boolean lookForMarkerPlacedByPlayer(Player player, Marker.MarkerType typeOfMarker) {
-        HashMap<Integer, Marker> listOfPlacedMarkers = Factory.getMapRepository().getListOfPlacedMarkers();
+        HashMap<Integer, MarkerSmell> listOfPlacedMarkers = Factory.getMapRepository().getListOfPlacedMarkers();
 
         if (listOfPlacedMarkers == null) {
             return false;
         }
 
-        for (Map.Entry<Integer, Marker> entry : listOfPlacedMarkers.entrySet()) {
+        for (Map.Entry<Integer, MarkerSmell> entry : listOfPlacedMarkers.entrySet()) {
             if ((entry.getValue().getType() == typeOfMarker) && (entry.getValue().getPlayer() == player)) {
                 return true;
             }

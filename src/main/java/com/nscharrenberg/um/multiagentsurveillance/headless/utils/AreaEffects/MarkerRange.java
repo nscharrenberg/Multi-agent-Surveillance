@@ -36,7 +36,7 @@ public class MarkerRange {
 
     // TODO: might update some advanced angle converter
     // t1 = current tile, t2 = centre position
-    private AdvancedAngle getDirection(Tile t1, Tile t2) {
+    public AdvancedAngle getDirection(Tile t1, Tile t2) {
         if (t1.getX() == t2.getX()) {
             if (t1.getY() < t2.getY())
                 return AdvancedAngle.DOWN;
@@ -60,7 +60,7 @@ public class MarkerRange {
         }
     }
 
-    private int getStrength(Tile current, Tile target) {
+    public int getStrength(Tile current, Tile target) {
         return Math.max(abs(current.getX()-target.getX()), abs(current.getY()-target.getY()));
     }
 

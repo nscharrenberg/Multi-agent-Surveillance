@@ -5,13 +5,14 @@ import com.nscharrenberg.um.multiagentsurveillance.headless.models.Map.Tile;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Player.Player;
 
 public class Marker extends Item {
+    private static final int RANGE = 5;
+    private final int DURATION = 10;
+
     private MarkerType type;
     private Tile tile;
     private int currentDuration;
     private Player player;
 
-    public final int RANGE = 5;
-    public final int DURATION = 10;
 
     public enum MarkerType {
         DEAD_END,
@@ -38,7 +39,7 @@ public class Marker extends Item {
         this.type = type;
     }
 
-    public int getRange() {
+    public static int getRange() {
         return RANGE;
     }
 

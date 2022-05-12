@@ -11,6 +11,7 @@ import com.nscharrenberg.um.multiagentsurveillance.headless.contracts.repositori
 import com.nscharrenberg.um.multiagentsurveillance.headless.exceptions.*;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Action;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Angle.AdvancedAngle;
+import com.nscharrenberg.um.multiagentsurveillance.headless.models.GameMode;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Items.Collision.Collision;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Items.Item;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Items.Teleporter;
@@ -236,7 +237,7 @@ public class PlayerRepository implements IPlayerRepository {
         if(player.getTile() instanceof ShadowTile)
             visionLength /= 2;
 
-        CharacterVision characterVision = new CharacterVision(visionLength, player.getDirection());
+        CharacterVision characterVision = new CharacterVision(visionLength, player.getDirection(), player);
         List<Tile> vision = characterVision.getVision(mapRepository.getBoard(), player.getTile());
         player.getAgent().addKnowledge(vision);
         completeKnowledgeProgress.add(vision);

@@ -2,8 +2,11 @@ package com.nscharrenberg.um.multiagentsurveillance.gui.canvas;
 
 import com.nscharrenberg.um.multiagentsurveillance.agents.shared.Agent;
 import com.nscharrenberg.um.multiagentsurveillance.headless.Factory;
-import com.nscharrenberg.um.multiagentsurveillance.headless.models.Angle.Angle;
+import com.nscharrenberg.um.multiagentsurveillance.headless.exceptions.BoardNotBuildException;
+import com.nscharrenberg.um.multiagentsurveillance.headless.exceptions.InvalidTileException;
+import com.nscharrenberg.um.multiagentsurveillance.headless.models.Action;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.GameMode;
+import com.nscharrenberg.um.multiagentsurveillance.headless.models.Items.Collision.Wall;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Items.Item;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Items.Teleporter;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Map.ShadowTile;
@@ -313,11 +316,11 @@ public class GameView extends StackPane {
         drawTile(tile, KNOWLEDGE_COLOR, .1);
     }
 
-    private void drawGuard(Tile tile, Angle angle) {
+    private void drawGuard(Tile tile, Action angle) {
         drawTile(tile, GUARD_COLOR);
     }
 
-    private void drawIntruder(Tile tile, Angle angle) {
+    private void drawIntruder(Tile tile, Action angle) {
         drawTile(tile, INTRUDER_COLOR);
     }
 

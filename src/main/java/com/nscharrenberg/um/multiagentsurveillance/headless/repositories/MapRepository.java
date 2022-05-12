@@ -16,7 +16,9 @@ import com.nscharrenberg.um.multiagentsurveillance.headless.models.Map.ShadowTil
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Map.Tile;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Map.TileArea;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Marker;
+import com.nscharrenberg.um.multiagentsurveillance.headless.models.MarkerSmell;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Player.Player;
+import com.nscharrenberg.um.multiagentsurveillance.headless.utils.AreaEffects.MarkerRange;
 
 import java.util.*;
 
@@ -29,8 +31,10 @@ public class MapRepository implements IMapRepository {
     private TileArea guardSpawnArea;
     private TileArea intruderSpawnArea;
 
-    private HashMap<Integer, Marker> placed_markers;
+    private HashMap<Integer, MarkerSmell> placed_markers;
     private int hashmapCounter;
+
+    private MarkerRange mr = new MarkerRange(Marker.getRange());
 
     public MapRepository(IGameRepository gameRepository, IPlayerRepository playerRepository) {
         this.playerRepository = playerRepository;
@@ -222,15 +226,16 @@ public class MapRepository implements IMapRepository {
 
         Tile[] neighboringTiles = calculateNeigboringTiles(marker);
         for (int i = 0; i < neighboringTiles.length; i++) {
-            neighboringTiles[i].add(marker);
-            placed_markers.put(hashmapCounter, marker);
+            MarkerSmell markersmell = new MarkerSmell(neighboringTiles[i], marker.getType(), mr.getStrength(neighboringTiles[i], found), mr.getDirection(neighboringTiles[i], found), player);
+            neighboringTiles[i].add(markersmell);
+            placed_markers.put(hashmapCounter, markersmell);
             hashmapCounter++;
         }
     }
 
     @Override
     public Tile[] calculateNeigboringTiles(Marker marker) throws InvalidTileException, BoardNotBuildException {
-        int distance = marker.RANGE;
+        int distance = Marker.getRange();
         int current_x = marker.getTile().getX();
         int current_y = marker.getTile().getX();
         int top_left_x = current_x - distance;
@@ -245,7 +250,7 @@ public class MapRepository implements IMapRepository {
             for (int j = top_left_y; j > bottom_left_y; j++) {
                 manhattanDistance = Math.abs(current_x - i) + Math.abs(current_y - j);
                 if (manhattanDistance <= distance) {
-                    listOfTiles[k] = findTileByCoordinates(i, j);;
+                    listOfTiles[k] = findTileByCoordinates(i, j);
                     k++;
                 }
             }
@@ -254,21 +259,21 @@ public class MapRepository implements IMapRepository {
     }
 
     @Override
-    public void removeMarker(Marker marker) throws BoardNotBuildException, InvalidTileException, ItemNotOnTileException {
+    public void removeMarker(MarkerSmell markersmell) throws BoardNotBuildException, InvalidTileException, ItemNotOnTileException {
         boardInitCheck();
 
-        int x_position = marker.getTile().getX();
-        int y_position = marker.getTile().getY();
+        int x_position = markersmell.getTile().getX();
+        int y_position = markersmell.getTile().getY();
 
         Tile found = findTileByCoordinates(x_position, y_position);
-        found.remove(marker);
+        found.remove(markersmell);
     }
 
     @Override
     public void checkMarkers() throws BoardNotBuildException, InvalidTileException, ItemNotOnTileException {
         boardInitCheck();
 
-        for (Map.Entry<Integer, Marker> entry : placed_markers.entrySet()) {
+        for (Map.Entry<Integer, MarkerSmell> entry : placed_markers.entrySet()) {
             if (entry.getValue().getCurrentDuration() == 0) {
                 removeMarker(entry.getValue());
                 placed_markers.remove(entry);
@@ -278,7 +283,7 @@ public class MapRepository implements IMapRepository {
     }
 
     @Override
-    public HashMap<Integer, Marker> getListOfPlacedMarkers() {
+    public HashMap<Integer, MarkerSmell> getListOfPlacedMarkers() {
         return placed_markers;
     }
 

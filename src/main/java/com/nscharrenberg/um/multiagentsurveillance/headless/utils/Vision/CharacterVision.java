@@ -18,7 +18,7 @@ public class CharacterVision{
     private Geometrics gm;
     private Player player;
 
-    public CharacterVision(int length, Angle direction, Player player) {
+    public CharacterVision(int length, Action direction, Player player) {
         this.length = length;
         this.direction = direction;
         this.gm = new Geometrics();
@@ -169,11 +169,11 @@ public class CharacterVision{
         int yDif = Math.abs(tile.getY() - playerTile.getY());
         int xDif = Math.abs(tile.getX() - playerTile.getX());
 
-        if(this.direction == Angle.UP || this.direction == Angle.DOWN){
+        if(this.direction == Action.UP || this.direction == Action.DOWN){
 
             return bound >= yDif;
 
-        }  else if(this.direction == Angle.LEFT || this.direction == Angle.RIGHT){
+        }  else if(this.direction == Action.LEFT || this.direction == Action.RIGHT){
 
             return bound >= xDif;
 

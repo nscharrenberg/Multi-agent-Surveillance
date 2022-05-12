@@ -8,6 +8,7 @@ import com.nscharrenberg.um.multiagentsurveillance.headless.models.Action;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Map.Tile;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Map.TileArea;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Marker;
+import com.nscharrenberg.um.multiagentsurveillance.headless.models.MarkerSmell;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Player.Player;
 
 import java.util.HashMap;
@@ -86,7 +87,7 @@ public interface IMapRepository {
      * @param x1 - left bound
      * @param y1 - top bound
      * @param x2 - right bound
-     * @param y2 - lower bound g
+     * @param y2 - lower bound
      * @throws BoardNotBuildException - Thrown when the board has not been initialized (no tiles exist)
      * @throws InvalidTileException - Thrown when there is at least one tile that is not within the board.
      * @throws ItemAlreadyOnTileException - Thrown when the item is already present on the given tile.
@@ -151,11 +152,11 @@ public interface IMapRepository {
 
     Tile[] calculateNeigboringTiles(Marker marker) throws InvalidTileException, BoardNotBuildException;
 
-    void removeMarker(Marker marker) throws BoardNotBuildException, InvalidTileException, ItemNotOnTileException;
+    void removeMarker(MarkerSmell markersmell) throws BoardNotBuildException, InvalidTileException, ItemNotOnTileException;
 
     void checkMarkers() throws BoardNotBuildException, InvalidTileException, ItemNotOnTileException;
 
-    HashMap<Integer, Marker> getListOfPlacedMarkers();
+    HashMap<Integer, MarkerSmell> getListOfPlacedMarkers();
 
     TileArea getBoard();
 

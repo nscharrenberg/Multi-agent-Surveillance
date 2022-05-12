@@ -5,6 +5,7 @@ import com.nscharrenberg.um.multiagentsurveillance.headless.exceptions.BoardNotB
 import com.nscharrenberg.um.multiagentsurveillance.headless.exceptions.InvalidTileException;
 import com.nscharrenberg.um.multiagentsurveillance.headless.exceptions.ItemAlreadyOnTileException;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Angle.Angle;
+import com.nscharrenberg.um.multiagentsurveillance.headless.models.GameMode;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Map.TileArea;
 import com.nscharrenberg.um.multiagentsurveillance.headless.utils.AngleConverter;
 
@@ -73,6 +74,8 @@ public class MapImporter {
     private void addToConfig(String id, String value) throws InvalidTileException, BoardNotBuildException {
         if (id.equals(FileItems.NAME.getKey())) {
             Factory.getGameRepository().setName(value);
+        } else if (id.equals(FileItems.GAME_MODE.getKey())) {
+            Factory.getGameRepository().setGameMode(GameMode.getById(Integer.parseInt(value)));
         } else if (id.equals(FileItems.HEIGHT.getKey())) {
             Factory.getGameRepository().setHeight(Integer.parseInt(value));
         } else if (id.equals(FileItems.WIDTH.getKey())) {

@@ -15,6 +15,7 @@ import com.nscharrenberg.um.multiagentsurveillance.headless.models.Marker;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Player.Guard;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Player.Intruder;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Player.Player;
+import com.nscharrenberg.um.multiagentsurveillance.headless.models.SoundWave;
 import com.nscharrenberg.um.multiagentsurveillance.headless.utils.recorder.json.Coordinates;
 import com.nscharrenberg.um.multiagentsurveillance.headless.Factory;
 import javafx.application.Application ;
@@ -68,7 +69,8 @@ public class GameBoardGUI extends Application {
         MARKER,
         TELEPORTER,
         WALL,
-        WINDOW;
+        WINDOW,
+        SOUNDWAVE;
     }
 
     public GameBoardGUI(){
@@ -377,6 +379,8 @@ public class GameBoardGUI extends Application {
                 polygon.setFill(Color.BLUE);
             } else if (item instanceof Teleporter){
                 rectangle.setFill(Color.PURPLE);
+            } else if (item instanceof SoundWave) {
+                rectangle.setFill(Color.ORANGE);
             }
         }
 
@@ -463,7 +467,11 @@ public class GameBoardGUI extends Application {
             }else if (item instanceof  Teleporter){
                 index = components.indexOf(TileComponents.TELEPORTER);
                 out.set(index, item);
+            }  else if (item instanceof SoundWave) {
+                index = components.indexOf(TileComponents.SOUNDWAVE);
+                out.set(index, item);
             }
+
         }
 
         out.removeAll(Collections.singleton(null));

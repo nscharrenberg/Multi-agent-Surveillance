@@ -73,6 +73,8 @@ public class MapImporter {
     private void addToConfig(String id, String value) throws InvalidTileException, BoardNotBuildException {
         if (id.equals(FileItems.NAME.getKey())) {
             Factory.getGameRepository().setName(value);
+        } else if (id.equals(FileItems.GAME_MODE.getKey())) {
+            Factory.getGameRepository().setGameMode(GameMode.getById(Integer.parseInt(value)));
         } else if (id.equals(FileItems.HEIGHT.getKey())) {
             Factory.getGameRepository().setHeight(Integer.parseInt(value));
         } else if (id.equals(FileItems.WIDTH.getKey())) {

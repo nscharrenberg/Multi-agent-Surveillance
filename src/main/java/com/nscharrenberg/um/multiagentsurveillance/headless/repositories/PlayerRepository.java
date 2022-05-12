@@ -47,7 +47,8 @@ public class PlayerRepository implements IPlayerRepository {
 
     private List<Agent> agents;
 
-    private static final Class<? extends Agent> agentType = YamauchiAgent.class;
+    private static final Class<? extends Agent> guardType = YamauchiAgent.class;
+    private static final Class<? extends Agent> intruderType = YamauchiAgent.class;
 
     private float explorationPercentage = 0;
 
@@ -112,17 +113,16 @@ public class PlayerRepository implements IPlayerRepository {
         // no tiles = 100% (division by 0 not possible)
         if (totalTileCount <= 0 || explorationPercentage >= (100 - TOLERANCE_RATE)) {
             explorationPercentage = 100;
-            //end game
-            Factory.getGameRepository().setRunning(false);
+            if (!getGameRepository().getGameMode().equals(GameMode.EXPLORATION)) {
+                //end game
+                Factory.getGameRepository().setRunning(false);
+            }
+
             return 100;
         }
 
         float percentage = (discoveredAreaTileCount / totalTileCount) * 100;
         explorationPercentage = percentage;
-
-        // TODO: Remove this when UI elements are present
-//        System.out.println("Explored: " + explorationPercentage + "%");
-
 
         return percentage;
     }
@@ -195,12 +195,12 @@ public class PlayerRepository implements IPlayerRepository {
                         Intruder intruder = new Intruder(tile, Action.UP);
                         tile.add(intruder);
                         intruders.add(intruder);
-                        agent = spawnAgent(intruder, agentType);
+                        agent = spawnAgent(intruder, intruderType);
                     } else {
                         Guard guard = new Guard(tile, Action.UP);
                         tile.add(guard);
                         guards.add(guard);
-                        agent = spawnAgent(guard, agentType);
+                        agent = spawnAgent(guard, guardType);
                     }
 
                     agent.addKnowledge(tile);
@@ -262,7 +262,7 @@ public class PlayerRepository implements IPlayerRepository {
 
             if (player.getAgent() != null) {
                 //Vision
-                CharacterVision characterVision = new CharacterVision(visionLength, player.getDirection());
+                CharacterVision characterVision = new CharacterVision(visionLength, player.getDirection(), player);
                 List<Tile> vision = characterVision.getVision(mapRepository.getBoard(), player.getTile());
 
                 //Add knowledge to the player
@@ -342,7 +342,7 @@ public class PlayerRepository implements IPlayerRepository {
 
             if (player.getAgent() != null) {
                 //Vision
-                CharacterVision characterVision = new CharacterVision(visionLength, player.getDirection());
+                CharacterVision characterVision = new CharacterVision(visionLength, player.getDirection(), player);
                 List<Tile> vision = characterVision.getVision(mapRepository.getBoard(), nextPosition);
 
                 //Add tiles to the progress
@@ -377,7 +377,7 @@ public class PlayerRepository implements IPlayerRepository {
 
         if (player.getAgent() != null) {
             //Vision
-            CharacterVision characterVision = new CharacterVision(visionLength, player.getDirection());
+            CharacterVision characterVision = new CharacterVision(visionLength, player.getDirection(), player);
             List<Tile> vision = characterVision.getVision(mapRepository.getBoard(), player.getTile());
 
             //Add knowledge to the player

@@ -1,6 +1,5 @@
 package com.nscharrenberg.um.multiagentsurveillance.headless.repositories;
 
-import com.nscharrenberg.um.multiagentsurveillance.agents.SBO.SBOAgent;
 import com.nscharrenberg.um.multiagentsurveillance.agents.frontier.yamauchi.YamauchiAgent;
 import com.nscharrenberg.um.multiagentsurveillance.agents.random.RandomAgent;
 import com.nscharrenberg.um.multiagentsurveillance.agents.shared.Agent;
@@ -14,6 +13,7 @@ import com.nscharrenberg.um.multiagentsurveillance.headless.exceptions.ItemAlrea
 import com.nscharrenberg.um.multiagentsurveillance.headless.exceptions.ItemNotOnTileException;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Angle.AdvancedAngle;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Angle.Angle;
+import com.nscharrenberg.um.multiagentsurveillance.headless.models.GameMode;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Items.Collision.Collision;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Items.Item;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Items.Teleporter;
@@ -48,8 +48,8 @@ public class PlayerRepository implements IPlayerRepository {
 
     private List<Agent> agents;
 
-    private static final Class<? extends Agent> agentType = YamauchiAgent.class;
-    private static final Class<? extends Agent> agentType2 = SBOAgent.class;
+    private static final Class<? extends Agent> guardType = YamauchiAgent.class;
+    private static final Class<? extends Agent> intruderType = YamauchiAgent.class;
 
     private float explorationPercentage = 0;
 
@@ -114,17 +114,16 @@ public class PlayerRepository implements IPlayerRepository {
         // no tiles = 100% (division by 0 not possible)
         if (totalTileCount <= 0 || explorationPercentage >= (100 - TOLERANCE_RATE)) {
             explorationPercentage = 100;
-            //end game
-            Factory.getGameRepository().setRunning(false);
+            if (!getGameRepository().getGameMode().equals(GameMode.EXPLORATION)) {
+                //end game
+                Factory.getGameRepository().setRunning(false);
+            }
+
             return 100;
         }
 
         float percentage = (discoveredAreaTileCount / totalTileCount) * 100;
         explorationPercentage = percentage;
-
-        // TODO: Remove this when UI elements are present
-//        System.out.println("Explored: " + explorationPercentage + "%");
-
 
         return percentage;
     }
@@ -197,12 +196,12 @@ public class PlayerRepository implements IPlayerRepository {
                         Intruder intruder = new Intruder(tile, Angle.UP);
                         tile.add(intruder);
                         intruders.add(intruder);
-                        agent = spawnAgent(intruder, agentType2);
+                        agent = spawnAgent(intruder, intruderType);
                     } else {
                         Guard guard = new Guard(tile, Angle.UP);
                         tile.add(guard);
                         guards.add(guard);
-                        agent = spawnAgent(guard, agentType2);
+                        agent = spawnAgent(guard, guardType);
                     }
 
                     agent.addKnowledge(tile);
@@ -221,8 +220,6 @@ public class PlayerRepository implements IPlayerRepository {
             agent = new RandomAgent(player);
         } else if (agentClass.equals(YamauchiAgent.class)) {
             agent = new YamauchiAgent(player);
-        } else if(agentClass.equals(SBOAgent.class)) {
-            agent = new SBOAgent(player);
         }
 
         if (agent == null) {

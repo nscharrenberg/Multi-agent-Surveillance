@@ -1,18 +1,13 @@
 package com.nscharrenberg.um.multiagentsurveillance.agents.DQN.training;
 
 import com.nscharrenberg.um.multiagentsurveillance.agents.DQN.DQN_Agent;
-import com.nscharrenberg.um.multiagentsurveillance.headless.Factory;
-import com.nscharrenberg.um.multiagentsurveillance.headless.exceptions.BoardNotBuildException;
-import com.nscharrenberg.um.multiagentsurveillance.headless.exceptions.InvalidTileException;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Action;
-import com.nscharrenberg.um.multiagentsurveillance.headless.models.Map.Tile;
-import com.nscharrenberg.um.multiagentsurveillance.headless.models.Player.Player;
+
+import java.util.ArrayList;
 
 public class NetworkTrainer {
 
     private int velocity = 1;
-    private double[] error;
-    private double[] output;
     private final int batchSize = 256;
     private final double gamma = 0.999;
     private final double epsStart = 1;
@@ -22,102 +17,51 @@ public class NetworkTrainer {
     private final int memorySize = 10000;
     private final double lr = 0.001;
     private final int numEpisodes = 1000;
-    private MoveHistory moveHistory;
+    private SampleData sampleData;
     private DQN_Agent agent;
 
 
+    /*
+        This class could do many, many things. Some ideas:
+        1. This class runs the games and has all the agents here
+        2. Another class runs the games and
+            a. This class manages all the agents
+            b. This class manages one agent
+    */
+
+
     public NetworkTrainer(DQN_Agent agent){
-        moveHistory = new MoveHistory(memorySize);
+        sampleData = new SampleData(memorySize);
         this.agent = agent;
     }
 
     public void runTraining() throws Exception {
         Action action;
         double reward;
-        double[][][] state = agent.getState();
-        double[][][] nextState;
-        Experience[] samples;
+        double[][][] state = agent.getState(), nextState;
+        boolean done;
+
 
         for (int ts = 0; ts < 1; ts++) {
             action = agent.decide();
             reward = agent.preformMove(action);
             nextState = agent.getState();
-            moveHistory.push(new Experience(state,action,reward,nextState));
+            done = false; // UPDATE
+
+            sampleData.push(new Experience(state,action,reward,nextState,done));
             state = nextState;
 
             // TODO: Add short and long term training methods
+            // TODO: Agent requires a game finished check
 
-            if (moveHistory.hasBatch(batchSize)){
-                samples = moveHistory.randomSample(batchSize);
-
-
-            }
+            if (sampleData.hasBatch(batchSize))
+                batchTrain();
         }
     }
 
-    // TODO: Move to agent class or handle error here
+    private void batchTrain(){
+        SampleData samples = sampleData.randomSample(batchSize);
 
-    public double[] checkMoves(double[] output, Player player) throws InvalidTileException, BoardNotBuildException {
-        error = new double[output.length];
-        this.output = output;
-
-        Action direction = player.getDirection();
-
-        int x = player.getTile().getX();
-        int y = player.getTile().getY();
-
-        // what way is up
-        switch (direction){
-            case UP -> verticalCheck(x, y, true);
-            case DOWN -> verticalCheck(x, y, false);
-            case LEFT -> horizontalCheck(x, y, false);
-            case RIGHT -> horizontalCheck(x, y, true);
-        }
-
-        return error;
     }
-
-    private double collisionError(Tile selected){
-        if (selected.isCollision())
-            return -output[0];
-        return  0;
-    }
-
-    private void verticalCheck(int x, int y, boolean increasing) throws InvalidTileException, BoardNotBuildException {
-
-        // seriously what way is up lol
-        int displacement;
-        if (increasing)
-            displacement = velocity;
-        else displacement = -velocity;
-
-        Tile selected;
-        selected = Factory.getMapRepository().findTileByCoordinates(x,y+displacement);
-        error[0] = collisionError(selected);
-
-        selected = Factory.getMapRepository().findTileByCoordinates(x-displacement,y);
-        error[1] = collisionError(selected);
-
-        selected = Factory.getMapRepository().findTileByCoordinates(x+displacement,y);
-        error[2] = collisionError(selected);
-    }
-
-    private void horizontalCheck(int x, int y, boolean increasing) throws InvalidTileException, BoardNotBuildException {
-        int displacement;
-        if (increasing)
-            displacement = velocity;
-        else displacement = -velocity;
-
-        Tile selected;
-        selected = Factory.getMapRepository().findTileByCoordinates(x,y-displacement);
-        error[0] = collisionError(selected);
-
-        selected = Factory.getMapRepository().findTileByCoordinates(x-displacement,y);
-        error[1] = collisionError(selected);
-
-        selected = Factory.getMapRepository().findTileByCoordinates(x+displacement,y);
-        error[2] = collisionError(selected);
-    }
-
 
 }

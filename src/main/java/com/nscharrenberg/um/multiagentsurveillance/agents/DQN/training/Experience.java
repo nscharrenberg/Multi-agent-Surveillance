@@ -6,17 +6,19 @@ import java.util.Random;
 
 public class Experience {
 
-    private double[][][] state;
-    private Action action;
-    private double reward;
-    private double[][][] nextState;
+    public double[][][] state;
+    public Action action;
+    public double reward;
+    public double[][][] nextState;
+    public boolean done;
 
 
-    public Experience(double[][][] state, Action action, double reward, double[][][] nextState){
+    public Experience(double[][][] state, Action action, double reward, double[][][] nextState, boolean done){
         this.state = state;
         this.action = action;
         this.nextState = nextState;
         this.reward = reward;
+        this.done = done;
     }
 
     public double[][][] getState() {

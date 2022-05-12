@@ -21,6 +21,8 @@ import java.util.*;
 public class SBOAgent extends Agent {
     private final Stack<Tile> scanned = new Stack<>();
     private final TileArea visited = new TileArea();
+    private RLmodel agentmodel = new RLmodel();
+    Tile goal = this.player.getTile();
 
     public SBOAgent(Player agent) {
         super(agent);
@@ -48,12 +50,22 @@ public class SBOAgent extends Agent {
     @Override
     public Angle decide() {
 
-        // TODO: need to update this to skip to next tile in stack if goal tile has entered the knowledge
-        if (!plannedMoves.isEmpty()) {
+        // TODO: get all parameters from the vision (this might become a global thing)
+        for (Item it: player.getTile().getItems()) {
+
+            // TODO: convert all parameter types to their corresponding one
+            Parameter temp = new Parameter(it);
+
+            if(agentmodel.AssessParameter(temp)) {
+                // set new angle
+            }
+
+        }
+
+        if (!plannedMoves.isEmpty() && knowledge.getByCoordinates(goal.getX(), goal.getY()).isEmpty()) {
             return plannedMoves.poll();
         }
 
-        Tile goal = this.player.getTile();
         gatherV2();
 
         while(!scanned.isEmpty()) {

@@ -206,32 +206,41 @@ public abstract class Agent {
         for (Map.Entry<Integer, HashMap<Integer, Tile>> rowEntry : vision.entrySet()) {
             for (Map.Entry<Integer, Tile> colEntry : rowEntry.getValue().entrySet()) {
                 if (player instanceof Guard) {
-                    if (colEntry.getValue() instanceof ShadowTile) {
+                    if (colEntry.getValue() instanceof ShadowTile && getShadedMarkers() > 0) {
                         if (!lookForSameMarker(vision, Marker.MarkerType.SHADED, player)) {
                             if (!lookForMarkerPlacedByPlayer(player, Marker.MarkerType.SHADED)) {
                                 return Action.PLACE_MARKER_SHADED;
                             }
                         }
                     }
+                    else if ((Factory.getMapRepository().getTargetArea().within(colEntry.getValue().getX(), colEntry.getValue().getY())) && getTargetMarkers() > 0) {
+                        if (!lookForSameMarker(vision, Marker.MarkerType.TARGET, player)) {
+                            if (!lookForMarkerPlacedByPlayer(player, Marker.MarkerType.TARGET)) {
+                                return Action.PLACE_MARKER_TARGET;
+                            }
+                        }
+                    }
                     for (Item item : colEntry.getValue().getItems()) {
-                        if (item instanceof Intruder) {
+                        if (item instanceof Intruder && getIntruderSpottedMarkers() > 0) {
                             if (!lookForSameMarker(vision, Marker.MarkerType.INTRUDER_SPOTTED, player)) {
                                 if (!lookForMarkerPlacedByPlayer(player, Marker.MarkerType.INTRUDER_SPOTTED)) {
                                     return Action.PLACE_MARKER_INTRUDERSPOTTED;
                                 }
                             }
                         }
-                        if (item instanceof Target) {
-                            if (!lookForSameMarker(vision, Marker.MarkerType.TARGET, player)) {
-                                if (!lookForMarkerPlacedByPlayer(player, Marker.MarkerType.TARGET)) {
-                                    return Action.PLACE_MARKER_TARGET;
-                                }
-                            }
-                        }
-                        if (item instanceof Teleporter) {
+                        else if (item instanceof Teleporter && getTeleporterMarkers() > 0) {
                             if (!lookForSameMarker(vision, Marker.MarkerType.TELEPORTER, player)) {
                                 if (!lookForMarkerPlacedByPlayer(player, Marker.MarkerType.TELEPORTER)) {
                                     return Action.PLACE_MARKER_TELEPORTER;
+                                }
+                            }
+                        }
+                        else if (item instanceof Wall && getDeadEndMarkers() > 0) {
+                            if (!lookForSameMarker(vision, Marker.MarkerType.DEAD_END, player)) {
+                                if (!lookForMarkerPlacedByPlayer(player, Marker.MarkerType.DEAD_END)) {
+                                    if (checkForDeadEnd(player, vision, colEntry.getValue())) {
+                                        return Action.PLACE_MARKER_DEADEND;
+                                    }
                                 }
                             }
                         }
@@ -239,36 +248,37 @@ public abstract class Agent {
                 }
 
                 else if (player instanceof Intruder) {
-                    if (colEntry.getValue() instanceof ShadowTile) {
+                    if (colEntry.getValue() instanceof ShadowTile && getShadedMarkers() > 0) {
                         if (!lookForSameMarker(vision, Marker.MarkerType.SHADED, player)) {
                             if (!lookForMarkerPlacedByPlayer(player, Marker.MarkerType.SHADED)) {
                                 return Action.PLACE_MARKER_SHADED;
                             }
                         }
                     }
+                    else if ((Factory.getMapRepository().getTargetArea().within(colEntry.getValue().getX(), colEntry.getValue().getY())) && getTargetMarkers() > 0) {
+                        if (!lookForSameMarker(vision, Marker.MarkerType.TARGET, player)) {
+                            if (!lookForMarkerPlacedByPlayer(player, Marker.MarkerType.TARGET)) {
+                                return Action.PLACE_MARKER_TARGET;
+                            }
+                        }
+                    }
                     for (Item item : colEntry.getValue().getItems()) {
-                        if (item instanceof Intruder) {
-                            if (!lookForSameMarker(vision, Marker.MarkerType.INTRUDER_SPOTTED, player)) {
-                                if (!lookForMarkerPlacedByPlayer(player, Marker.MarkerType.INTRUDER_SPOTTED)) {
-                                    return Action.PLACE_MARKER_INTRUDERSPOTTED;
+                        if (item instanceof Guard && getGuardSpottedMarkers() > 0) {
+                            if (!lookForSameMarker(vision, Marker.MarkerType.GUARD_SPOTTED, player)) {
+                                if (!lookForMarkerPlacedByPlayer(player, Marker.MarkerType.GUARD_SPOTTED)) {
+                                    return Action.PLACE_MARKER_GUARDSPOTTED;
                                 }
                             }
                         }
-                        if (item instanceof Target) {
-                            if (!lookForSameMarker(vision, Marker.MarkerType.TARGET, player)) {
-                                if (!lookForMarkerPlacedByPlayer(player, Marker.MarkerType.TARGET)) {
-                                    return Action.PLACE_MARKER_TARGET;
-                                }
-                            }
-                        }
-                        if (item instanceof Teleporter) {
+                        else if (item instanceof Teleporter && getTeleporterMarkers() > 0) {
                             if (!lookForSameMarker(vision, Marker.MarkerType.TELEPORTER, player)) {
                                 if (!lookForMarkerPlacedByPlayer(player, Marker.MarkerType.TELEPORTER)) {
+                                    System.out.println("TELEPORTER PLACED");
                                     return Action.PLACE_MARKER_TELEPORTER;
                                 }
                             }
                         }
-                        if (item instanceof Wall) {
+                        else if (item instanceof Wall && getDeadEndMarkers() > 0) {
                             if (!lookForSameMarker(vision, Marker.MarkerType.DEAD_END, player)) {
                                 if (!lookForMarkerPlacedByPlayer(player, Marker.MarkerType.DEAD_END)) {
                                     if (checkForDeadEnd(player, vision, colEntry.getValue())) {

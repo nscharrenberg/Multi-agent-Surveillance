@@ -4,11 +4,8 @@ import com.nscharrenberg.um.multiagentsurveillance.headless.Factory;
 import com.nscharrenberg.um.multiagentsurveillance.headless.contracts.repositories.IGameRepository;
 import com.nscharrenberg.um.multiagentsurveillance.headless.contracts.repositories.IMapRepository;
 import com.nscharrenberg.um.multiagentsurveillance.headless.contracts.repositories.IPlayerRepository;
-import com.nscharrenberg.um.multiagentsurveillance.headless.exceptions.CollisionException;
-import com.nscharrenberg.um.multiagentsurveillance.headless.exceptions.InvalidTileException;
-import com.nscharrenberg.um.multiagentsurveillance.headless.exceptions.ItemAlreadyOnTileException;
-import com.nscharrenberg.um.multiagentsurveillance.headless.exceptions.ItemNotOnTileException;
-import com.nscharrenberg.um.multiagentsurveillance.headless.models.Angle.Angle;
+import com.nscharrenberg.um.multiagentsurveillance.headless.exceptions.*;
+import com.nscharrenberg.um.multiagentsurveillance.headless.models.Action;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Items.Item;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Items.Teleporter;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Items.Collision.Wall;
@@ -66,7 +63,7 @@ public class MapImporterTest {
             playerRepository.move(playerRepository.getGuards().get(0), Action.DOWN);
 
             Assertions.assertNotEquals(Factory.getPlayerRepository().getGuards().get(0), playerRepository.getGuards().get(0));
-        } catch (IOException | CollisionException | ItemAlreadyOnTileException | InvalidTileException | ItemNotOnTileException e) {
+        } catch (IOException | CollisionException | ItemAlreadyOnTileException | InvalidTileException | ItemNotOnTileException | BoardNotBuildException e) {
             Assertions.fail();
         }
     }

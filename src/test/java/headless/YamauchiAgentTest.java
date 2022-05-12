@@ -23,7 +23,7 @@ public class YamauchiAgentTest {
     @DisplayName("BFS Test")
     @Test
     public void bfsTest() {
-        File file = new File("src/test/resources/maps/testmap2.txt");
+        File file = new File("src/test/resources/maps/testmap.txt");
 
         if (!file.exists()) {
             Assertions.fail("Resource not found");
@@ -81,7 +81,7 @@ public class YamauchiAgentTest {
     @DisplayName("AStar Test")
     @Test
     public void AStarTest() {
-        File file = new File("src/test/resources/maps/testmap2.txt");
+        File file = new File("src/test/resources/maps/testmap.txt");
 
         if (!file.exists()) {
             Assertions.fail("Resource not found");

@@ -22,9 +22,6 @@ public class Marker extends Item {
         SHADED
     }
 
-    //TODO: Drop marker whenever there is a teammate nearby --> keep kind of short term memory
-
-
     public Marker(MarkerType type, Tile tile, Player player) {
         super(tile);
         currentDuration = DURATION;

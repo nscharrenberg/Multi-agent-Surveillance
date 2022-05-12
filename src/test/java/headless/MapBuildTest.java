@@ -2,7 +2,7 @@ package headless;
 
 import com.nscharrenberg.um.multiagentsurveillance.headless.Factory;
 import com.nscharrenberg.um.multiagentsurveillance.headless.exceptions.*;
-import com.nscharrenberg.um.multiagentsurveillance.headless.models.Angle.Angle;
+import com.nscharrenberg.um.multiagentsurveillance.headless.models.Action;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Items.Item;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Items.Teleporter;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Items.Collision.Wall;
@@ -99,7 +99,7 @@ public class MapBuildTest {
 
     @DisplayName("Move Guard Success")
     @Test
-    void testMoveGuardSuccessful() throws ItemAlreadyOnTileException, CollisionException, InvalidTileException, ItemNotOnTileException {
+    void testMoveGuardSuccessful() throws ItemAlreadyOnTileException, CollisionException, InvalidTileException, ItemNotOnTileException, BoardNotBuildException {
         int x = 20;
         int y = 10;
 

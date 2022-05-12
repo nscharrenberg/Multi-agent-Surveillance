@@ -1,22 +1,23 @@
 package com.nscharrenberg.um.multiagentsurveillance.agents.shared.algorithms.pathfinding.AStar;
 
+import com.nscharrenberg.um.multiagentsurveillance.agents.shared.algorithms.distanceCalculator.CalculateDistance;
+import com.nscharrenberg.um.multiagentsurveillance.agents.shared.algorithms.distanceCalculator.ManhattanDistance;
 import com.nscharrenberg.um.multiagentsurveillance.agents.shared.algorithms.pathfinding.IPathFinding;
 import com.nscharrenberg.um.multiagentsurveillance.agents.shared.algorithms.structures.FibonacciHeap.Fibonacci;
 import com.nscharrenberg.um.multiagentsurveillance.agents.shared.algorithms.structures.FibonacciHeap.Node;
-import com.nscharrenberg.um.multiagentsurveillance.agents.shared.algorithms.structures.UnknownAreaCalculator.UnknownAreaCalculate;
 import com.nscharrenberg.um.multiagentsurveillance.agents.shared.utils.QueueNode;
 import com.nscharrenberg.um.multiagentsurveillance.agents.shared.utils.TreeNode;
-import com.nscharrenberg.um.multiagentsurveillance.headless.models.Angle;
-import com.nscharrenberg.um.multiagentsurveillance.headless.models.Area;
-import com.nscharrenberg.um.multiagentsurveillance.headless.models.Player;
-import com.nscharrenberg.um.multiagentsurveillance.headless.models.Tile;
+import com.nscharrenberg.um.multiagentsurveillance.headless.models.Angle.Angle;
+import com.nscharrenberg.um.multiagentsurveillance.headless.models.Map.Area;
+import com.nscharrenberg.um.multiagentsurveillance.headless.models.Player.Player;
+import com.nscharrenberg.um.multiagentsurveillance.headless.models.Map.Tile;
 import com.nscharrenberg.um.multiagentsurveillance.headless.utils.BoardUtils;
 
 import java.util.*;
 
 public class AStar implements IPathFinding {
 
-    private UnknownAreaCalculate unknownAreaCalculate = new UnknownAreaCalculate();
+    private final CalculateDistance calculateDistance = new ManhattanDistance();
 
     @Override
     public Optional<QueueNode> execute(Area<Tile> board, Player player, Tile target) {
@@ -65,7 +66,7 @@ public class AStar implements IPathFinding {
 
                     visited.get(nextTileOpt.get().getX()).put(nextTileOpt.get().getY(), Boolean.TRUE);
 
-                    int distance = computeDistance(nextTileOpt.get(), target);
+                    int distance = (int) calculateDistance.compute(nextTileOpt.get(), target);
 
                     TreeNode childNode = new TreeNode(nextTileOpt.get(), angle, tree);
 
@@ -100,7 +101,6 @@ public class AStar implements IPathFinding {
         int pathCost = 0;
 
         while (tree.getParent() != null) {
-//            pathCost += unknownAreaCalculate.calculateUnknownArea(board, tree.getTile());
             sequenceMoves.addFirst(tree.getEntrancePosition());
             tree = tree.getParent();
         }
@@ -113,11 +113,5 @@ public class AStar implements IPathFinding {
         QueueNode queueNode = new QueueNode(target, lastMove.getEntrancePosition(), sequenceMoves, pathCost);
 
         return Optional.of(queueNode);
-    }
-
-    private int computeDistance(Tile tileX, Tile tileY){
-        int x = Math.abs(tileX.getX() - tileY.getX());
-        int y = Math.abs(tileX.getY() - tileY.getY());
-        return x + y;
     }
 }

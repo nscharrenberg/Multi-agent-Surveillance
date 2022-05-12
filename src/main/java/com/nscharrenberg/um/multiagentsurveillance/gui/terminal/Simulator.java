@@ -2,12 +2,7 @@ package com.nscharrenberg.um.multiagentsurveillance.gui.terminal;
 
 import com.nscharrenberg.um.multiagentsurveillance.agents.shared.Agent;
 import com.nscharrenberg.um.multiagentsurveillance.headless.Factory;
-import com.nscharrenberg.um.multiagentsurveillance.headless.models.Angle;
-import com.nscharrenberg.um.multiagentsurveillance.headless.models.Guard;
-import com.nscharrenberg.um.multiagentsurveillance.headless.utils.files.MapImporter;
-
-import java.io.File;
-import java.io.IOException;
+import com.nscharrenberg.um.multiagentsurveillance.headless.models.Angle.Angle;
 
 public class Simulator {
 

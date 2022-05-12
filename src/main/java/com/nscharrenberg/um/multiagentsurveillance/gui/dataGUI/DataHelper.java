@@ -42,27 +42,27 @@ public class DataHelper {
     private float grabAgentData(String parameter, AgentJSON agent){
         switch (parameter){
             case "Steps" -> {
-                return agent.getMoveNum();
+                return agent.moveNum();
             }
             case "Time" -> {
-                return agent.getGameTime();
+                return agent.gameTime();
             }
             case "Time To Decide" -> {
-                return agent.getTimeToDecide();
+                return agent.timeToDecide();
             }
             case "X" -> {
-                Coordinates coordinates = agent.getCoordinates();
-                return coordinates.x;
+                Coordinates coordinates = agent.coordinates();
+                return coordinates.x();
             }
             case "Y" -> {
-                Coordinates coordinates = agent.getCoordinates();
-                return coordinates.y;
+                Coordinates coordinates = agent.coordinates();
+                return coordinates.y();
             }
             case "Total Exploration Rate" -> {
-                return agent.getTotalExplorationRate();
+                return agent.totalExplorationRate();
             }
             case "Agent Exploration Rate" -> {
-                return agent.getAgentExplorationRate();
+                return agent.agentExplorationRate();
             }
             default -> throw new RuntimeException("Parameter is not found, DataHelper.java");
         }

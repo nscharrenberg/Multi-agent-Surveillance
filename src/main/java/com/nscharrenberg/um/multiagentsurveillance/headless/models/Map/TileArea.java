@@ -1,4 +1,4 @@
-package com.nscharrenberg.um.multiagentsurveillance.headless.models;
+package com.nscharrenberg.um.multiagentsurveillance.headless.models.Map;
 
 import com.rits.cloning.Cloner;
 
@@ -214,6 +214,9 @@ public class TileArea extends Area<Tile> {
         if (existing.isPresent() && !overwrite) {
             return;
         }
+
+        if(existing.isEmpty())
+            size++;
 
         region.get(tile.getX()).put(tile.getY(), tile);
     }

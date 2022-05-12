@@ -3,18 +3,20 @@ package com.nscharrenberg.um.multiagentsurveillance.agents.frontier.yamauchi;
 import com.nscharrenberg.um.multiagentsurveillance.agents.frontier.yamauchi.comparator.IWeightComparator;
 import com.nscharrenberg.um.multiagentsurveillance.agents.frontier.yamauchi.comparator.MinDistanceUnknownAreaComparator;
 import com.nscharrenberg.um.multiagentsurveillance.agents.shared.Agent;
+import com.nscharrenberg.um.multiagentsurveillance.agents.shared.algorithms.distanceCalculator.CalculateDistance;
+import com.nscharrenberg.um.multiagentsurveillance.agents.shared.algorithms.distanceCalculator.ManhattanDistance;
 import com.nscharrenberg.um.multiagentsurveillance.agents.shared.algorithms.pathfinding.AStar.AStar;
-import com.nscharrenberg.um.multiagentsurveillance.agents.shared.algorithms.pathfinding.BFS.BFS;
 import com.nscharrenberg.um.multiagentsurveillance.agents.shared.algorithms.pathfinding.IPathFinding;
 import com.nscharrenberg.um.multiagentsurveillance.agents.shared.utils.QueueNode;
-import com.nscharrenberg.um.multiagentsurveillance.headless.contracts.repositories.IGameRepository;
-import com.nscharrenberg.um.multiagentsurveillance.headless.contracts.repositories.IMapRepository;
-import com.nscharrenberg.um.multiagentsurveillance.headless.contracts.repositories.IPlayerRepository;
 import com.nscharrenberg.um.multiagentsurveillance.headless.exceptions.CollisionException;
 import com.nscharrenberg.um.multiagentsurveillance.headless.exceptions.InvalidTileException;
 import com.nscharrenberg.um.multiagentsurveillance.headless.exceptions.ItemAlreadyOnTileException;
 import com.nscharrenberg.um.multiagentsurveillance.headless.exceptions.ItemNotOnTileException;
-import com.nscharrenberg.um.multiagentsurveillance.headless.models.*;
+import com.nscharrenberg.um.multiagentsurveillance.headless.models.Angle.Angle;
+import com.nscharrenberg.um.multiagentsurveillance.headless.models.Items.Collision.Collision;
+import com.nscharrenberg.um.multiagentsurveillance.headless.models.Items.Item;
+import com.nscharrenberg.um.multiagentsurveillance.headless.models.Map.Tile;
+import com.nscharrenberg.um.multiagentsurveillance.headless.models.Player.Player;
 import com.nscharrenberg.um.multiagentsurveillance.headless.utils.BoardUtils;
 
 import java.security.NoSuchAlgorithmException;
@@ -27,30 +29,11 @@ public class YamauchiAgent extends Agent {
     private SecureRandom random;
     private final IPathFinding pathFindingAlgorithm = new AStar();
     private final IWeightComparator weightDetector = new MinDistanceUnknownAreaComparator();
-
-    private int consecutiveNoFrontier = 0;
-    private static final int MAX_CONSECUTIVE_NO_FRONTIER_COUNT = 5;
+    private final CalculateDistance calculateDistance = new ManhattanDistance();
+    private final static boolean pathNotForAll = true;
 
     public YamauchiAgent(Player player) {
         super(player);
-        try {
-            this.random = SecureRandom.getInstanceStrong();
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public YamauchiAgent(Player player, IMapRepository mapRepository, IGameRepository gameRepository, IPlayerRepository playerRepository) {
-        super(player, mapRepository, gameRepository, playerRepository);
-        try {
-            this.random = SecureRandom.getInstanceStrong();
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public YamauchiAgent(Player player, Area<Tile> knowledge, Queue<Angle> plannedMoves, IMapRepository mapRepository, IGameRepository gameRepository, IPlayerRepository playerRepository) {
-        super(player, knowledge, plannedMoves, mapRepository, gameRepository, playerRepository);
         try {
             this.random = SecureRandom.getInstanceStrong();
         } catch (NoSuchAlgorithmException e) {
@@ -68,7 +51,7 @@ public class YamauchiAgent extends Agent {
             // If any of the above errors is thrown we can't continue with our planned moves, and need to recalculate our frontiers
             plannedMoves.clear();
             frontiers.clear();
-            detectFrontiers();
+            detect();
         } catch (ItemAlreadyOnTileException e) {
             e.printStackTrace();
         }
@@ -77,8 +60,8 @@ public class YamauchiAgent extends Agent {
     @Override
     public Angle decide() {
 
-        // Incosistent with explorer% ????
-        System.out.println("knowledgesize: " + this.knowledge.getRegion().entrySet().size());
+        // Inconsistent with explorer% ????
+//        System.out.println("Knowledge Size: " + this.knowledge.getRegion().entrySet().size());
 
         // If moves are alread planned just continue deciding them.
         if (!plannedMoves.isEmpty()) {
@@ -91,7 +74,6 @@ public class YamauchiAgent extends Agent {
 
         // No Frontier found, just do a random move for now
         if (chosenFrontierOpt.isEmpty() || chosenFrontierOpt.get().getQueueNode() == null) {
-            consecutiveNoFrontier++;
             int value = this.random.nextInt(100);
 
             Angle move = player.getDirection();
@@ -118,8 +100,6 @@ public class YamauchiAgent extends Agent {
             return move;
         }
 
-        consecutiveNoFrontier = 0;
-
         Frontier chosenFrontier = chosenFrontierOpt.get();
 
         plannedMoves = chosenFrontier.getQueueNode().getMoves();
@@ -129,7 +109,7 @@ public class YamauchiAgent extends Agent {
 
     private Optional<Frontier> pickBestFrontier() {
         if (frontiers.isEmpty() && plannedMoves.isEmpty()) {
-            detectFrontiers();
+            detect();
         }
 
         if (frontiers.isEmpty()) {
@@ -160,16 +140,26 @@ public class YamauchiAgent extends Agent {
             return Optional.empty();
         }
 
-        Angle finalPosition = bestFrontier.getQueueNode().getEntrancePosition();
-
-//        for (Angle angle : Angle.values()) {
-//            if (angle.equals(finalPosition)) continue;
-//            bestFrontier.getQueueNode().getMoves().add(angle);
-//        }
+        if(pathNotForAll) findTheBestPath(bestFrontier);
 
         chosenFrontier = bestFrontier;
 
         return Optional.of(bestFrontier);
+    }
+
+    private void findTheBestPath(Frontier frontier){
+
+        Optional<QueueNode> queueNodeOpt = pathFindingAlgorithm.execute(knowledge, player, frontier.getTarget());
+
+        if (queueNodeOpt.isPresent()){
+            QueueNode queueNode = queueNodeOpt.get();
+            frontier.setQueueNode(queueNode);
+        }
+    }
+
+    private void detect(){
+        if(detectFrontierByRegion())
+            detectFrontiers();
     }
 
     private void detectFrontiers() {
@@ -183,109 +173,31 @@ public class YamauchiAgent extends Agent {
                 if (colEntry.getValue().isCollision() && !colEntry.getValue().getItems().contains(player)) {
                     continue;
                 }
-
-                // Reject if all tile is surrounded by collision objects or teleporters
-                HashMap<AdvancedAngle, Tile> neighbours = BoardUtils.getNeighbours(knowledge, colEntry.getValue());
-
-                boolean isInaccessible = true;
-                for (Map.Entry<AdvancedAngle, Tile> neighbour : neighbours.entrySet()) {
-                    if (neighbour.getValue() == null) {
-                        continue;
-                    }
-
-                    if (!neighbour.getValue().isCollision() && !neighbour.getValue().isTeleport()) {
-                        isInaccessible = false;
-                        break;
-                    }
-                }
-
-                if (isInaccessible) {
+                // Reject if all tile is surrounded by collision objects or teleports
+                if (BoardUtils.isSurrounded(knowledge, colEntry.getValue())) {
                     continue;
                 }
 
-                if (colEntry.getValue().isTeleport() && consecutiveNoFrontier >= MAX_CONSECUTIVE_NO_FRONTIER_COUNT && (possibleTeleport == null
-                        || (Math.abs(player.getTile().getX() - colEntry.getValue().getX()) < Math.abs(player.getTile().getX() - possibleTeleport.getX()) && Math.abs(player.getTile().getX() - colEntry.getValue().getY()) < Math.abs(player.getTile().getX() - possibleTeleport.getY()))
-                        || (Math.abs(player.getTile().getX() - colEntry.getValue().getX()) < Math.abs(player.getTile().getX() - possibleTeleport.getX()))
-                        || (Math.abs(player.getTile().getX() - colEntry.getValue().getY()) < Math.abs(player.getTile().getX() - possibleTeleport.getY())))) {
+                if (colEntry.getValue().isTeleport()){
                     possibleTeleport = colEntry.getValue();
+                    continue;
                 }
-
                 // Check if it is a fully known tile
+                List<Optional<Tile>> neighbours = getAllNeighbours(colEntry, rowEntry);
 
-                Optional<Tile> upOpt = BoardUtils.nextPosition(knowledge, colEntry.getValue(), Angle.UP);
-                Optional<Tile> rightOpt = BoardUtils.nextPosition(knowledge, colEntry.getValue(), Angle.RIGHT);
-                Optional<Tile> leftOpt = BoardUtils.nextPosition(knowledge, colEntry.getValue(), Angle.LEFT);
-                Optional<Tile> downOpt = BoardUtils.nextPosition(knowledge, colEntry.getValue(), Angle.DOWN);
-                Optional<Tile> upLeftOpt = knowledge.getByCoordinates(colEntry.getKey() + Angle.LEFT.getxIncrement(), rowEntry.getKey() + Angle.UP.getyIncrement());
-                Optional<Tile> upRightOpt = knowledge.getByCoordinates(colEntry.getKey() + Angle.RIGHT.getxIncrement(), rowEntry.getKey() + Angle.UP.getyIncrement());
-                Optional<Tile> bottomLeftOpt = knowledge.getByCoordinates(colEntry.getKey() + Angle.LEFT.getxIncrement(), rowEntry.getKey() + Angle.DOWN.getyIncrement());
-                Optional<Tile> bottomRightOpt = knowledge.getByCoordinates(colEntry.getKey() + Angle.RIGHT.getxIncrement(), rowEntry.getKey() + Angle.DOWN.getyIncrement());
 
-                if (upOpt.isPresent() && rightOpt.isPresent() && leftOpt.isPresent()
-                        && downOpt.isPresent()) {
+                if (isFullyKnown(neighbours)) {
                     continue;
                 }
 
-                boolean isAdded = false;
-
-                for (Frontier frontier : frontiers) {
-                    if (frontier.add(colEntry.getValue())) {
-                        addUnknownArea(frontier,upOpt);
-                        addUnknownArea(frontier, downOpt);
-                        addUnknownArea(frontier, leftOpt);
-                        addUnknownArea(frontier, rightOpt);
-                        addUnknownArea(frontier, upRightOpt);
-                        addUnknownArea(frontier, upLeftOpt);
-                        addUnknownArea(frontier, bottomLeftOpt);
-                        addUnknownArea(frontier, bottomRightOpt);
-
-                        // Find the shortest path to this tile
-                        Optional<QueueNode> queueNodeOpt = pathFindingAlgorithm.execute(knowledge, player, colEntry.getValue());
-
-                        if (queueNodeOpt.isPresent()) {
-                            QueueNode queueNode = queueNodeOpt.get();
-
-                            if (queueNode.getTile().isCollision()) continue;
-                            if (frontier.getQueueNode() == null || (queueNode.getDistance() < frontier.getQueueNode().getDistance())) {
-                                frontier.setQueueNode(queueNode);
-                            }
-                        }
-
-                        isAdded = true;
-                        break;
-                    }
-                }
-
-                if (!isAdded) {
-                    Frontier newFrontier = new Frontier(colEntry.getValue());
-                    frontiers.add(newFrontier);
-
-                    addUnknownArea(newFrontier, upOpt);
-                    addUnknownArea(newFrontier, downOpt);
-                    addUnknownArea(newFrontier, leftOpt);
-                    addUnknownArea(newFrontier, rightOpt);
-                    addUnknownArea(newFrontier, upRightOpt);
-                    addUnknownArea(newFrontier, upLeftOpt);
-                    addUnknownArea(newFrontier, bottomLeftOpt);
-                    addUnknownArea(newFrontier, bottomRightOpt);
-
-                    // Find the shortest path to this tile
-                    Optional<QueueNode> queueNodeOpt = pathFindingAlgorithm.execute(knowledge, player, colEntry.getValue());
-
-                    if (queueNodeOpt.isPresent()) {
-                        QueueNode queueNode = queueNodeOpt.get();
-
-                        if (queueNode.getTile().isCollision()) continue;
-                        if (newFrontier.getQueueNode() == null || (queueNode.getDistance() < newFrontier.getQueueNode().getDistance())) {
-                            newFrontier.setQueueNode(queueNode);
-                        }
-                    }
+                if (addTileToFrontier(colEntry, neighbours)) {
+                    createNewFrontier(colEntry, neighbours);
                 }
             }
         }
 
         // If No frontiers are found but teleporter is in knowledge, go to teleporter.
-        if (chosenFrontier == null && possibleTeleport != null && consecutiveNoFrontier >= MAX_CONSECUTIVE_NO_FRONTIER_COUNT) {
+        if (frontiers.isEmpty() && possibleTeleport != null) {
             Frontier newFrontier = new Frontier(possibleTeleport);
             newFrontier.setUnknownAreas(1);
             frontiers.add(newFrontier);
@@ -306,13 +218,124 @@ public class YamauchiAgent extends Agent {
         }
     }
 
+    private boolean detectFrontierByRegion(){
+        int x = player.getTile().getX();
+        int y = player.getTile().getY();
+        HashMap<Integer, HashMap<Integer, Tile>> region = knowledge.subset(x - 10, y - 10, x + 10, y + 10);
+
+        frontiers.clear();
+        chosenFrontier = null;
+
+        for (Map.Entry<Integer, HashMap<Integer, Tile>> rowEntry : region.entrySet()) {
+            for (Map.Entry<Integer, Tile> colEntry : rowEntry.getValue().entrySet()) {
+                // Reject tile if its a collidable object
+                if (colEntry.getValue().isCollision() && !colEntry.getValue().getItems().contains(player)) {
+                    continue;
+                }
+
+                // Reject if all tile is surrounded by collision objects or teleports
+                if (BoardUtils.isSurrounded(knowledge, colEntry.getValue())) {
+                    continue;
+                }
+
+                if (colEntry.getValue().isTeleport()){
+                    continue;
+                }
+
+                // Check if it is a fully known tile
+
+                List<Optional<Tile>> neighbours = getAllNeighbours(colEntry, rowEntry);
+
+
+                if (isFullyKnown(neighbours)) {
+                    continue;
+                }
+
+                if (addTileToFrontier(colEntry, neighbours)) {
+                    createNewFrontier(colEntry, neighbours);
+                }
+            }
+        }
+
+        return frontiers.isEmpty();
+    }
+
+    private boolean addTileToFrontier(Map.Entry<Integer, Tile> colEntry, List<Optional<Tile>> neighbours){
+        for (Frontier frontier : frontiers) {
+            if (frontier.add(colEntry.getValue())) {
+                addUnknownArea(frontier, neighbours);
+
+                if(pathNotForAll) {
+                    int distance = (int) calculateDistance.compute(player.getTile(), colEntry.getValue());
+                    if (frontier.getDistance() > distance) {
+                        frontier.setTarget(colEntry.getValue());
+                        frontier.setDistance(distance);
+                    }
+                } else {
+                    // Find the shortest path to this tile
+                    Optional<QueueNode> queueNodeOpt = pathFindingAlgorithm.execute(knowledge, player, colEntry.getValue());
+
+                    if (queueNodeOpt.isPresent()) {
+                        QueueNode queueNode = queueNodeOpt.get();
+
+                        if (queueNode.getTile().isCollision()) return false;
+                        if (frontier.getQueueNode() == null || (queueNode.getDistance() < frontier.getQueueNode().getDistance())) {
+                            frontier.setQueueNode(queueNode);
+                        }
+                    }
+                }
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private void createNewFrontier(Map.Entry<Integer, Tile> colEntry, List<Optional<Tile>> neighbours){
+        Frontier newFrontier = new Frontier(colEntry.getValue());
+        frontiers.add(newFrontier);
+
+        addUnknownArea(newFrontier, neighbours);
+
+        // Find the shortest path to this tile
+        Optional<QueueNode> queueNodeOpt = pathFindingAlgorithm.execute(knowledge, player, colEntry.getValue());
+
+        if (queueNodeOpt.isPresent()) {
+            QueueNode queueNode = queueNodeOpt.get();
+
+            if (queueNode.getTile().isCollision()) return;
+            if (newFrontier.getQueueNode() == null || (queueNode.getDistance() < newFrontier.getQueueNode().getDistance())) {
+                newFrontier.setQueueNode(queueNode);
+            }
+        }
+    }
+
+    private boolean isFullyKnown(List<Optional<Tile>> neighbours){
+        return neighbours.get(0).isPresent() && neighbours.get(1).isPresent() && neighbours.get(2).isPresent() &&
+                neighbours.get(3).isPresent();
+    }
+
+    private List<Optional<Tile>> getAllNeighbours(Map.Entry<Integer, Tile> colEntry, Map.Entry<Integer, HashMap<Integer, Tile>> rowEntry){
+        Optional<Tile> upOpt = BoardUtils.nextPosition(knowledge, colEntry.getValue(), Angle.UP);
+        Optional<Tile> rightOpt = BoardUtils.nextPosition(knowledge, colEntry.getValue(), Angle.RIGHT);
+        Optional<Tile> leftOpt = BoardUtils.nextPosition(knowledge, colEntry.getValue(), Angle.LEFT);
+        Optional<Tile> downOpt = BoardUtils.nextPosition(knowledge, colEntry.getValue(), Angle.DOWN);
+        Optional<Tile> upLeftOpt = knowledge.getByCoordinates(colEntry.getKey() + Angle.LEFT.getxIncrement(), rowEntry.getKey() + Angle.UP.getyIncrement());
+        Optional<Tile> upRightOpt = knowledge.getByCoordinates(colEntry.getKey() + Angle.RIGHT.getxIncrement(), rowEntry.getKey() + Angle.UP.getyIncrement());
+        Optional<Tile> bottomLeftOpt = knowledge.getByCoordinates(colEntry.getKey() + Angle.LEFT.getxIncrement(), rowEntry.getKey() + Angle.DOWN.getyIncrement());
+        Optional<Tile> bottomRightOpt = knowledge.getByCoordinates(colEntry.getKey() + Angle.RIGHT.getxIncrement(), rowEntry.getKey() + Angle.DOWN.getyIncrement());
+
+        return Arrays.asList(upOpt, rightOpt, leftOpt, downOpt, upLeftOpt, upRightOpt, bottomLeftOpt, bottomRightOpt);
+    }
+
     @Override
     public IPathFinding getPathFindingAlgorithm(){
         return pathFindingAlgorithm;
     }
 
-    private void addUnknownArea(Frontier frontier, Optional<Tile> opt) {
-        if (opt.isEmpty()) frontier.addUnknownArea();
+    private void addUnknownArea(Frontier frontier, List<Optional<Tile>> neighbours) {
+        for(Optional<Tile> opt : neighbours){
+            if (opt.isEmpty()) frontier.addUnknownArea();
+        }
     }
 
     public Frontier getChosenFrontier() {

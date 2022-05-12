@@ -1,0 +1,12 @@
+height = 10
+width = 10
+numGuards = 0
+baseSpeedGuard = 5
+distanceViewing = 10
+numberMarkers = 5
+smellingDistance = 5
+spawnAreaGuards = 2 2 2 2
+wall = 0 0 0 10
+wall = 0 0 10 0
+wall = 10 0 10 10
+wall = 0 10 10 10

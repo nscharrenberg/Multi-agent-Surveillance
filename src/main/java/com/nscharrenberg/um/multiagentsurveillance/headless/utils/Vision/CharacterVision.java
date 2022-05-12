@@ -1,10 +1,16 @@
-package com.nscharrenberg.um.multiagentsurveillance.headless.utils;
+package com.nscharrenberg.um.multiagentsurveillance.headless.utils.Vision;
 
-import com.nscharrenberg.um.multiagentsurveillance.headless.models.*;
+import com.nscharrenberg.um.multiagentsurveillance.agents.shared.algorithms.distanceCalculator.EuclideanDistance;
+import com.nscharrenberg.um.multiagentsurveillance.headless.models.Angle.Angle;
+import com.nscharrenberg.um.multiagentsurveillance.headless.models.Items.Item;
+import com.nscharrenberg.um.multiagentsurveillance.headless.models.Items.Collision.Wall;
+import com.nscharrenberg.um.multiagentsurveillance.headless.models.Map.ShadowTile;
+import com.nscharrenberg.um.multiagentsurveillance.headless.models.Map.Tile;
+import com.nscharrenberg.um.multiagentsurveillance.headless.models.Map.TileArea;
+import com.nscharrenberg.um.multiagentsurveillance.headless.models.Player.Player;
+import com.nscharrenberg.um.multiagentsurveillance.headless.utils.Geometrics;
 
 import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 // probably have players inherit this class later
@@ -12,11 +18,13 @@ public class CharacterVision{
     private int length;
     private Angle direction;
     private Geometrics gm;
+    private Player player;
 
-    public CharacterVision(int length, Angle direction) {
+    public CharacterVision(int length, Angle direction, Player player) {
         this.length = length;
         this.direction = direction;
-        gm = new Geometrics();
+        this.gm = new Geometrics();
+        this.player = player;
     }
 
     public ArrayList<Tile> getVision(TileArea board, Tile position) {
@@ -46,30 +54,34 @@ public class CharacterVision{
                 for(int i = 0; i < this.length; i++) {
                     current = new Tile(px,py-i);
                     vision.add(current);
-                    if(!unobstructedTile(board, current))
+                    if(unobstructedTile(board, current))
                         break;
                 }
+                break;
             case DOWN:
                 for(int i = 0; i < this.length; i++) {
                     current = new Tile(px,py+i);
                     vision.add(current);
-                    if(!unobstructedTile(board, current))
+                    if(unobstructedTile(board, current))
                         break;
                 }
+                break;
             case RIGHT:
                 for(int i = 0; i < this.length; i++) {
                     current = new Tile(px+i, py);
                     vision.add(current);
-                    if(!unobstructedTile(board, current))
+                    if(unobstructedTile(board, current))
                         break;
                 }
+                break;
             case LEFT:
                 for(int i = 0; i < this.length; i++) {
                     current = new Tile(px-i, py);
                     vision.add(current);
-                    if(!unobstructedTile(board, current))
+                    if(unobstructedTile(board, current))
                         break;
                 }
+                break;
         }
 
         return vision;
@@ -131,7 +143,7 @@ public class CharacterVision{
         // Check remaining tiles for items
         for (Tile t : rawvision) {
             for (Tile it : gm.getIntersectingTiles(position, t)) {
-                if (!unobstructedTile(board, it)) {
+                if (unobstructedTile(board, it)) {
                     validtile = false;
                     break;
                 }
@@ -153,18 +165,45 @@ public class CharacterVision{
         return finalvision;
     }
 
+    private boolean checkDifBetweenPlayerAndShadowTile(Tile tile, Tile playerTile){
+
+        int bound = 2;
+        int yDif = Math.abs(tile.getY() - playerTile.getY());
+        int xDif = Math.abs(tile.getX() - playerTile.getX());
+
+        if(this.direction == Angle.UP || this.direction == Angle.DOWN){
+
+            return bound >= yDif;
+
+        }  else if(this.direction == Angle.LEFT || this.direction == Angle.RIGHT){
+
+            return bound >= xDif;
+
+        }
+
+        return false;
+    }
+
     private boolean unobstructedTile(TileArea board, Tile t) {
-        if(board.getByCoordinates(t.getX(), t.getY()).isPresent()) {
-            if (board.getByCoordinates(t.getX(), t.getY()).get().getItems().size() != 0) {
-                for (Item im : board.getByCoordinates(t.getX(), t.getY()).get().getItems()) {
+        Optional<Tile> optTile = board.getByCoordinates(t.getX(), t.getY());
+        if(optTile.isPresent()) {
+            Tile tile = optTile.get();
+
+            if(tile instanceof ShadowTile){
+                if(!checkDifBetweenPlayerAndShadowTile(tile, player.getTile()))
+                    return true;
+            }
+
+            if (tile.getItems().size() != 0) {
+                for (Item im : tile.getItems()) {
                     if (im instanceof Wall) {   // Might have to add other checks to this later
-                        return false;
+                        return true;
                     }
                 }
             }
-            return true;
+            return false;
         }
-        return false;
+        return true;
     }
 
     public int getLength() {

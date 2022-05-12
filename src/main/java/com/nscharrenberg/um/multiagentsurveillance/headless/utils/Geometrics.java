@@ -1,6 +1,6 @@
 package com.nscharrenberg.um.multiagentsurveillance.headless.utils;
 
-import com.nscharrenberg.um.multiagentsurveillance.headless.models.Tile;
+import com.nscharrenberg.um.multiagentsurveillance.headless.models.Map.Tile;
 
 import java.util.ArrayList;
 

@@ -1,6 +1,8 @@
 package com.nscharrenberg.um.multiagentsurveillance.headless.repositories;
 
+import com.nscharrenberg.um.multiagentsurveillance.agents.SBO.SBOAgent;
 import com.nscharrenberg.um.multiagentsurveillance.agents.frontier.yamauchi.YamauchiAgent;
+import com.nscharrenberg.um.multiagentsurveillance.agents.probablistic.evader.EvaderAgent;
 import com.nscharrenberg.um.multiagentsurveillance.agents.random.RandomAgent;
 import com.nscharrenberg.um.multiagentsurveillance.agents.shared.Agent;
 import com.nscharrenberg.um.multiagentsurveillance.headless.Factory;
@@ -49,7 +51,7 @@ public class PlayerRepository implements IPlayerRepository {
     private List<Agent> agents;
 
     private static final Class<? extends Agent> guardType = YamauchiAgent.class;
-    private static final Class<? extends Agent> intruderType = YamauchiAgent.class;
+    private static final Class<? extends Agent> intruderType = EvaderAgent.class;
 
     private float explorationPercentage = 0;
 
@@ -114,7 +116,7 @@ public class PlayerRepository implements IPlayerRepository {
         // no tiles = 100% (division by 0 not possible)
         if (totalTileCount <= 0 || explorationPercentage >= (100 - TOLERANCE_RATE)) {
             explorationPercentage = 100;
-            if (!getGameRepository().getGameMode().equals(GameMode.EXPLORATION)) {
+            if (getGameRepository().getGameMode().equals(GameMode.EXPLORATION)) {
                 //end game
                 Factory.getGameRepository().setRunning(false);
             }
@@ -220,6 +222,10 @@ public class PlayerRepository implements IPlayerRepository {
             agent = new RandomAgent(player);
         } else if (agentClass.equals(YamauchiAgent.class)) {
             agent = new YamauchiAgent(player);
+        } else if (agentClass.equals(SBOAgent.class)) {
+            agent = new SBOAgent(player);
+        } else if (agentClass.equals(EvaderAgent.class)) {
+            agent = new EvaderAgent(player);
         }
 
         if (agent == null) {

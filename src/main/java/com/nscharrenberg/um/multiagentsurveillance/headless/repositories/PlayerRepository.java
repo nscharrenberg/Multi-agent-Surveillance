@@ -222,6 +222,8 @@ public class PlayerRepository implements IPlayerRepository {
             agent = new YamauchiAgent(player);
         } else if (agentClass.equals(SBOAgent.class)) {
             agent = new SBOAgent(player);
+        } else if (agentClass.equals(DQN_Agent.class)){
+            agent = new DQN_Agent(player);
         }
 
         if (agent == null) {

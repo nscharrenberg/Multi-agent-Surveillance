@@ -38,7 +38,7 @@ public class Network {
         convLayers = new ConvLayer[]{
                 new ConvLayer(channels, inputLength, c1Filters, 7, learningRate),
                 new ConvLayer(c1Filters, input2Length, c2Filters, 6, learningRate),
-                new ConvLayer(c2Filters, input3Length, c3Filters, 6, learningRate),
+                new ConvLayer(c2Filters, input3Length, c3Filters, 6, learningRate)
         };
 
         conv3Length = outDim(input3Length);
@@ -46,8 +46,8 @@ public class Network {
 
 
         denseLayers = new DenseLayer[]{
-            denseLayers[0] = new DenseLayer(numDenseIn, numDenseIn, learningRate),
-            denseLayers[1] = new DenseLayer(numDenseIn, outputLength, learningRate),
+            new DenseLayer(numDenseIn, numDenseIn, learningRate),
+            new DenseLayer(numDenseIn, outputLength, learningRate)
         };
 
         activationLayer = new ActivationLayer(numDenseIn);

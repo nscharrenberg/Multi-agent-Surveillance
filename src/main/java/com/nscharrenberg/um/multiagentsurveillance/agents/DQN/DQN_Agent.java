@@ -1,7 +1,9 @@
 package com.nscharrenberg.um.multiagentsurveillance.agents.DQN;
 
 import com.nscharrenberg.um.multiagentsurveillance.agents.DQN.neuralNetwork.Network;
+import com.nscharrenberg.um.multiagentsurveillance.agents.DQN.training.EpsilonGreedy;
 import com.nscharrenberg.um.multiagentsurveillance.agents.shared.Agent;
+import com.nscharrenberg.um.multiagentsurveillance.headless.Factory;
 import com.nscharrenberg.um.multiagentsurveillance.headless.exceptions.*;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Action;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Items.Collision.Wall;
@@ -12,10 +14,13 @@ import com.nscharrenberg.um.multiagentsurveillance.headless.models.Player.Intrud
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Player.Player;
 import com.nscharrenberg.um.multiagentsurveillance.headless.utils.AreaEffects.AudioEffect.Audio;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class DQN_Agent extends Agent {
 
+    private EpsilonGreedy strategy;
     private double[][][] state, previousState;
     private int rewardScalar = 5;
     private int channels = 3;
@@ -24,13 +29,20 @@ public class DQN_Agent extends Agent {
     private int yOffset = 6;
     private double lr = 0.90; // TBD
     private Network network;
+    private int velocity = 1;
+    private HashMap<Integer , double[]> qValues;
+
 
     public DQN_Agent(Player player) {
         super(player);
 
         network = new Network(lr);
         network.initLayers(channels, length);
+        //strategy = new EpsilonGreedy();
+
+        qValues = new HashMap<>();
     }
+
 
 
     public double preformMove(Action angle){
@@ -43,10 +55,10 @@ public class DQN_Agent extends Agent {
     }
 
     @Override
-    public void execute(Action angle) {
+    public void execute(Action action) {
 
         try {
-            playerRepository.move(player, angle);
+            playerRepository.move(player, action);
         } catch (CollisionException | InvalidTileException | ItemNotOnTileException | ItemAlreadyOnTileException | BoardNotBuildException e) {
             e.printStackTrace();
         }
@@ -54,26 +66,33 @@ public class DQN_Agent extends Agent {
         updateState();
     }
 
+    // TODO: Track move number
     @Override
     public Action decide() throws Exception {
 
         int move = predictMove();
+
         Action currentDirection = player.getDirection();
         Action action = currentDirection;
 
         // TODO: Add option to drop makers
 
         switch (move){
-            case 0 -> action = currentDirection;
+            case 0 -> {
+                action = currentDirection;
+                System.out.println("Moving Forward");
+            }
             case 1 -> action = turnRight(currentDirection);
             case 2 -> action = turnLeft(currentDirection);
             default -> dropMaker(player);
         }
 
+        System.out.println(action);
+
         return action;
     }
 
-    private int predictMove(){
+    private int predictMove() throws InvalidTileException, BoardNotBuildException {
 
         double[] qValues = network.forwardPropagate(updateState());
 
@@ -81,9 +100,14 @@ public class DQN_Agent extends Agent {
         // TODO: check if moves collide with wall or other guard/intruder
 
         int maxInd = 0;
+        int start = 0;
 
+        if (collisionForward()) {
+            start = 1;
+            maxInd = 1;
+        }
 
-        for (int i = 0; i < qValues.length; i++) {
+        for (int i = start; i < qValues.length; i++) {
             maxInd = qValues[i] > qValues[maxInd] ?  i : maxInd;
         }
 
@@ -144,27 +168,29 @@ public class DQN_Agent extends Agent {
     public double[][][] updateState(){
 
         state = new double[channels][length][length];
-        List<Tile> visionList = (List<Tile>) vision;
         List<Audio> audioList = player.getAudioEffects();
         List<Item> items;
         int xP = player.getTile().getX();
         int yP = player.getTile().getY();
         int VIX, VIY;
 
-        for (Tile tile : visionList) {
-            // Get the vision index for x and y position in state tensor
-            VIX = (tile.getX() - xP) + xOffset;
-            VIY = (tile.getY() - yP) + yOffset;
+        for (Map.Entry<Integer, HashMap<Integer, Tile>> rowEntry : vision.getRegion().entrySet()) {
+            for (Map.Entry<Integer, Tile> colEntry : rowEntry.getValue().entrySet()) {
 
-            items = player.getTile().getItems();
+                // Get the vision index for x and y position in state tensor
+                VIX = (colEntry.getValue().getX() - xP) + xOffset;
+                VIY = (colEntry.getValue().getY() - yP) + yOffset;
 
-            for (Item item : items) {
-                if (item instanceof Guard)
-                    state[0][VIX][VIY] = 1;
-                if (item instanceof Intruder)
-                    state[0][VIX][VIY] = -1;
-                if (item instanceof Wall)
-                    state[1][VIX][VIY] = 1;
+                items = player.getTile().getItems();
+
+                for (Item item : items) {
+                    if (item instanceof Guard)
+                        state[0][VIX][VIY] = 1;
+                    if (item instanceof Intruder)
+                        state[0][VIX][VIY] = -1;
+                    if (item instanceof Wall)
+                        state[1][VIX][VIY] = 1;
+                }
             }
         }
 
@@ -182,5 +208,75 @@ public class DQN_Agent extends Agent {
     public double[][][] getState() {
         return state.clone();
     }
+
+    public boolean collisionForward() throws InvalidTileException, BoardNotBuildException {
+
+        Action direction = player.getDirection();
+
+        int x = player.getTile().getX();
+        int y = player.getTile().getY();
+
+        switch (direction){
+            case UP -> {
+                return Factory.getMapRepository().findTileByCoordinates(x,y - velocity).isCollision();
+            }
+            case DOWN -> {
+                return Factory.getMapRepository().findTileByCoordinates(x,y + velocity).isCollision();
+            }
+            case LEFT -> {
+                return Factory.getMapRepository().findTileByCoordinates(x - velocity,y).isCollision();
+            }
+            case RIGHT -> {
+                return Factory.getMapRepository().findTileByCoordinates(x + velocity,y).isCollision();
+            }
+        }
+
+        return false;
+    }
+
+/*
+    private double collisionError(Tile selected){
+        if (selected.isCollision())
+            return -output[0];
+        return  0;
+    }
+
+    private void verticalCheck(int x, int y, boolean increasing) throws InvalidTileException, BoardNotBuildException {
+
+        // seriously what way is up lol
+        int displacement;
+        if (increasing)
+            displacement = -velocity;
+        else displacement = velocity;
+
+        Tile selected;
+        selected = Factory.getMapRepository().findTileByCoordinates(x,y-displacement);
+        error[0] = collisionError(selected);
+
+        selected = Factory.getMapRepository().findTileByCoordinates(x-displacement,y);
+        error[1] = collisionError(selected);
+
+        selected = Factory.getMapRepository().findTileByCoordinates(x+displacement,y);
+        error[2] = collisionError(selected);
+    }
+
+    private void horizontalCheck(int x, int y, boolean increasing) throws InvalidTileException, BoardNotBuildException {
+        int displacement;
+        if (increasing)
+            displacement = velocity;
+        else displacement = -velocity;
+
+        Tile selected;
+        selected = Factory.getMapRepository().findTileByCoordinates(x,y-displacement);
+        error[0] = collisionError(selected);
+
+        selected = Factory.getMapRepository().findTileByCoordinates(x-displacement,y);
+        error[1] = collisionError(selected);
+
+        selected = Factory.getMapRepository().findTileByCoordinates(x+displacement,y);
+        error[2] = collisionError(selected);
+    }
+*/
+
 
 }

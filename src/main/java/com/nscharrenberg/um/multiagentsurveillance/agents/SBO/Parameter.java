@@ -1,9 +1,10 @@
 package com.nscharrenberg.um.multiagentsurveillance.agents.SBO;
 
-import com.nscharrenberg.um.multiagentsurveillance.headless.models.AdvancedAngle;
-import com.nscharrenberg.um.multiagentsurveillance.headless.models.Item;
-import com.nscharrenberg.um.multiagentsurveillance.headless.models.ItemType;
+import com.nscharrenberg.um.multiagentsurveillance.headless.models.Angle.*;
+import com.nscharrenberg.um.multiagentsurveillance.headless.models.Items.*;
+import com.nscharrenberg.um.multiagentsurveillance.headless.models.Map.*;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.SoundWave;
+
 
 
 public class Parameter {

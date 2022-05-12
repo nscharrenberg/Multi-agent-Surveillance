@@ -1,5 +1,10 @@
 package com.nscharrenberg.um.multiagentsurveillance.headless.models;
 
+import com.nscharrenberg.um.multiagentsurveillance.headless.models.Angle.AdvancedAngle;
+import com.nscharrenberg.um.multiagentsurveillance.headless.models.Items.Item;
+import com.nscharrenberg.um.multiagentsurveillance.headless.models.Items.ItemType;
+import com.nscharrenberg.um.multiagentsurveillance.headless.models.Map.Tile;
+
 public class MarkerSmell extends Item {
 
     private ItemType marking;

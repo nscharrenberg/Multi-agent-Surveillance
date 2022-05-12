@@ -1,6 +1,7 @@
 package com.nscharrenberg.um.multiagentsurveillance.agents.SBO;
 
-import com.nscharrenberg.um.multiagentsurveillance.headless.models.Angle;
+import com.nscharrenberg.um.multiagentsurveillance.headless.models.Angle.*;
+
 
 import java.util.ArrayList;
 

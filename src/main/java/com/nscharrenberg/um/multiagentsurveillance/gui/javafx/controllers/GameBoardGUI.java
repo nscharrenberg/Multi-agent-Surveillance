@@ -14,6 +14,7 @@ import com.nscharrenberg.um.multiagentsurveillance.headless.models.Map.TileArea;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Player.Guard;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Player.Intruder;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Player.Player;
+import com.nscharrenberg.um.multiagentsurveillance.headless.models.SoundWave;
 import com.nscharrenberg.um.multiagentsurveillance.headless.utils.recorder.json.Coordinates;
 import com.nscharrenberg.um.multiagentsurveillance.headless.Factory;
 import javafx.application.Application ;

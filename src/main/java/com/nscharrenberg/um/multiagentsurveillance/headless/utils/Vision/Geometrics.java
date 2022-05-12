@@ -1,4 +1,4 @@
-package com.nscharrenberg.um.multiagentsurveillance.headless.utils;
+package com.nscharrenberg.um.multiagentsurveillance.headless.utils.Vision;
 
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Map.Tile;
 

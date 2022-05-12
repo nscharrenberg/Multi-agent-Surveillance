@@ -1,6 +1,11 @@
 package com.nscharrenberg.um.multiagentsurveillance.headless.models;
 
-public class SoundWave extends Item{
+import com.nscharrenberg.um.multiagentsurveillance.headless.models.Angle.AdvancedAngle;
+import com.nscharrenberg.um.multiagentsurveillance.headless.models.Items.Item;
+import com.nscharrenberg.um.multiagentsurveillance.headless.models.Map.Tile;
+
+
+public class SoundWave extends Item {
     private int strength; // Sound strength
     private AdvancedAngle direction; // Sound direction (where it is coming from)
 

@@ -1,6 +1,5 @@
 package com.nscharrenberg.um.multiagentsurveillance.headless.utils.Vision;
 
-import com.nscharrenberg.um.multiagentsurveillance.agents.shared.algorithms.distanceCalculator.EuclideanDistance;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Angle.Angle;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Items.Item;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Items.Collision.Wall;
@@ -8,7 +7,6 @@ import com.nscharrenberg.um.multiagentsurveillance.headless.models.Map.ShadowTil
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Map.Tile;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Map.TileArea;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Player.Player;
-import com.nscharrenberg.um.multiagentsurveillance.headless.utils.Geometrics;
 
 import java.util.ArrayList;
 import java.util.Optional;

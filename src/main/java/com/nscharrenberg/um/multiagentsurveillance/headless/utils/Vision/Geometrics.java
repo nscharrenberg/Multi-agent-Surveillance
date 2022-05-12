@@ -1,4 +1,4 @@
-package com.nscharrenberg.um.multiagentsurveillance.headless.utils;
+package com.nscharrenberg.um.multiagentsurveillance.headless.utils.Vision;
 
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Map.Tile;
 
@@ -51,6 +51,12 @@ public class Geometrics {
         linetiles.removeIf(tc -> (tc.getX() == endpoint.getX() && tc.getY() == endpoint.getY()));
 
         return linetiles;
+    }
+
+    // Used for agent audio
+    public ArrayList<Tile> getSurroundingTiles() {
+
+        return null;
     }
 
 }

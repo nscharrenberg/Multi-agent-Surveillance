@@ -9,7 +9,7 @@ import com.nscharrenberg.um.multiagentsurveillance.headless.models.Player.Player
 import java.util.HashMap;
 import java.util.Map;
 
-public class ProbabilisticAgent extends YamauchiAgent {
+public abstract class ProbabilisticAgent extends YamauchiAgent {
 
     public State currentState = State.NORMAL;
     public Tile closestKnownAgent;

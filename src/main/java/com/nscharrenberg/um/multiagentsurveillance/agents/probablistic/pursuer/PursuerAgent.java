@@ -1,9 +1,8 @@
 package com.nscharrenberg.um.multiagentsurveillance.agents.probablistic.pursuer;
 
 import com.nscharrenberg.um.multiagentsurveillance.agents.frontier.yamauchi.YamauchiAgent;
-import com.nscharrenberg.um.multiagentsurveillance.agents.frontier.yamauchi.comparator.IWeightComparator;
-import com.nscharrenberg.um.multiagentsurveillance.agents.frontier.yamauchi.comparator.MinDistanceUnknownAreaComparator;
-import com.nscharrenberg.um.multiagentsurveillance.agents.probablistic.evader.EvaderState;
+import com.nscharrenberg.um.multiagentsurveillance.agents.frontier.yamauchi.comparator.guard.IWeightComparatorGuard;
+import com.nscharrenberg.um.multiagentsurveillance.agents.frontier.yamauchi.comparator.guard.MinDistanceUnknownAreaComparator;
 import com.nscharrenberg.um.multiagentsurveillance.agents.shared.algorithms.distanceCalculator.CalculateDistance;
 import com.nscharrenberg.um.multiagentsurveillance.agents.shared.algorithms.distanceCalculator.ManhattanDistance;
 import com.nscharrenberg.um.multiagentsurveillance.agents.shared.algorithms.pathfinding.AStar.AStar;
@@ -23,7 +22,7 @@ public class PursuerAgent extends YamauchiAgent {
     private static int MAX_SEARCH_STEPS = 3;
     private SecureRandom random;
     private final IPathFinding pathFindingAlgorithm = new AStar();
-    private final IWeightComparator weightDetector = new MinDistanceUnknownAreaComparator();
+    private final IWeightComparatorGuard weightDetector = new MinDistanceUnknownAreaComparator();
     private final CalculateDistance calculateDistance = new ManhattanDistance();
     private PursuerState currentState = PursuerState.NORMAL;
     private Tile closestKnownIntruder = null;

@@ -142,6 +142,8 @@ public interface IMapRepository {
      */
     void addIntruderSpawnArea(int x1, int y1, int x2, int y2) throws BoardNotBuildException, InvalidTileException;
 
+    Tile getTargetCenter();
+
     TileArea getBoard();
 
     void setBoard(TileArea board);

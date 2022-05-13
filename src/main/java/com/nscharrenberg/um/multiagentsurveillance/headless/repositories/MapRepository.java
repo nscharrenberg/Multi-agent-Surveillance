@@ -1,5 +1,7 @@
 package com.nscharrenberg.um.multiagentsurveillance.headless.repositories;
 
+import com.nscharrenberg.um.multiagentsurveillance.agents.shared.algorithms.intersectionCalculator.IntersectionPoint;
+import com.nscharrenberg.um.multiagentsurveillance.agents.shared.algorithms.intersectionCalculator.Point;
 import com.nscharrenberg.um.multiagentsurveillance.headless.Factory;
 import com.nscharrenberg.um.multiagentsurveillance.headless.contracts.repositories.IGameRepository;
 import com.nscharrenberg.um.multiagentsurveillance.headless.contracts.repositories.IMapRepository;
@@ -27,6 +29,7 @@ public class MapRepository implements IMapRepository {
     private TileArea targetArea;
     private TileArea guardSpawnArea;
     private TileArea intruderSpawnArea;
+    private Tile targetCenter;
 
     public MapRepository(IGameRepository gameRepository, IPlayerRepository playerRepository) {
         this.playerRepository = playerRepository;
@@ -40,6 +43,10 @@ public class MapRepository implements IMapRepository {
         this.gameRepository = Factory.getGameRepository();
 
         this.board = new TileArea();
+    }
+
+    public Tile getTargetCenter() {
+        return targetCenter;
     }
 
     @Override
@@ -105,6 +112,11 @@ public class MapRepository implements IMapRepository {
             throw new InvalidTileException(x1, y1, x2, y2);
         }
 
+        Point A = new Point(x1, y1);
+        Point B = new Point(x2, y2);
+        Point C = new Point(x1, y2);
+        Point D = new Point(x2, y1);
+        targetCenter = IntersectionPoint.calculateIntersectionPoint(A, B, C, D);
         targetArea = found;
     }
 

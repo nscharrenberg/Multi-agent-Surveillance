@@ -11,8 +11,6 @@ public interface IAudioEffect {
 
     double computeEffectLevel(double distance);
 
-    Angle computeSoundAngle(int x1, int y1, int x2, int y2);
-
     void setRange(double range);
 
     double getRange();

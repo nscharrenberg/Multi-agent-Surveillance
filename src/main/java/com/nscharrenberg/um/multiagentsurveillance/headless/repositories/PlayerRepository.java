@@ -238,10 +238,25 @@ public class PlayerRepository implements IPlayerRepository {
         return agent;
     }
 
+    @Override
+    public void move(Player player, Angle direction) throws CollisionException, InvalidTileException, ItemNotOnTileException, ItemAlreadyOnTileException {
+        if(player instanceof Guard){
+            basicMove(player, direction);
+        } else if(player instanceof Intruder){
+            ((Intruder) player).updateTargetInfo();
+            basicMove(player, direction);
+        } else {
+            throw new RuntimeException("Wrong player class");
+        }
+    }
+
+
+
+
 
 
     @Override
-    public void move(Player player, Angle direction) throws CollisionException, InvalidTileException, ItemNotOnTileException, ItemAlreadyOnTileException {
+    public void basicMove(Player player, Angle direction) throws CollisionException, InvalidTileException, ItemNotOnTileException, ItemAlreadyOnTileException {
         Angle currentDirection = player.getDirection();
         Tile currentTilePlayer = player.getTile();
         int visionLength = 6;

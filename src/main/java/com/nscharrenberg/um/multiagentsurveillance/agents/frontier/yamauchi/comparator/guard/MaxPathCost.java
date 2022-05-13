@@ -1,8 +1,8 @@
-package com.nscharrenberg.um.multiagentsurveillance.agents.frontier.yamauchi.comparator;
+package com.nscharrenberg.um.multiagentsurveillance.agents.frontier.yamauchi.comparator.guard;
 
 import com.nscharrenberg.um.multiagentsurveillance.agents.frontier.yamauchi.Frontier;
 
-public class MaxPathCost implements IWeightComparator{
+public class MaxPathCost implements IWeightComparatorGuard {
     @Override
     public Frontier compare(Frontier frontier, Frontier bestFrontier) {
 

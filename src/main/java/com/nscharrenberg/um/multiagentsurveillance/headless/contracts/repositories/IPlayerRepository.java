@@ -39,6 +39,7 @@ public interface IPlayerRepository {
      */
     void move(Player player, Angle direction) throws CollisionException, InvalidTileException, ItemNotOnTileException, ItemAlreadyOnTileException;
 
+    void basicMove(Player player, Angle direction) throws CollisionException, InvalidTileException, ItemNotOnTileException, ItemAlreadyOnTileException;
     /**
      * Validates whether the move the player wants to make is a valid move
      * Same logic as the `move` function but not actually making the move and instead giving a valid/invalid indication

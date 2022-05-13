@@ -3,6 +3,7 @@ package com.nscharrenberg.um.multiagentsurveillance.agents.probablistic.pursuer;
 import com.nscharrenberg.um.multiagentsurveillance.agents.frontier.yamauchi.YamauchiAgent;
 import com.nscharrenberg.um.multiagentsurveillance.agents.frontier.yamauchi.comparator.guard.IWeightComparatorGuard;
 import com.nscharrenberg.um.multiagentsurveillance.agents.frontier.yamauchi.comparator.guard.MinDistanceUnknownAreaComparator;
+import com.nscharrenberg.um.multiagentsurveillance.agents.probablistic.ClosestKnownAgent;
 import com.nscharrenberg.um.multiagentsurveillance.agents.shared.algorithms.distanceCalculator.CalculateDistance;
 import com.nscharrenberg.um.multiagentsurveillance.agents.shared.algorithms.distanceCalculator.ManhattanDistance;
 import com.nscharrenberg.um.multiagentsurveillance.agents.shared.algorithms.pathfinding.AStar.AStar;
@@ -19,11 +20,9 @@ import java.util.Map;
 import java.util.Optional;
 
 public class PursuerAgent extends YamauchiAgent {
-    private static int MAX_SEARCH_STEPS = 3;
+    private static final int MAX_SEARCH_STEPS = 3;
     private SecureRandom random;
     private final IPathFinding pathFindingAlgorithm = new AStar();
-    private final IWeightComparatorGuard weightDetector = new MinDistanceUnknownAreaComparator();
-    private final CalculateDistance calculateDistance = new ManhattanDistance();
     private PursuerState currentState = PursuerState.NORMAL;
     private Tile closestKnownIntruder = null;
     private int searchCounter = 0;
@@ -49,11 +48,7 @@ public class PursuerAgent extends YamauchiAgent {
                 if (tile.hasIntruder()) {
                     currentState = PursuerState.HUNT;
 
-                    if (closestKnownIntruder == null
-                            || Math.abs(player.getTile().getX() - tile.getX()) < Math.abs(player.getTile().getX() - closestKnownIntruder.getX())
-                            || Math.abs(player.getTile().getX() - tile.getX()) < Math.abs(player.getTile().getY() - closestKnownIntruder.getY())
-                            || Math.abs(player.getTile().getY() - tile.getY()) < Math.abs(player.getTile().getX() - closestKnownIntruder.getX())
-                            || Math.abs(player.getTile().getY() - tile.getY()) < Math.abs(player.getTile().getY() - closestKnownIntruder.getY())) {
+                    if (ClosestKnownAgent.isClosestKnownAgent(closestKnownIntruder, player, tile)) {
                         closestKnownIntruder = tile;
                     }
                 }

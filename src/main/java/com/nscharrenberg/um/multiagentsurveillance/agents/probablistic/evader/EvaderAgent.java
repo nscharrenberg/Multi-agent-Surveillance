@@ -3,6 +3,7 @@ package com.nscharrenberg.um.multiagentsurveillance.agents.probablistic.evader;
 import com.nscharrenberg.um.multiagentsurveillance.agents.frontier.yamauchi.YamauchiAgent;
 import com.nscharrenberg.um.multiagentsurveillance.agents.frontier.yamauchi.comparator.guard.IWeightComparatorGuard;
 import com.nscharrenberg.um.multiagentsurveillance.agents.frontier.yamauchi.comparator.guard.MinDistanceUnknownAreaComparator;
+import com.nscharrenberg.um.multiagentsurveillance.agents.probablistic.ClosestKnownAgent;
 import com.nscharrenberg.um.multiagentsurveillance.agents.shared.algorithms.distanceCalculator.CalculateDistance;
 import com.nscharrenberg.um.multiagentsurveillance.agents.shared.algorithms.distanceCalculator.ManhattanDistance;
 import com.nscharrenberg.um.multiagentsurveillance.agents.shared.algorithms.pathfinding.AStar.AStar;
@@ -19,12 +20,10 @@ import java.util.Map;
 import java.util.Optional;
 
 public class EvaderAgent extends YamauchiAgent {
-    private static int MAX_FLEE_STEPS = 10;
-    private static int MAX_CAUTIOUS_STEPS = 3;
+    private static final int MAX_FLEE_STEPS = 10;
+    private static final int MAX_CAUTIOUS_STEPS = 3;
     private SecureRandom random;
     private final IPathFinding pathFindingAlgorithm = new AStar();
-    private final IWeightComparatorGuard weightDetector = new MinDistanceUnknownAreaComparator();
-    private final CalculateDistance calculateDistance = new ManhattanDistance();
     private EvaderState currentState = EvaderState.NORMAL;
     private Tile closestKnownGuard = null;
     private int fleeCounter = 0;
@@ -50,11 +49,7 @@ public class EvaderAgent extends YamauchiAgent {
                 if (tile.hasGuard()) {
                     currentState = EvaderState.FLEE;
 
-                    if (closestKnownGuard == null
-                            || Math.abs(player.getTile().getX() - tile.getX()) < Math.abs(player.getTile().getX() - closestKnownGuard.getX())
-                            || Math.abs(player.getTile().getX() - tile.getX()) < Math.abs(player.getTile().getY() - closestKnownGuard.getY())
-                            || Math.abs(player.getTile().getY() - tile.getY()) < Math.abs(player.getTile().getX() - closestKnownGuard.getX())
-                            || Math.abs(player.getTile().getY() - tile.getY()) < Math.abs(player.getTile().getY() - closestKnownGuard.getY())) {
+                    if (ClosestKnownAgent.isClosestKnownAgent(closestKnownGuard, player, tile)) {
                         closestKnownGuard = tile;
                     }
                 }

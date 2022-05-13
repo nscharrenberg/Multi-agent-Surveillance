@@ -13,7 +13,7 @@ public class AngleTilesCalculator {
         int absY = Math.abs(y);
 
         if(x == 0 && y == 0)
-            throw new RuntimeException("Sound Angle Error");
+            System.out.println("Game angle is calculated incorrectly, because tiles are the same");
 
 
         if(x == 0){

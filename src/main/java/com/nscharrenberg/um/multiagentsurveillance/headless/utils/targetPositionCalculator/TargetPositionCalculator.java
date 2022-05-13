@@ -8,6 +8,7 @@ public class TargetPositionCalculator {
 
     private Point firstPosition;
     private Point imitatedFirstPoint;
+    private double firstAngle;
 
     private Point secondPosition;
     private Point imitatedSecondPoint;
@@ -20,6 +21,12 @@ public class TargetPositionCalculator {
             firstMove(targetAngle, position);
             return null;
         } else if(moveCount == 1){
+
+            //Safe condition to avoid a miss in the calculation of the target
+            if(firstAngle == targetAngle)
+                return null;
+
+
             secondMove(targetAngle, position);
             return IntersectionPoint.calculateIntersectionPoint(firstPosition, imitatedFirstPoint,
                     secondPosition, imitatedSecondPoint);
@@ -33,6 +40,7 @@ public class TargetPositionCalculator {
         double x = (Math.round(firstPosition.getX() + (10000 * Math.cos(firstTargetAngle))));
         double y = (Math.round(firstPosition.getY() + (10000 * Math.sin(firstTargetAngle))));
         this.imitatedFirstPoint = new Point(x, y);
+        this.firstAngle = firstTargetAngle;
         this.moveCount++;
     }
 

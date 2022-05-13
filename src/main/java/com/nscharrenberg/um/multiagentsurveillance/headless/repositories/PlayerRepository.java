@@ -2,7 +2,7 @@ package com.nscharrenberg.um.multiagentsurveillance.headless.repositories;
 
 import com.nscharrenberg.um.multiagentsurveillance.agents.SBO.SBOAgent;
 import com.nscharrenberg.um.multiagentsurveillance.agents.frontier.yamauchi.YamauchiAgent;
-import com.nscharrenberg.um.multiagentsurveillance.agents.probablistic.evader.EvaderAgent;
+import com.nscharrenberg.um.multiagentsurveillance.agents.probabilistic.evader.EvaderAgent;
 import com.nscharrenberg.um.multiagentsurveillance.agents.random.RandomAgent;
 import com.nscharrenberg.um.multiagentsurveillance.agents.shared.Agent;
 import com.nscharrenberg.um.multiagentsurveillance.headless.Factory;

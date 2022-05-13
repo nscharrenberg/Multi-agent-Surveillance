@@ -1,4 +1,4 @@
-package com.nscharrenberg.um.multiagentsurveillance.agents.probablistic;
+package com.nscharrenberg.um.multiagentsurveillance.agents.probabilistic;
 
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Map.Tile;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Player.Player;

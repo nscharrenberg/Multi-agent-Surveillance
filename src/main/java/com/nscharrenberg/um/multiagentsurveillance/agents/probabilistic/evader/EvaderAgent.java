@@ -1,11 +1,9 @@
-package com.nscharrenberg.um.multiagentsurveillance.agents.probablistic.evader;
+package com.nscharrenberg.um.multiagentsurveillance.agents.probabilistic.evader;
 
 import com.nscharrenberg.um.multiagentsurveillance.agents.frontier.yamauchi.YamauchiAgent;
-import com.nscharrenberg.um.multiagentsurveillance.agents.frontier.yamauchi.comparator.guard.IWeightComparatorGuard;
-import com.nscharrenberg.um.multiagentsurveillance.agents.frontier.yamauchi.comparator.guard.MinDistanceUnknownAreaComparator;
-import com.nscharrenberg.um.multiagentsurveillance.agents.probablistic.ClosestKnownAgent;
-import com.nscharrenberg.um.multiagentsurveillance.agents.shared.algorithms.distanceCalculator.CalculateDistance;
-import com.nscharrenberg.um.multiagentsurveillance.agents.shared.algorithms.distanceCalculator.ManhattanDistance;
+import com.nscharrenberg.um.multiagentsurveillance.agents.probabilistic.ClosestKnownAgent;
+import com.nscharrenberg.um.multiagentsurveillance.agents.probabilistic.ProbabilisticAgent;
+import com.nscharrenberg.um.multiagentsurveillance.agents.probabilistic.State;
 import com.nscharrenberg.um.multiagentsurveillance.agents.shared.algorithms.pathfinding.AStar.AStar;
 import com.nscharrenberg.um.multiagentsurveillance.agents.shared.algorithms.pathfinding.IPathFinding;
 import com.nscharrenberg.um.multiagentsurveillance.agents.shared.utils.QueueNode;
@@ -19,46 +17,21 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
-public class EvaderAgent extends YamauchiAgent {
+public class EvaderAgent extends ProbabilisticAgent {
     private static final int MAX_FLEE_STEPS = 10;
     private static final int MAX_CAUTIOUS_STEPS = 3;
-    private SecureRandom random;
     private final IPathFinding pathFindingAlgorithm = new AStar();
-    private EvaderState currentState = EvaderState.NORMAL;
-    private Tile closestKnownGuard = null;
     private int fleeCounter = 0;
     private int cautiousCounter = 0;
 
     public EvaderAgent(Player player) {
         super(player);
-
-        try {
-            this.random = SecureRandom.getInstanceStrong();
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-        }
     }
 
-    private void checkVision() {
-        if (player.getVision() == null) return;
 
-        for (Map.Entry<Integer, HashMap<Integer, Tile>> rowEntry : player.getVision().getRegion().entrySet()) {
-            for (Map.Entry<Integer, Tile> colEntry : rowEntry.getValue().entrySet()) {
-                Tile tile = colEntry.getValue();
-
-                if (tile.hasGuard()) {
-                    currentState = EvaderState.FLEE;
-
-                    if (ClosestKnownAgent.isClosestKnownAgent(closestKnownGuard, player, tile)) {
-                        closestKnownGuard = tile;
-                    }
-                }
-            }
-        }
-    }
 
     private Angle flee() {
-        Optional<QueueNode> queueNodeOpt = pathFindingAlgorithm.execute(knowledge, player, closestKnownGuard);
+        Optional<QueueNode> queueNodeOpt = pathFindingAlgorithm.execute(knowledge, player, closestKnownAgent);
 
         if (queueNodeOpt.isPresent()) {
             Angle peeked = queueNodeOpt.get().getMoves().peek();
@@ -79,26 +52,26 @@ public class EvaderAgent extends YamauchiAgent {
 
     @Override
     public Angle decide() {
-        checkVision();
+        checkVision(this);
 
-        if (currentState.equals(EvaderState.FLEE) && closestKnownGuard != null) {
+        if (currentState.equals(State.FLEE) && closestKnownAgent != null) {
             if (fleeCounter < MAX_FLEE_STEPS) {
                 fleeCounter++;
             } else {
                 fleeCounter = 0;
-                currentState = EvaderState.CAUTIOUS;
+                currentState = State.CAUTIOUS;
             }
 
             System.out.println("I am fleeing");
             return flee();
         }
 
-        if (currentState.equals(EvaderState.CAUTIOUS)) {
+        if (currentState.equals(State.CAUTIOUS)) {
             if (cautiousCounter < MAX_CAUTIOUS_STEPS) {
                 cautiousCounter++;
             } else {
                 cautiousCounter = 0;
-                currentState = EvaderState.NORMAL;
+                currentState = State.NORMAL;
             }
 
             System.out.println("I am Cautious");

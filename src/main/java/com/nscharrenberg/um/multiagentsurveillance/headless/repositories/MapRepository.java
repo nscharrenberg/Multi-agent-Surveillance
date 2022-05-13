@@ -112,12 +112,19 @@ public class MapRepository implements IMapRepository {
             throw new InvalidTileException(x1, y1, x2, y2);
         }
 
-        Point A = new Point(x1, y1);
-        Point B = new Point(x2, y2);
-        Point C = new Point(x1, y2);
-        Point D = new Point(x2, y1);
-        targetCenter = IntersectionPoint.calculateIntersectionPoint(A, B, C, D);
         targetArea = found;
+
+        if(!targetArea.isEmpty()) {
+            System.out.println(x1);
+            System.out.println(y1);
+            System.out.println(x2);
+            System.out.println(y2);
+            Point A = new Point(x1, y1);
+            Point B = new Point(x2, y2);
+            Point C = new Point(x1, y2);
+            Point D = new Point(x2, y1);
+            targetCenter = IntersectionPoint.calculateIntersectionPoint(A, B, C, D);
+        }
     }
 
     @Override

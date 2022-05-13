@@ -7,6 +7,10 @@ import com.nscharrenberg.um.multiagentsurveillance.agents.shared.algorithms.dist
 import com.nscharrenberg.um.multiagentsurveillance.agents.shared.algorithms.distanceCalculator.ManhattanDistance;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Map.Tile;
 
+/**
+ * Compare frontiers by the distance to the target
+ * If distances are equal, we use a minimal distance or a number of unknown tiles comparator
+ */
 public class CloseToTarget implements IWeightComparatorIntruder {
 
     CalculateDistance calculateDistance = new ManhattanDistance();

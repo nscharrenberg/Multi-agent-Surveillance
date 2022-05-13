@@ -5,6 +5,12 @@ import com.nscharrenberg.um.multiagentsurveillance.headless.models.Map.Tile;
 
 public class AngleTilesCalculator {
 
+    /**
+     * Calculate the game angle from X to Y
+     * @param tileX Position X
+     * @param tileY Position Y
+     * @return the game angle, which demonstrates the direction from X to Y
+     */
     public static Angle computeAngle(Tile tileX, Tile tileY) {
         int x = tileY.getX() - tileX.getX();
         int y = tileY.getY() - tileX.getY();

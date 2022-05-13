@@ -4,6 +4,11 @@ import com.nscharrenberg.um.multiagentsurveillance.headless.models.Angle.Angle;
 
 public class OppositeAngle {
 
+    /**
+     * Opposite angle
+     * @param angle Game angle
+     * @return the opposite game angle
+     */
     public static Angle getOppositeAngle(Angle angle){
 
         if(!(angle.equals(Angle.UP) || angle.equals(Angle.DOWN) || angle.equals(Angle.LEFT) || angle.equals(Angle.RIGHT)))

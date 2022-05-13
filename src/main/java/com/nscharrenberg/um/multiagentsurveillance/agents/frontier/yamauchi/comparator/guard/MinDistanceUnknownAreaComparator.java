@@ -2,7 +2,12 @@ package com.nscharrenberg.um.multiagentsurveillance.agents.frontier.yamauchi.com
 
 import com.nscharrenberg.um.multiagentsurveillance.agents.frontier.yamauchi.Frontier;
 
+/**
+ * Compare frontiers by the distance of the path
+ * If distances are equal, compare by unknown tiles
+ */
 public class MinDistanceUnknownAreaComparator implements IWeightComparatorGuard {
+
     @Override
     public Frontier compare(Frontier frontier, Frontier bestFrontier) {
 

@@ -4,6 +4,14 @@ import com.nscharrenberg.um.multiagentsurveillance.headless.models.Map.Tile;
 
 public class IntersectionPoint {
 
+    /**
+     * Compute the intersection point of two lines
+     * @param A point of the first line
+     * @param B point of the first line
+     * @param C point of the second line
+     * @param D point of the second line
+     * @return the intersection point of two lines
+     */
     public static Tile calculateIntersectionPoint(Point A, Point B, Point C, Point D){
 
         // Line X represented as a1x + b1y = c1

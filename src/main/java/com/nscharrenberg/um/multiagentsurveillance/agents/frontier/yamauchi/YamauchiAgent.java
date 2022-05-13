@@ -132,6 +132,7 @@ public class YamauchiAgent extends Agent {
                 bestFrontier = frontier;
 
 
+            //Compare two frontiers
             if(player instanceof Guard){
                 bestFrontier = weightDetectorGuard.compare(frontier, bestFrontier);
             } else if(player instanceof Intruder){

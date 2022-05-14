@@ -2,6 +2,7 @@ package com.nscharrenberg.um.multiagentsurveillance.agents.DQN.training;
 
 import com.nscharrenberg.um.multiagentsurveillance.agents.DQN.DQN_Agent;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Action;
+import com.nscharrenberg.um.multiagentsurveillance.headless.models.Map.Area;
 
 import java.util.ArrayList;
 
@@ -17,7 +18,7 @@ public class NetworkTrainer {
     private final int memorySize = 10000;
     private final double lr = 0.001;
     private final int numEpisodes = 1000;
-    private SampleData sampleData;
+    private TrainingData trainingData;
     private DQN_Agent agent;
 
 
@@ -31,7 +32,7 @@ public class NetworkTrainer {
 
 
     public NetworkTrainer(DQN_Agent agent){
-        sampleData = new SampleData(memorySize);
+        trainingData = new TrainingData(memorySize);
         this.agent = agent;
     }
 
@@ -48,20 +49,23 @@ public class NetworkTrainer {
             nextState = agent.getState();
             done = false; // UPDATE
 
-            sampleData.push(new Experience(state,action,reward,nextState,done));
+            //trainingData.push(new Experience(state,action,reward,nextState,done));
             state = nextState;
 
             // TODO: Add short and long term training methods
             // TODO: Agent requires a game finished check
 
-            if (sampleData.hasBatch(batchSize))
+            if (trainingData.hasBatch(batchSize))
                 batchTrain();
         }
     }
 
     private void batchTrain(){
-        SampleData samples = sampleData.randomSample(batchSize);
-
+        TrainingData samples = trainingData.randomSample(batchSize);
+        ArrayList<double[]> qValues = samples.qValues;
+        //ArrayList<double[]> nextQValues =
     }
+
+
 
 }

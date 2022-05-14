@@ -4,7 +4,7 @@ import com.nscharrenberg.um.multiagentsurveillance.headless.models.Action;
 
 import java.util.*;
 
-public class SampleData {
+public class TrainingData {
 
     private int capacity;
     private int index;
@@ -15,16 +15,17 @@ public class SampleData {
     public ArrayList<Action> actions;
     public ArrayList<Double> rewards;
     public ArrayList<Boolean> ends;
+    public ArrayList<double[]> qValues;
 
 
-    public SampleData(int capacity) {
+    public TrainingData(int capacity) {
         this.capacity = capacity;
         this.index = 0;
         this.count = 0;
         this.random = new Random();
     }
 
-    public SampleData() {
+    public TrainingData() {
         this.capacity = 0;
         this.index = 0;
         this.count = 0;
@@ -33,11 +34,12 @@ public class SampleData {
     }
 
     private void init(){
-        int initCapacity = capacity == 0 ? 100 : capacity;
+        int initCapacity = capacity == 0 ? 1000 : capacity;
         states = new ArrayList<>(initCapacity);
         nextStates = new ArrayList<>(initCapacity);
         actions = new ArrayList<>(initCapacity);
         rewards = new ArrayList<>(initCapacity);
+        qValues = new ArrayList<>(initCapacity);
     }
 
     public void push(Experience experience) {
@@ -54,11 +56,15 @@ public class SampleData {
         count++;
     }
 
-    public SampleData randomSample(int batchSize) {
+    public void push(double[][][] states, Action action, double reward, double[][][] nextState, boolean done, double[] qValues){
+        push(new Experience(states,action,reward,nextState,done,qValues));
+    }
+
+    public TrainingData randomSample(int batchSize) {
 
         int bound;
         Set<Integer> indexSet = new HashSet<>();
-        SampleData randomSample = new SampleData();
+        TrainingData randomSample = new TrainingData();
 
         if (count < capacity)
             bound = count;
@@ -77,7 +83,8 @@ public class SampleData {
                                                 actions.get(i),
                                                 rewards.get(i),
                                                 nextStates.get(i),
-                                                ends.get(i));
+                                                ends.get(i),
+                                                qValues.get(i));
             randomSample.push(sampleExperience);
         }
 

@@ -43,7 +43,11 @@ public class DQN_Agent extends Agent {
         qValues = new HashMap<>();
     }
 
+    public DQN_Agent(Player player, Network network) {
+        super(player);
 
+        this.network = network;
+    }
 
     public double preformMove(Action angle){
 
@@ -234,7 +238,99 @@ public class DQN_Agent extends Agent {
         return false;
     }
 
-/*
+    public EpsilonGreedy getStrategy() {
+        return strategy;
+    }
+
+    public void setStrategy(EpsilonGreedy strategy) {
+        this.strategy = strategy;
+    }
+
+    public void setState(double[][][] state) {
+        this.state = state;
+    }
+
+    public double[][][] getPreviousState() {
+        return previousState;
+    }
+
+    public void setPreviousState(double[][][] previousState) {
+        this.previousState = previousState;
+    }
+
+    public int getRewardScalar() {
+        return rewardScalar;
+    }
+
+    public void setRewardScalar(int rewardScalar) {
+        this.rewardScalar = rewardScalar;
+    }
+
+    public int getChannels() {
+        return channels;
+    }
+
+    public void setChannels(int channels) {
+        this.channels = channels;
+    }
+
+    public int getLength() {
+        return length;
+    }
+
+    public void setLength(int length) {
+        this.length = length;
+    }
+
+    public int getxOffset() {
+        return xOffset;
+    }
+
+    public void setxOffset(int xOffset) {
+        this.xOffset = xOffset;
+    }
+
+    public int getyOffset() {
+        return yOffset;
+    }
+
+    public void setyOffset(int yOffset) {
+        this.yOffset = yOffset;
+    }
+
+    public double getLr() {
+        return lr;
+    }
+
+    public void setLr(double lr) {
+        this.lr = lr;
+    }
+
+    public Network getNetwork() {
+        return network;
+    }
+
+    public void setNetwork(Network network) {
+        this.network = network;
+    }
+
+    public int getVelocity() {
+        return velocity;
+    }
+
+    public void setVelocity(int velocity) {
+        this.velocity = velocity;
+    }
+
+    public HashMap<Integer, double[]> getqValues() {
+        return qValues;
+    }
+
+    public void setqValues(HashMap<Integer, double[]> qValues) {
+        this.qValues = qValues;
+    }
+
+    /*
     private double collisionError(Tile selected){
         if (selected.isCollision())
             return -output[0];

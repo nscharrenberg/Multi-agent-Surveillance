@@ -3,13 +3,13 @@ package com.nscharrenberg.um.multiagentsurveillance.agents.DQN.CNN;
 import static com.nscharrenberg.um.multiagentsurveillance.agents.DQN.DQN_Util.*;
 
 public class Filter {
-    private final int channels;
+    private int channels;
     private double[][][] input;
-    private final int kernelSize = 3;
+    private int kernelSize = 3;
     private Kernel[] kernels;
     private double[][] bias;
-    private final int inputLength;
-    private final int size;
+    private int inputLength;
+    private int size;
     private double learningRate;
 
     /**
@@ -36,6 +36,9 @@ public class Filter {
         for (int i = 0; i < channels; i++) {
             kernels[i] = new Kernel(initWeight);
         }
+    }
+
+    public Filter() {
     }
 
     /**
@@ -152,4 +155,67 @@ public class Filter {
         return out;
     }
 
+    public int getChannels() {
+        return channels;
+    }
+
+    public void setChannels(int channels) {
+        this.channels = channels;
+    }
+
+    public double[][][] getInput() {
+        return input;
+    }
+
+    public void setInput(double[][][] input) {
+        this.input = input;
+    }
+
+    public int getKernelSize() {
+        return kernelSize;
+    }
+
+    public void setKernelSize(int kernelSize) {
+        this.kernelSize = kernelSize;
+    }
+
+    public Kernel[] getKernels() {
+        return kernels;
+    }
+
+    public void setKernels(Kernel[] kernels) {
+        this.kernels = kernels;
+    }
+
+    public double[][] getBias() {
+        return bias;
+    }
+
+    public void setBias(double[][] bias) {
+        this.bias = bias;
+    }
+
+    public int getInputLength() {
+        return inputLength;
+    }
+
+    public void setInputLength(int inputLength) {
+        this.inputLength = inputLength;
+    }
+
+    public int getSize() {
+        return size;
+    }
+
+    public void setSize(int size) {
+        this.size = size;
+    }
+
+    public double getLearningRate() {
+        return learningRate;
+    }
+
+    public void setLearningRate(double learningRate) {
+        this.learningRate = learningRate;
+    }
 }

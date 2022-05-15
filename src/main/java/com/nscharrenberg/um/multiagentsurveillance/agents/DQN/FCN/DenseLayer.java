@@ -3,7 +3,7 @@ package com.nscharrenberg.um.multiagentsurveillance.agents.DQN.FCN;
 public class DenseLayer {
 
     private Neuron[] neurons;
-    private final int numInputs, numOutputs;
+    private int numInputs, numOutputs;
     private double[] inputs;
     private double[] outputs;
 
@@ -11,6 +11,9 @@ public class DenseLayer {
         this.numInputs = numInputs;
         this.numOutputs = numOutputs;
         initNeurons(learningRate);
+    }
+
+    public DenseLayer() {
     }
 
     private void initNeurons(double learningRate){
@@ -77,4 +80,43 @@ public class DenseLayer {
         return out;
     }
 
+    public Neuron[] getNeurons() {
+        return neurons;
+    }
+
+    public void setNeurons(Neuron[] neurons) {
+        this.neurons = neurons;
+    }
+
+    public int getNumInputs() {
+        return numInputs;
+    }
+
+    public void setNumInputs(int numInputs) {
+        this.numInputs = numInputs;
+    }
+
+    public int getNumOutputs() {
+        return numOutputs;
+    }
+
+    public void setNumOutputs(int numOutputs) {
+        this.numOutputs = numOutputs;
+    }
+
+    public double[] getInputs() {
+        return inputs;
+    }
+
+    public void setInputs(double[] inputs) {
+        this.inputs = inputs;
+    }
+
+    public double[] getOutputs() {
+        return outputs;
+    }
+
+    public void setOutputs(double[] outputs) {
+        this.outputs = outputs;
+    }
 }

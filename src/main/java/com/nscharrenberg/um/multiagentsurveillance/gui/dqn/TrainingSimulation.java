@@ -22,6 +22,7 @@ public class TrainingSimulation {
         int n = 5;
 //        train(n);
         testWritingNetwork();
+        NetworkUtils.readDenseLayer(NETWORK_PATH + 2 + NETWORK_EXTENSION);
     }
 
     private void testWritingNetwork() throws Exception {
@@ -68,7 +69,7 @@ public class TrainingSimulation {
         for (Agent agent : Factory.getPlayerRepository().getAgents()) {
             if (agent instanceof DQN_Agent dqnAgent) {
                 networkId++;
-                NetworkUtils.saveNetwork(dqnAgent.getNetwork(), NETWORK_PATH + networkId + NETWORK_EXTENSION);
+                NetworkUtils.saveDenseLayer(dqnAgent.getNetwork(), NETWORK_PATH + networkId + NETWORK_EXTENSION);
                 networks.push(dqnAgent.getNetwork());
             }
         }

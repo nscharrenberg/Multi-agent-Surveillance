@@ -7,8 +7,8 @@ public class Neuron {
 
     private double[] weights;
     private double bias;
-    private final int numInputs;
-    private final double learningRate;
+    private int numInputs;
+    private double learningRate;
 
     public Neuron(int numInputs, double learningRate) {
         this.numInputs = numInputs;
@@ -16,6 +16,9 @@ public class Neuron {
         weights = new double[numInputs];
         bias = 0;
         initWeights();
+    }
+
+    public Neuron() {
     }
 
     public double[] getWeights() { return weights; }
@@ -65,4 +68,27 @@ public class Neuron {
             weights[i] = ThreadLocalRandom.current().nextDouble(-k, k);
     }
 
+    public void setWeights(double[] weights) {
+        this.weights = weights;
+    }
+
+    public void setBias(double bias) {
+        this.bias = bias;
+    }
+
+    public int getNumInputs() {
+        return numInputs;
+    }
+
+    public void setNumInputs(int numInputs) {
+        this.numInputs = numInputs;
+    }
+
+    public double getLearningRate() {
+        return learningRate;
+    }
+
+    public void setLearningRate(double learningRate) {
+        this.learningRate = learningRate;
+    }
 }

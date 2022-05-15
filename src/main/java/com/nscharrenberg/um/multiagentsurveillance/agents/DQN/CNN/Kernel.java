@@ -5,7 +5,7 @@ import java.util.concurrent.ThreadLocalRandom;
 import static com.nscharrenberg.um.multiagentsurveillance.agents.DQN.DQN_Util.scaleSubtract;
 
 public class Kernel {
-    private final int size = 3;
+    private int size = 3;
     private double[][] weights;
     private Random random = ThreadLocalRandom.current();
 
@@ -16,7 +16,9 @@ public class Kernel {
         for (int i=0; i<size; i++)
             for (int j=0; j<size; j++)
                 weights[i][j] = scale * (random.nextInt(3) - 1);
+    }
 
+    public Kernel() {
     }
 
     public double[][] getWeights(){
@@ -43,4 +45,23 @@ public class Kernel {
         return line;
     }
 
+    public int getSize() {
+        return size;
+    }
+
+    public void setSize(int size) {
+        this.size = size;
+    }
+
+    public void setWeights(double[][] weights) {
+        this.weights = weights;
+    }
+
+    public Random getRandom() {
+        return random;
+    }
+
+    public void setRandom(Random random) {
+        this.random = random;
+    }
 }

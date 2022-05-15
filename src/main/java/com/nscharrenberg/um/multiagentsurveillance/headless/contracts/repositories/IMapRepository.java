@@ -11,6 +11,7 @@ import com.nscharrenberg.um.multiagentsurveillance.headless.models.Marker;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.MarkerSmell;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Player.Player;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 public interface IMapRepository {
@@ -156,7 +157,7 @@ public interface IMapRepository {
 
     void checkMarkers() throws BoardNotBuildException, InvalidTileException, ItemNotOnTileException;
 
-    HashMap<Integer, MarkerSmell> getListOfPlacedMarkers();
+    ArrayList<MarkerSmell> getListOfPlacedMarkers();
 
     TileArea getBoard();
 

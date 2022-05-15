@@ -197,7 +197,9 @@ public abstract class Agent {
         execute(decide());
     }
 
+    int counter = 0;
     public Action markerCheck() throws InvalidTileException, BoardNotBuildException {
+        counter++;
         HashMap<Integer, HashMap<Integer, Tile>> vision = player.getVision().getRegion();
 
         for (Map.Entry<Integer, HashMap<Integer, Tile>> rowEntry : vision.entrySet()) {
@@ -206,6 +208,7 @@ public abstract class Agent {
                     if (colEntry.getValue() instanceof ShadowTile && getShadedMarkers() > 0) {
                         if (!lookForSameMarker(vision, Marker.MarkerType.SHADED, player)) {
                             if (!lookForMarkerPlacedByPlayer(player, Marker.MarkerType.SHADED)) {
+                                System.out.println("SHADED");
                                 return Action.PLACE_MARKER_SHADED;
                             }
                         }
@@ -221,6 +224,7 @@ public abstract class Agent {
                         else if (item instanceof Teleporter && getTeleporterMarkers() > 0) {
                             if (!lookForSameMarker(vision, Marker.MarkerType.TELEPORTER, player)) {
                                 if (!lookForMarkerPlacedByPlayer(player, Marker.MarkerType.TELEPORTER)) {
+                                    System.out.println("TELEPORTER PLACED");
                                     return Action.PLACE_MARKER_TELEPORTER;
                                 }
                             }
@@ -263,7 +267,6 @@ public abstract class Agent {
                         else if (item instanceof Teleporter && getTeleporterMarkers() > 0) {
                             if (!lookForSameMarker(vision, Marker.MarkerType.TELEPORTER, player)) {
                                 if (!lookForMarkerPlacedByPlayer(player, Marker.MarkerType.TELEPORTER)) {
-                                    System.out.println("TELEPORTER PLACED");
                                     return Action.PLACE_MARKER_TELEPORTER;
                                 }
                             }
@@ -281,7 +284,7 @@ public abstract class Agent {
                 }
             }
         }
-
+        System.out.println(counter + "   FAAAAALLLLLSSEEEE");
         return null;
     }
 
@@ -289,7 +292,7 @@ public abstract class Agent {
         for (Map.Entry<Integer, HashMap<Integer, Tile>> rowEntry : vision.entrySet()) {
             for (Map.Entry<Integer, Tile> colEntry : rowEntry.getValue().entrySet()) {
                 for (Item item : colEntry.getValue().getItems()) {
-                    if ((item instanceof Marker) && (((Marker) item).getType() == typeOfMarker) && (((Marker) item).getPlayer().getClass().equals(player.getClass()))) {
+                    if ((item instanceof MarkerSmell) && (((MarkerSmell) item).getType() == typeOfMarker) && (((MarkerSmell) item).getPlayer().getClass().equals(player.getClass()))) {
                         return true;
                     }
                 }
@@ -300,14 +303,14 @@ public abstract class Agent {
     }
 
     public boolean lookForMarkerPlacedByPlayer(Player player, Marker.MarkerType typeOfMarker) {
-        HashMap<Integer, MarkerSmell> listOfPlacedMarkers = Factory.getMapRepository().getListOfPlacedMarkers();
+        ArrayList<MarkerSmell> listOfPlacedMarkers = Factory.getMapRepository().getListOfPlacedMarkers();
 
         if (listOfPlacedMarkers == null) {
             return false;
         }
 
-        for (Map.Entry<Integer, MarkerSmell> entry : listOfPlacedMarkers.entrySet()) {
-            if ((entry.getValue().getType() == typeOfMarker) && (entry.getValue().getPlayer() == player)) {
+        for (int i = 0; i < listOfPlacedMarkers.size(); i++) {
+            if ((listOfPlacedMarkers.get(i).getType() == typeOfMarker) && (listOfPlacedMarkers.get(i).getPlayer() == player)) {
                 return true;
             }
         }

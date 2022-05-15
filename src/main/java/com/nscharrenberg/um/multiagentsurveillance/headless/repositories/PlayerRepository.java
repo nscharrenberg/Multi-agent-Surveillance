@@ -258,7 +258,7 @@ public class PlayerRepository implements IPlayerRepository {
             visionLength /= 2;
 
         // Rotate the player when it's not facing the same direction as it wants to go to.
-        if (!currentDirection.equals(direction)) {
+        if (!currentDirection.equals(direction) && !direction.equals(Action.PLACE_MARKER_DEADEND) && !direction.equals(Action.PLACE_MARKER_TARGET) && !direction.equals(Action.PLACE_MARKER_GUARDSPOTTED) && !direction.equals(Action.PLACE_MARKER_INTRUDERSPOTTED) && !direction.equals(Action.PLACE_MARKER_TELEPORTER) && !direction.equals(Action.PLACE_MARKER_SHADED)) {
             player.setDirection(direction);
 
             if (player.getAgent() != null) {

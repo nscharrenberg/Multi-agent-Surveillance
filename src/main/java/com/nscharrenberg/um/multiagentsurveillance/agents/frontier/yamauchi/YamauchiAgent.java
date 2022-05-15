@@ -79,9 +79,9 @@ public class YamauchiAgent extends Agent {
     @Override
     public Action decide() throws InvalidTileException, BoardNotBuildException {
 
-        if (player.getAgent().markerCheck() != null) {
-            //TODO: Return the type of marker. In general: Adjust code in placeMarker method, decide and move method.
-            return player.getAgent().markerCheck();
+        Action markerChecked = player.getAgent().markerCheck();
+        if (markerChecked != null) {
+            return markerChecked;
         }
 
         // Inconsistent with explorer% ????
@@ -246,7 +246,7 @@ public class YamauchiAgent extends Agent {
         int x = player.getTile().getX();
         int y = player.getTile().getY();
         HashMap<Integer, HashMap<Integer, Tile>> region = knowledge.subset(x - 10, y - 10, x + 10, y + 10);
-        
+
         frontiers.clear();
         chosenFrontier = null;
 

@@ -17,16 +17,20 @@ public class Network {
     private ConvLayer[] convLayers;
     private DenseLayer[] denseLayers;
     private ActivationLayer activationLayer;
-    private final int kernelSize = 3;
-    private final double learningRate;
-    private final int outputLength = 3; // TODO: Add markers to decisions
-    private final int c1Filters = 32, c2Filters = 128, c3Filters = 32;
+    private int kernelSize = 3;
+    private double learningRate;
+    private int outputLength = 3; // TODO: Add markers to decisions
+    private int c1Filters = 32, c2Filters = 128, c3Filters = 32;
     private int conv3Length;
 
     private double[] networkOutput;
 
     public Network(double learningRate){
         this.learningRate = learningRate;
+    }
+
+    public Network() {
+        this.learningRate = 0;
     }
 
     public void initLayers(int channels, int inputLength){
@@ -126,4 +130,91 @@ public class Network {
         return length - kernelSize + 1;
     }
 
+    public ConvLayer[] getConvLayers() {
+        return convLayers;
+    }
+
+    public void setConvLayers(ConvLayer[] convLayers) {
+        this.convLayers = convLayers;
+    }
+
+    public DenseLayer[] getDenseLayers() {
+        return denseLayers;
+    }
+
+    public void setDenseLayers(DenseLayer[] denseLayers) {
+        this.denseLayers = denseLayers;
+    }
+
+    public ActivationLayer getActivationLayer() {
+        return activationLayer;
+    }
+
+    public void setActivationLayer(ActivationLayer activationLayer) {
+        this.activationLayer = activationLayer;
+    }
+
+    public int getKernelSize() {
+        return kernelSize;
+    }
+
+    public double getLearningRate() {
+        return learningRate;
+    }
+
+    public int getOutputLength() {
+        return outputLength;
+    }
+
+    public int getC1Filters() {
+        return c1Filters;
+    }
+
+    public int getC2Filters() {
+        return c2Filters;
+    }
+
+    public int getC3Filters() {
+        return c3Filters;
+    }
+
+    public int getConv3Length() {
+        return conv3Length;
+    }
+
+    public void setConv3Length(int conv3Length) {
+        this.conv3Length = conv3Length;
+    }
+
+    public double[] getNetworkOutput() {
+        return networkOutput;
+    }
+
+    public void setNetworkOutput(double[] networkOutput) {
+        this.networkOutput = networkOutput;
+    }
+
+    public void setLearningRate(double learningRate) {
+        this.learningRate = learningRate;
+    }
+
+    public void setKernelSize(int kernelSize) {
+        this.kernelSize = kernelSize;
+    }
+
+    public void setOutputLength(int outputLength) {
+        this.outputLength = outputLength;
+    }
+
+    public void setC1Filters(int c1Filters) {
+        this.c1Filters = c1Filters;
+    }
+
+    public void setC2Filters(int c2Filters) {
+        this.c2Filters = c2Filters;
+    }
+
+    public void setC3Filters(int c3Filters) {
+        this.c3Filters = c3Filters;
+    }
 }

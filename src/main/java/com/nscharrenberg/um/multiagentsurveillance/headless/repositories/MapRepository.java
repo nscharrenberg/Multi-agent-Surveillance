@@ -268,6 +268,8 @@ public class MapRepository implements IMapRepository {
     public void checkMarkers() throws BoardNotBuildException, InvalidTileException, ItemNotOnTileException {
         boardInitCheck();
 
+        if (placed_markers == null || placed_markers.isEmpty()) return;
+
         for (Map.Entry<Integer, Marker> entry : placed_markers.entrySet()) {
             if (entry.getValue().getCurrentDuration() == 0) {
                 removeMarker(entry.getValue());

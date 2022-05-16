@@ -17,6 +17,7 @@ public class Intruder extends Player {
     private double sprintSpeed;
     private boolean isSprinting = false;
     private Angle targetDirection;
+    private AdvancedAngle targetDirectionAdvancedAngle;
 
     public Intruder(Tile position, Angle direction) {
         // TODO: Read speed from Configuration
@@ -25,7 +26,8 @@ public class Intruder extends Player {
         // TODO: Read sprint speed from Configuration
         this.sprintSpeed = 20;
 
-        targetDirection = TargetDirection.computeTargetDirection(position.getX(), position.getY());
+        // this.targetDirection = TargetDirection.computeTargetDirection(position.getX(), position.getY());
+        this.targetDirectionAdvancedAngle = TargetDirection.computeTargetDirectionInAdvancedAngle(position.getX(), position.getY());
     }
 
     public double getSprintSpeed() {
@@ -67,7 +69,9 @@ public class Intruder extends Player {
         return Objects.hash(super.hashCode(), sprintSpeed, isSprinting);
     }
 
+    public void getTarget(){
 
+    }
 
 
 }

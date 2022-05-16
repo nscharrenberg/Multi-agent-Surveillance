@@ -1,6 +1,7 @@
 package com.nscharrenberg.um.multiagentsurveillance.headless.utils;
 
 import com.nscharrenberg.um.multiagentsurveillance.headless.Factory;
+import com.nscharrenberg.um.multiagentsurveillance.headless.models.Angle.AdvancedAngle;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Angle.Angle;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Map.Tile;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Map.TileArea;
@@ -78,6 +79,57 @@ public class TargetDirection {
 
         }
     }
+
+    public static AdvancedAngle computeTargetDirectionInAdvancedAngle(int x, int y) {
+
+        TileArea targetArea = Factory.getMapRepository().getTargetArea();
+        List<Tile> bounds = targetArea.getBounds();
+
+        if (bounds.isEmpty()) {
+            throw new RuntimeException("no target position provided for the intruder");
+        }
+
+        // Top Left
+        int topLeftX = bounds.get(0).getX();
+        int topLeftY = bounds.get(0).getY();
+
+        // Bottom Right
+        int bottomRightX = bounds.get(3).getX();
+        int bottomRightY = bounds.get(3).getY();
+
+        Tile targetCentre = new Tile((topLeftX + bottomRightX)/2, (topLeftY + bottomRightY)/2);
+
+        Tile intruderPosition = new Tile(x, y);
+
+        if (intruderPosition.getX() == targetCentre.getX())
+        {
+            if (intruderPosition.getY() < targetCentre.getY())
+                return AdvancedAngle.DOWN;
+            else
+                return AdvancedAngle.UP;
+        }
+        else if(intruderPosition.getY() == targetCentre.getY())
+        {
+            if (intruderPosition.getX() < targetCentre.getX())
+                return AdvancedAngle.RIGHT;
+            else
+                return AdvancedAngle.LEFT;
+        }
+        else if (intruderPosition.getX() > targetCentre.getX())
+        {
+            if (intruderPosition.getY() < targetCentre.getY())
+                return AdvancedAngle.BOTTOM_LEFT;
+            else
+                return AdvancedAngle.TOP_LEFT;
+        }
+        else {
+            if (intruderPosition.getY() < targetCentre.getY())
+                return AdvancedAngle.BOTTOM_RIGHT;
+            else
+                return AdvancedAngle.TOP_RIGHT;
+        }
+    }
+
     public static Angle computeTargetDirectionTesting(int x1, int y1) {
 
         File file = new File("src/test/resources/maps/testmap6.txt");
@@ -98,6 +150,29 @@ public class TargetDirection {
         }
 
         return computeTargetDirection(x1, y1);
+
+    }
+
+    public static AdvancedAngle computeTargetDirectionInAdvancedAngleTesting(int x, int y) {
+
+        File file = new File("src/test/resources/maps/testmap6.txt");
+
+        if (!file.exists()) {
+            throw new RuntimeException("Resource not found");
+        }
+
+        String path = file.getAbsolutePath();
+
+        MapImporter importer = new MapImporter();
+
+        try {
+            importer.load(path);
+
+        } catch (IOException e) {
+            throw new RuntimeException("Importer failed");
+        }
+
+        return computeTargetDirectionInAdvancedAngle(x, y);
 
     }
 }

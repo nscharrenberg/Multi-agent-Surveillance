@@ -5,6 +5,7 @@ module com.nscharrenberg.um.multiagentsurveillance {
     requires com.google.gson;
     requires java.datatransfer;
     requires java.desktop;
+    requires java.base;
 
     opens com.nscharrenberg.um.multiagentsurveillance to javafx.fxml, cloning;
     exports com.nscharrenberg.um.multiagentsurveillance;
@@ -24,6 +25,8 @@ module com.nscharrenberg.um.multiagentsurveillance {
     opens com.nscharrenberg.um.multiagentsurveillance.agents.shared.utils to cloning;
     opens com.nscharrenberg.um.multiagentsurveillance.agents.frontier.yamauchi.comparator to cloning;
     opens com.nscharrenberg.um.multiagentsurveillance.agents.shared.algorithms.pathfinding.AStar to cloning;
+    opens com.nscharrenberg.um.multiagentsurveillance.agents.DQN.neuralNetwork to com.google.gson;
+    opens com.nscharrenberg.um.multiagentsurveillance.agents.DQN.CNN to com.google.gson;
     opens com.nscharrenberg.um.multiagentsurveillance.headless.utils to cloning;
     exports com.nscharrenberg.um.multiagentsurveillance.headless.utils.recorder;
     opens com.nscharrenberg.um.multiagentsurveillance.headless.utils.recorder to com.google.gson, javafx.fxml;

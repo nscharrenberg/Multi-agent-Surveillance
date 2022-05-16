@@ -10,8 +10,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.nscharrenberg.um.multiagentsurveillance.agents.DQN.utils.properties.DQNKernelProperties.SIZE;
-import static com.nscharrenberg.um.multiagentsurveillance.agents.DQN.utils.properties.DQNKernelProperties.WEIGHTS;
+import static com.nscharrenberg.um.multiagentsurveillance.agents.DQN.utils.properties.DQNKernelProperties.*;
 
 public class DQNKernelAdapter extends TypeAdapter<Kernel> {
     @Override

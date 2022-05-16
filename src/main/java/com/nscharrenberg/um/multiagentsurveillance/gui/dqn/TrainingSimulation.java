@@ -17,12 +17,13 @@ import java.util.Stack;
 public class TrainingSimulation {
     private String NETWORK_PATH = "dqn_network_activation_layer";
     private String NETWORK_EXTENSION = ".agent";
+    private Stack<Network> networks = new Stack<>();
 
     public TrainingSimulation() throws Exception {
         int n = 5;
 //        train(n);
         testWritingNetwork();
-        NetworkUtils.readDenseLayer(NETWORK_PATH + 2 + NETWORK_EXTENSION);
+//        NetworkUtils.readNetwork(NETWORK_PATH + 2 + NETWORK_EXTENSION);
     }
 
     private void testWritingNetwork() throws Exception {
@@ -69,7 +70,7 @@ public class TrainingSimulation {
         for (Agent agent : Factory.getPlayerRepository().getAgents()) {
             if (agent instanceof DQN_Agent dqnAgent) {
                 networkId++;
-                NetworkUtils.saveDenseLayer(dqnAgent.getNetwork(), NETWORK_PATH + networkId + NETWORK_EXTENSION);
+                NetworkUtils.saveNetwork(dqnAgent.getNetwork(), NETWORK_PATH + networkId + NETWORK_EXTENSION);
                 networks.push(dqnAgent.getNetwork());
             }
         }
@@ -84,8 +85,6 @@ public class TrainingSimulation {
             }
         }
     }
-
-    private Stack<Network> networks = new Stack<>();
 
     private void runSingleGame() throws Exception {
         Factory.init();

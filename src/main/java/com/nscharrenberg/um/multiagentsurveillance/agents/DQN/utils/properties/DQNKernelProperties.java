@@ -2,7 +2,8 @@ package com.nscharrenberg.um.multiagentsurveillance.agents.DQN.utils.properties;
 
 public enum DQNKernelProperties {
     SIZE("size"),
-    WEIGHTS("weights");
+    WEIGHTS("weights"),
+    SEED("seed");
 
     final String key;
 

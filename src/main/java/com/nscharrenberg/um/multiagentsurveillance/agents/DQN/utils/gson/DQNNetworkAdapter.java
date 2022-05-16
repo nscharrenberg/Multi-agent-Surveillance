@@ -67,7 +67,7 @@ public class DQNNetworkAdapter extends TypeAdapter<Network> {
 
         writer.beginArray();
 
-        for (int i = 0; i < value.getDenseLayers().length; i++) {
+        for (int i = 0; i <= value.getDenseLayers().length; i++) {
             writer.value(gson.toJson(value.getDenseLayers()[i], DenseLayer.class));
         }
 
@@ -77,7 +77,7 @@ public class DQNNetworkAdapter extends TypeAdapter<Network> {
 
         writer.beginArray();
 
-        for (int i = 0; i < value.getConvLayers().length; i++) {
+        for (int i = 0; i <= value.getConvLayers().length; i++) {
             writer.value(gson.toJson(value.getConvLayers()[i], ConvLayer.class));
         }
 

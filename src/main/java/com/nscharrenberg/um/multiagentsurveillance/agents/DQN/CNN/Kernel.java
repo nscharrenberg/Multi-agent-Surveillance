@@ -7,7 +7,7 @@ import static com.nscharrenberg.um.multiagentsurveillance.agents.DQN.DQN_Util.sc
 public class Kernel {
     private int size = 3;
     private double[][] weights;
-    private Random random = ThreadLocalRandom.current();
+    private transient Random random = ThreadLocalRandom.current();
 
     public Kernel(double initWeight){
         double scale = Math.pow(10, -initWeight);
@@ -16,9 +16,12 @@ public class Kernel {
         for (int i=0; i<size; i++)
             for (int j=0; j<size; j++)
                 weights[i][j] = scale * (random.nextInt(3) - 1);
+
+
     }
 
     public Kernel() {
+
     }
 
     public double[][] getWeights(){

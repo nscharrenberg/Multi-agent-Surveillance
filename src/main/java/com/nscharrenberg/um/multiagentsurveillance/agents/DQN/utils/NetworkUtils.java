@@ -39,6 +39,18 @@ public class NetworkUtils {
         fr.close();
     }
 
+    public static String networkToJson(Network network) {
+        Gson gson = buildGson();
+
+        return gson.toJson(network);
+    }
+
+    public static Network jsonToNetwork(String json) {
+        Gson gson = buildGson();
+
+        return gson.fromJson(json, Network.class);
+    }
+
     /**
      * Read the DQN Network values from a file and build a network instance
      * @param pathToFile - the file to read

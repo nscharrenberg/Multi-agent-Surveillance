@@ -48,8 +48,9 @@ public class SBOAgent extends Agent {
     @Override
     public Action decide() throws InvalidTileException, BoardNotBuildException {
 
-        if (player.getAgent().markerCheck() != null) {
-            return player.getAgent().markerCheck();
+        Action markerChecked = player.getAgent().markerCheck();
+        if (markerChecked != null) {
+            return markerChecked;
         }
 
         // TODO: get all parameters from the vision (this might become a global thing)

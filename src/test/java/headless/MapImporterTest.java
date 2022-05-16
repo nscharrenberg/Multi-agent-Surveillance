@@ -28,7 +28,7 @@ public class MapImporterTest {
     @DisplayName("Decoupled Repository Import Successful")
     @Test
     void testDecoupledRepositoriesSuccessful() {
-        File file = new File("src/test/resources/maps/testmap.txt");
+        File file = new File("src/test/resources/maps/rust.txt");
 
         if (!file.exists()) {
             Assertions.fail("Resource not found");

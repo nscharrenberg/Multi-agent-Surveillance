@@ -1,4 +1,5 @@
 package com.nscharrenberg.um.multiagentsurveillance.headless.utils;
+
 import com.nscharrenberg.um.multiagentsurveillance.headless.exceptions.BoardNotBuildException;
 import com.nscharrenberg.um.multiagentsurveillance.headless.exceptions.InvalidTileException;
 import com.nscharrenberg.um.multiagentsurveillance.headless.exceptions.ItemNotOnTileException;
@@ -13,27 +14,21 @@ import com.nscharrenberg.um.multiagentsurveillance.headless.models.Map.Tile;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Map.TileArea;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Player.Guard;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Player.Intruder;
-import com.nscharrenberg.um.multiagentsurveillance.headless.models.Player.Player;
 
-
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
 
 public class GameOver {
 
-    private static String MAP_PATH = "src/test/resources/maps/testmap.txt";
     private IMapRepository mapRepository;
     private IPlayerRepository playerRepository;
 
     private ManhattanDistance manhattanDistance;
 
-    private GameMode gameMode;
+    private static GameMode gameMode;
 
-    private int caught = 0;
-    private int escape = 0;
+    private static int caught = 0;
+    private static int escaped = 0;
 
-    enum gameOver
+    public enum gameOver
     {
         WIN,
         LOSE
@@ -46,12 +41,12 @@ public class GameOver {
     }
 
     // Check whether the gameMode is Guard vs Intruder
-    private boolean checkGameMode(){
-        return gameMode.getName().equals("Guard vs Intruder") && gameMode.getId() == 1;
+    public static boolean checkGameMode(){
+        return gameMode.getName().equals("Guard vs Intruder") || gameMode.getId() == 1;
     }
 
     // Check if all the intruders are gone
-    private gameOver findIntruder(TileArea board, Tile intruderPos)
+    public static gameOver findIntruder(TileArea board, Tile intruderPos)
     {
         if(board.getByCoordinates(intruderPos.getX(), intruderPos.getY()).isPresent())
         {
@@ -70,7 +65,7 @@ public class GameOver {
     }
 
     // Check if the intruders are in the target area
-    private gameOver checkTargetArea(TileArea targetArea, Intruder intruder, Tile target)
+    public static gameOver checkTargetArea(TileArea targetArea, Intruder intruder, Tile target)
     {
         if (intruder.getTile().equals(target) && !targetArea.isEmpty())
         {
@@ -90,14 +85,24 @@ public class GameOver {
         }
         else
             {
-                escape+=1;
+                escaped+=1;
             }
     }
 
 
-    public int getIntruderNumber()
+    public static int getIntruderNumber()
     {
         return 1;
+    }
+
+    public static int getCaughtNumber()
+    {
+        return caught;
+    }
+
+    public static int getEscapeNumber()
+    {
+        return escaped;
     }
 
 }

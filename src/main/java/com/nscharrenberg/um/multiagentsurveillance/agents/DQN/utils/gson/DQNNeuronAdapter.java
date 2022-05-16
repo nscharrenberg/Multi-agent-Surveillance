@@ -59,7 +59,7 @@ public class DQNNeuronAdapter extends TypeAdapter<Neuron> {
                    neuron.setBias(reader.nextDouble());
                } else if (fieldName.equals(NUM_INPUTS.getKey())) {
                    neuron.setNumInputs(reader.nextInt());
-               } else if (fieldName.equalsDQ(LEARNING_RATE.getKey())) {
+               } else if (fieldName.equals(LEARNING_RATE.getKey())) {
                    neuron.setLearningRate(reader.nextDouble());
                } else if (fieldName.equals(WEIGHTS.getKey())) {
                    reader.beginArray();

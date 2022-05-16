@@ -14,14 +14,16 @@ import com.nscharrenberg.um.multiagentsurveillance.headless.models.Items.Item;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Items.Collision.Wall;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Map.Tile;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Map.TileArea;
+import com.nscharrenberg.um.multiagentsurveillance.headless.models.MarkerSmell;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Player.Player;
+import com.nscharrenberg.um.multiagentsurveillance.headless.models.SoundWave;
 
 import java.util.*;
 
 public class SBOAgent extends Agent {
     private final Stack<Tile> scanned = new Stack<>();
     private final TileArea visited = new TileArea();
-    private RLmodel agentmodel = new RLmodel();
+    private final RLmodel agentmodel = new RLmodel();
     Tile goal = this.player.getTile();
 
     public SBOAgent(Player agent) {
@@ -50,19 +52,29 @@ public class SBOAgent extends Agent {
     @Override
     public Angle decide() {
 
-        // TODO: get all parameters from the vision (this might become a global thing)
+        Angle newdirection = null;
         for (Item it: player.getTile().getItems()) {
 
             // TODO: convert all parameter types to their corresponding one
-            Parameter temp = new Parameter(it);
-
-            if(agentmodel.AssessParameter(temp)) {
-                // set new angle
+            Parameter temp = null;
+            if(it instanceof SoundWave) {
+                temp  = new Parameter((SoundWave) it);
+                if(agentmodel.AssessParameter(temp, this.player))
+                    newdirection = agentmodel.getRedirect();
+            } else if(it instanceof MarkerSmell) {
+                temp = new Parameter((MarkerSmell) it);
+                if(agentmodel.AssessParameter(temp, this.player))
+                    newdirection = agentmodel.getRedirect();
             }
 
         }
 
-        if (!plannedMoves.isEmpty() && knowledge.getByCoordinates(goal.getX(), goal.getY()).isEmpty()) {
+        // Have to rewrite this properly
+        if(newdirection != null) {
+            plannedMoves = new PriorityQueue<>();
+            plannedMoves.add(newdirection);
+            return newdirection;
+        } else if (!plannedMoves.isEmpty() && knowledge.getByCoordinates(goal.getX(), goal.getY()).isEmpty()) {
             return plannedMoves.poll();
         }
 

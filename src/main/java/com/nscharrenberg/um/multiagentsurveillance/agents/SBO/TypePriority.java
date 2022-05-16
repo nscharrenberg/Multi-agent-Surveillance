@@ -4,7 +4,7 @@ import com.nscharrenberg.um.multiagentsurveillance.headless.models.*;
 
 public enum TypePriority {
     SoundWave(1, SoundWave.class),
-    Marker(1, Marker.class);
+    MarkerSmell(1, MarkerSmell.class);
 
     TypePriority(double priority, Class<?> instance) {
         this.priority = priority;

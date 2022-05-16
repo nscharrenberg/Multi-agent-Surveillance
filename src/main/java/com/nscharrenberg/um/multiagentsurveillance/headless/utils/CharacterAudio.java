@@ -29,7 +29,7 @@ public class CharacterAudio {
             for (Map.Entry<Integer, Tile> colEntry : rowEntry.getValue().entrySet()) {
                 Tile st = colEntry.getValue();
                 if (st != null) {
-                    st.add(new SoundWave(st, getWaveStrength(st, position), getWaveDirection(st, position)));
+                    st.add(new SoundWave(st, getWaveStrength(st, position), getWaveDirection(st, position), null));
                 }
             }
         }

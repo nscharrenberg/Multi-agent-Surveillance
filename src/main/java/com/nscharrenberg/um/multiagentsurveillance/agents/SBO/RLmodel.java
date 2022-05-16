@@ -1,6 +1,8 @@
 package com.nscharrenberg.um.multiagentsurveillance.agents.SBO;
 
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Angle.*;
+import com.nscharrenberg.um.multiagentsurveillance.headless.models.Player.Player;
+import com.nscharrenberg.um.multiagentsurveillance.headless.utils.AngleConverter;
 
 
 import java.util.ArrayList;
@@ -17,14 +19,20 @@ public class RLmodel {
         inputs = new ArrayList<Parameter>();
     }
 
-    public boolean AssessParameter(Parameter input) {
+    public boolean AssessParameter(Parameter input, Player player) {
+        // Skip its own inputs
+        if(input.owner == null || input.owner == player) {
+            return false;
+        }
+
         double val = 0;
         // TODO: Calc priority value || will be different for intruders
         val = (input.type.getPriority() * prioscaler) - (strengthbias * input.strength);
 
         if(val >= baseline) {
             // Set new angle
-            // redirect = input.direction;
+            // TODO: convert advanced angle to normal angle for the agent
+            //redirect = input.direction;
 
             baseline = val;
             return true;
@@ -37,5 +45,23 @@ public class RLmodel {
     public void update() {
 
     }
+
+
+    public double getBaseline() {
+        return baseline;
+    }
+
+    public void setBaseline(double baseline) {
+        this.baseline = baseline;
+    }
+
+    public Angle getRedirect() {
+        return redirect;
+    }
+
+    public void setRedirect(Angle redirect) {
+        this.redirect = redirect;
+    }
+
 
 }

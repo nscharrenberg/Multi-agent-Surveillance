@@ -119,7 +119,54 @@ public class DQNFilterAdapter extends TypeAdapter<Filter> {
                 } else if (fieldName.equals(DQNFilterProperties.LEARNING_RATE.getKey())) {
                     filter.setLearningRate(reader.nextDouble());
                 } else if (fieldName.equals(DQNFilterProperties.INPUT.getKey())) {
+                    reader.beginArray();
 
+                    List<List<List<Double>>> biasRow = new ArrayList<>();
+
+                    while (reader.hasNext()) {
+                        reader.peek();
+
+                        reader.beginArray();
+
+                        List<List<Double>> biasCol = new ArrayList<>();
+
+                        while (reader.hasNext()) {
+                            reader.peek();
+
+                            reader.beginArray();
+
+                            List<Double> biasDepth = new ArrayList<>();
+
+                            while (reader.hasNext()) {
+                                reader.peek();
+
+                                biasDepth.add(reader.nextDouble());
+                            }
+
+                            reader.endArray();
+
+                            biasCol.add(biasDepth);
+                        }
+
+                        reader.endArray();
+
+                        biasRow.add(biasCol);
+                    }
+
+                    reader.endArray();
+
+                    // Convert back to primitive - TODO: Improve efficiency
+                    double[][][] inputArray = new double[biasRow.size()][biasRow.get(0).size()][biasRow.get(0).get(0).size()];
+
+                    for (int i = 0; i < biasRow.size(); i++) {
+                        for (int j = 0; j < biasRow.get(i).size(); j++) {
+                            for (int k = 0; k < biasRow.get(i).get(j).size(); j++) {
+                                inputArray[i][j][k] = biasRow.get(i).get(j).get(k);
+                            }
+                        }
+                    }
+
+                    filter.setInput(inputArray);
                 } else if (fieldName.equals(DQNFilterProperties.KERNELS.getKey())) {
                     reader.beginArray();
 
@@ -134,7 +181,40 @@ public class DQNFilterAdapter extends TypeAdapter<Filter> {
 
                     filter.setKernels(outputs.toArray(new Kernel[0]));
                 } else if (fieldName.equals(DQNFilterProperties.BIAS.getKey())) {
+                    reader.beginArray();
 
+                    List<List<Double>> biasRow = new ArrayList<>();
+
+                    while (reader.hasNext()) {
+                        reader.peek();
+
+                        reader.beginArray();
+
+                        List<Double> biasCol = new ArrayList<>();
+
+                        while (reader.hasNext()) {
+                            reader.peek();
+
+                            biasCol.add(reader.nextDouble());
+                        }
+
+                        reader.endArray();
+
+                        biasRow.add(biasCol);
+                    }
+
+                    reader.endArray();
+
+                    // Convert back to primitive - TODO: Improve efficiency
+                    double[][] inputArray = new double[biasRow.size()][biasRow.get(0).size()];
+
+                    for (int i = 0; i < biasRow.size(); i++) {
+                        for (int j = 0; j < biasRow.get(i).size(); j++) {
+                            inputArray[i][j] = biasRow.get(i).get(j);
+                        }
+                    }
+
+                    filter.setBias(inputArray);
                 }
             }
         }

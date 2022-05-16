@@ -4,6 +4,7 @@ import com.nscharrenberg.um.multiagentsurveillance.agents.shared.Agent;
 import com.nscharrenberg.um.multiagentsurveillance.headless.Factory;
 import com.nscharrenberg.um.multiagentsurveillance.headless.exceptions.BoardNotBuildException;
 import com.nscharrenberg.um.multiagentsurveillance.headless.exceptions.InvalidTileException;
+import com.nscharrenberg.um.multiagentsurveillance.headless.exceptions.ItemNotOnTileException;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Action;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.GameMode;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Items.Collision.Wall;
@@ -79,7 +80,7 @@ public class GameView extends StackPane {
 
     private WritableImage initialBoard;
 
-    public GameView(Stage stage) throws InvalidTileException, BoardNotBuildException {
+    public GameView(Stage stage) throws InvalidTileException, BoardNotBuildException, ItemNotOnTileException {
 
         this.stage = stage;
         Factory.init();
@@ -167,7 +168,7 @@ public class GameView extends StackPane {
         return point * GSSD;
     }
 
-    public void init(Stage stage) throws InvalidTileException, BoardNotBuildException {
+    public void init(Stage stage) throws InvalidTileException, BoardNotBuildException, ItemNotOnTileException {
         canvas = new Canvas(stage.getWidth(), stage.getHeight());
         graphicsContext = canvas.getGraphicsContext2D();
 

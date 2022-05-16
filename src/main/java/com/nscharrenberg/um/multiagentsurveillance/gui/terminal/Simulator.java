@@ -30,17 +30,8 @@ public class Simulator {
                         + agent.getPlayer().getTile().getY() + ")");
                 agentId++;
             }
-
-            Factory.getMapRepository().checkMarkers();
         }
 
         System.out.println("100% Achieved");
     }
-
-    /** What to change:
-     *  1. Ask Noah and Tjardo about different markers on the same tile. Since the guards cannot understand the
-     *      markers of the intruders and vice versa, so it shouldn't be a problem for putting them on the same tile
-     *      However, we will need to check if the same player type can place 2 markers on the same tile (do we allow
-     *      this or not?). The only problem would be the visibility of markers in the GUI.
-     */
 }

@@ -7,6 +7,7 @@ import com.nscharrenberg.um.multiagentsurveillance.headless.contracts.repositori
 import com.nscharrenberg.um.multiagentsurveillance.headless.contracts.repositories.IPlayerRepository;
 import com.nscharrenberg.um.multiagentsurveillance.headless.exceptions.BoardNotBuildException;
 import com.nscharrenberg.um.multiagentsurveillance.headless.exceptions.InvalidTileException;
+import com.nscharrenberg.um.multiagentsurveillance.headless.exceptions.ItemNotOnTileException;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Action;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Items.Collision.Wall;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Items.Item;
@@ -191,15 +192,14 @@ public abstract class Agent {
 
     public abstract void execute(Action action);
 
-    public abstract Action decide() throws InvalidTileException, BoardNotBuildException;
+    public abstract Action decide() throws InvalidTileException, BoardNotBuildException, ItemNotOnTileException;
 
-    public void execute() throws InvalidTileException, BoardNotBuildException {
+    public void execute() throws InvalidTileException, BoardNotBuildException, ItemNotOnTileException {
+        Factory.getMapRepository().checkMarkers();
         execute(decide());
     }
 
-    int counter = 0;
     public Action markerCheck() throws InvalidTileException, BoardNotBuildException {
-        counter++;
         HashMap<Integer, HashMap<Integer, Tile>> vision = player.getVision().getRegion();
 
         for (Map.Entry<Integer, HashMap<Integer, Tile>> rowEntry : vision.entrySet()) {
@@ -208,7 +208,6 @@ public abstract class Agent {
                     if (colEntry.getValue() instanceof ShadowTile && getShadedMarkers() > 0) {
                         if (!lookForSameMarker(vision, Marker.MarkerType.SHADED, player)) {
                             if (!lookForMarkerPlacedByPlayer(player, Marker.MarkerType.SHADED)) {
-                                System.out.println("SHADED");
                                 return Action.PLACE_MARKER_SHADED;
                             }
                         }
@@ -224,7 +223,6 @@ public abstract class Agent {
                         else if (item instanceof Teleporter && getTeleporterMarkers() > 0) {
                             if (!lookForSameMarker(vision, Marker.MarkerType.TELEPORTER, player)) {
                                 if (!lookForMarkerPlacedByPlayer(player, Marker.MarkerType.TELEPORTER)) {
-                                    System.out.println("TELEPORTER PLACED");
                                     return Action.PLACE_MARKER_TELEPORTER;
                                 }
                             }
@@ -284,7 +282,6 @@ public abstract class Agent {
                 }
             }
         }
-        System.out.println(counter + "   FAAAAALLLLLSSEEEE");
         return null;
     }
 
@@ -332,110 +329,154 @@ public abstract class Agent {
         int differenceFromWallToCurrentY = currentY - wallY;
 
         if (differenceFromWallToCurrentX > 0 && differenceFromWallToCurrentY >= 0) {
-            for (Point coordinate : deadEndTilesTopLeft) {
+            for (Point coordinate : deadEndTilesBottomLeft) {
                 boolean tileFound = false;
-                Tile currentTile = Factory.getMapRepository().findTileByCoordinates((int) coordinate.getX(), (int) coordinate.getY());
-                for (Map.Entry<Integer, HashMap<Integer, Tile>> rowEntry : vision.entrySet()) {
-                    for (Map.Entry<Integer, Tile> colEntry : rowEntry.getValue().entrySet()) {
-                        if (colEntry.getValue() == currentTile) {
-                            tileFound = true;
-                            break;
+                if (coordinate.getX() >= 0 && coordinate.getY() >= 0 && coordinate.getX() <= Factory.getGameRepository().getWidth() && coordinate.getY() <= Factory.getGameRepository().getHeight()) {
+                    Tile currentTile = Factory.getMapRepository().findTileByCoordinates((int) coordinate.getX(), (int) coordinate.getY());
+                    for (Map.Entry<Integer, HashMap<Integer, Tile>> rowEntry : vision.entrySet()) {
+                        for (Map.Entry<Integer, Tile> colEntry : rowEntry.getValue().entrySet()) {
+                            if (colEntry.getValue() == currentTile) {
+                                tileFound = true;
+                                break;
+                            }
                         }
                     }
+                    for (Map.Entry<Integer, HashMap<Integer, Tile>> rowEntry : getKnowledge().getRegion().entrySet()) {
+                        for (Map.Entry<Integer, Tile> colEntry : rowEntry.getValue().entrySet()) {
+                            if (colEntry.getValue() == currentTile) {
+                                tileFound = true;
+                                break;
+                            }
+                        }
+                    }
+
+                    boolean wallFound = false;
+                    if (tileFound) {
+                        for (Item item : currentTile.getItems()) {
+                            if (item instanceof Wall) {
+                                wallFound = true;
+                                break;
+                            }
+                        }
+                        if (wallFound) {
+                            continue;
+                        } else {return false;}
+                    } else {return false;}
                 }
-                boolean wallFound = false;
-                if (tileFound) {
-                    for (Item item : currentTile.getItems()) {
-                        if (item instanceof Wall) {
-                            wallFound = true;
-                            break;
-                        }
-                    }
-                    if (wallFound) {
-                        continue;
-                    } else { return false; }
-                } else { return false; }
             }
         }
 
         else if (differenceFromWallToCurrentX <= 0 && differenceFromWallToCurrentY > 0) {
-            for (Point coordinate : deadEndTilesTopRight) {
+            for (Point coordinate : deadEndTilesBottomLeft) {
                 boolean tileFound = false;
-                Tile currentTile = Factory.getMapRepository().findTileByCoordinates((int) coordinate.getX(), (int) coordinate.getY());
-                for (Map.Entry<Integer, HashMap<Integer, Tile>> rowEntry : vision.entrySet()) {
-                    for (Map.Entry<Integer, Tile> colEntry : rowEntry.getValue().entrySet()) {
-                        if (colEntry.getValue() == currentTile) {
-                            tileFound = true;
-                            break;
+                if (coordinate.getX() >= 0 && coordinate.getY() >= 0 && coordinate.getX() <= Factory.getGameRepository().getWidth() && coordinate.getY() <= Factory.getGameRepository().getHeight()) {
+                    Tile currentTile = Factory.getMapRepository().findTileByCoordinates((int) coordinate.getX(), (int) coordinate.getY());
+                    for (Map.Entry<Integer, HashMap<Integer, Tile>> rowEntry : vision.entrySet()) {
+                        for (Map.Entry<Integer, Tile> colEntry : rowEntry.getValue().entrySet()) {
+                            if (colEntry.getValue() == currentTile) {
+                                tileFound = true;
+                                break;
+                            }
                         }
                     }
+                    for (Map.Entry<Integer, HashMap<Integer, Tile>> rowEntry : getKnowledge().getRegion().entrySet()) {
+                        for (Map.Entry<Integer, Tile> colEntry : rowEntry.getValue().entrySet()) {
+                            if (colEntry.getValue() == currentTile) {
+                                tileFound = true;
+                                break;
+                            }
+                        }
+                    }
+
+                    boolean wallFound = false;
+                    if (tileFound) {
+                        for (Item item : currentTile.getItems()) {
+                            if (item instanceof Wall) {
+                                wallFound = true;
+                                break;
+                            }
+                        }
+                        if (wallFound) {
+                            continue;
+                        } else {return false;}
+                    } else {return false;}
                 }
-                boolean wallFound = false;
-                if (tileFound) {
-                    for (Item item : currentTile.getItems()) {
-                        if (item instanceof Wall) {
-                            wallFound = true;
-                            break;
-                        }
-                    }
-                    if (wallFound) {
-                        continue;
-                    } else { return false; }
-                } else { return false; }
             }
         }
 
         else if (differenceFromWallToCurrentX >= 0 && differenceFromWallToCurrentY < 0) {
-            for (Point coordinate : deadEndTilesBottomLeft) {
+            for (Point coordinate : deadEndTilesTopRight) {
                 boolean tileFound = false;
-                Tile currentTile = Factory.getMapRepository().findTileByCoordinates((int) coordinate.getX(), (int) coordinate.getY());
-                for (Map.Entry<Integer, HashMap<Integer, Tile>> rowEntry : vision.entrySet()) {
-                    for (Map.Entry<Integer, Tile> colEntry : rowEntry.getValue().entrySet()) {
-                        if (colEntry.getValue() == currentTile) {
-                            tileFound = true;
-                            break;
+                if (coordinate.getX() >= 0 && coordinate.getY() >= 0 && coordinate.getX() <= Factory.getGameRepository().getWidth() && coordinate.getY() <= Factory.getGameRepository().getHeight()) {
+                    Tile currentTile = Factory.getMapRepository().findTileByCoordinates((int) coordinate.getX(), (int) coordinate.getY());
+                    for (Map.Entry<Integer, HashMap<Integer, Tile>> rowEntry : vision.entrySet()) {
+                        for (Map.Entry<Integer, Tile> colEntry : rowEntry.getValue().entrySet()) {
+                            if (colEntry.getValue() == currentTile) {
+                                tileFound = true;
+                                break;
+                            }
                         }
                     }
+                    for (Map.Entry<Integer, HashMap<Integer, Tile>> rowEntry : getKnowledge().getRegion().entrySet()) {
+                        for (Map.Entry<Integer, Tile> colEntry : rowEntry.getValue().entrySet()) {
+                            if (colEntry.getValue() == currentTile) {
+                                tileFound = true;
+                                break;
+                            }
+                        }
+                    }
+
+                    boolean wallFound = false;
+                    if (tileFound) {
+                        for (Item item : currentTile.getItems()) {
+                            if (item instanceof Wall) {
+                                wallFound = true;
+                                break;
+                            }
+                        }
+                        if (wallFound) {
+                            continue;
+                        } else {return false;}
+                    } else {return false;}
                 }
-                boolean wallFound = false;
-                if (tileFound) {
-                    for (Item item : currentTile.getItems()) {
-                        if (item instanceof Wall) {
-                            wallFound = true;
-                            break;
-                        }
-                    }
-                    if (wallFound) {
-                        continue;
-                    } else { return false; }
-                } else { return false; }
             }
         }
 
         else if (differenceFromWallToCurrentX < 0 && differenceFromWallToCurrentY <= 0) {
-            for (Point coordinate : deadEndTilesBottomRight) {
+            for (Point coordinate : deadEndTilesTopLeft) {
                 boolean tileFound = false;
-                Tile currentTile = Factory.getMapRepository().findTileByCoordinates((int) coordinate.getX(), (int) coordinate.getY());
-                for (Map.Entry<Integer, HashMap<Integer, Tile>> rowEntry : vision.entrySet()) {
-                    for (Map.Entry<Integer, Tile> colEntry : rowEntry.getValue().entrySet()) {
-                        if (colEntry.getValue() == currentTile) {
-                            tileFound = true;
-                            break;
+                if (coordinate.getX() >= 0 && coordinate.getY() >= 0 && coordinate.getX() <= Factory.getGameRepository().getWidth() && coordinate.getY() <= Factory.getGameRepository().getHeight()) {
+                    Tile currentTile = Factory.getMapRepository().findTileByCoordinates((int) coordinate.getX(), (int) coordinate.getY());
+                    for (Map.Entry<Integer, HashMap<Integer, Tile>> rowEntry : vision.entrySet()) {
+                        for (Map.Entry<Integer, Tile> colEntry : rowEntry.getValue().entrySet()) {
+                            if (colEntry.getValue() == currentTile) {
+                                tileFound = true;
+                                break;
+                            }
                         }
                     }
+                    for (Map.Entry<Integer, HashMap<Integer, Tile>> rowEntry : getKnowledge().getRegion().entrySet()) {
+                        for (Map.Entry<Integer, Tile> colEntry : rowEntry.getValue().entrySet()) {
+                            if (colEntry.getValue() == currentTile) {
+                                tileFound = true;
+                                break;
+                            }
+                        }
+                    }
+
+                    boolean wallFound = false;
+                    if (tileFound) {
+                        for (Item item : currentTile.getItems()) {
+                            if (item instanceof Wall) {
+                                wallFound = true;
+                                break;
+                            }
+                        }
+                        if (wallFound) {
+                            continue;
+                        } else {return false;}
+                    } else {return false;}
                 }
-                boolean wallFound = false;
-                if (tileFound) {
-                    for (Item item : currentTile.getItems()) {
-                        if (item instanceof Wall) {
-                            wallFound = true;
-                            break;
-                        }
-                    }
-                    if (wallFound) {
-                        continue;
-                    } else { return false; }
-                } else { return false; }
             }
         }
 

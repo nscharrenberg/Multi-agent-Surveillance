@@ -8,6 +8,7 @@ import com.nscharrenberg.um.multiagentsurveillance.agents.shared.algorithms.dist
 import com.nscharrenberg.um.multiagentsurveillance.agents.shared.algorithms.pathfinding.AStar.AStar;
 import com.nscharrenberg.um.multiagentsurveillance.agents.shared.algorithms.pathfinding.IPathFinding;
 import com.nscharrenberg.um.multiagentsurveillance.agents.shared.utils.QueueNode;
+import com.nscharrenberg.um.multiagentsurveillance.headless.Factory;
 import com.nscharrenberg.um.multiagentsurveillance.headless.contracts.repositories.IGameRepository;
 import com.nscharrenberg.um.multiagentsurveillance.headless.contracts.repositories.IMapRepository;
 import com.nscharrenberg.um.multiagentsurveillance.headless.contracts.repositories.IPlayerRepository;
@@ -77,7 +78,7 @@ public class YamauchiAgent extends Agent {
     }
 
     @Override
-    public Action decide() throws InvalidTileException, BoardNotBuildException {
+    public Action decide() throws InvalidTileException, BoardNotBuildException{
 
         Action markerChecked = player.getAgent().markerCheck();
         if (markerChecked != null) {

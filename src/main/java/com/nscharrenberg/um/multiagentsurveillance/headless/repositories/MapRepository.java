@@ -249,7 +249,7 @@ public class MapRepository implements IMapRepository {
         for (int i = top_left_x; i <= top_right_x; i++) {
             for (int j = top_left_y; j <= bottom_left_y; j++) {
                 manhattanDistance = Math.abs(current_x - i) + Math.abs(current_y - j);
-                if (manhattanDistance <= distance) {
+                if (manhattanDistance <= distance && i >= 0 && i <= gameRepository.getWidth() && j >= 0 && j <= gameRepository.getHeight()) {
                     listOfTiles[k] = findTileByCoordinates(i, j);
                     k++;
                 }
@@ -273,15 +273,20 @@ public class MapRepository implements IMapRepository {
     public void checkMarkers() throws BoardNotBuildException, InvalidTileException, ItemNotOnTileException {
         boardInitCheck();
 
-        for (int i = 0; i < placed_markers.size(); i++) {
-            if (placed_markers.get(i) != null) {
+        if (placed_markers.size() > 0) {
+            int i = 0;
+            while (i < placed_markers.size()) {
+                placed_markers.get(i).decrementCurrentDuration();
                 if (placed_markers.get(i).getCurrentDuration() == 0) {
                     removeMarker(placed_markers.get(i));
                     placed_markers.remove(placed_markers.get(i));
+                } else {
+                    i++;
                 }
-                placed_markers.get(i).decrementCurrentDuration();
             }
         }
+
+
     }
 
     @Override

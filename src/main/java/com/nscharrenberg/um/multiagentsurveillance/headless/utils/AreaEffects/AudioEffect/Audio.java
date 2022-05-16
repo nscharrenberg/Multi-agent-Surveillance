@@ -27,7 +27,7 @@ public class Audio {
     }
 
 
-    public Action ActionDirection() {
+    public Action actionDirection() {
         return ActionDirection;
     }
 }

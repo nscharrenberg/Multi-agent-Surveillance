@@ -6,6 +6,7 @@ distanceViewing = 10
 numberMarkers = 5
 smellingDistance = 5
 spawnAreaGuards = 2 2 20 10
+targetArea = 5 5 10 10
 wall = 0 0 200 1
 wall = 0 1 1 150
 wall = 199 1 200 150

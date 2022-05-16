@@ -6,7 +6,8 @@ public enum DQNConvLayerProperties {
     CHANNELS("channels"),
     KERNEL_SIZE("kernelSize"),
     FILTERS("filtes"),
-    OUTPUT("output");
+    OUTPUT("output"),
+    LENGTH("length");
 
     final String key;
 

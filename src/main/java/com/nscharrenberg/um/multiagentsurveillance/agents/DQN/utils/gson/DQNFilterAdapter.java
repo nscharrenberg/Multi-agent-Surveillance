@@ -15,6 +15,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.nscharrenberg.um.multiagentsurveillance.agents.DQN.utils.properties.DQNFilterProperties.*;
+
 public class DQNFilterAdapter extends TypeAdapter<Filter> {
     private Gson gson;
 
@@ -30,22 +32,22 @@ public class DQNFilterAdapter extends TypeAdapter<Filter> {
     public void write(JsonWriter writer, Filter value) throws IOException {
         writer.beginObject();
 
-        writer.name(DQNFilterProperties.CHANNELS.getKey());
+        writer.name(CHANNELS.getKey());
         writer.value(value.getChannels());
 
-        writer.name(DQNFilterProperties.KERNEL_SIZE.getKey());
+        writer.name(KERNEL_SIZE.getKey());
         writer.value(value.getKernelSize());
 
-        writer.name(DQNFilterProperties.INPUT_LENGTH.getKey());
+        writer.name(INPUT_LENGTH.getKey());
         writer.value(value.getInputLength());
 
-        writer.name(DQNFilterProperties.SIZE.getKey());
+        writer.name(SIZE.getKey());
         writer.value(value.getSize());
 
-        writer.name(DQNFilterProperties.LEARNING_RATE.getKey());
+        writer.name(LEARNING_RATE.getKey());
         writer.value(value.getLearningRate());
 
-        writer.name(DQNFilterProperties.INPUT.getKey());
+        writer.name(INPUT.getKey());
 
         writer.beginArray();
 
@@ -63,7 +65,7 @@ public class DQNFilterAdapter extends TypeAdapter<Filter> {
 
         writer.endArray();
 
-        writer.name(DQNFilterProperties.BIAS.getKey());
+        writer.name(BIAS.getKey());
 
         writer.beginArray();
 
@@ -77,7 +79,7 @@ public class DQNFilterAdapter extends TypeAdapter<Filter> {
 
         writer.endArray();
 
-        writer.name(DQNFilterProperties.KERNELS.getKey());
+        writer.name(KERNELS.getKey());
 
         writer.beginArray();
 
@@ -108,17 +110,17 @@ public class DQNFilterAdapter extends TypeAdapter<Filter> {
             if (fieldName != null) {
                 token = reader.peek();
 
-                if (fieldName.equals(DQNFilterProperties.CHANNELS.getKey())) {
+                if (fieldName.equals(CHANNELS.getKey())) {
                     filter.setChannels(reader.nextInt());
-                } else if (fieldName.equals(DQNFilterProperties.KERNEL_SIZE.getKey())) {
+                } else if (fieldName.equals(KERNEL_SIZE.getKey())) {
                     filter.setKernelSize(reader.nextInt());
-                } else if (fieldName.equals(DQNFilterProperties.INPUT_LENGTH.getKey())) {
+                } else if (fieldName.equals(INPUT_LENGTH.getKey())) {
                     filter.setInputLength(reader.nextInt());
-                } else if (fieldName.equals(DQNFilterProperties.SIZE.getKey())) {
+                } else if (fieldName.equals(SIZE.getKey())) {
                     filter.setSize(reader.nextInt());
-                } else if (fieldName.equals(DQNFilterProperties.LEARNING_RATE.getKey())) {
+                } else if (fieldName.equals(LEARNING_RATE.getKey())) {
                     filter.setLearningRate(reader.nextDouble());
-                } else if (fieldName.equals(DQNFilterProperties.INPUT.getKey())) {
+                } else if (fieldName.equals(INPUT.getKey())) {
                     reader.beginArray();
 
                     List<List<List<Double>>> biasRow = new ArrayList<>();
@@ -167,7 +169,7 @@ public class DQNFilterAdapter extends TypeAdapter<Filter> {
                     }
 
                     filter.setInput(inputArray);
-                } else if (fieldName.equals(DQNFilterProperties.KERNELS.getKey())) {
+                } else if (fieldName.equals(KERNELS.getKey())) {
                     reader.beginArray();
 
                     List<Kernel> outputs = new ArrayList<>();
@@ -180,7 +182,7 @@ public class DQNFilterAdapter extends TypeAdapter<Filter> {
                     reader.endArray();
 
                     filter.setKernels(outputs.toArray(new Kernel[0]));
-                } else if (fieldName.equals(DQNFilterProperties.BIAS.getKey())) {
+                } else if (fieldName.equals(BIAS.getKey())) {
                     reader.beginArray();
 
                     List<List<Double>> biasRow = new ArrayList<>();

@@ -7,7 +7,7 @@ public class ConvLayer {
     private int inputLength;
     private int numFilters;
     private int channels;
-    private final int kernelSize = 3;
+    private int kernelSize = 3;
     private Filter[] filters;
     private double[][][] output;
 
@@ -22,6 +22,9 @@ public class ConvLayer {
         for (int i = 0; i < numFilters; i++) {
             filters[i] = new Filter(channels, inputLength, initWeight, learningRate);
         }
+    }
+
+    public ConvLayer() {
     }
 
     public double[][][] forward(double[][][] input) {
@@ -73,4 +76,59 @@ public class ConvLayer {
         return out;
     }
 
+    public int getInputLength() {
+        return inputLength;
+    }
+
+    public void setInputLength(int inputLength) {
+        this.inputLength = inputLength;
+    }
+
+    public int getNumFilters() {
+        return numFilters;
+    }
+
+    public void setNumFilters(int numFilters) {
+        this.numFilters = numFilters;
+    }
+
+    public int getChannels() {
+        return channels;
+    }
+
+    public void setChannels(int channels) {
+        this.channels = channels;
+    }
+
+    public int getKernelSize() {
+        return kernelSize;
+    }
+
+    public void setKernelSize(int kernelSize) {
+        this.kernelSize = kernelSize;
+    }
+
+    public Filter[] getFilters() {
+        return filters;
+    }
+
+    public void setFilters(Filter[] filters) {
+        this.filters = filters;
+    }
+
+    public double[][][] getOutput() {
+        return output;
+    }
+
+    public void setOutput(double[][][] output) {
+        this.output = output;
+    }
+
+    public int getLength() {
+        return length;
+    }
+
+    public void setLength(int length) {
+        this.length = length;
+    }
 }

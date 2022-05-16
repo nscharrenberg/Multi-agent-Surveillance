@@ -298,26 +298,32 @@ public class PlayerRepository implements IPlayerRepository {
             if (direction == Action.PLACE_MARKER_DEADEND) {
                 Factory.getMapRepository().addMarker(Marker.MarkerType.DEAD_END, currentPosition.getX(), currentPosition.getY(), player);
                 player.getAgent().decrementDeadEndMarkers();
+                return;
             }
             else if (direction == Action.PLACE_MARKER_GUARDSPOTTED) {
                 Factory.getMapRepository().addMarker(Marker.MarkerType.GUARD_SPOTTED, currentPosition.getX(), currentPosition.getY(), player);
                 player.getAgent().decrementGuardSpottedMarkers();
+                return;
             }
             else if (direction == Action.PLACE_MARKER_INTRUDERSPOTTED) {
                 Factory.getMapRepository().addMarker(Marker.MarkerType.INTRUDER_SPOTTED, currentPosition.getX(), currentPosition.getY(), player);
                 player.getAgent().decrementIntruderSpottedMarkers();
+                return;
             }
             else if (direction == Action.PLACE_MARKER_SHADED) {
                 Factory.getMapRepository().addMarker(Marker.MarkerType.SHADED, currentPosition.getX(), currentPosition.getY(), player);
                 player.getAgent().decrementShadedMarkers();
+                return;
             }
             else if (direction == Action.PLACE_MARKER_TARGET) {
                 Factory.getMapRepository().addMarker(Marker.MarkerType.TARGET, currentPosition.getX(), currentPosition.getY(), player);
                 player.getAgent().decrementTargetMarkers();
+                return;
             }
             else if (direction == Action.PLACE_MARKER_TELEPORTER) {
                 Factory.getMapRepository().addMarker(Marker.MarkerType.TELEPORTER, currentPosition.getX(), currentPosition.getY(), player);
                 player.getAgent().decrementTeleporterMarkers();
+                return;
             }
 
         }

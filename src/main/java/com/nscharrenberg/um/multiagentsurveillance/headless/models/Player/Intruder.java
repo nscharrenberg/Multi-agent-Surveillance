@@ -1,6 +1,6 @@
 package com.nscharrenberg.um.multiagentsurveillance.headless.models.Player;
 
-import com.nscharrenberg.um.multiagentsurveillance.headless.models.Angle.Angle;
+import com.nscharrenberg.um.multiagentsurveillance.headless.models.Action;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Map.Tile;
 
 import java.util.Objects;
@@ -9,7 +9,8 @@ public class Intruder extends Player {
     private double sprintSpeed;
     private boolean isSprinting = false;
 
-    public Intruder(Tile position, Angle direction) {
+
+    public Intruder(Tile position, Action direction) {
         // TODO: Read speed from Configuration
         super(position, direction, 10);
 

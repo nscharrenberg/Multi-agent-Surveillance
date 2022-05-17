@@ -5,7 +5,7 @@ import com.nscharrenberg.um.multiagentsurveillance.agents.shared.utils.QueueNode
 import com.nscharrenberg.um.multiagentsurveillance.agents.frontier.yamauchi.YamauchiAgent;
 import com.nscharrenberg.um.multiagentsurveillance.agents.shared.algorithms.pathfinding.BFS.BFS;
 import com.nscharrenberg.um.multiagentsurveillance.headless.Factory;
-import com.nscharrenberg.um.multiagentsurveillance.headless.models.Angle.Angle;
+import com.nscharrenberg.um.multiagentsurveillance.headless.models.Action;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Player.Guard;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Map.Tile;
 import com.nscharrenberg.um.multiagentsurveillance.headless.utils.files.MapImporter;
@@ -44,7 +44,7 @@ public class YamauchiAgentTest {
 
             Tile spawnTile = spawntileOpt.get();
 
-            Guard guard = new Guard(spawnTile, Angle.RIGHT);
+            Guard guard = new Guard(spawnTile, Action.RIGHT);
             YamauchiAgent agent = new YamauchiAgent(guard);
 
             HashMap<Integer, HashMap<Integer, Tile>> region = Factory.getMapRepository().getBoard().subset(0, 0, 10,10);
@@ -102,7 +102,7 @@ public class YamauchiAgentTest {
 
             Tile spawnTile = spawntileOpt.get();
 
-            Guard guard = new Guard(spawnTile, Angle.RIGHT);
+            Guard guard = new Guard(spawnTile, Action.RIGHT);
             YamauchiAgent agent = new YamauchiAgent(guard);
 
             HashMap<Integer, HashMap<Integer, Tile>> region = Factory.getMapRepository().getBoard().subset(0, 0, 10,10);

@@ -1,0 +1,15 @@
+height = 10
+width = 10
+gameMode = 1
+numGuards = 0
+numIntruders = 1
+baseSpeedGuard = 5
+distanceViewing = 10
+numberMarkers = 5
+smellingDistance = 5
+spawnAreaIntruders = 2 2 4 4
+wall = 0 0 9 0
+wall = 0 0 0 9
+wall = 9 0 9 9
+wall = 0 9 9 9
+targetArea = 7 7 8 8

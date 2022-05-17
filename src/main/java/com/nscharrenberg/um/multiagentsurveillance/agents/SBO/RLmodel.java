@@ -1,5 +1,6 @@
 package com.nscharrenberg.um.multiagentsurveillance.agents.SBO;
 
+import com.nscharrenberg.um.multiagentsurveillance.headless.models.Action;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Angle.*;
 
 
@@ -9,7 +10,7 @@ public class RLmodel {
     double prioscaler = 0;
     double strengthbias = 1;
     double baseline = 0;
-    Angle redirect = null;
+    Action redirect = null;
     ArrayList<Parameter> inputs;
 
 

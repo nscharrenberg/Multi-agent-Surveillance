@@ -1,10 +1,17 @@
 package com.nscharrenberg.um.multiagentsurveillance.headless.contracts.repositories;
 
-import com.nscharrenberg.um.multiagentsurveillance.headless.exceptions.*;
-import com.nscharrenberg.um.multiagentsurveillance.headless.models.Angle.Angle;
+import com.nscharrenberg.um.multiagentsurveillance.headless.exceptions.BoardNotBuildException;
+import com.nscharrenberg.um.multiagentsurveillance.headless.exceptions.InvalidTileException;
+import com.nscharrenberg.um.multiagentsurveillance.headless.exceptions.ItemAlreadyOnTileException;
+import com.nscharrenberg.um.multiagentsurveillance.headless.exceptions.ItemNotOnTileException;
+import com.nscharrenberg.um.multiagentsurveillance.headless.models.Action;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Map.Tile;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Map.TileArea;
+import com.nscharrenberg.um.multiagentsurveillance.headless.models.Marker;
+import com.nscharrenberg.um.multiagentsurveillance.headless.models.MarkerSmell;
+import com.nscharrenberg.um.multiagentsurveillance.headless.models.Player.Player;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 public interface IMapRepository {
@@ -74,14 +81,14 @@ public interface IMapRepository {
      * @throws InvalidTileException - Thrown when there is at least one tile that is not within the board.
      * @throws ItemAlreadyOnTileException - Thrown when the item is already present on the given tile.
      */
-    void addTeleporter(int x1, int y1, int x2, int y2, int destX, int destY, Angle direction) throws InvalidTileException, BoardNotBuildException, ItemAlreadyOnTileException;
+    void addTeleporter(int x1, int y1, int x2, int y2, int destX, int destY, Action direction) throws InvalidTileException, BoardNotBuildException, ItemAlreadyOnTileException;
 
     /**
      * Turns a group of Tiles into shaded tiles
      * @param x1 - left bound
      * @param y1 - top bound
      * @param x2 - right bound
-     * @param y2 - lower bound g
+     * @param y2 - lower bound
      * @throws BoardNotBuildException - Thrown when the board has not been initialized (no tiles exist)
      * @throws InvalidTileException - Thrown when there is at least one tile that is not within the board.
      * @throws ItemAlreadyOnTileException - Thrown when the item is already present on the given tile.
@@ -141,6 +148,16 @@ public interface IMapRepository {
      * @throws InvalidTileException - Thrown when there is at least one tile that is not within the board.
      */
     void addIntruderSpawnArea(int x1, int y1, int x2, int y2) throws BoardNotBuildException, InvalidTileException;
+
+    void addMarker(Marker.MarkerType type, int x1, int y1, Player player) throws BoardNotBuildException, InvalidTileException, ItemAlreadyOnTileException;
+
+    Tile[] calculateNeigboringTiles(Marker marker) throws InvalidTileException, BoardNotBuildException;
+
+    void removeMarker(MarkerSmell markersmell) throws BoardNotBuildException, InvalidTileException, ItemNotOnTileException;
+
+    void checkMarkers() throws BoardNotBuildException, InvalidTileException, ItemNotOnTileException;
+
+    ArrayList<MarkerSmell> getListOfPlacedMarkers();
 
     TileArea getBoard();
 

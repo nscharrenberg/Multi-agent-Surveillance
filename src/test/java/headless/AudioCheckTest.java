@@ -5,7 +5,7 @@ import com.nscharrenberg.um.multiagentsurveillance.agents.AudioAgent.AudioAgent;
 import com.nscharrenberg.um.multiagentsurveillance.agents.shared.Agent;
 import com.nscharrenberg.um.multiagentsurveillance.headless.Factory;
 import com.nscharrenberg.um.multiagentsurveillance.headless.contracts.repositories.IPlayerRepository;
-import com.nscharrenberg.um.multiagentsurveillance.headless.models.Angle.Angle;
+import com.nscharrenberg.um.multiagentsurveillance.headless.models.Action;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Map.Tile;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Player.Guard;
 import com.nscharrenberg.um.multiagentsurveillance.headless.utils.AreaEffects.AudioEffect.Audio;
@@ -41,11 +41,11 @@ public class AudioCheckTest {
         Optional<Tile> optTileY = Factory.getMapRepository().getBoard().getByCoordinates(8, 2);
         if(optTileX.isPresent() && optTileY.isPresent()){
             Tile tile = optTileX.get();
-            Agent audioAgent = new AudioAgent(new Guard(tile, Angle.UP));
+            Agent audioAgent = new AudioAgent(new Guard(tile, Action.UP));
             tile.getItems().add(audioAgent.getPlayer());
 
             tile = optTileY.get();
-            Agent stayedAgent = new AudioAgent(new Guard(tile, Angle.UP));
+            Agent stayedAgent = new AudioAgent(new Guard(tile, Action.UP));
             tile.getItems().add(stayedAgent.getPlayer());
 
             stayedAgent.getPlayer().setRepresentedSoundRange(12);
@@ -94,7 +94,7 @@ public class AudioCheckTest {
                 break;
             }
 
-            agent.execute(audio.angleDirection());
+            agent.execute(audio.actionDirection());
 
 
             List<AgentJSON> listAgentJSON = data.get(agentId);

@@ -73,6 +73,7 @@ public class GameOverTest
             Assertions.assertEquals(0, GameOver.getCaughtNumber());
             Assertions.assertEquals(0, GameOver.getEscapeNumber());
         }catch(BoardNotBuildException ignored){
-           
+
         }
     }
+}

@@ -16,10 +16,6 @@ public class Parameter {
     int strength;
     Player owner;
 
-    public Parameter(Item it) {
-
-    }
-
     public Parameter(SoundWave sw) {
         this.direction = sw.getDirection();
         this.strength = sw.getStrength();

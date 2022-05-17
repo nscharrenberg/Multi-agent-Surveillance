@@ -22,7 +22,13 @@ public class RLmodel {
     }
 
 
-    // TODO: Calc priority value || will be different for intruders || integrate positive and negative effects
+    /*
+         TODO: Calc priority value || will be different for intruders
+            Integrate positive and negative effects
+            Handle walls if new angle is blocked
+            setup baseline parameter
+
+    */
     public boolean parameterEvaluation(Parameter input, Player player) {
         // Skip its own inputs
         if(input.owner == null || input.owner == player) {
@@ -33,9 +39,10 @@ public class RLmodel {
         val = (input.type.getPriority() * prioscaler) - (strengthbias * input.strength);
 
         if(val >= baseline) {
-            // Set new angle
+            // Set new angle (might need to duplicate in order to actually perform move)
             redirect.addAll(AngleConverter.split(input.direction));
 
+            // Set new baseline (so new inputs dont overwrite existing higher priority ones)
             baseline = val;
             return true;
         }

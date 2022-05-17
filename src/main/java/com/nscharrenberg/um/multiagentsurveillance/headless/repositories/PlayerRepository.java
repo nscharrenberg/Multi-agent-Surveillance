@@ -82,6 +82,27 @@ public class PlayerRepository implements IPlayerRepository {
         }
     }
 
+    public PlayerRepository() {
+        this.mapRepository = Factory.getMapRepository();
+        this.gameRepository = Factory.getGameRepository();
+
+        this.intruders = new ArrayList<>();
+        this.guards = new ArrayList<>();
+        this.agents = new ArrayList<>();
+        this.completeKnowledgeProgress = new TileArea();
+        this.stopWatch = new StopWatch();
+
+        this.intrudersAboutToEscape = new HashMap<>();
+        this.caughtIntruders = new ArrayList<>();
+        this.escapedIntruders = new ArrayList<>();
+
+        try {
+            this.random = SecureRandom.getInstanceStrong();
+        } catch (NoSuchAlgorithmException e) {
+            System.out.println("Error while generating Random Class");
+        }
+    }
+
     @Override
     public void calculateInaccessibleTiles() {
         for (Map.Entry<Integer, HashMap<Integer, Tile>> rowEntry : mapRepository.getBoard().getRegion().entrySet()) {
@@ -138,23 +159,6 @@ public class PlayerRepository implements IPlayerRepository {
         explorationPercentage = percentage;
 
         return percentage;
-    }
-
-    public PlayerRepository() {
-        this.mapRepository = Factory.getMapRepository();
-        this.gameRepository = Factory.getGameRepository();
-
-        this.intruders = new ArrayList<>();
-        this.guards = new ArrayList<>();
-        this.agents = new ArrayList<>();
-        this.completeKnowledgeProgress = new TileArea();
-        this.stopWatch = new StopWatch();
-
-        try {
-            this.random = SecureRandom.getInstanceStrong();
-        } catch (NoSuchAlgorithmException e) {
-            System.out.println("Error while generating Random Class");
-        }
     }
 
     @Override
@@ -262,6 +266,12 @@ public class PlayerRepository implements IPlayerRepository {
 
     @Override
     public void move(Player player, Action direction) throws CollisionException, InvalidTileException, ItemNotOnTileException, ItemAlreadyOnTileException, BoardNotBuildException {
+        if (player instanceof Guard guard) {
+            capture(guard);
+        } else if (player instanceof Intruder intruder) {
+            escape(intruder);
+        }
+
         Action currentDirection = player.getDirection();
         Tile currentTilePlayer = player.getTile();
         int visionLength = 6;
@@ -384,7 +394,6 @@ public class PlayerRepository implements IPlayerRepository {
 
                 //Set the represented sound range
                 player.setRepresentedSoundRange(WAIT);
-
             }
 
             return;
@@ -414,13 +423,19 @@ public class PlayerRepository implements IPlayerRepository {
         }
     }
 
-    public void capture(Guard guard) {
+    /**
+     * Check if the given guard is capturing an intruder
+     * @param guard - the given guard
+     */
+    private void capture(Guard guard) {
         ManhattanDistance manhattanDistance = new ManhattanDistance();
 
         for (Intruder intruder : intruders) {
             double distance = manhattanDistance.compute(guard.getTile(), intruder.getTile());
 
             if (distance <= captureRange) {
+                System.out.println("Intruder " + intruder.getId() + " has been Caught");
+
                 caughtIntruders.add(intruder);
 
                 intruders.remove(intruder);
@@ -434,15 +449,22 @@ public class PlayerRepository implements IPlayerRepository {
         }
     }
 
-    public void escape(Intruder intruder) {
+    /**
+     * Check if the given intruder is in the process of escaping
+     * @param intruder - the given intruder
+     */
+    private void escape(Intruder intruder) {
         if (mapRepository.getTargetArea().within(intruder.getTile().getX(), intruder.getTile().getY())) {
             if (intrudersAboutToEscape.containsKey(intruder.getId())) {
                 int count = intrudersAboutToEscape.get(intruder.getId());
 
                 // Intruder escaped & is removed from the board.
                 if (count > timeStepsToEscape) {
+                    System.out.println("Intruder " + intruder.getId() + " has escaped");
+
                     escapedIntruders.add(intruder);
 
+                    intrudersAboutToEscape.remove(intruder.getId());
                     intruders.remove(intruder);
                     agents.remove(intruder.getAgent());
 
@@ -454,14 +476,20 @@ public class PlayerRepository implements IPlayerRepository {
                     return;
                 }
 
+                int newCount = count + 1;
+
+                System.out.println("Intruder " + intruder.getId() + " is trying to escape (" + newCount + ")");
+
                 // Intruder is about to escape, just a few more timesteps to go!
-                intrudersAboutToEscape.put(intruder.getId(), count + 1);
+                intrudersAboutToEscape.put(intruder.getId(), newCount);
 
                 return;
             }
 
+            System.out.println("Intruder " + intruder.getId() + " entered the target zone");
             intrudersAboutToEscape.put(intruder.getId(), 0);
         } else if (intrudersAboutToEscape.containsKey(intruder.getId())) {
+            System.out.println("Intruder " + intruder.getId() + " has left the target zone");
             // The intruder left the targetZone
             intrudersAboutToEscape.remove(intruder.getId());
         }

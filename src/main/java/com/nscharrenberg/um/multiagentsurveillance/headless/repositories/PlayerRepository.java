@@ -49,8 +49,8 @@ public class PlayerRepository implements IPlayerRepository {
 
     private List<Agent> agents;
 
-    private static final Class<? extends Agent> guardType = DQN_Agent.class;
-    private static final Class<? extends Agent> intruderType = DQN_Agent.class;
+    private static final Class<? extends Agent> guardType = YamauchiAgent.class;
+    private static final Class<? extends Agent> intruderType = YamauchiAgent.class;
 
     private float explorationPercentage = 0;
 

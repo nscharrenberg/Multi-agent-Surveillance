@@ -149,6 +149,8 @@ public interface IMapRepository {
      */
     void addIntruderSpawnArea(int x1, int y1, int x2, int y2) throws BoardNotBuildException, InvalidTileException;
 
+    Tile getTargetCenter();
+
     void addMarker(Marker.MarkerType type, int x1, int y1, Player player) throws BoardNotBuildException, InvalidTileException, ItemAlreadyOnTileException;
 
     Tile[] calculateNeigboringTiles(Marker marker) throws InvalidTileException, BoardNotBuildException;

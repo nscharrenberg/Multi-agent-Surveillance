@@ -2,6 +2,8 @@ package com.nscharrenberg.um.multiagentsurveillance.headless.repositories;
 
 import com.nscharrenberg.um.multiagentsurveillance.agents.SBO.SBOAgent;
 import com.nscharrenberg.um.multiagentsurveillance.agents.frontier.yamauchi.YamauchiAgent;
+import com.nscharrenberg.um.multiagentsurveillance.agents.probabilistic.evader.EvaderAgent;
+import com.nscharrenberg.um.multiagentsurveillance.agents.probabilistic.pursuer.PursuerAgent;
 import com.nscharrenberg.um.multiagentsurveillance.agents.random.RandomAgent;
 import com.nscharrenberg.um.multiagentsurveillance.agents.shared.Agent;
 import com.nscharrenberg.um.multiagentsurveillance.headless.Factory;
@@ -31,7 +33,7 @@ import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.util.*;
 
-import static com.nscharrenberg.um.multiagentsurveillance.headless.utils.AreaEffects.AudioEffectHelper.*;
+import static com.nscharrenberg.um.multiagentsurveillance.headless.utils.AreaEffects.SoundEffectHelper.*;
 
 public class PlayerRepository implements IPlayerRepository {
     private IMapRepository mapRepository;
@@ -48,8 +50,8 @@ public class PlayerRepository implements IPlayerRepository {
 
     private List<Agent> agents;
 
-    private static final Class<? extends Agent> guardType = YamauchiAgent.class;
-    private static final Class<? extends Agent> intruderType = YamauchiAgent.class;
+    private static final Class<? extends Agent> guardType = PursuerAgent.class;
+    private static final Class<? extends Agent> intruderType = EvaderAgent.class;
 
     private float explorationPercentage = 0;
 
@@ -222,6 +224,10 @@ public class PlayerRepository implements IPlayerRepository {
             agent = new YamauchiAgent(player);
         } else if (agentClass.equals(SBOAgent.class)) {
             agent = new SBOAgent(player);
+        } else if (agentClass.equals(PursuerAgent.class)){
+            agent = new PursuerAgent(player);
+        } else if (agentClass.equals(EvaderAgent.class)){
+            agent = new EvaderAgent(player);
         }
 
         if (agent == null) {
@@ -250,6 +256,21 @@ public class PlayerRepository implements IPlayerRepository {
 
     @Override
     public void move(Player player, Action direction) throws CollisionException, InvalidTileException, ItemNotOnTileException, ItemAlreadyOnTileException, BoardNotBuildException {
+        if(player instanceof Guard){
+            basicMove(player, direction);
+            if(((Guard) player).isHunting())
+                player.setRepresentedSoundRange(YELL);
+        } else if(player instanceof Intruder){
+            ((Intruder) player).updateTargetInfo();
+            basicMove(player, direction);
+        } else {
+            throw new RuntimeException("Wrong player class");
+        }
+    }
+
+
+    @Override
+    public void basicMove(Player player, Action direction) throws CollisionException, InvalidTileException, ItemNotOnTileException, ItemAlreadyOnTileException, BoardNotBuildException {
         Action currentDirection = player.getDirection();
         Tile currentTilePlayer = player.getTile();
         int visionLength = 6;

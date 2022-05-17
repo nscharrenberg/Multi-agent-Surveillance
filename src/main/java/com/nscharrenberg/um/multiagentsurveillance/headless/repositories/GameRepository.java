@@ -1,19 +1,23 @@
 package com.nscharrenberg.um.multiagentsurveillance.headless.repositories;
 
+import com.nscharrenberg.um.multiagentsurveillance.agents.shared.algorithms.angleCalculator.AngleTilesCalculator;
+import com.nscharrenberg.um.multiagentsurveillance.agents.shared.algorithms.angleCalculator.ComputeDoubleAngleTiles;
 import com.nscharrenberg.um.multiagentsurveillance.headless.Factory;
 import com.nscharrenberg.um.multiagentsurveillance.headless.contracts.repositories.IGameRepository;
 import com.nscharrenberg.um.multiagentsurveillance.headless.contracts.repositories.IMapRepository;
 import com.nscharrenberg.um.multiagentsurveillance.headless.contracts.repositories.IPlayerRepository;
+import com.nscharrenberg.um.multiagentsurveillance.headless.models.Action;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.GameMode;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Player.Guard;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Player.Intruder;
+import com.nscharrenberg.um.multiagentsurveillance.headless.models.Player.Player;
 import com.nscharrenberg.um.multiagentsurveillance.headless.utils.files.MapImporter;
 
 import java.io.File;
 import java.io.IOException;
 
 public class GameRepository implements IGameRepository {
-    private static String MAP_PATH = "src/test/resources/maps/testmap.txt";
+    private static String MAP_PATH = "src/test/resources/maps/rust.txt";
     private IMapRepository mapRepository;
     private IPlayerRepository playerRepository;
 
@@ -77,6 +81,24 @@ public class GameRepository implements IGameRepository {
             e.printStackTrace();
 //            Factory.getGameRepository().setRunning(false);
         }
+    }
+
+    @Override
+    public Action getTargetGameAngle(Player player){
+        if(player instanceof Intruder) {
+            return AngleTilesCalculator.computeAngle(Factory.getMapRepository().getTargetCenter(), player.getTile());
+        }
+
+        return null;
+    }
+
+    @Override
+    public double getTargetRealAngle(Player player){
+        if(player instanceof Intruder) {
+            return ComputeDoubleAngleTiles.computeAngle(Factory.getMapRepository().getTargetCenter(), player.getTile());
+        }
+
+        return 0.0;
     }
 
     private void setupAgents() {

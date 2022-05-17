@@ -1,7 +1,5 @@
 package com.nscharrenberg.um.multiagentsurveillance.agents.DQN.CNN;
 
-import static com.nscharrenberg.um.multiagentsurveillance.agents.DQN.DQN_Util.matrixSum3D;
-
 public class ConvLayer {
 
     private int inputLength;
@@ -40,7 +38,7 @@ public class ConvLayer {
 
     public double[][][] backward(double[][][] outputGradient){
 
-        //outputGradient = reluPrime(outputGradient);
+        outputGradient = reluPrime(outputGradient);
 
         double[][][] inputGradient = new double[channels][inputLength][inputLength];
 
@@ -64,6 +62,25 @@ public class ConvLayer {
         }
 
         return dYdE;
+    }
+
+    private double[][][] matrixSum3D(double[][][] A, double[][][] B){
+        assert A.length == B.length && A[0].length == B[0].length && A[0][0].length == B[0][0].length : "Unequal lengths provided";
+
+        int channels = A.length;
+        int length = A[0].length;
+
+        double[][][] out = new double[channels][length][length];
+
+        for (int i = 0; i < channels; i++) {
+            for (int j = 0; j < length; j++) {
+                for (int k = 0; k < length; k++) {
+                    out[i][j][k] = A[i][j][k] + B[i][j][k];
+                }
+            }
+        }
+
+        return out;
     }
 
 

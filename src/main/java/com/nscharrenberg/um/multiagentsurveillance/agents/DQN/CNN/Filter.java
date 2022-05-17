@@ -1,7 +1,5 @@
 package com.nscharrenberg.um.multiagentsurveillance.agents.DQN.CNN;
 
-import static com.nscharrenberg.um.multiagentsurveillance.agents.DQN.DQN_Util.*;
-
 public class Filter {
     private int channels;
     private double[][][] input;
@@ -90,19 +88,27 @@ public class Filter {
         int outLength = input.length - kernelWeights.length + 1;
         double[][] out = new double[outLength][outLength];
 
-        if (forward) {
-            for (int i = 0; i < outLength; i++) {
-                for (int j = 0; j < outLength; j++) {
-                    out[i][j] += relu(ccValid(input, kernelWeights, i, j));
-                }
-            }
-        }
+        for (int i = 0; i < outLength; i++)
+            for (int j = 0; j < outLength; j++)
+                out[i][j] += forward ? relu(crossCorrelate(input, kernelWeights, i, j)) : crossCorrelate(input, kernelWeights, i, j);
 
-        else {
-            for (int i = 0; i < outLength; i++) {
-                for (int j = 0; j < outLength; j++) {
-                    out[i][j] += ccValid(input, kernelWeights, i, j);
-                }
+        return out;
+    }
+
+    private double relu(double x){
+        return Math.max(0, x);
+    }
+
+    private double[][] convolution2DFull(double[][] gradient, double[][] kernel){
+
+        int outLength = gradient.length + kernel.length - 1;
+        double[][] out = new double[outLength][outLength];
+        double[][] rotKernel = rot180(kernel);
+        double[][] paddedGradient = padMatrix(gradient, kernel.length);
+
+        for (int i = 0; i < outLength; i++) {
+            for (int j = 0; j < outLength; j++) {
+                out[i][j] = crossCorrelate(paddedGradient, rotKernel, i, j);
             }
         }
 
@@ -111,22 +117,95 @@ public class Filter {
 
     /**
      * @param input
-     * @param kernelWeights
+     * @param kernel
      * @param iOffset
      * @param jOffset
      * @return
      */
-    private double ccValid(double[][] input, double[][] kernelWeights, int iOffset, int jOffset){
+    private double crossCorrelate(double[][] input, double[][] kernel, int iOffset, int jOffset){
 
         double sum = 0;
 
-        for (int i = 0; i < kernelWeights.length; i++) {
-            for (int j = 0; j < kernelWeights.length; j++) {
-                sum += kernelWeights[i][j] * input[iOffset+i][jOffset+j];
+        for (int i = 0; i < kernel.length; i++) {
+            for (int j = 0; j < kernel.length; j++) {
+                sum += kernel[i][j] * input[iOffset+i][jOffset+j];
             }
         }
 
         return sum;
+    }
+
+    /**
+     * @param input - square matrix
+     * @return - input rotated 180 degrees
+     */
+    private double[][] rot180(double[][] input){
+
+        int length = input.length;
+        double[][] out = new double[length][length];
+        int index = length - 1;
+
+        for (int i = 0; i < length; i++) {
+            for (int j = 0; j < length; j++)
+                out[j][i] = input[index-j][index-i];
+        }
+
+        return out;
+    }
+
+    /**
+     * Method used to grow a matrix for full cross correlation. Extra indices are 0
+     * @param input - matrix to be grown
+     * @param smallSize - length of the matrix input is being cross correlated against
+     * @return
+     */
+    private double[][] padMatrix(double[][] input, int smallSize){
+
+        int size = 2 * (smallSize - 1)+ input.length;
+        int diff = smallSize - 1;
+        double[][] out = new double[size][size];
+
+        for (int i = diff; i < input.length + diff; i++) {
+            for (int j = diff; j < input.length + diff; j++) {
+                out[i][j] = input[i-diff][j-diff];
+            }
+        }
+
+        return out;
+    }
+
+    /**
+     * Both main and subtract must be square and have the same length
+     * @param main - matrix to be subtracted from
+     * @param subtract - matrix to be scaled. Then taken from main
+     * @param scale - scalar for the subtract matrix
+     * @return the main matrix minus the scaled subtract matrix
+     */
+    private static double[][] scaleSubtract(double[][] main, double[][] subtract, double scale){
+        assert main.length == subtract.length : "Unequal lengths provided";
+
+        double[][] out = new double[main.length][main.length];
+        for (int i = 0; i < main.length; i++) {
+            for (int j = 0; j < main.length; j++) {
+                out[i][j] = main[i][j] - (scale * subtract[i][j]);
+            }
+        }
+
+        return out;
+    }
+
+    private double[][] matrixSum2D(double[][] A, double[][] B, double[][] C){
+        assert A.length == B.length && A[0].length == B[0].length : "Unequal lengths provided";
+        assert A.length == C.length && A[0].length == C[0].length : "Unequal lengths provided";
+
+        double[][] out = new double[A.length][A[0].length];
+        for (int i = 0; i < A.length; i++) {
+            for (int j = 0; j < A[0].length; j++) {
+                out[i][j] = A[i][j] + B[i][j] + C[i][j];
+            }
+        }
+
+        return out;
     }
 
 

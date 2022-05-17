@@ -28,7 +28,7 @@ import java.util.*;
 import java.util.List;
 
 public abstract class Agent {
-    protected final Player player;
+    protected Player player;
     protected Area<Tile> knowledge;
     protected Area<Tile> vision;
     protected Queue<Action> plannedMoves;

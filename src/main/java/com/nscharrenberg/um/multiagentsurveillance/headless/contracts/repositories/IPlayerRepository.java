@@ -1,5 +1,6 @@
 package com.nscharrenberg.um.multiagentsurveillance.headless.contracts.repositories;
 
+import com.nscharrenberg.um.multiagentsurveillance.agents.DQN.DQN_Agent;
 import com.nscharrenberg.um.multiagentsurveillance.agents.shared.Agent;
 import com.nscharrenberg.um.multiagentsurveillance.headless.exceptions.*;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Action;
@@ -22,6 +23,8 @@ public interface IPlayerRepository {
      * @param playerInstance - the player instance to be spawned
      */
     void spawn(Class<?> playerInstance);
+
+    void spawn(Class<?> playerInstance, DQN_Agent agent);
 
     void spawn(Class<? extends Player> playerClass, TileArea playerSpawnArea);
 

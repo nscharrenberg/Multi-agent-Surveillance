@@ -5,33 +5,24 @@ import com.nscharrenberg.um.multiagentsurveillance.agents.DQN.FCN.ActivationLaye
 import com.nscharrenberg.um.multiagentsurveillance.agents.DQN.FCN.DenseLayer;
 
 import java.util.ArrayList;
-
-import static com.nscharrenberg.um.multiagentsurveillance.agents.DQN.DQN_Util.flatten3D;
-import static com.nscharrenberg.um.multiagentsurveillance.agents.DQN.DQN_Util.unFlatten3D;
 import static com.nscharrenberg.um.multiagentsurveillance.agents.DQN.neuralNetwork.NetworkWriter.writeNetwork;
 
 public class Network {
 
-    // TODO: create a read network method to load saved weights
 
     private ConvLayer[] convLayers;
     private DenseLayer[] denseLayers;
     private ActivationLayer activationLayer;
     private int kernelSize = 3;
-    private double learningRate;
-    private int outputLength = 3; // TODO: Add markers to decisions
+    private double learningRate = 0.001;;
+    private int outputLength = 3;
     private int c1Filters = 32, c2Filters = 128, c3Filters = 32;
     private int conv3Length;
 
     private double[] networkOutput;
 
-    public Network(double learningRate){
-        this.learningRate = learningRate;
-    }
+    public Network(){}
 
-    public Network() {
-        this.learningRate = 0;
-    }
 
     public void initLayers(int channels, int inputLength){
 
@@ -82,11 +73,11 @@ public class Network {
 
     // TODO: Implement and validate backward propagation
 
-    public void backwardPropagate(double[] validated){
+    public void backwardPropagate(double[] target, double[] predicted){
 
         double[][][] inputGradient;
 
-        double[] dEdY = msePrime(outputLength, networkOutput, validated);
+        double[] dEdY = dEdY(target, predicted);
 
         dEdY = denseLayers[1].backward(dEdY);
         dEdY = activationLayer.backward(dEdY);
@@ -99,16 +90,51 @@ public class Network {
         convLayers[0].backward(inputGradient);
     }
 
-    private double[] msePrime(int n, double[] yP, double[] yA){
+    private double[] dEdY(double[] target, double[] predicted){
+        assert target.length == predicted.length : "dEdY: Vectors length differs";
 
-        double[] dEdY = new double[n];
+        double[] dEdY = new double[target.length];
 
-        for (int i = 0; i < n; i++) {
-            dEdY[i] = (2 / n) * (yP[i] - yA[i]);
-        }
+        for (int i = 0; i < dEdY.length; i++)
+            dEdY[i] = -(target[i] - predicted[i]);
 
         return dEdY;
     }
+
+
+    private double[][][] unFlatten3D(double[] input, int channels, int length){
+        assert input.length == length * length * channels : "Unflatten: size error";
+
+        double[][][] out = new double[channels][length][length];
+        int ind = 0;
+
+        for (int i = 0; i < channels; i++) {
+            for (int j = 0; j < length; j++) {
+                for (int k = 0; k < length; k++) {
+                    out[i][j][k] = input[ind++];
+                }
+            }
+        }
+        return out;
+    }
+
+    private double[] flatten3D(double[][][] input){
+        assert input[0].length == input[0][0].length : "Unequal lengths provided";
+
+        double[] out = new double[input.length * input[0].length * input[0].length];
+
+        int ind = 0;
+        for (int i = 0; i < input.length; i++) {
+            for (int j = 0; j < input[0].length; j++) {
+                for (int k = 0; k < input[0].length; k++) {
+                    out[ind++] = input[i][j][k];
+                }
+            }
+        }
+
+        return out;
+    }
+
 
     public void saveNetwork(int networkNum, String team){
 
@@ -124,6 +150,16 @@ public class Network {
         dLayers.add(denseLayers[1].saveDenseLayer());
 
         writeNetwork(cLayers, dLayers, name);
+    }
+
+    private Network(ConvLayer[] convLayers, DenseLayer[] denseLayers, ActivationLayer activationLayer) {
+        this.convLayers = convLayers;
+        this.denseLayers = denseLayers;
+        this.activationLayer = activationLayer;
+    }
+
+    public Network clone(){
+        return new Network(convLayers, denseLayers, activationLayer);
     }
 
     private int outDim(int length){

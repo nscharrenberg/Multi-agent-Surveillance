@@ -1,5 +1,6 @@
 package com.nscharrenberg.um.multiagentsurveillance.headless.repositories;
 
+import com.nscharrenberg.um.multiagentsurveillance.agents.DQN.DQN_Agent;
 import com.nscharrenberg.um.multiagentsurveillance.headless.Factory;
 import com.nscharrenberg.um.multiagentsurveillance.headless.contracts.repositories.IGameRepository;
 import com.nscharrenberg.um.multiagentsurveillance.headless.contracts.repositories.IMapRepository;
@@ -40,6 +41,18 @@ public class GameRepository implements IGameRepository {
         this.playerRepository = playerRepository;
     }
 
+    public void startGame(DQN_Agent[] guards, DQN_Agent[] intruders) {
+        importMap();
+
+        if (gameMode == null) {
+            setGameMode(GameMode.EXPLORATION);
+        }
+
+        setupAgents(guards, intruders);
+
+//        playerRepository.getStopWatch().start();
+    }
+
     @Override
     public void startGame() {
         importMap();
@@ -76,6 +89,18 @@ public class GameRepository implements IGameRepository {
         } catch (IOException e) {
             e.printStackTrace();
 //            Factory.getGameRepository().setRunning(false);
+        }
+    }
+
+    private void setupAgents(DQN_Agent[] guards, DQN_Agent[] intruders) {
+        for (int i = 0; i < guards.length; i++) {
+            Factory.getPlayerRepository().spawn(Guard.class, guards[i]);
+        }
+
+        if (Factory.getGameRepository().getGameMode().equals(GameMode.GUARD_INTRUDER)) {
+            for (int i = 0; i < intruders.length; i++) {
+                Factory.getPlayerRepository().spawn(Intruder.class, intruders[i]);
+            }
         }
     }
 

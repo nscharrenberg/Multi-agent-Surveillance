@@ -1,5 +1,6 @@
 package com.nscharrenberg.um.multiagentsurveillance.headless.contracts.repositories;
 
+import com.nscharrenberg.um.multiagentsurveillance.agents.DQN.DQN_Agent;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.GameMode;
 
 public interface IGameRepository {
@@ -54,4 +55,6 @@ public interface IGameRepository {
     boolean isRunning();
 
     void setRunning(boolean running);
+
+    void startGame(DQN_Agent[] guards, DQN_Agent[] intruders);
 }

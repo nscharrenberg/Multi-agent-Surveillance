@@ -1,15 +1,18 @@
+/*
 package com.nscharrenberg.um.multiagentsurveillance.agents.DQN;
 
 import java.util.Arrays;
 
 public class DQN_Util {
 
-    /*
+    */
+/*
     Matrices are represented as follows: [c][x][y]
     c: channels
     x: x position
     y: y position
-     */
+     *//*
+
 
     public static int matrixIndex(int x, int y){
         return x + (y * 8);
@@ -87,12 +90,14 @@ public class DQN_Util {
         return Math.max(0, x);
     }
 
-    /**
+    */
+/**
      * @param big - matrix to be cross correlated against
      * @param small - matrix which is cross correlated over the big
      * @param forward - if true the activation function is applied
      * @return Either the activated output of the cross correlation or the cross correlation product
-     */
+     *//*
+
     public static double[][] crossCorrelate2DValid(double[][] big, double[][] small, boolean forward){
 
         int outLength = big.length - small.length + 1;
@@ -117,12 +122,12 @@ public class DQN_Util {
         return out;
     }
 
-    public static double[][] convolution2DFull(double[][] big, double[][] small){
+    public static double[][] convolution2DFull(double[][] gradient, double[][] kernel){
 
-        int outLength = big.length + small.length - 1;
+        int outLength = gradient.length + kernel.length - 1;
         double[][] out = new double[outLength][outLength];
-        double[][] rot = rot180(small);
-        double[][] gBig = growFull(big, small.length);
+        double[][] rot = rot180(kernel);
+        double[][] gBig = growFull(gradient, kernel.length);
 
 
         for (int i = 0; i < outLength; i++) {
@@ -180,13 +185,15 @@ public class DQN_Util {
         return out;
     }
 
-    /**
+    */
+/**
      * Both main and subtract must be square and have the same length
      * @param main - matrix to be subtracted from
      * @param subtract - matrix to be scaled. Then taken from main
      * @param scale - scalar for the subtract matrix
      * @return the main matrix minus the scaled subtract matrix
-     */
+     *//*
+
     public static double[][] scaleSubtract(double[][] main, double[][] subtract, double scale){
         assert main.length == subtract.length : "Unequal lengths provided";
 
@@ -267,10 +274,12 @@ public class DQN_Util {
         return out;
     }
 
-    /**
+    */
+/**
      * @param input - vector with length = x^2 with x being an int
      * @return - 2D matrix of input vector
-     */
+     *//*
+
     public static double[][] unflatten2D(double[] input){
 
         int length = (int) Math.sqrt(input.length);
@@ -312,10 +321,12 @@ public class DQN_Util {
         return out;
     }
 
-    /**
+    */
+/**
      * @param input - square matrix
      * @return - input rotated 180 degrees
-     */
+     *//*
+
     public static double[][] rot180(double[][] input){
 
         int length = input.length;
@@ -330,12 +341,14 @@ public class DQN_Util {
         return out;
     }
 
-    /**
+    */
+/**
      * Method used to grow a matrix for full cross correlation. Extra indices are 0
      * @param input - matrix to be grown
      * @param smallSize - length of the matrix input is being cross correlated against
      * @return
-     */
+     *//*
+
     private static double[][] growFull(double[][] input, int smallSize){
 
         int size = (smallSize - 1) * 2 + input.length;
@@ -351,3 +364,4 @@ public class DQN_Util {
         return out;
     }
 }
+*/

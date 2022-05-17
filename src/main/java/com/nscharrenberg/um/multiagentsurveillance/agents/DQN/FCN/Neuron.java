@@ -5,7 +5,7 @@ import java.util.concurrent.ThreadLocalRandom;
 
 public class Neuron {
 
-    private double[] weights;
+    private double[] weights, input;
     private double bias;
     private int numInputs;
     private double learningRate;
@@ -25,6 +25,8 @@ public class Neuron {
     public double getBias() { return bias; }
 
     public double calculateForward(double[] input){
+
+        this.input = input;
         double out = 0;
 
         for (int i = 0; i < input.length; i++) {
@@ -32,18 +34,18 @@ public class Neuron {
         }
         out += bias;
 
-
         return out;
     }
 
     public void calculateBackward(double dEdY){
         double[] dEdW = dEdW(dEdY);
 
+        // TODO: Decide if updates are + | -
         for (int i = 0; i < weights.length; i++) {
-            weights[i] -= learningRate * dEdW[i];
+            weights[i] += learningRate * dEdW[i];
         }
 
-        bias -= learningRate * dEdY;
+        bias += learningRate * dEdY;
     }
 
 
@@ -51,7 +53,7 @@ public class Neuron {
         double[] dEdW = new double[weights.length];
 
         for (int i = 0; i < dEdW.length; i++) {
-            dEdW[i] = dEdY * weights[i];
+            dEdW[i] = dEdY * input[i];
         }
 
         return dEdW;

@@ -11,16 +11,14 @@ public class Experience {
     public double reward;
     public double[][][] nextState;
     public boolean done;
-    public double[] qValues;
 
 
-    public Experience(double[][][] state, Action action, double reward, double[][][] nextState, boolean done, double[] qValues){
+    public Experience(double[][][] state, Action action, double reward, double[][][] nextState, boolean done){
         this.state = state;
         this.action = action;
         this.nextState = nextState;
         this.reward = reward;
         this.done = done;
-        this.qValues = qValues;
     }
 
     public double[][][] getState() {

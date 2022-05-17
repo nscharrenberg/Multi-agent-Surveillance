@@ -15,14 +15,13 @@ public class TrainingData {
     public ArrayList<Action> actions;
     public ArrayList<Double> rewards;
     public ArrayList<Boolean> ends;
-    public ArrayList<double[]> qValues;
-
 
     public TrainingData(int capacity) {
         this.capacity = capacity;
         this.index = 0;
         this.count = 0;
         this.random = new Random();
+        init();
     }
 
     public TrainingData() {
@@ -34,12 +33,11 @@ public class TrainingData {
     }
 
     private void init(){
-        int initCapacity = capacity == 0 ? 1000 : capacity;
+        int initCapacity = capacity == 0 ? 10000 : capacity;
         states = new ArrayList<>(initCapacity);
         nextStates = new ArrayList<>(initCapacity);
         actions = new ArrayList<>(initCapacity);
         rewards = new ArrayList<>(initCapacity);
-        qValues = new ArrayList<>(initCapacity);
     }
 
     public void push(Experience experience) {
@@ -56,8 +54,8 @@ public class TrainingData {
         count++;
     }
 
-    public void push(double[][][] states, Action action, double reward, double[][][] nextState, boolean done, double[] qValues){
-        push(new Experience(states,action,reward,nextState,done,qValues));
+    public void push(double[][][] states, Action action, double reward, double[][][] nextState, boolean done){
+        push(new Experience(states,action,reward,nextState,done));
     }
 
     public TrainingData randomSample(int batchSize) {
@@ -83,8 +81,7 @@ public class TrainingData {
                                                 actions.get(i),
                                                 rewards.get(i),
                                                 nextStates.get(i),
-                                                ends.get(i),
-                                                qValues.get(i));
+                                                ends.get(i));
             randomSample.push(sampleExperience);
         }
 

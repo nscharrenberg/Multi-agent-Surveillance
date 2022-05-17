@@ -1,6 +1,10 @@
 package com.nscharrenberg.um.multiagentsurveillance.headless.utils;
 
+import com.nscharrenberg.um.multiagentsurveillance.headless.models.Angle.AdvancedAngle;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Angle.Angle;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class AngleConverter {
 
@@ -28,4 +32,44 @@ public class AngleConverter {
         // UP when Angle is between -45 (315) and 45 degrees
         return Angle.UP;
     }
+
+    public static ArrayList<Angle> split(AdvancedAngle inputangle) {
+        ArrayList<Angle> angleset = new ArrayList<Angle>();
+
+        if(inputangle == AdvancedAngle.UP)
+            angleset.add(Angle.UP);
+
+        if(inputangle == AdvancedAngle.DOWN)
+            angleset.add(Angle.DOWN);
+
+        if(inputangle == AdvancedAngle.LEFT)
+            angleset.add(Angle.LEFT);
+
+        if(inputangle == AdvancedAngle.RIGHT)
+            angleset.add(Angle.RIGHT);
+
+        if(inputangle == AdvancedAngle.TOP_RIGHT) {
+            angleset.add(Angle.UP);
+            angleset.add(Angle.RIGHT);
+        }
+
+        if(inputangle == AdvancedAngle.TOP_LEFT) {
+            angleset.add(Angle.UP);
+            angleset.add(Angle.LEFT);
+        }
+
+        if(inputangle == AdvancedAngle.BOTTOM_RIGHT) {
+            angleset.add(Angle.DOWN);
+            angleset.add(Angle.LEFT);
+        }
+
+        if(inputangle == AdvancedAngle.BOTTOM_LEFT) {
+            angleset.add(Angle.DOWN);
+            angleset.add(Angle.LEFT);
+        }
+
+        return angleset;
+
+    }
+
 }

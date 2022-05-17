@@ -6,12 +6,13 @@ import com.nscharrenberg.um.multiagentsurveillance.headless.utils.AngleConverter
 
 
 import java.util.ArrayList;
+import java.util.Queue;
 
 public class RLmodel {
-    double prioscaler = 0;
+    double prioscaler = 1;
     double strengthbias = 1;
     double baseline = 0;
-    Angle redirect = null;
+    Queue<Angle> redirect = null;
     ArrayList<Parameter> inputs;
 
 
@@ -31,8 +32,7 @@ public class RLmodel {
 
         if(val >= baseline) {
             // Set new angle
-            // TODO: convert advanced angle to normal angle for the agent
-            //redirect = input.direction;
+            redirect.addAll(AngleConverter.split(input.direction));
 
             baseline = val;
             return true;
@@ -55,13 +55,8 @@ public class RLmodel {
         this.baseline = baseline;
     }
 
-    public Angle getRedirect() {
+    public Queue<Angle> getRedirect() {
         return redirect;
     }
-
-    public void setRedirect(Angle redirect) {
-        this.redirect = redirect;
-    }
-
 
 }

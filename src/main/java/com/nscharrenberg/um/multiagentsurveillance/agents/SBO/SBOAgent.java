@@ -52,29 +52,20 @@ public class SBOAgent extends Agent {
     @Override
     public Angle decide() {
 
-        Angle newdirection = null;
         for (Item it: player.getTile().getItems()) {
 
-            // TODO: convert all parameter types to their corresponding one
-            Parameter temp = null;
             if(it instanceof SoundWave) {
-                temp  = new Parameter((SoundWave) it);
-                if(agentmodel.AssessParameter(temp, this.player))
-                    newdirection = agentmodel.getRedirect();
+                if(agentmodel.AssessParameter(new Parameter((SoundWave) it), this.player))
+                    plannedMoves = agentmodel.getRedirect();
             } else if(it instanceof MarkerSmell) {
-                temp = new Parameter((MarkerSmell) it);
-                if(agentmodel.AssessParameter(temp, this.player))
-                    newdirection = agentmodel.getRedirect();
+                if(agentmodel.AssessParameter(new Parameter((MarkerSmell) it), this.player))
+                    plannedMoves = agentmodel.getRedirect();
             }
-
         }
 
-        // Have to rewrite this properly
-        if(newdirection != null) {
-            plannedMoves = new PriorityQueue<>();
-            plannedMoves.add(newdirection);
-            return newdirection;
-        } else if (!plannedMoves.isEmpty() && knowledge.getByCoordinates(goal.getX(), goal.getY()).isEmpty()) {
+        // Continue queue
+        // && knowledge.getByCoordinates(goal.getX(), goal.getY()).isEmpty()
+        if (!plannedMoves.isEmpty()) {
             return plannedMoves.poll();
         }
 

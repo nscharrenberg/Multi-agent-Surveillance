@@ -21,14 +21,15 @@ public class RLmodel {
         inputs = new ArrayList<Parameter>();
     }
 
-    public boolean AssessParameter(Parameter input, Player player) {
+
+    // TODO: Calc priority value || will be different for intruders || integrate positive and negative effects
+    public boolean parameterEvaluation(Parameter input, Player player) {
         // Skip its own inputs
         if(input.owner == null || input.owner == player) {
             return false;
         }
 
         double val = 0;
-        // TODO: Calc priority value || will be different for intruders
         val = (input.type.getPriority() * prioscaler) - (strengthbias * input.strength);
 
         if(val >= baseline) {
@@ -42,11 +43,6 @@ public class RLmodel {
         return false;
 
     }
-
-    public void update() {
-
-    }
-
 
     public double getBaseline() {
         return baseline;

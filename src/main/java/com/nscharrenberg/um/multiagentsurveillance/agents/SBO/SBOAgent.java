@@ -58,10 +58,10 @@ public class SBOAgent extends Agent {
         for (Item it: player.getTile().getItems()) {
 
             if(it instanceof SoundWave) {
-                if(agentmodel.AssessParameter(new Parameter((SoundWave) it), this.player))
+                if(agentmodel.parameterEvaluation(new Parameter((SoundWave) it), this.player))
                     plannedMoves = agentmodel.getRedirect();
             } else if(it instanceof MarkerSmell) {
-                if(agentmodel.AssessParameter(new Parameter((MarkerSmell) it), this.player))
+                if(agentmodel.parameterEvaluation(new Parameter((MarkerSmell) it), this.player))
                     plannedMoves = agentmodel.getRedirect();
             }
         }
@@ -72,8 +72,10 @@ public class SBOAgent extends Agent {
             return plannedMoves.poll();
         }
 
+        // Add vision tiles to the stack
         gatherV2();
 
+        // Iterate the stack for the next tile
         while (!scanned.isEmpty()) {
             Tile top = scanned.peek();
             if (this.knowledge.getByCoordinates(top.getX(), top.getY()).isPresent()) {

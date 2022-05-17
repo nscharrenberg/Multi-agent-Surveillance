@@ -8,7 +8,8 @@ import com.nscharrenberg.um.multiagentsurveillance.agents.shared.algorithms.dist
 import com.nscharrenberg.um.multiagentsurveillance.headless.Factory;
 import com.nscharrenberg.um.multiagentsurveillance.headless.contracts.repositories.IMapRepository;
 import com.nscharrenberg.um.multiagentsurveillance.headless.contracts.repositories.IPlayerRepository;
-import com.nscharrenberg.um.multiagentsurveillance.headless.models.Angle.Angle;
+import com.nscharrenberg.um.multiagentsurveillance.headless.models.Action;
+import com.nscharrenberg.um.multiagentsurveillance.headless.models.Angle.AdvancedAngle;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Items.Item;
 import com.nscharrenberg.um.multiagentsurveillance.agents.shared.algorithms.distanceCalculator.ManhattanDistance;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Map.Tile;
@@ -89,8 +90,7 @@ public class GameOver {
     }
 
     // Check if the intruders are in the target area
-    public static gameState checkTargetArea()
-    {
+    public static gameState checkTargetArea() throws BoardNotBuildException, InvalidTileException, ItemNotOnTileException {
         Intruder intruder = Factory.getPlayerRepository().getIntruders().get(0);
 
         TileArea targetArea = Factory.getMapRepository().getTargetArea();
@@ -118,7 +118,7 @@ public class GameOver {
                 {
                     for (Agent agent : Factory.getPlayerRepository().getAgents())
                     {
-                        Angle move = agent.decide();
+                        Action move = agent.decide();
 
                         agent.execute(move);
 

@@ -4,7 +4,7 @@ import com.nscharrenberg.um.multiagentsurveillance.headless.Factory;
 import com.nscharrenberg.um.multiagentsurveillance.headless.exceptions.BoardNotBuildException;
 import com.nscharrenberg.um.multiagentsurveillance.headless.exceptions.InvalidTileException;
 import com.nscharrenberg.um.multiagentsurveillance.headless.exceptions.ItemAlreadyOnTileException;
-import com.nscharrenberg.um.multiagentsurveillance.headless.models.Angle.Angle;
+import com.nscharrenberg.um.multiagentsurveillance.headless.models.Action;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.GameMode;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Map.TileArea;
 import com.nscharrenberg.um.multiagentsurveillance.headless.utils.AngleConverter;
@@ -168,9 +168,9 @@ public class MapImporter {
             int destX = Integer.parseInt(items[4]);
             int destY = Integer.parseInt(items[5]);
             int angle = Integer.parseInt(items[0]);
-            Angle roundedAngle = AngleConverter.convert(angle);
+            Action roundedAction = AngleConverter.convert(angle);
 
-            Factory.getMapRepository().addTeleporter(x1, y1, x2, y2, destX, destY, roundedAngle);
+            Factory.getMapRepository().addTeleporter(x1, y1, x2, y2, destX, destY, roundedAction);
         } else if (id.equals(FileItems.SHADED.getKey())) {
             int x1 = Integer.parseInt(items[0]);
             int y1 = Integer.parseInt(items[1]);

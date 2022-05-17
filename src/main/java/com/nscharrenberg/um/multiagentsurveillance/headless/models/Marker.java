@@ -1,38 +1,61 @@
 package com.nscharrenberg.um.multiagentsurveillance.headless.models;
 
-public class Marker {
-    private int type;
-    private int range;
-    private int duration;
+import com.nscharrenberg.um.multiagentsurveillance.headless.models.Items.Item;
+import com.nscharrenberg.um.multiagentsurveillance.headless.models.Map.Tile;
+import com.nscharrenberg.um.multiagentsurveillance.headless.models.Player.Player;
+
+public class Marker extends Item {
+    private static final int RANGE = 5;
+    private final int DURATION = 10;
+
+    private MarkerType type;
+    private Tile tile;
+    private int currentDuration;
+    private Player player;
 
 
-    public Marker(int type, int range, int duration) {
-        this.type = type;
-        this.range = range;
-        this.duration = duration;
+    public enum MarkerType {
+        DEAD_END,
+        TARGET,
+        GUARD_SPOTTED,
+        INTRUDER_SPOTTED,
+        TELEPORTER,
+        SHADED
     }
 
-    public int getType() {
+    public Marker(MarkerType type, Tile tile, Player player) {
+        super(tile);
+        currentDuration = DURATION;
+        this.type = type;
+        this.tile = tile;
+        this.player = player;
+    }
+
+    public MarkerType getType() {
         return type;
     }
 
-    public void setType(int type) {
+    public void setType(MarkerType type) {
         this.type = type;
     }
 
-    public int getRange() {
-        return range;
+    public static int getRange() {
+        return RANGE;
     }
 
-    public void setRange(int range) {
-        this.range = range;
+    public int getCurrentDuration() {
+        return currentDuration;
     }
 
-    public int getDuration() {
-        return duration;
+    public Tile getTile() {
+        return tile;
     }
 
-    public void setDuration(int duration) {
-        this.duration = duration;
+    public void decrementCurrentDuration() {
+        currentDuration--;
+    }
+
+    public Player getPlayer() {
+        return player;
     }
 }

@@ -1,11 +1,8 @@
 package com.nscharrenberg.um.multiagentsurveillance.headless.contracts.repositories;
 
 import com.nscharrenberg.um.multiagentsurveillance.agents.shared.Agent;
-import com.nscharrenberg.um.multiagentsurveillance.headless.exceptions.CollisionException;
-import com.nscharrenberg.um.multiagentsurveillance.headless.exceptions.InvalidTileException;
-import com.nscharrenberg.um.multiagentsurveillance.headless.exceptions.ItemAlreadyOnTileException;
-import com.nscharrenberg.um.multiagentsurveillance.headless.exceptions.ItemNotOnTileException;
-import com.nscharrenberg.um.multiagentsurveillance.headless.models.Angle.Angle;
+import com.nscharrenberg.um.multiagentsurveillance.headless.exceptions.*;
+import com.nscharrenberg.um.multiagentsurveillance.headless.models.Action;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Map.TileArea;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Player.Guard;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Player.Intruder;
@@ -37,8 +34,9 @@ public interface IPlayerRepository {
      * @throws ItemNotOnTileException - Thrown when the player is not on the tile (Should not happen)
      * @throws ItemAlreadyOnTileException - Thrown when the player is already on the tile its trying to move to (should not happen)
      */
-    void move(Player player, Angle direction) throws CollisionException, InvalidTileException, ItemNotOnTileException, ItemAlreadyOnTileException;
+    void move(Player player, Action direction) throws CollisionException, InvalidTileException, ItemNotOnTileException, ItemAlreadyOnTileException, BoardNotBuildException;
 
+    void basicMove(Player player, Action direction) throws CollisionException, InvalidTileException, ItemNotOnTileException, ItemAlreadyOnTileException, BoardNotBuildException;
     /**
      * Validates whether the move the player wants to make is a valid move
      * Same logic as the `move` function but not actually making the move and instead giving a valid/invalid indication
@@ -46,7 +44,7 @@ public interface IPlayerRepository {
      * @param direction - the direction to move to
      * @return whether it is a valid move or not
      */
-    boolean isLegalMove(Player player, Angle direction);
+    boolean isLegalMove(Player player, Action direction);
 
     void updateSounds(List<Agent> agentList);
 

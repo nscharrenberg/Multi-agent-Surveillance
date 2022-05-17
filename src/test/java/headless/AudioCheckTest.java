@@ -5,10 +5,10 @@ import com.nscharrenberg.um.multiagentsurveillance.agents.AudioAgent.AudioAgent;
 import com.nscharrenberg.um.multiagentsurveillance.agents.shared.Agent;
 import com.nscharrenberg.um.multiagentsurveillance.headless.Factory;
 import com.nscharrenberg.um.multiagentsurveillance.headless.contracts.repositories.IPlayerRepository;
-import com.nscharrenberg.um.multiagentsurveillance.headless.models.Angle.Angle;
+import com.nscharrenberg.um.multiagentsurveillance.headless.models.Action;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Map.Tile;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Player.Guard;
-import com.nscharrenberg.um.multiagentsurveillance.headless.utils.AreaEffects.AudioEffect.Audio;
+import com.nscharrenberg.um.multiagentsurveillance.headless.utils.AreaEffects.AudioEffect.Sound;
 import com.nscharrenberg.um.multiagentsurveillance.headless.utils.AreaEffects.DistanceEffects;
 import com.nscharrenberg.um.multiagentsurveillance.headless.utils.files.MapImporter;
 import com.nscharrenberg.um.multiagentsurveillance.headless.utils.recorder.GameConfigurationRecorder;
@@ -41,11 +41,11 @@ public class AudioCheckTest {
         Optional<Tile> optTileY = Factory.getMapRepository().getBoard().getByCoordinates(8, 2);
         if(optTileX.isPresent() && optTileY.isPresent()){
             Tile tile = optTileX.get();
-            Agent audioAgent = new AudioAgent(new Guard(tile, Angle.UP));
+            Agent audioAgent = new AudioAgent(new Guard(tile, Action.UP));
             tile.getItems().add(audioAgent.getPlayer());
 
             tile = optTileY.get();
-            Agent stayedAgent = new AudioAgent(new Guard(tile, Angle.UP));
+            Agent stayedAgent = new AudioAgent(new Guard(tile, Action.UP));
             tile.getItems().add(stayedAgent.getPlayer());
 
             stayedAgent.getPlayer().setRepresentedSoundRange(12);
@@ -83,18 +83,18 @@ public class AudioCheckTest {
         while (Factory.getGameRepository().isRunning()) {
 
             DistanceEffects.areaEffects(agent, agents);
-            List<Audio> audioList = agent.getPlayer().getAudioEffects();
+            List<Sound> soundList = agent.getPlayer().getSoundEffects();
 
-            if(audioList.size() == 0)
-                throw new RuntimeException("Audio is Empty");
+            if(soundList.size() == 0)
+                throw new RuntimeException("Sound is Empty");
 
-            Audio audio = audioList.get(0);
-            if(audio.effectLevel() >= 91.5) {
+            Sound sound = soundList.get(0);
+            if(sound.effectLevel() >= 91.5) {
                 FLAG = true;
                 break;
             }
 
-            agent.execute(audio.angleDirection());
+            agent.execute(sound.actionDirection());
 
 
             List<AgentJSON> listAgentJSON = data.get(agentId);

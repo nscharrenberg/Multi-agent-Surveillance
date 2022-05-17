@@ -2,7 +2,7 @@ package com.nscharrenberg.um.multiagentsurveillance.gui.canvas;
 
 import com.nscharrenberg.um.multiagentsurveillance.agents.shared.Agent;
 import com.nscharrenberg.um.multiagentsurveillance.headless.Factory;
-import com.nscharrenberg.um.multiagentsurveillance.headless.models.Angle.Angle;
+import com.nscharrenberg.um.multiagentsurveillance.headless.models.Action;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.geometry.HPos;
@@ -47,13 +47,13 @@ public class CanvasApp extends Application {
                     List<Agent> listAgent = Factory.getPlayerRepository().getAgents();
                     Agent agent = listAgent.get(0);
                     if (e.getCode() == KeyCode.UP) {
-                        agent.execute(Angle.UP);
+                        agent.execute(Action.UP);
                     } else if (e.getCode() == KeyCode.DOWN){
-                        agent.execute(Angle.DOWN);
+                        agent.execute(Action.DOWN);
                     } else if (e.getCode() == KeyCode.LEFT){
-                        agent.execute(Angle.LEFT);
+                        agent.execute(Action.LEFT);
                     } else if (e.getCode() == KeyCode.RIGHT){
-                        agent.execute(Angle.RIGHT);
+                        agent.execute(Action.RIGHT);
                     }
                 }
             });

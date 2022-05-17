@@ -2,12 +2,15 @@ package com.nscharrenberg.um.multiagentsurveillance.agents.probabilistic.evader;
 
 import com.nscharrenberg.um.multiagentsurveillance.agents.probabilistic.ProbabilisticAgent;
 import com.nscharrenberg.um.multiagentsurveillance.agents.probabilistic.State;
+import com.nscharrenberg.um.multiagentsurveillance.agents.shared.algorithms.angleCalculator.OppositeAngle;
+import com.nscharrenberg.um.multiagentsurveillance.agents.shared.algorithms.angleCalculator.RightAngle;
 import com.nscharrenberg.um.multiagentsurveillance.agents.shared.algorithms.pathfinding.AStar.AStar;
 import com.nscharrenberg.um.multiagentsurveillance.agents.shared.algorithms.pathfinding.IPathFinding;
 import com.nscharrenberg.um.multiagentsurveillance.agents.shared.utils.QueueNode;
 import com.nscharrenberg.um.multiagentsurveillance.headless.exceptions.BoardNotBuildException;
 import com.nscharrenberg.um.multiagentsurveillance.headless.exceptions.InvalidTileException;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Action;
+import com.nscharrenberg.um.multiagentsurveillance.headless.models.Map.Tile;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Player.Player;
 import java.util.Optional;
 
@@ -24,21 +27,33 @@ public class EvaderAgent extends ProbabilisticAgent {
 
 
 
-    private Action flee() throws InvalidTileException, BoardNotBuildException {
-        Optional<QueueNode> queueNodeOpt = pathFindingAlgorithm.execute(knowledge, player, closestKnownAgent);
+    private Action flee(boolean foundSomeone, boolean heardSomeone) throws InvalidTileException, BoardNotBuildException {
+        if(foundSomeone) {
+            Optional<QueueNode> queueNodeOpt = pathFindingAlgorithm.execute(knowledge, player, closestKnownAgent);
 
-        if (queueNodeOpt.isPresent()) {
-            Action peeked = queueNodeOpt.get().getMoves().peek();
+            if (queueNodeOpt.isPresent()) {
+                Action peeked = queueNodeOpt.get().getMoves().peek();
 
-            if (peeked == Action.UP) {
-                return Action.DOWN;
-            } else if (peeked == Action.DOWN) {
-                return Action.UP;
-            } else if (peeked == Action.RIGHT) {
-                return Action.LEFT;
-            } else if (peeked == Action.LEFT) {
-                return Action.RIGHT;
+                if (peeked == Action.UP) {
+                    return Action.DOWN;
+                } else if (peeked == Action.DOWN) {
+                    return Action.UP;
+                } else if (peeked == Action.RIGHT) {
+                    return Action.LEFT;
+                } else if (peeked == Action.LEFT) {
+                    return Action.RIGHT;
+                }
             }
+        } else if(heardSomeone){
+            Action action = OppositeAngle.getOppositeAngle(closestSound.actionDirection());
+            Tile position = getPlayer().getTile();
+            Optional<Tile> optTile = getKnowledge().getByCoordinates(position.getX() + action.getxIncrement(), position.getY() + action.getyIncrement());
+            if(optTile.isPresent()){
+                Tile tile = optTile.get();
+                if(tile.isCollision())
+                    return RightAngle.getRightAngle(action);
+            }
+            return action;
         }
 
         return super.decide();
@@ -46,9 +61,10 @@ public class EvaderAgent extends ProbabilisticAgent {
 
     @Override
     public Action decide() throws InvalidTileException, BoardNotBuildException {
-        checkVision(this);
+        boolean foundSomeone = checkVision(this);
+        boolean heardSomeone = checkSounds(this);
 
-        if (currentState.equals(State.FLEE) && closestKnownAgent != null) {
+        if (currentState.equals(State.FLEE) && (foundSomeone || heardSomeone)) {
             if (fleeCounter < MAX_FLEE_STEPS) {
                 fleeCounter++;
             } else {
@@ -57,7 +73,7 @@ public class EvaderAgent extends ProbabilisticAgent {
             }
 
             System.out.println("I am fleeing");
-            return flee();
+            return flee(foundSomeone, heardSomeone);
         }
 
         if (currentState.equals(State.CAUTIOUS)) {

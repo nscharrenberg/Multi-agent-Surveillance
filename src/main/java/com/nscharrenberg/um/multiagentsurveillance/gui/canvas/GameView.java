@@ -151,8 +151,8 @@ public class GameView extends StackPane {
                 try {
                     Factory.getMapRepository().checkMarkers();
                 } catch (BoardNotBuildException | InvalidTileException | ItemNotOnTileException e) {
-                    e.printStackTrace();
                 }
+                Factory.getPlayerRepository().updateSounds(Factory.getPlayerRepository().getAgents());
                 for (Agent agent : Factory.getPlayerRepository().getAgents()) {
                     try {
                         agent.execute();

@@ -253,7 +253,8 @@ public class YamauchiAgent extends Agent {
     private boolean detectFrontierByRegion(){
         int x = player.getTile().getX();
         int y = player.getTile().getY();
-        HashMap<Integer, HashMap<Integer, Tile>> region = knowledge.subset(x - 10, y - 10, x + 10, y + 10);
+        int RANGE = 20;
+        HashMap<Integer, HashMap<Integer, Tile>> region = knowledge.subset(x - RANGE, y - RANGE, x + RANGE, y + RANGE);
 
         frontiers.clear();
         chosenFrontier = null;

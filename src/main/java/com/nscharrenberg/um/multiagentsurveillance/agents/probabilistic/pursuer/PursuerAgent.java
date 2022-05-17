@@ -22,13 +22,17 @@ public class PursuerAgent extends ProbabilisticAgent {
     }
 
 
-    private Action hunt() throws InvalidTileException, BoardNotBuildException {
-        Optional<QueueNode> queueNodeOpt = pathFindingAlgorithm.execute(knowledge, player, closestKnownAgent);
+    private Action hunt(boolean foundSomeone, boolean heardSomeone) throws InvalidTileException, BoardNotBuildException {
+        if(foundSomeone) {
+            Optional<QueueNode> queueNodeOpt = pathFindingAlgorithm.execute(knowledge, player, closestKnownAgent);
 
-        if (queueNodeOpt.isPresent()) {
-            huntingSteps = queueNodeOpt.get();
+            if (queueNodeOpt.isPresent()) {
+                huntingSteps = queueNodeOpt.get();
 
-            return huntingSteps.getMoves().poll();
+                return huntingSteps.getMoves().poll();
+            }
+        } else if(heardSomeone) {
+            return closestSound.actionDirection();
         }
 
         return super.decide();
@@ -36,15 +40,17 @@ public class PursuerAgent extends ProbabilisticAgent {
 
     @Override
     public Action decide() throws InvalidTileException, BoardNotBuildException {
-        checkVision(this);
+        boolean foundSomeone = checkVision(this);
+        boolean heardSomeone = checkSounds(this);
 
-        if (currentState.equals(State.HUNT) && closestKnownAgent != null && huntingSteps != null) {
+        if (currentState.equals(State.HUNT) && (foundSomeone || heardSomeone)) {
             System.out.println("I am hunting");
-            Action h = hunt();
 
-            if (huntingSteps.getMoves().isEmpty()) {
-                huntingSteps = null;
+            if (huntingSteps != null && !huntingSteps.getMoves().isEmpty()) {
+                return huntingSteps.getMoves().poll();
             }
+
+            return hunt(foundSomeone, heardSomeone);
         }
 
         if (currentState.equals(State.SEARCH)) {

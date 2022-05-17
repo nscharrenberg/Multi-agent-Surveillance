@@ -17,9 +17,9 @@ import java.io.File;
 import java.io.IOException;
 
 public class GameRepository implements IGameRepository {
-    private static final String MAP_PATH = "src/test/resources/maps/rust.txt";
-    private final IMapRepository mapRepository;
-    private final IPlayerRepository playerRepository;
+    private static String MAP_PATH = "src/test/resources/maps/rust.txt";
+    private IMapRepository mapRepository;
+    private IPlayerRepository playerRepository;
 
     private String name;
     private GameMode gameMode;

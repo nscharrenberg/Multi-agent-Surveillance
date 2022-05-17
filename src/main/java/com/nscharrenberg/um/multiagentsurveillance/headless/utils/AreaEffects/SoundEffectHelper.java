@@ -9,4 +9,6 @@ public class SoundEffectHelper {
     public static final double SPRINTING = 17.0;
 
     public static final double WAIT = 0.0;
+
+    public static final double YELL = 25.0;
 }

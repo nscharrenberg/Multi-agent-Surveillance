@@ -3,6 +3,9 @@ package com.nscharrenberg.um.multiagentsurveillance.agents.probabilistic;
 import com.nscharrenberg.um.multiagentsurveillance.agents.frontier.yamauchi.YamauchiAgent;
 import com.nscharrenberg.um.multiagentsurveillance.agents.probabilistic.evader.EvaderAgent;
 import com.nscharrenberg.um.multiagentsurveillance.agents.probabilistic.pursuer.PursuerAgent;
+import com.nscharrenberg.um.multiagentsurveillance.headless.contracts.repositories.IGameRepository;
+import com.nscharrenberg.um.multiagentsurveillance.headless.contracts.repositories.IMapRepository;
+import com.nscharrenberg.um.multiagentsurveillance.headless.contracts.repositories.IPlayerRepository;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Action;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Map.Tile;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Player.Player;
@@ -21,6 +24,10 @@ public abstract class ProbabilisticAgent extends YamauchiAgent {
 
     public ProbabilisticAgent(Player player) {
         super(player);
+    }
+
+    public ProbabilisticAgent(Player player, IMapRepository mapRepository, IGameRepository gameRepository, IPlayerRepository playerRepository) {
+        super(player, mapRepository, gameRepository, playerRepository);
     }
 
     public boolean checkSounds(ProbabilisticAgent agent){

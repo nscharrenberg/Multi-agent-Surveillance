@@ -2,6 +2,7 @@ package com.nscharrenberg.um.multiagentsurveillance.headless.contracts.repositor
 
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Action;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.GameMode;
+import com.nscharrenberg.um.multiagentsurveillance.headless.models.GameState;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Player.Player;
 
 public interface IGameRepository {
@@ -60,4 +61,16 @@ public interface IGameRepository {
     Action getTargetGameAngle(Player player);
 
     double getTargetRealAngle(Player player);
+
+    GameState getGameState();
+
+    void setGameState(GameState gameState);
+
+    IMapRepository getMapRepository();
+
+    void setMapRepository(IMapRepository mapRepository);
+
+    IPlayerRepository getPlayerRepository();
+
+    void setPlayerRepository(IPlayerRepository playerRepository);
 }

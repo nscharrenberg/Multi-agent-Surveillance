@@ -384,4 +384,6 @@ public class MapRepository implements IMapRepository {
     public void setPlayerRepository(IPlayerRepository playerRepository) {
         this.playerRepository = playerRepository;
     }
+
+
 }

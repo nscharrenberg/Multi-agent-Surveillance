@@ -1,6 +1,9 @@
 package com.nscharrenberg.um.multiagentsurveillance.headless.utils.files;
 
 import com.nscharrenberg.um.multiagentsurveillance.headless.Factory;
+import com.nscharrenberg.um.multiagentsurveillance.headless.contracts.repositories.IGameRepository;
+import com.nscharrenberg.um.multiagentsurveillance.headless.contracts.repositories.IMapRepository;
+import com.nscharrenberg.um.multiagentsurveillance.headless.contracts.repositories.IPlayerRepository;
 import com.nscharrenberg.um.multiagentsurveillance.headless.exceptions.BoardNotBuildException;
 import com.nscharrenberg.um.multiagentsurveillance.headless.exceptions.InvalidTileException;
 import com.nscharrenberg.um.multiagentsurveillance.headless.exceptions.ItemAlreadyOnTileException;
@@ -16,15 +19,28 @@ import java.util.Scanner;
 public class MapImporter {
     private boolean tilesInitialized = false;
 
+    private IGameRepository gameRepository;
+    private IMapRepository mapRepository;
+    private IPlayerRepository playerRepository;
+
+    public MapImporter(IGameRepository gameRepository, IMapRepository mapRepository, IPlayerRepository playerRepository) {
+        this.gameRepository = gameRepository;
+        this.mapRepository = mapRepository;
+        this.playerRepository = playerRepository;
+    }
+
+    public MapImporter() {
+        gameRepository = Factory.getGameRepository();
+        playerRepository = Factory.getPlayerRepository();
+        mapRepository = Factory.getMapRepository();
+    }
+
     /**
      * Load a file into the game
      * @param path - the file path
      * @throws IOException - Thrown when the file could not be found or is unable to read the file
      */
     public void load(String path) throws IOException {
-        // Reset the game state
-        Factory.reset();
-
         try (FileInputStream fileInputStream = new FileInputStream(path); Scanner scanner = new Scanner(fileInputStream, StandardCharsets.UTF_8)) {
             while (scanner.hasNextLine()) {
                 parseLine(scanner.nextLine());
@@ -73,29 +89,29 @@ public class MapImporter {
      */
     private void addToConfig(String id, String value) throws InvalidTileException, BoardNotBuildException {
         if (id.equals(FileItems.NAME.getKey())) {
-            Factory.getGameRepository().setName(value);
+            gameRepository.setName(value);
         } else if (id.equals(FileItems.GAME_MODE.getKey())) {
-            Factory.getGameRepository().setGameMode(GameMode.getById(Integer.parseInt(value)));
+            gameRepository.setGameMode(GameMode.getById(Integer.parseInt(value)));
         } else if (id.equals(FileItems.HEIGHT.getKey())) {
-            Factory.getGameRepository().setHeight(Integer.parseInt(value));
+            gameRepository.setHeight(Integer.parseInt(value));
         } else if (id.equals(FileItems.WIDTH.getKey())) {
-            Factory.getGameRepository().setWidth(Integer.parseInt(value));
+            gameRepository.setWidth(Integer.parseInt(value));
         } else if (id.equals(FileItems.SCALING.getKey())) {
-            Factory.getGameRepository().setScaling(Double.parseDouble(value));
+            gameRepository.setScaling(Double.parseDouble(value));
         } else if (id.equals(FileItems.NUM_GUARDS.getKey())) {
-            Factory.getGameRepository().setGuardCount(Integer.parseInt(value));
+            gameRepository.setGuardCount(Integer.parseInt(value));
         } else if (id.equals(FileItems.NUM_INTRUDERS.getKey())) {
-            Factory.getGameRepository().setIntruderCount(Integer.parseInt(value));
+            gameRepository.setIntruderCount(Integer.parseInt(value));
         } else if (id.equals(FileItems.BASE_SPEED_GUARD.getKey())) {
-            Factory.getGameRepository().setBaseSpeedGuards(Double.parseDouble(value));
+            gameRepository.setBaseSpeedGuards(Double.parseDouble(value));
         } else if (id.equals(FileItems.BASE_SPEED_INTRUDER.getKey())) {
-            Factory.getGameRepository().setBaseSpeedIntruders(Double.parseDouble(value));
+            gameRepository.setBaseSpeedIntruders(Double.parseDouble(value));
         } else if (id.equals(FileItems.SPRINT_SPEED_INTRUDER.getKey())) {
-            Factory.getGameRepository().setSpringSpeedIntruders(Double.parseDouble(value));
+            gameRepository.setSpringSpeedIntruders(Double.parseDouble(value));
         } else if (id.equals(FileItems.TIME_STEP.getKey())) {
-            Factory.getGameRepository().setTimeStep(Double.parseDouble(value));
+            gameRepository.setTimeStep(Double.parseDouble(value));
         } else {
-            if (!this.tilesInitialized && Factory.getGameRepository().getHeight() > 0 && Factory.getGameRepository().getWidth() > 0) {
+            if (!this.tilesInitialized && gameRepository.getHeight() > 0 && gameRepository.getWidth() > 0) {
                 initTiles();
 
                 this.tilesInitialized = true;
@@ -110,21 +126,21 @@ public class MapImporter {
                 int x2 = Integer.parseInt(items[2]);
                 int y2 = Integer.parseInt(items[3]);
 
-                Factory.getMapRepository().addTargetArea(x1, y1, x2, y2);
+                mapRepository.addTargetArea(x1, y1, x2, y2);
             } else if (id.equals(FileItems.SPAWN_AREA_INTRUDERS.getKey())) {
                 int x1 = Integer.parseInt(items[0]);
                 int y1 = Integer.parseInt(items[1]);
                 int x2 = Integer.parseInt(items[2]);
                 int y2 = Integer.parseInt(items[3]);
 
-                Factory.getMapRepository().addIntruderSpawnArea(x1, y1, x2, y2);
+                mapRepository.addIntruderSpawnArea(x1, y1, x2, y2);
             } else if (id.equals(FileItems.SPAWN_AREA_GUARDS.getKey())) {
                 int x1 = Integer.parseInt(items[0]);
                 int y1 = Integer.parseInt(items[1]);
                 int x2 = Integer.parseInt(items[2]);
                 int y2 = Integer.parseInt(items[3]);
 
-                Factory.getMapRepository().addGuardSpawnArea(x1, y1, x2, y2);
+                mapRepository.addGuardSpawnArea(x1, y1, x2, y2);
             }
         }
     }
@@ -133,8 +149,8 @@ public class MapImporter {
      * Initialize the tiles based on the width and height
      */
     private void initTiles() {
-        Factory.getMapRepository().setBoard(new TileArea());
-        Factory.getMapRepository().buildEmptyBoard();
+        mapRepository.setBoard(new TileArea());
+        mapRepository.buildEmptyBoard();
     }
 
     /**
@@ -146,7 +162,7 @@ public class MapImporter {
      * @throws InvalidTileException - Thrown when the tile is outside the board.
      */
     private void addToMap(String id, String value) throws BoardNotBuildException, ItemAlreadyOnTileException, InvalidTileException {
-        if (Factory.getMapRepository().getBoard().isEmpty()) {
+        if (mapRepository.getBoard().isEmpty()) {
             throw new BoardNotBuildException();
         }
 
@@ -159,7 +175,7 @@ public class MapImporter {
             int x2 = Integer.parseInt(items[2]);
             int y2 = Integer.parseInt(items[3]);
 
-            Factory.getMapRepository().addWall(x1, y1, x2, y2);
+            mapRepository.addWall(x1, y1, x2, y2);
         } else if (id.equals(FileItems.TELEPORT.getKey())) {
             int x1 = Integer.parseInt(items[0]);
             int y1 = Integer.parseInt(items[1]);
@@ -170,14 +186,14 @@ public class MapImporter {
             int angle = Integer.parseInt(items[0]);
             Action roundedAction = AngleConverter.convert(angle);
 
-            Factory.getMapRepository().addTeleporter(x1, y1, x2, y2, destX, destY, roundedAction);
+            mapRepository.addTeleporter(x1, y1, x2, y2, destX, destY, roundedAction);
         } else if (id.equals(FileItems.SHADED.getKey())) {
             int x1 = Integer.parseInt(items[0]);
             int y1 = Integer.parseInt(items[1]);
             int x2 = Integer.parseInt(items[2]);
             int y2 = Integer.parseInt(items[3]);
 
-            Factory.getMapRepository().addShaded(x1, y1, x2, y2);
+            mapRepository.addShaded(x1, y1, x2, y2);
         } else if (id.equals(FileItems.TEXTURE.getKey())) {
             // TODO: Implement once we know what it is
         }

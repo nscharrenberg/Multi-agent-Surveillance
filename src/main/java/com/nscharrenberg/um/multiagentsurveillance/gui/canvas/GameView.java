@@ -2,6 +2,9 @@ package com.nscharrenberg.um.multiagentsurveillance.gui.canvas;
 
 import com.nscharrenberg.um.multiagentsurveillance.agents.shared.Agent;
 import com.nscharrenberg.um.multiagentsurveillance.headless.Factory;
+import com.nscharrenberg.um.multiagentsurveillance.headless.contracts.repositories.IGameRepository;
+import com.nscharrenberg.um.multiagentsurveillance.headless.contracts.repositories.IMapRepository;
+import com.nscharrenberg.um.multiagentsurveillance.headless.contracts.repositories.IPlayerRepository;
 import com.nscharrenberg.um.multiagentsurveillance.headless.exceptions.BoardNotBuildException;
 import com.nscharrenberg.um.multiagentsurveillance.headless.exceptions.InvalidTileException;
 import com.nscharrenberg.um.multiagentsurveillance.headless.exceptions.ItemNotOnTileException;
@@ -16,6 +19,9 @@ import com.nscharrenberg.um.multiagentsurveillance.headless.models.Map.TileArea;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Player.Guard;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Player.Intruder;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Player.Player;
+import com.nscharrenberg.um.multiagentsurveillance.headless.repositories.GameRepository;
+import com.nscharrenberg.um.multiagentsurveillance.headless.repositories.MapRepository;
+import com.nscharrenberg.um.multiagentsurveillance.headless.repositories.PlayerRepository;
 import javafx.animation.AnimationTimer;
 import javafx.concurrent.Task;
 import javafx.geometry.Insets;
@@ -48,6 +54,10 @@ public class GameView extends StackPane {
     protected static Color VISION_COLOR = Color.LIGHTGOLDENRODYELLOW;
     protected static Color KNOWLEDGE_COLOR = Color.LAWNGREEN;
     protected static Color TARGET_COLOR = Color.TEAL;
+    
+    private IGameRepository gameRepository;
+    private IPlayerRepository playerRepository;
+    private IMapRepository mapRepository;
 
 
     public static HashMap<String, Color> getMapColours(){
@@ -84,10 +94,23 @@ public class GameView extends StackPane {
     public GameView(Stage stage) throws InvalidTileException, BoardNotBuildException, ItemNotOnTileException {
 
         this.stage = stage;
-        Factory.init();
-        Factory.getGameRepository().startGame();
-        WIDTH = Factory.getGameRepository().getWidth() + 1;
-        HEIGHT = Factory.getGameRepository().getHeight() + 1;
+
+        this.gameRepository = new GameRepository();
+        this.playerRepository = new PlayerRepository();
+        this.mapRepository = new MapRepository();
+
+        this.gameRepository.setMapRepository(mapRepository);
+        this.gameRepository.setPlayerRepository(playerRepository);
+
+        this.playerRepository.setMapRepository(mapRepository);
+        this.playerRepository.setGameRepository(gameRepository);
+
+        this.mapRepository.setPlayerRepository(playerRepository);
+        this.mapRepository.setGameRepository(gameRepository);
+
+        gameRepository.startGame();
+        WIDTH = gameRepository.getWidth() + 1;
+        HEIGHT = gameRepository.getHeight() + 1;
 
         screenWidth = (int) stage.getWidth();
         screenHeight = (int) stage.getHeight();
@@ -111,7 +134,7 @@ public class GameView extends StackPane {
 
                 System.out.println(" Game Finished ");
                 gameFinished();
-                Factory.getGameRepository().setRunning(false);
+                gameRepository.setRunning(false);
 
                 return null;
             }
@@ -124,8 +147,8 @@ public class GameView extends StackPane {
         AnimationTimer timer = new AnimationTimer() {
             @Override
             public void handle(long now) {
-                if (Factory.getGameRepository().isRunning()) {
-                    Factory.getPlayerRepository().calculateExplorationPercentage();
+                if (gameRepository.isRunning()) {
+                    playerRepository.calculateExplorationPercentage();
                     updateAndDraw();
                 }
             }
@@ -135,7 +158,7 @@ public class GameView extends StackPane {
     }
 
     private void gameFinished() {
-        Factory.getGameRepository().stopGame();
+        gameRepository.stopGame();
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle("Game is Finished");
         alert.setHeaderText("Game Finished");
@@ -146,14 +169,15 @@ public class GameView extends StackPane {
 
     private void gameLoop() {
         if(!MANUAL_PLAYER) {
-            Factory.getGameRepository().setRunning(true);
-            while (Factory.getGameRepository().isRunning()) {
+            gameRepository.setRunning(true);
+            while (gameRepository.isRunning()) {
                 try {
-                    Factory.getMapRepository().checkMarkers();
+                    mapRepository.checkMarkers();
                 } catch (BoardNotBuildException | InvalidTileException | ItemNotOnTileException e) {
                 }
-                Factory.getPlayerRepository().updateSounds(Factory.getPlayerRepository().getAgents());
-                for (Agent agent : Factory.getPlayerRepository().getAgents()) {
+                playerRepository.updateSounds(playerRepository.getAgents());
+                for (Agent agent : playerRepository.getAgents()) {
+                    System.out.println("Agent");
                     try {
                         agent.execute();
                     } catch (Exception e) {
@@ -188,10 +212,10 @@ public class GameView extends StackPane {
 
         initMap();
 
-        Factory.getGameRepository().setRunning(true);
+        gameRepository.setRunning(true);
 
         for (int i = 0; i < 5; i++) {
-            for (Agent agent : Factory.getPlayerRepository().getAgents()) {
+            for (Agent agent : playerRepository.getAgents()) {
                 agent.execute();
             }
         }
@@ -204,7 +228,7 @@ public class GameView extends StackPane {
         graphicsContext.setFill(BASIC_TILE_COLOR);
         graphicsContext.fillRect(0, 0, screenWidth, screenHeight);
 
-        for (Map.Entry<Integer, HashMap<Integer, Tile>> rowEntry : Factory.getMapRepository().getBoard().getRegion().entrySet()) {
+        for (Map.Entry<Integer, HashMap<Integer, Tile>> rowEntry : mapRepository.getBoard().getRegion().entrySet()) {
             for (Map.Entry<Integer, Tile> colEntry : rowEntry.getValue().entrySet()) {
                 Tile tile = colEntry.getValue();
 
@@ -260,19 +284,19 @@ public class GameView extends StackPane {
         graphicsContext.drawImage(initialBoard, 0, 0);
         DecimalFormat decimalFormat = new DecimalFormat("##.00");
 
-        if (Factory.getPlayerRepository().getExplorationPercentage() >= 100) {
+        if (playerRepository.getExplorationPercentage() >= 100) {
             stage.setTitle("Map Explored. Game Finished!");
-        } else if (!Factory.getGameRepository().isRunning()) {
-            stage.setTitle("Game Stopped at an exploration rate of " + decimalFormat.format(Factory.getPlayerRepository().getExplorationPercentage()) + "% - " + Factory.getGameRepository().getGameMode().getName());
+        } else if (!gameRepository.isRunning()) {
+            stage.setTitle("Game Stopped at an exploration rate of " + decimalFormat.format(playerRepository.getExplorationPercentage()) + "% - " + gameRepository.getGameMode().getName() + " - " + gameRepository.getGameState().getMessage());
         } else {
-            stage.setTitle("Exploration Percentage: " + decimalFormat.format(Factory.getPlayerRepository().getExplorationPercentage()) + "% - " + Factory.getGameRepository().getGameMode().getName());
+            stage.setTitle("Exploration Percentage: " + decimalFormat.format(playerRepository.getExplorationPercentage()) + "% - " + gameRepository.getGameMode().getName()+ " - " + gameRepository.getGameState().getMessage());
         }
 
-        if (Factory.getGameRepository().getGameMode().equals(GameMode.EXPLORATION)) {
+        if (gameRepository.getGameMode().equals(GameMode.EXPLORATION)) {
             drawAllKnowledge();
         }
 
-        for (Agent agent : Factory.getPlayerRepository().getAgents()) {
+        for (Agent agent : playerRepository.getAgents()) {
             drawAgents(agent.getPlayer().getTile());
 
             if (agent.getPlayer().getVision() != null) {
@@ -286,7 +310,7 @@ public class GameView extends StackPane {
     }
 
     private void drawTargetArea() {
-        TileArea targetArea = Factory.getMapRepository().getTargetArea();
+        TileArea targetArea = mapRepository.getTargetArea();
 
         if (targetArea != null) {
             for (Map.Entry<Integer, HashMap<Integer, Tile>> rowEntry : targetArea.getRegion().entrySet()) {
@@ -304,7 +328,7 @@ public class GameView extends StackPane {
     }
 
     public void drawAllKnowledge() {
-        for (Map.Entry<Integer, HashMap<Integer, Tile>> rowEntry : Factory.getPlayerRepository().getCompleteKnowledgeProgress().getRegion().entrySet()) {
+        for (Map.Entry<Integer, HashMap<Integer, Tile>> rowEntry : playerRepository.getCompleteKnowledgeProgress().getRegion().entrySet()) {
             try {
                 for (Map.Entry<Integer, Tile> colEntry : rowEntry.getValue().entrySet()) {
                     drawKnowledge(colEntry.getValue());

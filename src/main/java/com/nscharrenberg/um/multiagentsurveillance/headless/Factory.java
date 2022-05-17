@@ -36,5 +36,14 @@ public class Factory {
         gameRepository = new GameRepository();
         mapRepository = new MapRepository();
         playerRepository = new PlayerRepository();
+
+        gameRepository.setMapRepository(mapRepository);
+        gameRepository.setPlayerRepository(playerRepository);
+
+        mapRepository.setGameRepository(gameRepository);
+        mapRepository.setPlayerRepository(playerRepository);
+
+        playerRepository.setGameRepository(gameRepository);
+        playerRepository.setMapRepository(mapRepository);
     }
 }

@@ -15,6 +15,7 @@ import com.nscharrenberg.um.multiagentsurveillance.headless.exceptions.*;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Action;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Angle.AdvancedAngle;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.GameMode;
+import com.nscharrenberg.um.multiagentsurveillance.headless.models.GameState;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Items.Collision.Collision;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Items.Item;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Items.Teleporter;
@@ -151,7 +152,7 @@ public class PlayerRepository implements IPlayerRepository {
             explorationPercentage = 100;
             if (!getGameRepository().getGameMode().equals(GameMode.EXPLORATION)) {
                 //end game
-                Factory.getGameRepository().setRunning(false);
+                gameRepository.setRunning(false);
             }
 
             return 100;
@@ -235,15 +236,15 @@ public class PlayerRepository implements IPlayerRepository {
         Agent agent = null;
 
         if (agentClass.equals(RandomAgent.class)) {
-            agent = new RandomAgent(player);
+            agent = new RandomAgent(player, mapRepository, gameRepository, this);
         } else if (agentClass.equals(YamauchiAgent.class)) {
-            agent = new YamauchiAgent(player);
+            agent = new YamauchiAgent(player, mapRepository, gameRepository, this);
         } else if (agentClass.equals(SBOAgent.class)) {
-            agent = new SBOAgent(player);
+            agent = new SBOAgent(player, mapRepository, gameRepository, this);
         } else if (agentClass.equals(PursuerAgent.class)){
-            agent = new PursuerAgent(player);
+            agent = new PursuerAgent(player, mapRepository, gameRepository, this);
         } else if (agentClass.equals(EvaderAgent.class)){
-            agent = new EvaderAgent(player);
+            agent = new EvaderAgent(player, mapRepository, gameRepository, this);
         }
 
         if (agent == null) {
@@ -279,11 +280,21 @@ public class PlayerRepository implements IPlayerRepository {
 
             capture(guard);
         } else if(player instanceof Intruder intruder){
-            intruder.updateTargetInfo();
+            updateTargetInfo(intruder);
             basicMove(intruder, direction);
             escape(intruder);
         } else {
             throw new RuntimeException("Wrong player class");
+        }
+    }
+
+    public void updateTargetInfo(Intruder intruder) {
+        intruder.setTargetAngle(gameRepository.getTargetGameAngle(intruder));
+
+        if(intruder.getTarget() == null) {
+            intruder.setTarget(intruder.getTargetPositionCalculator().calculate(gameRepository.getTargetRealAngle(intruder), intruder.getTile()));
+        } else {
+            intruder.setDistanceToTarget(intruder.getCalculateDistance().compute(intruder.getTarget(), intruder.getTile()));
         }
     }
 
@@ -336,32 +347,32 @@ public class PlayerRepository implements IPlayerRepository {
 
         if ((nextPosition.getX() == currentPosition.getX()) && (nextPosition.getY() == currentPosition.getY())) {
             if (direction == Action.PLACE_MARKER_DEADEND) {
-                Factory.getMapRepository().addMarker(Marker.MarkerType.DEAD_END, currentPosition.getX(), currentPosition.getY(), player);
+                mapRepository.addMarker(Marker.MarkerType.DEAD_END, currentPosition.getX(), currentPosition.getY(), player);
                 player.getAgent().decrementDeadEndMarkers();
                 return;
             }
             else if (direction == Action.PLACE_MARKER_GUARDSPOTTED) {
-                Factory.getMapRepository().addMarker(Marker.MarkerType.GUARD_SPOTTED, currentPosition.getX(), currentPosition.getY(), player);
+                mapRepository.addMarker(Marker.MarkerType.GUARD_SPOTTED, currentPosition.getX(), currentPosition.getY(), player);
                 player.getAgent().decrementGuardSpottedMarkers();
                 return;
             }
             else if (direction == Action.PLACE_MARKER_INTRUDERSPOTTED) {
-                Factory.getMapRepository().addMarker(Marker.MarkerType.INTRUDER_SPOTTED, currentPosition.getX(), currentPosition.getY(), player);
+                mapRepository.addMarker(Marker.MarkerType.INTRUDER_SPOTTED, currentPosition.getX(), currentPosition.getY(), player);
                 player.getAgent().decrementIntruderSpottedMarkers();
                 return;
             }
             else if (direction == Action.PLACE_MARKER_SHADED) {
-                Factory.getMapRepository().addMarker(Marker.MarkerType.SHADED, currentPosition.getX(), currentPosition.getY(), player);
+                mapRepository.addMarker(Marker.MarkerType.SHADED, currentPosition.getX(), currentPosition.getY(), player);
                 player.getAgent().decrementShadedMarkers();
                 return;
             }
             else if (direction == Action.PLACE_MARKER_TARGET) {
-                Factory.getMapRepository().addMarker(Marker.MarkerType.TARGET, currentPosition.getX(), currentPosition.getY(), player);
+                mapRepository.addMarker(Marker.MarkerType.TARGET, currentPosition.getX(), currentPosition.getY(), player);
                 player.getAgent().decrementTargetMarkers();
                 return;
             }
             else if (direction == Action.PLACE_MARKER_TELEPORTER) {
-                Factory.getMapRepository().addMarker(Marker.MarkerType.TELEPORTER, currentPosition.getX(), currentPosition.getY(), player);
+                mapRepository.addMarker(Marker.MarkerType.TELEPORTER, currentPosition.getX(), currentPosition.getY(), player);
                 player.getAgent().decrementTeleporterMarkers();
                 return;
             }
@@ -441,6 +452,44 @@ public class PlayerRepository implements IPlayerRepository {
         }
     }
 
+    private void checkGameState() {
+        // At least one intruder must escape to win
+        if (gameRepository.getGameMode().equals(GameMode.GUARD_INTRUDER_ONE)) {
+            // Intruders win if one escaped
+            if (escapedIntruders.size() >= 1) {
+                gameRepository.setRunning(false);
+                gameRepository.setGameState(GameState.INTRUDERS_WON);
+            }
+
+            // Guards won if all intruders are caught
+            if (intruders.isEmpty()) {
+                gameRepository.setRunning(false);
+                gameRepository.setGameState(GameState.GUARDS_WON);
+            }
+
+            gameRepository.setGameState(GameState.NO_RESULT);
+        }
+
+        // All intruders must escape to win
+        if (gameRepository.getGameMode().equals(GameMode.GUARD_INTRUDER_ALL)) {
+            // Intruders still on the board, so no results
+            if (!intruders.isEmpty()) {
+                gameRepository.setGameState(GameState.NO_RESULT);
+            }
+            // Guards won if at least one intruder is caught
+            if (!caughtIntruders.isEmpty()) {
+                gameRepository.setRunning(false);
+                gameRepository.setGameState(GameState.GUARDS_WON);
+            }
+
+            // Intruders win if they all escaped
+            gameRepository.setRunning(false);
+            gameRepository.setGameState(GameState.INTRUDERS_WON);
+        }
+
+        gameRepository.setGameState(GameState.NO_RESULT);
+    }
+
     /**
      * Check if the given guard is capturing an intruder
      * @param guard - the given guard
@@ -463,6 +512,8 @@ public class PlayerRepository implements IPlayerRepository {
                 } catch (ItemNotOnTileException e) {
                     e.printStackTrace();
                 }
+
+                checkGameState();
             }
         }
     }
@@ -491,6 +542,8 @@ public class PlayerRepository implements IPlayerRepository {
                     } catch (ItemNotOnTileException e) {
                         e.printStackTrace();
                     }
+
+                    checkGameState();
                     return;
                 }
 

@@ -8,6 +8,7 @@ import com.nscharrenberg.um.multiagentsurveillance.headless.contracts.repositori
 import com.nscharrenberg.um.multiagentsurveillance.headless.contracts.repositories.IPlayerRepository;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Action;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.GameMode;
+import com.nscharrenberg.um.multiagentsurveillance.headless.models.GameState;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Player.Guard;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Player.Intruder;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Player.Player;
@@ -33,6 +34,7 @@ public class GameRepository implements IGameRepository {
     private double baseSpeedGuards;
     private double timeStep;
     private boolean isRunning = false;
+    private GameState gameState = GameState.NO_RESULT;
 
     public GameRepository() {
         this.mapRepository = Factory.getMapRepository();
@@ -70,13 +72,13 @@ public class GameRepository implements IGameRepository {
     private void importMap() {
         File file = new File(MAP_PATH);
         String path = file.getAbsolutePath();
-        MapImporter importer = new MapImporter();
+        MapImporter importer = new MapImporter(this, mapRepository, playerRepository);
 
-        Factory.getGameRepository().setRunning(true);
+        setRunning(true);
 
         try {
             importer.load(path);
-            Factory.getPlayerRepository().calculateInaccessibleTiles();
+            playerRepository.calculateInaccessibleTiles();
         } catch (IOException e) {
             e.printStackTrace();
 //            Factory.getGameRepository().setRunning(false);
@@ -86,7 +88,7 @@ public class GameRepository implements IGameRepository {
     @Override
     public Action getTargetGameAngle(Player player){
         if(player instanceof Intruder) {
-            return AngleTilesCalculator.computeAngle(Factory.getMapRepository().getTargetCenter(), player.getTile());
+            return AngleTilesCalculator.computeAngle(mapRepository.getTargetCenter(), player.getTile());
         }
 
         return null;
@@ -95,20 +97,20 @@ public class GameRepository implements IGameRepository {
     @Override
     public double getTargetRealAngle(Player player){
         if(player instanceof Intruder) {
-            return ComputeDoubleAngleTiles.computeAngle(Factory.getMapRepository().getTargetCenter(), player.getTile());
+            return ComputeDoubleAngleTiles.computeAngle(mapRepository.getTargetCenter(), player.getTile());
         }
 
         return 0.0;
     }
 
     private void setupAgents() {
-        for (int i = 0; i < Factory.getGameRepository().getGuardCount(); i++) {
-            Factory.getPlayerRepository().spawn(Guard.class);
+        for (int i = 0; i < getGuardCount(); i++) {
+            playerRepository.spawn(Guard.class);
         }
 
-        if (Factory.getGameRepository().getGameMode().equals(GameMode.GUARD_INTRUDER)) {
-            for (int i = 0; i < Factory.getGameRepository().getIntruderCount(); i++) {
-                Factory.getPlayerRepository().spawn(Intruder.class);
+        if (getGameMode().equals(GameMode.GUARD_INTRUDER_ALL)) {
+            for (int i = 0; i < getIntruderCount(); i++) {
+                playerRepository.spawn(Intruder.class);
             }
         }
     }
@@ -231,5 +233,35 @@ public class GameRepository implements IGameRepository {
     @Override
     public void setRunning(boolean running) {
         isRunning = running;
+    }
+
+    @Override
+    public GameState getGameState() {
+        return gameState;
+    }
+
+    @Override
+    public void setGameState(GameState gameState) {
+        this.gameState = gameState;
+    }
+
+    @Override
+    public IMapRepository getMapRepository() {
+        return mapRepository;
+    }
+
+    @Override
+    public void setMapRepository(IMapRepository mapRepository) {
+        this.mapRepository = mapRepository;
+    }
+
+    @Override
+    public IPlayerRepository getPlayerRepository() {
+        return playerRepository;
+    }
+
+    @Override
+    public void setPlayerRepository(IPlayerRepository playerRepository) {
+        this.playerRepository = playerRepository;
     }
 }

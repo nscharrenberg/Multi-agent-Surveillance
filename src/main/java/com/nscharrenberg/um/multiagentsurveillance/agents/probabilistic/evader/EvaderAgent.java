@@ -7,6 +7,9 @@ import com.nscharrenberg.um.multiagentsurveillance.agents.shared.algorithms.angl
 import com.nscharrenberg.um.multiagentsurveillance.agents.shared.algorithms.pathfinding.AStar.AStar;
 import com.nscharrenberg.um.multiagentsurveillance.agents.shared.algorithms.pathfinding.IPathFinding;
 import com.nscharrenberg.um.multiagentsurveillance.agents.shared.utils.QueueNode;
+import com.nscharrenberg.um.multiagentsurveillance.headless.contracts.repositories.IGameRepository;
+import com.nscharrenberg.um.multiagentsurveillance.headless.contracts.repositories.IMapRepository;
+import com.nscharrenberg.um.multiagentsurveillance.headless.contracts.repositories.IPlayerRepository;
 import com.nscharrenberg.um.multiagentsurveillance.headless.exceptions.BoardNotBuildException;
 import com.nscharrenberg.um.multiagentsurveillance.headless.exceptions.InvalidTileException;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Action;
@@ -25,7 +28,9 @@ public class EvaderAgent extends ProbabilisticAgent {
         super(player);
     }
 
-
+    public EvaderAgent(Player player, IMapRepository mapRepository, IGameRepository gameRepository, IPlayerRepository playerRepository) {
+        super(player, mapRepository, gameRepository, playerRepository);
+    }
 
     private Action flee(boolean foundSomeone, boolean heardSomeone) throws InvalidTileException, BoardNotBuildException {
         if(foundSomeone) {

@@ -29,8 +29,6 @@ public class PursuerAgent extends ProbabilisticAgent {
     private Action hunt(boolean foundSomeone, boolean heardSomeone) throws InvalidTileException, BoardNotBuildException {
         if(foundSomeone) {
             Optional<QueueNode> queueNodeOpt = pathFindingAlgorithm.execute(knowledge, player, closestKnownAgent);
-
-            ((Guard) player).setHunting(true);
             if (queueNodeOpt.isPresent()) {
                 huntingSteps = queueNodeOpt.get().getMoves();
 
@@ -61,8 +59,6 @@ public class PursuerAgent extends ProbabilisticAgent {
 
             return hunt(foundSomeone, heardSomeone);
         }
-
-        ((Guard) player).setHunting(false);
 
         if (currentState.equals(State.SEARCH)) {
             if (searchCounter < MAX_SEARCH_STEPS) {

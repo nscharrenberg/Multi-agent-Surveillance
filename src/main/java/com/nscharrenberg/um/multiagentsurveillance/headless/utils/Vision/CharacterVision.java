@@ -6,6 +6,7 @@ import com.nscharrenberg.um.multiagentsurveillance.headless.models.Items.Collisi
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Map.ShadowTile;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Map.Tile;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Map.TileArea;
+import com.nscharrenberg.um.multiagentsurveillance.headless.models.Player.Guard;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Player.Player;
 
 import java.util.ArrayList;
@@ -138,6 +139,9 @@ public class CharacterVision{
         rawvision.removeIf(tc -> (tc.getX() < 0 || tc.getY() < 0));
         rawvision.removeIf(tc -> (tc.getX() > board.width() || tc.getY() > board.height()));
 
+        //Guards
+        boolean isHunting = false;
+
         // Check remaining tiles for items
         for (Tile t : rawvision) {
             for (Tile it : gm.getIntersectingTiles(position, t)) {
@@ -153,12 +157,24 @@ public class CharacterVision{
                 if (tileAddOpt.isEmpty()) {
                     continue;
                 }
+                Tile tile = tileAddOpt.get();
+                finalvision.add(tile);
 
-                finalvision.add(tileAddOpt.get());
+                if(player instanceof Guard && !isHunting){
+                    if(tile.hasIntruder()){
+                        isHunting = true;
+                    }
+                }
+
+
             } else {
                 validtile = true;
             }
         }
+
+        if(player instanceof Guard guard)
+            guard.setHunting(isHunting);
+
 
         return finalvision;
     }

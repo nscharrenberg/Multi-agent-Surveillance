@@ -144,11 +144,15 @@ public class GameView extends StackPane {
         alert.show();
     }
 
-    private void gameLoop() throws InvalidTileException, BoardNotBuildException, ItemNotOnTileException {
+    private void gameLoop() {
         if(!MANUAL_PLAYER) {
             Factory.getGameRepository().setRunning(true);
             while (Factory.getGameRepository().isRunning()) {
-                Factory.getMapRepository().checkMarkers();
+                try {
+                    Factory.getMapRepository().checkMarkers();
+                } catch (BoardNotBuildException | InvalidTileException | ItemNotOnTileException e) {
+                    e.printStackTrace();
+                }
                 for (Agent agent : Factory.getPlayerRepository().getAgents()) {
                     try {
                         agent.execute();

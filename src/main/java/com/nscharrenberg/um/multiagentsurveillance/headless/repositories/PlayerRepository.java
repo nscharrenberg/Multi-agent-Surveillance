@@ -4,6 +4,7 @@ import com.nscharrenberg.um.multiagentsurveillance.agents.SBO.SBOAgent;
 import com.nscharrenberg.um.multiagentsurveillance.agents.frontier.yamauchi.YamauchiAgent;
 import com.nscharrenberg.um.multiagentsurveillance.agents.random.RandomAgent;
 import com.nscharrenberg.um.multiagentsurveillance.agents.shared.Agent;
+import com.nscharrenberg.um.multiagentsurveillance.agents.shared.algorithms.distanceCalculator.ManhattanDistance;
 import com.nscharrenberg.um.multiagentsurveillance.headless.Factory;
 import com.nscharrenberg.um.multiagentsurveillance.headless.contracts.repositories.IGameRepository;
 import com.nscharrenberg.um.multiagentsurveillance.headless.contracts.repositories.IMapRepository;
@@ -53,6 +54,13 @@ public class PlayerRepository implements IPlayerRepository {
 
     private float explorationPercentage = 0;
 
+    private double captureRange = 2.0;
+    private int timeStepsToEscape = 3;
+
+    private HashMap<String, Integer> intrudersAboutToEscape;
+    private List<Intruder> caughtIntruders;
+    private List<Intruder> escapedIntruders;
+
     public PlayerRepository(IMapRepository mapRepository, IGameRepository gameRepository) {
         this.mapRepository = mapRepository;
         this.gameRepository = gameRepository;
@@ -62,6 +70,10 @@ public class PlayerRepository implements IPlayerRepository {
         this.agents = new ArrayList<>();
         this.completeKnowledgeProgress = new TileArea();
         this.stopWatch = new StopWatch();
+
+        this.intrudersAboutToEscape = new HashMap<>();
+        this.caughtIntruders = new ArrayList<>();
+        this.escapedIntruders = new ArrayList<>();
 
         try {
             this.random = SecureRandom.getInstanceStrong();
@@ -402,7 +414,58 @@ public class PlayerRepository implements IPlayerRepository {
         }
     }
 
+    public void capture(Guard guard) {
+        ManhattanDistance manhattanDistance = new ManhattanDistance();
 
+        for (Intruder intruder : intruders) {
+            double distance = manhattanDistance.compute(guard.getTile(), intruder.getTile());
+
+            if (distance <= captureRange) {
+                caughtIntruders.add(intruder);
+
+                intruders.remove(intruder);
+                agents.remove(intruder.getAgent());
+                try {
+                    intruder.getTile().remove(intruder);
+                } catch (ItemNotOnTileException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
+    public void escape(Intruder intruder) {
+        if (mapRepository.getTargetArea().within(intruder.getTile().getX(), intruder.getTile().getY())) {
+            if (intrudersAboutToEscape.containsKey(intruder.getId())) {
+                int count = intrudersAboutToEscape.get(intruder.getId());
+
+                // Intruder escaped & is removed from the board.
+                if (count > timeStepsToEscape) {
+                    escapedIntruders.add(intruder);
+
+                    intruders.remove(intruder);
+                    agents.remove(intruder.getAgent());
+
+                    try {
+                        intruder.getTile().remove(intruder);
+                    } catch (ItemNotOnTileException e) {
+                        e.printStackTrace();
+                    }
+                    return;
+                }
+
+                // Intruder is about to escape, just a few more timesteps to go!
+                intrudersAboutToEscape.put(intruder.getId(), count + 1);
+
+                return;
+            }
+
+            intrudersAboutToEscape.put(intruder.getId(), 0);
+        } else if (intrudersAboutToEscape.containsKey(intruder.getId())) {
+            // The intruder left the targetZone
+            intrudersAboutToEscape.remove(intruder.getId());
+        }
+    }
 
     @Override
     public boolean isLegalMove(Player player, Action direction) {

@@ -12,8 +12,10 @@ import com.nscharrenberg.um.multiagentsurveillance.headless.utils.AreaEffects.Au
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.UUID;
 
 public abstract class Player extends Collision {
+    private final String id;
     private Action direction;
     private double speed;
     private Area<Tile> vision;
@@ -25,6 +27,7 @@ public abstract class Player extends Collision {
 
     public Player(Tile tile, Action direction, double speed) {
         super(tile);
+        this.id = UUID.randomUUID().toString();
         this.direction = direction;
         this.speed = speed;
         this.agent = null;
@@ -40,6 +43,7 @@ public abstract class Player extends Collision {
         this.agent = null;
         this.audioEffects = new ArrayList<>();
         this.representedSound = new AudioEffect(0);
+        this.id = UUID.randomUUID().toString();
     }
 
     public List<Audio> getAudioEffects() {
@@ -101,5 +105,9 @@ public abstract class Player extends Collision {
 
     public void setAgent(Agent agent) {
         this.agent = agent;
+    }
+
+    public String getId() {
+        return id;
     }
 }

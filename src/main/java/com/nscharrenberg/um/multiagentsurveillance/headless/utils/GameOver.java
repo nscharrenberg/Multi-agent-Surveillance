@@ -1,19 +1,22 @@
 package com.nscharrenberg.um.multiagentsurveillance.headless.utils;
 
+import com.nscharrenberg.um.multiagentsurveillance.agents.shared.Agent;
 import com.nscharrenberg.um.multiagentsurveillance.headless.exceptions.BoardNotBuildException;
 import com.nscharrenberg.um.multiagentsurveillance.headless.exceptions.InvalidTileException;
 import com.nscharrenberg.um.multiagentsurveillance.headless.exceptions.ItemNotOnTileException;
-import com.nscharrenberg.um.multiagentsurveillance.headless.models.GameMode;
+import com.nscharrenberg.um.multiagentsurveillance.agents.shared.algorithms.distanceCalculator.CalculateDistance;
 import com.nscharrenberg.um.multiagentsurveillance.headless.Factory;
 import com.nscharrenberg.um.multiagentsurveillance.headless.contracts.repositories.IMapRepository;
 import com.nscharrenberg.um.multiagentsurveillance.headless.contracts.repositories.IPlayerRepository;
+import com.nscharrenberg.um.multiagentsurveillance.headless.models.Angle.Angle;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Items.Item;
 import com.nscharrenberg.um.multiagentsurveillance.agents.shared.algorithms.distanceCalculator.ManhattanDistance;
-import com.nscharrenberg.um.multiagentsurveillance.headless.models.Map.Area;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Map.Tile;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Map.TileArea;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Player.Guard;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Player.Intruder;
+
+import java.util.*;
 
 
 public class GameOver {
@@ -22,16 +25,18 @@ public class GameOver {
     private IPlayerRepository playerRepository;
 
     private ManhattanDistance manhattanDistance;
+    private CalculateDistance calculateDistance;
 
-    private static GameMode gameMode;
+    private static boolean secondGameMode;
 
     private static int caught = 0;
     private static int escaped = 0;
 
-    public enum gameOver
+    public enum gameState
     {
-        WIN,
-        LOSE
+        INTRUDER_WIN,
+        GUARD_WIN,
+        GAME_IN_PROCESS
     }
 
     public GameOver()
@@ -41,54 +46,119 @@ public class GameOver {
     }
 
     // Check whether the gameMode is Guard vs Intruder
-    public static boolean checkGameMode(){
-        return gameMode.getName().equals("Guard vs Intruder") || gameMode.getId() == 1;
+    public static boolean checkGameMode()
+    {
+        if (Factory.getGameRepository().getGameMode().getName().equals("Guard vs Intruder") || Factory.getGameRepository().getGameMode().getId() == 1)
+        {
+            secondGameMode = true;
+        }
+        return secondGameMode;
     }
 
     // Check if all the intruders are gone
-    public static gameOver findIntruder(TileArea board, Tile intruderPos)
+    public static gameState findIntruder() throws NoSuchElementException
     {
-        if(board.getByCoordinates(intruderPos.getX(), intruderPos.getY()).isPresent())
+        TileArea board = Factory.getMapRepository().getBoard();
+
+        Intruder intruder = Factory.getPlayerRepository().getIntruders().get(0);
+
+        if(secondGameMode)
         {
-            if (board.getByCoordinates(intruderPos.getX(), intruderPos.getY()).get().getItems().size() != 0)
+            if(board.getByCoordinates(intruder.getTile().getX() ,intruder.getTile().getY()).isPresent())
             {
-                for (Item im : board.getByCoordinates(intruderPos.getX(), intruderPos.getY()).get().getItems())
+                if (board.getByCoordinates(intruder.getTile().getX(), intruder.getTile().getY()).get().getItems().size() != 0)
                 {
-                    if (im instanceof Intruder)
+                   return gameState.GAME_IN_PROCESS;
+                }
+            }
+            for (Map.Entry<Integer, HashMap<Integer, Tile>> rowEntry : board.getRegion().entrySet())
+            {
+                for (Map.Entry<Integer, Tile> colEntry : rowEntry.getValue().entrySet())
+                {
+                    for (Item im : board.getByCoordinates(rowEntry.getKey(), colEntry.getKey()).get().getItems())
                     {
-                        return gameOver.LOSE;
+                        if (im instanceof Intruder)
+                        {
+                            return gameState.GAME_IN_PROCESS;
+                        }
                     }
                 }
             }
         }
-        return gameOver.WIN;
+        return gameState.GUARD_WIN;
     }
 
     // Check if the intruders are in the target area
-    public static gameOver checkTargetArea(TileArea targetArea, Intruder intruder, Tile target)
+    public static gameState checkTargetArea()
     {
-        if (intruder.getTile().equals(target) && !targetArea.isEmpty())
+        Intruder intruder = Factory.getPlayerRepository().getIntruders().get(0);
+
+        TileArea targetArea = Factory.getMapRepository().getTargetArea();
+
+        Tile target = null;
+
+        if (targetArea != null)
         {
-            return gameOver.LOSE;
+            for (Map.Entry<Integer, HashMap<Integer, Tile>> rowEntry : targetArea.getRegion().entrySet())
+            {
+                for (Map.Entry<Integer, Tile> colEntry : rowEntry.getValue().entrySet())
+                {
+                    target = colEntry.getValue();
+                }
+            }
         }
-        return gameOver.WIN;
+
+        if (secondGameMode)
+        {
+            while (Factory.getGameRepository().isRunning())
+            {
+                int startMarker = 0;
+
+                while (intruder.getTile().equals(target) && !targetArea.isEmpty())
+                {
+                    for (Agent agent : Factory.getPlayerRepository().getAgents())
+                    {
+                        Angle move = agent.decide();
+
+                        agent.execute(move);
+
+                        startMarker++;
+                    }
+                }
+                if (startMarker>=3)
+                {
+                    return gameState.INTRUDER_WIN;
+                }
+            }
+        }
+        return gameState.GAME_IN_PROCESS;
     }
 
     // if the intruder is no more than 0.5 meter away and in sight.
-    public void capture(Intruder intruder, Guard guard) throws BoardNotBuildException, InvalidTileException, ItemNotOnTileException
+    public gameState capture() throws BoardNotBuildException, InvalidTileException, ItemNotOnTileException
     {
-        double dist = manhattanDistance.compute(intruder.getTile(), guard.getTile());
-        if(dist <= 0.5)
+        Intruder intruder = Factory.getPlayerRepository().getIntruders().get(0);
+        Guard guard = Factory.getPlayerRepository().getGuards().get(0);
+
+        int distance = (int) calculateDistance.compute(intruder.getTile(), guard.getTile());
+
+        if(distance <= 0.5)
         {
             mapRepository.findTileByCoordinates(intruder.getTile().getX(), intruder.getTile().getY()).remove(intruder);
             caught+=1;
+            return gameState.GUARD_WIN;
         }
         else
             {
                 escaped+=1;
             }
+        return gameState.GAME_IN_PROCESS;
     }
 
+    public static boolean getGameMode()
+    {
+        return secondGameMode;
+    }
 
     public static int getIntruderNumber()
     {

@@ -1,6 +1,6 @@
 package com.nscharrenberg.um.multiagentsurveillance.headless.utils.AreaEffects;
 
-public class AudioEffectHelper {
+public class SoundEffectHelper {
 
     public static final double ROTATE = 5.0;
 

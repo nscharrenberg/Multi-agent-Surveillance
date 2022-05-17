@@ -6,7 +6,7 @@ import com.nscharrenberg.um.multiagentsurveillance.headless.Factory;
 import com.nscharrenberg.um.multiagentsurveillance.headless.contracts.repositories.IGameRepository;
 import com.nscharrenberg.um.multiagentsurveillance.headless.contracts.repositories.IMapRepository;
 import com.nscharrenberg.um.multiagentsurveillance.headless.contracts.repositories.IPlayerRepository;
-import com.nscharrenberg.um.multiagentsurveillance.headless.models.Angle.Angle;
+import com.nscharrenberg.um.multiagentsurveillance.headless.models.Action;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.GameMode;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Player.Guard;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Player.Intruder;
@@ -17,9 +17,9 @@ import java.io.File;
 import java.io.IOException;
 
 public class GameRepository implements IGameRepository {
-    private static String MAP_PATH = "src/test/resources/maps/testmap.txt";
-    private IMapRepository mapRepository;
-    private IPlayerRepository playerRepository;
+    private static final String MAP_PATH = "src/test/resources/maps/rust.txt";
+    private final IMapRepository mapRepository;
+    private final IPlayerRepository playerRepository;
 
     private String name;
     private GameMode gameMode;
@@ -84,7 +84,7 @@ public class GameRepository implements IGameRepository {
     }
 
     @Override
-    public Angle getTargetGameAngle(Player player){
+    public Action getTargetGameAngle(Player player){
         if(player instanceof Intruder) {
             return AngleTilesCalculator.computeAngle(Factory.getMapRepository().getTargetCenter(), player.getTile());
         }

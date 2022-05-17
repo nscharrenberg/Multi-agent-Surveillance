@@ -3,11 +3,11 @@ package com.nscharrenberg.um.multiagentsurveillance.headless.utils.AreaEffects.A
 import com.nscharrenberg.um.multiagentsurveillance.agents.shared.Agent;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Action;
 
-public interface IAudioEffect {
+public interface ISoundEffect {
 
     boolean isEffectReachable(double distance);
 
-    Audio getAudioEffect(Agent x, Agent y, double distance);
+    Sound getSoundEffect(Agent x, Agent y, double distance);
 
     double computeEffectLevel(double distance);
 

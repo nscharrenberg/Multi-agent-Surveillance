@@ -5,7 +5,9 @@ import com.nscharrenberg.um.multiagentsurveillance.agents.probabilistic.State;
 import com.nscharrenberg.um.multiagentsurveillance.agents.shared.algorithms.pathfinding.AStar.AStar;
 import com.nscharrenberg.um.multiagentsurveillance.agents.shared.algorithms.pathfinding.IPathFinding;
 import com.nscharrenberg.um.multiagentsurveillance.agents.shared.utils.QueueNode;
-import com.nscharrenberg.um.multiagentsurveillance.headless.models.Angle.Angle;
+import com.nscharrenberg.um.multiagentsurveillance.headless.exceptions.BoardNotBuildException;
+import com.nscharrenberg.um.multiagentsurveillance.headless.exceptions.InvalidTileException;
+import com.nscharrenberg.um.multiagentsurveillance.headless.models.Action;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Player.Player;
 import java.util.Optional;
 
@@ -20,7 +22,7 @@ public class PursuerAgent extends ProbabilisticAgent {
     }
 
 
-    private Angle hunt() {
+    private Action hunt() throws InvalidTileException, BoardNotBuildException {
         Optional<QueueNode> queueNodeOpt = pathFindingAlgorithm.execute(knowledge, player, closestKnownAgent);
 
         if (queueNodeOpt.isPresent()) {
@@ -33,12 +35,12 @@ public class PursuerAgent extends ProbabilisticAgent {
     }
 
     @Override
-    public Angle decide() {
+    public Action decide() throws InvalidTileException, BoardNotBuildException {
         checkVision(this);
 
         if (currentState.equals(State.HUNT) && closestKnownAgent != null && huntingSteps != null) {
             System.out.println("I am hunting");
-            Angle h = hunt();
+            Action h = hunt();
 
             if (huntingSteps.getMoves().isEmpty()) {
                 huntingSteps = null;

@@ -1,6 +1,6 @@
 package com.nscharrenberg.um.multiagentsurveillance.agents.shared.algorithms.angleCalculator;
 
-import com.nscharrenberg.um.multiagentsurveillance.headless.models.Angle.Angle;
+import com.nscharrenberg.um.multiagentsurveillance.headless.models.Action;
 
 public class RightAngle {
 
@@ -9,19 +9,19 @@ public class RightAngle {
      * @param angle Game angle
      * @return the right side angle
      */
-    public static Angle getRightAngle(Angle angle){
+    public static Action getRightAngle(Action angle){
 
-        if(!(angle.equals(Angle.UP) || angle.equals(Angle.DOWN) || angle.equals(Angle.LEFT) || angle.equals(Angle.RIGHT)))
+        if(!(angle.equals(Action.UP) || angle.equals(Action.DOWN) || angle.equals(Action.LEFT) || angle.equals(Action.RIGHT)))
             throw new RuntimeException("Wrong Angle");
 
-        if(angle.equals(Angle.UP)){
-            return Angle.RIGHT;
-        } else if(angle.equals(Angle.LEFT)){
-            return Angle.UP;
-        } else if(angle.equals(Angle.RIGHT)){
-            return Angle.DOWN;
+        if(angle.equals(Action.UP)){
+            return Action.RIGHT;
+        } else if(angle.equals(Action.LEFT)){
+            return Action.UP;
+        } else if(angle.equals(Action.RIGHT)){
+            return Action.DOWN;
         } else{
-            return Angle.LEFT;
+            return Action.LEFT;
         }
     }
 

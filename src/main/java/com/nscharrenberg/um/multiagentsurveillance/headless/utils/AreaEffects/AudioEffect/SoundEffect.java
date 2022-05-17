@@ -4,10 +4,10 @@ import com.nscharrenberg.um.multiagentsurveillance.agents.shared.Agent;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Action;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Map.Tile;
 
-public class AudioEffect implements IAudioEffect {
+public class SoundEffect implements ISoundEffect {
     protected double RANGE;
 
-    public AudioEffect(double range){
+    public SoundEffect(double range){
         this.RANGE = range;
     }
 
@@ -17,7 +17,7 @@ public class AudioEffect implements IAudioEffect {
     }
 
     @Override
-    public Audio getAudioEffect(Agent x, Agent y, double distance) {
+    public Sound getSoundEffect(Agent x, Agent y, double distance) {
 
         Tile tileX = x.getPlayer().getTile();
         Tile tileY = y.getPlayer().getTile();
@@ -26,7 +26,7 @@ public class AudioEffect implements IAudioEffect {
 
         double effectLevel = computeEffectLevel(distance);
 
-        return new Audio(effectLevel, soundAction);
+        return new Sound(effectLevel, soundAction);
     }
 
     @Override

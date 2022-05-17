@@ -31,7 +31,7 @@ import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.util.*;
 
-import static com.nscharrenberg.um.multiagentsurveillance.headless.utils.AreaEffects.AudioEffectHelper.*;
+import static com.nscharrenberg.um.multiagentsurveillance.headless.utils.AreaEffects.SoundEffectHelper.*;
 
 public class PlayerRepository implements IPlayerRepository {
     private IMapRepository mapRepository;
@@ -250,6 +250,19 @@ public class PlayerRepository implements IPlayerRepository {
 
     @Override
     public void move(Player player, Action direction) throws CollisionException, InvalidTileException, ItemNotOnTileException, ItemAlreadyOnTileException, BoardNotBuildException {
+        if(player instanceof Guard){
+            basicMove(player, direction);
+        } else if(player instanceof Intruder){
+            ((Intruder) player).updateTargetInfo();
+            basicMove(player, direction);
+        } else {
+            throw new RuntimeException("Wrong player class");
+        }
+    }
+
+
+    @Override
+    public void basicMove(Player player, Action direction) throws CollisionException, InvalidTileException, ItemNotOnTileException, ItemAlreadyOnTileException, BoardNotBuildException {
         Action currentDirection = player.getDirection();
         Tile currentTilePlayer = player.getTile();
         int visionLength = 6;

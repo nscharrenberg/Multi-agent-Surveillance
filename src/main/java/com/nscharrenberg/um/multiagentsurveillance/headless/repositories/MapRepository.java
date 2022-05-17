@@ -52,6 +52,7 @@ public class MapRepository implements IMapRepository {
         this.board = new TileArea();
     }
 
+    @Override
     public Tile getTargetCenter() {
         return targetCenter;
     }

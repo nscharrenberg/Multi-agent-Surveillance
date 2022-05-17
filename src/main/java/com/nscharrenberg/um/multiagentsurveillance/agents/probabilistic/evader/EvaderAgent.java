@@ -1,20 +1,14 @@
 package com.nscharrenberg.um.multiagentsurveillance.agents.probabilistic.evader;
 
-import com.nscharrenberg.um.multiagentsurveillance.agents.frontier.yamauchi.YamauchiAgent;
-import com.nscharrenberg.um.multiagentsurveillance.agents.probabilistic.ClosestKnownAgent;
 import com.nscharrenberg.um.multiagentsurveillance.agents.probabilistic.ProbabilisticAgent;
 import com.nscharrenberg.um.multiagentsurveillance.agents.probabilistic.State;
 import com.nscharrenberg.um.multiagentsurveillance.agents.shared.algorithms.pathfinding.AStar.AStar;
 import com.nscharrenberg.um.multiagentsurveillance.agents.shared.algorithms.pathfinding.IPathFinding;
 import com.nscharrenberg.um.multiagentsurveillance.agents.shared.utils.QueueNode;
-import com.nscharrenberg.um.multiagentsurveillance.headless.models.Angle.Angle;
-import com.nscharrenberg.um.multiagentsurveillance.headless.models.Map.Tile;
+import com.nscharrenberg.um.multiagentsurveillance.headless.exceptions.BoardNotBuildException;
+import com.nscharrenberg.um.multiagentsurveillance.headless.exceptions.InvalidTileException;
+import com.nscharrenberg.um.multiagentsurveillance.headless.models.Action;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Player.Player;
-
-import java.security.NoSuchAlgorithmException;
-import java.security.SecureRandom;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Optional;
 
 public class EvaderAgent extends ProbabilisticAgent {
@@ -30,20 +24,20 @@ public class EvaderAgent extends ProbabilisticAgent {
 
 
 
-    private Angle flee() {
+    private Action flee() throws InvalidTileException, BoardNotBuildException {
         Optional<QueueNode> queueNodeOpt = pathFindingAlgorithm.execute(knowledge, player, closestKnownAgent);
 
         if (queueNodeOpt.isPresent()) {
-            Angle peeked = queueNodeOpt.get().getMoves().peek();
+            Action peeked = queueNodeOpt.get().getMoves().peek();
 
-            if (peeked == Angle.UP) {
-                return Angle.DOWN;
-            } else if (peeked == Angle.DOWN) {
-                return Angle.UP;
-            } else if (peeked == Angle.RIGHT) {
-                return Angle.LEFT;
-            } else if (peeked == Angle.LEFT) {
-                return Angle.RIGHT;
+            if (peeked == Action.UP) {
+                return Action.DOWN;
+            } else if (peeked == Action.DOWN) {
+                return Action.UP;
+            } else if (peeked == Action.RIGHT) {
+                return Action.LEFT;
+            } else if (peeked == Action.LEFT) {
+                return Action.RIGHT;
             }
         }
 
@@ -51,7 +45,7 @@ public class EvaderAgent extends ProbabilisticAgent {
     }
 
     @Override
-    public Angle decide() {
+    public Action decide() throws InvalidTileException, BoardNotBuildException {
         checkVision(this);
 
         if (currentState.equals(State.FLEE) && closestKnownAgent != null) {

@@ -1,6 +1,6 @@
 package com.nscharrenberg.um.multiagentsurveillance.agents.shared.algorithms.angleCalculator;
 
-import com.nscharrenberg.um.multiagentsurveillance.headless.models.Angle.Angle;
+import com.nscharrenberg.um.multiagentsurveillance.headless.models.Action;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Map.Tile;
 
 public class AngleTilesCalculator {
@@ -11,7 +11,7 @@ public class AngleTilesCalculator {
      * @param tileY Position Y
      * @return the game angle, which demonstrates the direction from X to Y
      */
-    public static Angle computeAngle(Tile tileX, Tile tileY) {
+    public static Action computeAngle(Tile tileX, Tile tileY) {
         int x = tileY.getX() - tileX.getX();
         int y = tileY.getY() - tileX.getY();
 
@@ -24,32 +24,32 @@ public class AngleTilesCalculator {
 
         if(x == 0){
 
-            if(y > 0) return Angle.DOWN;
-            else return Angle.UP;
+            if(y > 0) return Action.DOWN;
+            else return Action.UP;
 
         } else if(y == 0){
 
-            if(x > 0) return Angle.RIGHT;
-            else return Angle.LEFT;
+            if(x > 0) return Action.RIGHT;
+            else return Action.LEFT;
 
         } else if(x > 0){
 
             if(y > 0) {
-                if (absX > absY) return Angle.RIGHT;
-                else return Angle.DOWN;
+                if (absX > absY) return Action.RIGHT;
+                else return Action.DOWN;
             } else {
-                if(absX > absY) return Angle.RIGHT;
-                else return Angle.UP;
+                if(absX > absY) return Action.RIGHT;
+                else return Action.UP;
             }
 
         } else {
 
             if(y > 0) {
-                if (absX > absY) return Angle.LEFT;
-                else return Angle.DOWN;
+                if (absX > absY) return Action.LEFT;
+                else return Action.DOWN;
             } else {
-                if(absX > absY) return Angle.LEFT;
-                else return Angle.UP;
+                if(absX > absY) return Action.LEFT;
+                else return Action.UP;
             }
 
         }

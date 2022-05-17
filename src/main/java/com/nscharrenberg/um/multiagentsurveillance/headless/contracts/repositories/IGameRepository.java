@@ -1,6 +1,6 @@
 package com.nscharrenberg.um.multiagentsurveillance.headless.contracts.repositories;
 
-import com.nscharrenberg.um.multiagentsurveillance.headless.models.Angle.Angle;
+import com.nscharrenberg.um.multiagentsurveillance.headless.models.Action;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.GameMode;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Player.Player;
 
@@ -57,7 +57,7 @@ public interface IGameRepository {
 
     void setRunning(boolean running);
 
-    Angle getTargetGameAngle(Player player);
+    Action getTargetGameAngle(Player player);
 
     double getTargetRealAngle(Player player);
 }

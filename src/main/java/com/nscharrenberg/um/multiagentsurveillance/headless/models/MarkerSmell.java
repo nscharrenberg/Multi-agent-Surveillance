@@ -4,25 +4,22 @@ import com.nscharrenberg.um.multiagentsurveillance.headless.models.Angle.Advance
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Items.Item;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Items.ItemType;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Map.Tile;
+import com.nscharrenberg.um.multiagentsurveillance.headless.models.Marker.MarkerType;
+import com.nscharrenberg.um.multiagentsurveillance.headless.models.Player.Player;
 
-public class MarkerSmell extends Item {
 
-    private ItemType marking;
+public class MarkerSmell extends Marker {
+
     private int strength;
     private AdvancedAngle direction;
 
 
     // TODO: We need some way of distinguishing markers (and add it to itemtype)
-    public MarkerSmell(Tile tile, ItemType marking, int strength, AdvancedAngle direction) {
-        super(tile);
-        this.marking = marking;
+    public MarkerSmell(Tile tile, Marker.MarkerType marking, int strength, AdvancedAngle direction, Player player) {
+        super(marking, tile, player);
         this.strength = strength;
         this.direction = direction;
     }
-
-    public ItemType getMarking() { return marking; }
-
-    public void setMarking(ItemType marking) { this.marking = marking; }
 
     public int getStrength() {
         return strength;

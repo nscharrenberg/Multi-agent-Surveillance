@@ -2,11 +2,14 @@ package com.nscharrenberg.um.multiagentsurveillance.gui.canvas;
 
 import com.nscharrenberg.um.multiagentsurveillance.agents.shared.Agent;
 import com.nscharrenberg.um.multiagentsurveillance.headless.Factory;
-import com.nscharrenberg.um.multiagentsurveillance.headless.models.Angle.Angle;
+import com.nscharrenberg.um.multiagentsurveillance.headless.exceptions.BoardNotBuildException;
+import com.nscharrenberg.um.multiagentsurveillance.headless.exceptions.InvalidTileException;
+import com.nscharrenberg.um.multiagentsurveillance.headless.exceptions.ItemNotOnTileException;
+import com.nscharrenberg.um.multiagentsurveillance.headless.models.Action;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.GameMode;
+import com.nscharrenberg.um.multiagentsurveillance.headless.models.Items.Collision.Wall;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Items.Item;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Items.Teleporter;
-import com.nscharrenberg.um.multiagentsurveillance.headless.models.Items.Collision.Wall;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Map.ShadowTile;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Map.Tile;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Map.TileArea;
@@ -77,7 +80,7 @@ public class GameView extends StackPane {
 
     private WritableImage initialBoard;
 
-    public GameView(Stage stage) {
+    public GameView(Stage stage) throws InvalidTileException, BoardNotBuildException, ItemNotOnTileException {
 
         this.stage = stage;
         Factory.init();
@@ -140,10 +143,11 @@ public class GameView extends StackPane {
         alert.show();
     }
 
-    private void gameLoop() {
+    private void gameLoop() throws InvalidTileException, BoardNotBuildException, ItemNotOnTileException {
         if(!MANUAL_PLAYER) {
             Factory.getGameRepository().setRunning(true);
             while (Factory.getGameRepository().isRunning()) {
+                Factory.getMapRepository().checkMarkers();
                 for (Agent agent : Factory.getPlayerRepository().getAgents()) {
                     try {
                         agent.execute();
@@ -165,7 +169,7 @@ public class GameView extends StackPane {
         return point * GSSD;
     }
 
-    public void init(Stage stage) {
+    public void init(Stage stage) throws InvalidTileException, BoardNotBuildException, ItemNotOnTileException {
         canvas = new Canvas(stage.getWidth(), stage.getHeight());
         graphicsContext = canvas.getGraphicsContext2D();
 
@@ -314,11 +318,11 @@ public class GameView extends StackPane {
         drawTile(tile, KNOWLEDGE_COLOR, .1);
     }
 
-    private void drawGuard(Tile tile, Angle angle) {
+    private void drawGuard(Tile tile, Action angle) {
         drawTile(tile, GUARD_COLOR);
     }
 
-    private void drawIntruder(Tile tile, Angle angle) {
+    private void drawIntruder(Tile tile, Action angle) {
         drawTile(tile, INTRUDER_COLOR);
     }
 

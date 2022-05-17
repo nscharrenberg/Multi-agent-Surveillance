@@ -1,9 +1,9 @@
 package com.nscharrenberg.um.multiagentsurveillance.headless.models.Player;
 
 import com.nscharrenberg.um.multiagentsurveillance.agents.shared.Agent;
-import com.nscharrenberg.um.multiagentsurveillance.headless.models.Angle.Angle;
-import com.nscharrenberg.um.multiagentsurveillance.headless.models.Map.Area;
+import com.nscharrenberg.um.multiagentsurveillance.headless.models.Action;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Items.Collision.Collision;
+import com.nscharrenberg.um.multiagentsurveillance.headless.models.Map.Area;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Map.Tile;
 import com.nscharrenberg.um.multiagentsurveillance.headless.utils.AreaEffects.AudioEffect.Audio;
 import com.nscharrenberg.um.multiagentsurveillance.headless.utils.AreaEffects.AudioEffect.AudioEffect;
@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.Objects;
 
 public abstract class Player extends Collision {
-    private Angle direction;
+    private Action direction;
     private double speed;
     private Area<Tile> vision;
     private Agent agent;
@@ -23,7 +23,7 @@ public abstract class Player extends Collision {
 
     // TODO: Keep track of the state the player is in (moving, standing still, climbing, on_target)
 
-    public Player(Tile tile, Angle direction, double speed) {
+    public Player(Tile tile, Action direction, double speed) {
         super(tile);
         this.direction = direction;
         this.speed = speed;
@@ -32,7 +32,7 @@ public abstract class Player extends Collision {
         this.representedSound = new AudioEffect(0);
     }
 
-    public Player(Tile tile, Angle direction, double speed, Area<Tile> observation) {
+    public Player(Tile tile, Action direction, double speed, Area<Tile> observation) {
         super(tile);
         this.direction = direction;
         this.speed = speed;
@@ -58,11 +58,11 @@ public abstract class Player extends Collision {
         this.representedSound = representedSound;
     }
 
-    public Angle getDirection() {
+    public Action getDirection() {
         return direction;
     }
 
-    public void setDirection(Angle direction) {
+    public void setDirection(Action direction) {
         this.direction = direction;
     }
 

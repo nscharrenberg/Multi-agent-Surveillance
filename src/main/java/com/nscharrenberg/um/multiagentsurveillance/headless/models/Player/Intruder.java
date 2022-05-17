@@ -3,6 +3,7 @@ package com.nscharrenberg.um.multiagentsurveillance.headless.models.Player;
 import com.nscharrenberg.um.multiagentsurveillance.headless.Factory;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Angle.AdvancedAngle;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Angle.Angle;
+import com.nscharrenberg.um.multiagentsurveillance.headless.models.Action;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Map.Tile;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Map.TileArea;
 import com.nscharrenberg.um.multiagentsurveillance.headless.utils.files.MapImporter;
@@ -19,7 +20,8 @@ public class Intruder extends Player {
     private Angle targetDirection;
     private AdvancedAngle targetDirectionAdvancedAngle;
 
-    public Intruder(Tile position, Angle direction) {
+
+    public Intruder(Tile position, Action direction) {
         // TODO: Read speed from Configuration
         super(position, direction, 10);
 

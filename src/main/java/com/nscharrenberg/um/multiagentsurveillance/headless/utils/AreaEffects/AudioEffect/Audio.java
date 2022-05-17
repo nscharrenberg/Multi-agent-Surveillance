@@ -1,24 +1,25 @@
 package com.nscharrenberg.um.multiagentsurveillance.headless.utils.AreaEffects.AudioEffect;
 
-import com.nscharrenberg.um.multiagentsurveillance.headless.models.Angle.Angle;
+
+import com.nscharrenberg.um.multiagentsurveillance.headless.models.Action;
 
 public class Audio {
 
     private double effectLevel;
 
-    private Angle angleDirection;
+    private Action ActionDirection;
 
-    public Audio(double effectLevel, Angle angleDirection) {
+    public Audio(double effectLevel, Action ActionDirection) {
         this.effectLevel = effectLevel;
-        this.angleDirection = angleDirection;
+        this.ActionDirection = ActionDirection;
     }
 
     public void setEffectLevel(double effectLevel) {
         this.effectLevel = effectLevel;
     }
 
-    public void setAngleDirection(Angle angleDirection) {
-        this.angleDirection = angleDirection;
+    public void setActionDirection(Action ActionDirection) {
+        this.ActionDirection = ActionDirection;
     }
 
     public double effectLevel() {
@@ -26,7 +27,7 @@ public class Audio {
     }
 
 
-    public Angle angleDirection() {
-        return angleDirection;
+    public Action actionDirection() {
+        return ActionDirection;
     }
 }

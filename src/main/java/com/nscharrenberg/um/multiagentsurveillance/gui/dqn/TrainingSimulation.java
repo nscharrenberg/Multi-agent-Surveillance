@@ -69,9 +69,10 @@ public class TrainingSimulation {
         int networkId = 1;
         for (Agent agent : Factory.getPlayerRepository().getAgents()) {
             if (agent instanceof DQN_Agent dqnAgent) {
-                networkId++;
                 NetworkUtils.saveNetwork(dqnAgent.getNetwork(), NETWORK_PATH + networkId + NETWORK_EXTENSION);
                 networks.push(dqnAgent.getNetwork());
+
+                networkId++;
             }
         }
     }

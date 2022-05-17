@@ -17,6 +17,7 @@ public abstract class ProbabilisticAgent extends YamauchiAgent {
     public State currentState = State.NORMAL;
     public Tile closestKnownAgent;
     public Sound closestSound;
+    public boolean ignoreSounds = false;
 
     public ProbabilisticAgent(Player player) {
         super(player);
@@ -54,12 +55,20 @@ public abstract class ProbabilisticAgent extends YamauchiAgent {
             for (Map.Entry<Integer, Tile> colEntry : rowEntry.getValue().entrySet()) {
                 Tile tile = colEntry.getValue();
 
-                if (tile.hasGuard() && agent instanceof EvaderAgent) {
-                    changeState(State.FLEE, tile);
-                    flag  = true;
-                } else if(tile.hasIntruder() && agent instanceof PursuerAgent){
-                    changeState(State.HUNT, tile);
-                    flag  = true;
+                if (tile.hasGuard()) {
+                    if(agent instanceof EvaderAgent) {
+                        changeState(State.FLEE, tile);
+                        flag = true;
+                    } else {
+                        ignoreSounds = true;
+                    }
+                } else if(tile.hasIntruder()){
+                    if(agent instanceof PursuerAgent) {
+                        changeState(State.HUNT, tile);
+                        flag = true;
+                    } else {
+                        ignoreSounds = true;
+                    }
                 }
             }
         }

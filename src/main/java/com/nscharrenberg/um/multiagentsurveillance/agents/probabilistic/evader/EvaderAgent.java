@@ -44,7 +44,7 @@ public class EvaderAgent extends ProbabilisticAgent {
                     return Action.RIGHT;
                 }
             }
-        } else if(heardSomeone){
+        } else if(heardSomeone && !ignoreSounds){
             Action action = OppositeAngle.getOppositeAngle(closestSound.actionDirection());
             Tile position = getPlayer().getTile();
             Optional<Tile> optTile = getKnowledge().getByCoordinates(position.getX() + action.getxIncrement(), position.getY() + action.getyIncrement());
@@ -72,7 +72,6 @@ public class EvaderAgent extends ProbabilisticAgent {
                 currentState = State.CAUTIOUS;
             }
 
-            System.out.println("I am fleeing");
             return flee(foundSomeone, heardSomeone);
         }
 
@@ -84,7 +83,6 @@ public class EvaderAgent extends ProbabilisticAgent {
                 currentState = State.NORMAL;
             }
 
-            System.out.println("I am Cautious");
             return super.decide();
         }
 

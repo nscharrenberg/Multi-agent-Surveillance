@@ -8,14 +8,18 @@ import com.nscharrenberg.um.multiagentsurveillance.agents.shared.utils.QueueNode
 import com.nscharrenberg.um.multiagentsurveillance.headless.exceptions.BoardNotBuildException;
 import com.nscharrenberg.um.multiagentsurveillance.headless.exceptions.InvalidTileException;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Action;
+import com.nscharrenberg.um.multiagentsurveillance.headless.models.Player.Guard;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Player.Player;
+
+import java.util.LinkedList;
 import java.util.Optional;
+import java.util.Queue;
 
 public class PursuerAgent extends ProbabilisticAgent {
     private static final int MAX_SEARCH_STEPS = 3;
     private final IPathFinding pathFindingAlgorithm = new AStar();
     private int searchCounter = 0;
-    private QueueNode huntingSteps = null;
+    private Queue<Action> huntingSteps = new LinkedList<>();
 
     public PursuerAgent(Player player) {
         super(player);
@@ -26,13 +30,19 @@ public class PursuerAgent extends ProbabilisticAgent {
         if(foundSomeone) {
             Optional<QueueNode> queueNodeOpt = pathFindingAlgorithm.execute(knowledge, player, closestKnownAgent);
 
+            ((Guard) player).setHunting(true);
             if (queueNodeOpt.isPresent()) {
-                huntingSteps = queueNodeOpt.get();
+                huntingSteps = queueNodeOpt.get().getMoves();
 
-                return huntingSteps.getMoves().poll();
+                return huntingSteps.poll();
             }
-        } else if(heardSomeone) {
-            return closestSound.actionDirection();
+        } else if(heardSomeone && !ignoreSounds) {
+
+            for (int i = 0; i < 3; i++) {
+                huntingSteps.add(closestSound.actionDirection());
+            }
+
+            return huntingSteps.poll();
         }
 
         return super.decide();
@@ -44,14 +54,15 @@ public class PursuerAgent extends ProbabilisticAgent {
         boolean heardSomeone = checkSounds(this);
 
         if (currentState.equals(State.HUNT) && (foundSomeone || heardSomeone)) {
-            System.out.println("I am hunting");
 
-            if (huntingSteps != null && !huntingSteps.getMoves().isEmpty()) {
-                return huntingSteps.getMoves().poll();
+            if (!huntingSteps.isEmpty()) {
+                return huntingSteps.poll();
             }
 
             return hunt(foundSomeone, heardSomeone);
         }
+
+        ((Guard) player).setHunting(false);
 
         if (currentState.equals(State.SEARCH)) {
             if (searchCounter < MAX_SEARCH_STEPS) {
@@ -61,7 +72,6 @@ public class PursuerAgent extends ProbabilisticAgent {
                 currentState = State.NORMAL;
             }
 
-            System.out.println("I am searching");
             return super.decide();
         }
 

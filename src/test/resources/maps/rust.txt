@@ -35,3 +35,4 @@ wall = 39 111 40 125
 shaded = 1 20 19 60
 shaded = 99 131 140 149
 teleport = 128 22 138 32 170 120 0.0
+targetArea = 5 5 10 10

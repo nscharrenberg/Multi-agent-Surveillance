@@ -3,10 +3,12 @@ package com.nscharrenberg.um.multiagentsurveillance.agents.frontier.yamauchi;
 import com.nscharrenberg.um.multiagentsurveillance.agents.frontier.yamauchi.comparator.IWeightComparator;
 import com.nscharrenberg.um.multiagentsurveillance.agents.frontier.yamauchi.comparator.MinDistanceUnknownAreaComparator;
 import com.nscharrenberg.um.multiagentsurveillance.agents.shared.Agent;
+import com.nscharrenberg.um.multiagentsurveillance.agents.shared.algorithms.distanceCalculator.CalculateDistance;
 import com.nscharrenberg.um.multiagentsurveillance.agents.shared.algorithms.distanceCalculator.ManhattanDistance;
 import com.nscharrenberg.um.multiagentsurveillance.agents.shared.algorithms.pathfinding.AStar.AStar;
 import com.nscharrenberg.um.multiagentsurveillance.agents.shared.algorithms.pathfinding.IPathFinding;
 import com.nscharrenberg.um.multiagentsurveillance.agents.shared.utils.QueueNode;
+import com.nscharrenberg.um.multiagentsurveillance.headless.Factory;
 import com.nscharrenberg.um.multiagentsurveillance.headless.contracts.repositories.IGameRepository;
 import com.nscharrenberg.um.multiagentsurveillance.headless.contracts.repositories.IMapRepository;
 import com.nscharrenberg.um.multiagentsurveillance.headless.contracts.repositories.IPlayerRepository;
@@ -29,6 +31,7 @@ public class YamauchiAgent extends Agent {
     private SecureRandom random;
     private final IPathFinding pathFindingAlgorithm = new AStar();
     private final IWeightComparator weightDetector = new MinDistanceUnknownAreaComparator();
+    private final CalculateDistance calculateDistance = new ManhattanDistance();
     private final static boolean pathNotForAll = true;
 
     public YamauchiAgent(Player player) {
@@ -75,11 +78,11 @@ public class YamauchiAgent extends Agent {
     }
 
     @Override
-    public Action decide() throws InvalidTileException, BoardNotBuildException {
+    public Action decide() throws InvalidTileException, BoardNotBuildException{
 
-        if (player.getAgent().markerCheck() != null) {
-            //TODO: Return the type of marker. In general: Adjust code in placeMarker method, decide and move method.
-            return player.getAgent().markerCheck();
+        Action markerChecked = player.getAgent().markerCheck();
+        if (markerChecked != null) {
+            return markerChecked;
         }
 
         // Inconsistent with explorer% ????
@@ -244,7 +247,7 @@ public class YamauchiAgent extends Agent {
         int x = player.getTile().getX();
         int y = player.getTile().getY();
         HashMap<Integer, HashMap<Integer, Tile>> region = knowledge.subset(x - 10, y - 10, x + 10, y + 10);
-        
+
         frontiers.clear();
         chosenFrontier = null;
 
@@ -288,7 +291,7 @@ public class YamauchiAgent extends Agent {
                 addUnknownArea(frontier, neighbours);
 
                 if(pathNotForAll) {
-                    int distance = (int) ManhattanDistance.compute(player.getTile(), colEntry.getValue());
+                    int distance = (int) calculateDistance.compute(player.getTile(), colEntry.getValue());
                     if (frontier.getDistance() > distance) {
                         frontier.setTarget(colEntry.getValue());
                         frontier.setDistance(distance);

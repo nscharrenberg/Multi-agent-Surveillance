@@ -94,7 +94,7 @@ public class AudioCheckTest {
                 break;
             }
 
-            agent.execute(audio.ActionDirection());
+            agent.execute(audio.actionDirection());
 
 
             List<AgentJSON> listAgentJSON = data.get(agentId);

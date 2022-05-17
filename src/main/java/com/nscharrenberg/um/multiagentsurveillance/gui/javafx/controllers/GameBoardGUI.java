@@ -12,9 +12,11 @@ import com.nscharrenberg.um.multiagentsurveillance.headless.models.Map.ShadowTil
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Map.Tile;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Map.TileArea;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Marker;
+import com.nscharrenberg.um.multiagentsurveillance.headless.models.MarkerSmell;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Player.Guard;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Player.Intruder;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Player.Player;
+import com.nscharrenberg.um.multiagentsurveillance.headless.models.SoundWave;
 import com.nscharrenberg.um.multiagentsurveillance.headless.utils.recorder.json.Coordinates;
 import com.nscharrenberg.um.multiagentsurveillance.headless.Factory;
 import javafx.application.Application ;
@@ -57,7 +59,7 @@ public class GameBoardGUI extends Application {
     private HashMap<Integer, HashMap<Integer, StackPane>> gridPanes = new HashMap<>();
 
 
-    private ArrayList<TileComponents> components = new ArrayList<TileComponents>(Arrays.asList(TileComponents.SHADED, TileComponents.MARKER, TileComponents.WALL, TileComponents.DOOR, TileComponents.WINDOW, TileComponents.TELEPORTER,
+    private ArrayList<TileComponents> components = new ArrayList<TileComponents>(Arrays.asList(TileComponents.SHADED, TileComponents.MARKERSMELL, TileComponents.WALL, TileComponents.DOOR, TileComponents.WINDOW, TileComponents.TELEPORTER,
             TileComponents.GUARD, TileComponents.INTRUDER));
 
     public enum TileComponents {
@@ -65,10 +67,11 @@ public class GameBoardGUI extends Application {
         SHADED,
         GUARD,
         INTRUDER,
-        MARKER,
+        MARKERSMELL,
         TELEPORTER,
         WALL,
-        WINDOW;
+        WINDOW,
+        SOUNDWAVE;
     }
 
     public GameBoardGUI(){
@@ -356,12 +359,12 @@ public class GameBoardGUI extends Application {
             if (item instanceof Wall) {
                 rectangle.setFill(Color.DARKGRAY);
                 rectangle.setOpacity(0.8);
-            } else if (item instanceof Marker) {
-                if (((Marker) item).getPlayer() instanceof Guard) {
-                    markerLines = drawMarkersGuard(((Marker) item).getType());
+            } else if (item instanceof MarkerSmell) {
+                if (((MarkerSmell) item).getPlayer() instanceof Guard) {
+                    markerLines = drawMarkersGuard(((MarkerSmell) item).getType());
                 }
-                else if (((Marker) item).getPlayer() instanceof Intruder) {
-                    markerCircle = drawMarkersIntruders(((Marker) item).getType());
+                else if (((MarkerSmell) item).getPlayer() instanceof Intruder) {
+                    markerCircle = drawMarkersIntruders(((MarkerSmell) item).getType());
                 }
             } else if (item instanceof Window) {
                 rectangle.setFill(Color.BLUE);
@@ -377,6 +380,8 @@ public class GameBoardGUI extends Application {
                 polygon.setFill(Color.BLUE);
             } else if (item instanceof Teleporter){
                 rectangle.setFill(Color.PURPLE);
+            } else if (item instanceof SoundWave) {
+                rectangle.setFill(Color.ORANGE);
             }
         }
 
@@ -445,8 +450,8 @@ public class GameBoardGUI extends Application {
             if (item instanceof Wall) {
                 index = components.indexOf(TileComponents.WALL);
                 out.set(index, item);
-            } else if (item instanceof Marker) {
-                index = components.indexOf(TileComponents.MARKER);
+            } else if (item instanceof MarkerSmell) {
+                index = components.indexOf(TileComponents.MARKERSMELL);
                 out.set(index, item);
             } else if (item instanceof Window) {
                 index = components.indexOf(TileComponents.WINDOW);
@@ -463,7 +468,11 @@ public class GameBoardGUI extends Application {
             }else if (item instanceof  Teleporter){
                 index = components.indexOf(TileComponents.TELEPORTER);
                 out.set(index, item);
+            }  else if (item instanceof SoundWave) {
+                index = components.indexOf(TileComponents.SOUNDWAVE);
+                out.set(index, item);
             }
+
         }
 
         out.removeAll(Collections.singleton(null));

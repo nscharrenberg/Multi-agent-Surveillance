@@ -6,7 +6,7 @@ import com.nscharrenberg.um.multiagentsurveillance.headless.models.Items.Collisi
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Map.ShadowTile;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Map.Tile;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Map.TileArea;
-import com.nscharrenberg.um.multiagentsurveillance.headless.utils.Geometrics;
+import com.nscharrenberg.um.multiagentsurveillance.headless.models.Player.Player;
 
 import java.util.ArrayList;
 import java.util.Optional;
@@ -16,11 +16,13 @@ public class CharacterVision{
     private int length;
     private Action direction;
     private Geometrics gm;
+    private Player player;
 
-    public CharacterVision(int length, Action direction) {
+    public CharacterVision(int length, Action direction, Player player) {
         this.length = length;
         this.direction = direction;
-        gm = new Geometrics();
+        this.gm = new Geometrics();
+        this.player = player;
     }
 
     public ArrayList<Tile> getVision(TileArea board, Tile position) {
@@ -136,10 +138,6 @@ public class CharacterVision{
         rawvision.removeIf(tc -> (tc.getX() < 0 || tc.getY() < 0));
         rawvision.removeIf(tc -> (tc.getX() > board.width() || tc.getY() > board.height()));
 
-        int xBound = 0;
-        int yBound = 0;
-        boolean flag = true;
-
         // Check remaining tiles for items
         for (Tile t : rawvision) {
             for (Tile it : gm.getIntersectingTiles(position, t)) {
@@ -156,19 +154,6 @@ public class CharacterVision{
                     continue;
                 }
 
-                if(tileAddOpt.get() instanceof ShadowTile){
-                    Tile tileAdd = tileAddOpt.get();
-                    if(flag){
-                        flag = false;
-                        xBound = tileAdd.getX();
-                        yBound = tileAdd.getY();
-                    }
-
-                    if(checkShadowTile(position, xBound, yBound))
-                        continue;
-
-                }
-
                 finalvision.add(tileAddOpt.get());
             } else {
                 validtile = true;
@@ -178,36 +163,35 @@ public class CharacterVision{
         return finalvision;
     }
 
-    private boolean checkShadowTile(Tile tile, int xBound, int yBound){
+    private boolean checkDifBetweenPlayerAndShadowTile(Tile tile, Tile playerTile){
 
-        int shadowBound = 1;
+        int bound = 2;
+        int yDif = Math.abs(tile.getY() - playerTile.getY());
+        int xDif = Math.abs(tile.getX() - playerTile.getX());
 
-        if(this.direction == Action.UP){
+        if(this.direction == Action.UP || this.direction == Action.DOWN){
 
-            return tile.getY() >= yBound - shadowBound;
+            return bound >= yDif;
 
-        } else if(this.direction == Action.DOWN){
+        }  else if(this.direction == Action.LEFT || this.direction == Action.RIGHT){
 
-            return tile.getY() <= yBound + shadowBound;
-
-        } else if(this.direction == Action.LEFT){
-
-            return tile.getX() >= xBound - shadowBound;
-
-        } else if(this.direction == Action.RIGHT){
-
-            return tile.getX() <= xBound + shadowBound;
+            return bound >= xDif;
 
         }
 
         return false;
     }
 
-
     private boolean unobstructedTile(TileArea board, Tile t) {
         Optional<Tile> optTile = board.getByCoordinates(t.getX(), t.getY());
         if(optTile.isPresent()) {
             Tile tile = optTile.get();
+
+            if(tile instanceof ShadowTile){
+                if(!checkDifBetweenPlayerAndShadowTile(tile, player.getTile()))
+                    return true;
+            }
+
             if (tile.getItems().size() != 0) {
                 for (Item im : tile.getItems()) {
                     if (im instanceof Wall) {   // Might have to add other checks to this later

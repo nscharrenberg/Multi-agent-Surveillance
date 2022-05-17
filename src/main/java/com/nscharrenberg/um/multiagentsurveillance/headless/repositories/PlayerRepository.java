@@ -12,6 +12,7 @@ import com.nscharrenberg.um.multiagentsurveillance.headless.contracts.repositori
 import com.nscharrenberg.um.multiagentsurveillance.headless.exceptions.*;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Action;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Angle.AdvancedAngle;
+import com.nscharrenberg.um.multiagentsurveillance.headless.models.GameMode;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Items.Collision.Collision;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Items.Item;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Items.Teleporter;
@@ -48,7 +49,8 @@ public class PlayerRepository implements IPlayerRepository {
 
     private List<Agent> agents;
 
-    private static final Class<? extends Agent> agentType = DQN_Agent.class;
+    private static final Class<? extends Agent> guardType = YamauchiAgent.class;
+    private static final Class<? extends Agent> intruderType = YamauchiAgent.class;
 
     private float explorationPercentage = 0;
 
@@ -113,17 +115,16 @@ public class PlayerRepository implements IPlayerRepository {
         // no tiles = 100% (division by 0 not possible)
         if (totalTileCount <= 0 || explorationPercentage >= (100 - TOLERANCE_RATE)) {
             explorationPercentage = 100;
-            //end game
-            Factory.getGameRepository().setRunning(false);
+            if (!getGameRepository().getGameMode().equals(GameMode.EXPLORATION)) {
+                //end game
+                Factory.getGameRepository().setRunning(false);
+            }
+
             return 100;
         }
 
         float percentage = (discoveredAreaTileCount / totalTileCount) * 100;
         explorationPercentage = percentage;
-
-        // TODO: Remove this when UI elements are present
-//        System.out.println("Explored: " + explorationPercentage + "%");
-
 
         return percentage;
     }
@@ -196,12 +197,12 @@ public class PlayerRepository implements IPlayerRepository {
                         Intruder intruder = new Intruder(tile, Action.UP);
                         tile.add(intruder);
                         intruders.add(intruder);
-                        agent = spawnAgent(intruder, agentType);
+                        agent = spawnAgent(intruder, intruderType);
                     } else {
                         Guard guard = new Guard(tile, Action.UP);
                         tile.add(guard);
                         guards.add(guard);
-                        agent = spawnAgent(guard, agentType);
+                        agent = spawnAgent(guard, guardType);
                     }
 
                     agent.addKnowledge(tile);
@@ -239,7 +240,7 @@ public class PlayerRepository implements IPlayerRepository {
         if(player.getTile() instanceof ShadowTile)
             visionLength /= 2;
 
-        CharacterVision characterVision = new CharacterVision(visionLength, player.getDirection());
+        CharacterVision characterVision = new CharacterVision(visionLength, player.getDirection(), player);
         List<Tile> vision = characterVision.getVision(mapRepository.getBoard(), player.getTile());
         player.getAgent().addKnowledge(vision);
         completeKnowledgeProgress.add(vision);
@@ -260,12 +261,12 @@ public class PlayerRepository implements IPlayerRepository {
             visionLength /= 2;
 
         // Rotate the player when it's not facing the same direction as it wants to go to.
-        if (!currentDirection.equals(direction)) {
+        if (!currentDirection.equals(direction) && !direction.equals(Action.PLACE_MARKER_DEADEND) && !direction.equals(Action.PLACE_MARKER_TARGET) && !direction.equals(Action.PLACE_MARKER_GUARDSPOTTED) && !direction.equals(Action.PLACE_MARKER_INTRUDERSPOTTED) && !direction.equals(Action.PLACE_MARKER_TELEPORTER) && !direction.equals(Action.PLACE_MARKER_SHADED)) {
             player.setDirection(direction);
 
             if (player.getAgent() != null) {
                 //Vision
-                CharacterVision characterVision = new CharacterVision(visionLength, player.getDirection());
+                CharacterVision characterVision = new CharacterVision(visionLength, player.getDirection(), player);
                 List<Tile> vision = characterVision.getVision(mapRepository.getBoard(), player.getTile());
 
                 //Add knowledge to the player
@@ -300,26 +301,32 @@ public class PlayerRepository implements IPlayerRepository {
             if (direction == Action.PLACE_MARKER_DEADEND) {
                 Factory.getMapRepository().addMarker(Marker.MarkerType.DEAD_END, currentPosition.getX(), currentPosition.getY(), player);
                 player.getAgent().decrementDeadEndMarkers();
+                return;
             }
             else if (direction == Action.PLACE_MARKER_GUARDSPOTTED) {
                 Factory.getMapRepository().addMarker(Marker.MarkerType.GUARD_SPOTTED, currentPosition.getX(), currentPosition.getY(), player);
                 player.getAgent().decrementGuardSpottedMarkers();
+                return;
             }
             else if (direction == Action.PLACE_MARKER_INTRUDERSPOTTED) {
                 Factory.getMapRepository().addMarker(Marker.MarkerType.INTRUDER_SPOTTED, currentPosition.getX(), currentPosition.getY(), player);
                 player.getAgent().decrementIntruderSpottedMarkers();
+                return;
             }
             else if (direction == Action.PLACE_MARKER_SHADED) {
                 Factory.getMapRepository().addMarker(Marker.MarkerType.SHADED, currentPosition.getX(), currentPosition.getY(), player);
                 player.getAgent().decrementShadedMarkers();
+                return;
             }
             else if (direction == Action.PLACE_MARKER_TARGET) {
                 Factory.getMapRepository().addMarker(Marker.MarkerType.TARGET, currentPosition.getX(), currentPosition.getY(), player);
                 player.getAgent().decrementTargetMarkers();
+                return;
             }
             else if (direction == Action.PLACE_MARKER_TELEPORTER) {
                 Factory.getMapRepository().addMarker(Marker.MarkerType.TELEPORTER, currentPosition.getX(), currentPosition.getY(), player);
                 player.getAgent().decrementTeleporterMarkers();
+                return;
             }
 
         }
@@ -345,7 +352,7 @@ public class PlayerRepository implements IPlayerRepository {
 
             if (player.getAgent() != null) {
                 //Vision
-                CharacterVision characterVision = new CharacterVision(visionLength, player.getDirection());
+                CharacterVision characterVision = new CharacterVision(visionLength, player.getDirection(), player);
                 List<Tile> vision = characterVision.getVision(mapRepository.getBoard(), nextPosition);
 
                 //Add tiles to the progress
@@ -380,7 +387,7 @@ public class PlayerRepository implements IPlayerRepository {
 
         if (player.getAgent() != null) {
             //Vision
-            CharacterVision characterVision = new CharacterVision(visionLength, player.getDirection());
+            CharacterVision characterVision = new CharacterVision(visionLength, player.getDirection(), player);
             List<Tile> vision = characterVision.getVision(mapRepository.getBoard(), player.getTile());
 
             //Add knowledge to the player

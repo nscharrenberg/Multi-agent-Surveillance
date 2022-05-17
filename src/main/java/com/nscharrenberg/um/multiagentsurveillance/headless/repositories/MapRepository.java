@@ -16,7 +16,9 @@ import com.nscharrenberg.um.multiagentsurveillance.headless.models.Map.ShadowTil
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Map.Tile;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Map.TileArea;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Marker;
+import com.nscharrenberg.um.multiagentsurveillance.headless.models.MarkerSmell;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Player.Player;
+import com.nscharrenberg.um.multiagentsurveillance.headless.utils.AreaEffects.MarkerRange;
 
 import java.util.*;
 
@@ -29,8 +31,9 @@ public class MapRepository implements IMapRepository {
     private TileArea guardSpawnArea;
     private TileArea intruderSpawnArea;
 
-    private HashMap<Integer, Marker> placed_markers;
-    private int hashmapCounter;
+    private ArrayList<MarkerSmell> placed_markers = new ArrayList<MarkerSmell>();
+
+    private MarkerRange mr = new MarkerRange(Marker.getRange());
 
     public MapRepository(IGameRepository gameRepository, IPlayerRepository playerRepository) {
         this.playerRepository = playerRepository;
@@ -222,30 +225,32 @@ public class MapRepository implements IMapRepository {
 
         Tile[] neighboringTiles = calculateNeigboringTiles(marker);
         for (int i = 0; i < neighboringTiles.length; i++) {
-            neighboringTiles[i].add(marker);
-            placed_markers.put(hashmapCounter, marker);
-            hashmapCounter++;
+            if (neighboringTiles[i] != null) {
+                MarkerSmell markersmell = new MarkerSmell(neighboringTiles[i], marker.getType(), mr.getStrength(neighboringTiles[i], found), mr.getDirection(neighboringTiles[i], found), player);
+                neighboringTiles[i].add(markersmell);
+                placed_markers.add(markersmell);
+            }
         }
     }
 
     @Override
     public Tile[] calculateNeigboringTiles(Marker marker) throws InvalidTileException, BoardNotBuildException {
-        int distance = marker.RANGE;
+        int distance = Marker.getRange();
         int current_x = marker.getTile().getX();
-        int current_y = marker.getTile().getX();
+        int current_y = marker.getTile().getY();
         int top_left_x = current_x - distance;
         int top_left_y = current_y - distance;
         int top_right_x = current_x + distance;
         int bottom_left_y = current_y + distance;
         int manhattanDistance;
-        Tile[] listOfTiles = new Tile[]{};
+        Tile[] listOfTiles = new Tile[(distance*2+1)*(distance*2+1)];
         int k = 0;
 
-        for (int i = top_left_x; i > top_right_x; i++) {
-            for (int j = top_left_y; j > bottom_left_y; j++) {
+        for (int i = top_left_x; i <= top_right_x; i++) {
+            for (int j = top_left_y; j <= bottom_left_y; j++) {
                 manhattanDistance = Math.abs(current_x - i) + Math.abs(current_y - j);
-                if (manhattanDistance <= distance) {
-                    listOfTiles[k] = findTileByCoordinates(i, j);;
+                if (manhattanDistance <= distance && i >= 0 && i <= gameRepository.getWidth() && j >= 0 && j <= gameRepository.getHeight()) {
+                    listOfTiles[k] = findTileByCoordinates(i, j);
                     k++;
                 }
             }
@@ -254,33 +259,38 @@ public class MapRepository implements IMapRepository {
     }
 
     @Override
-    public void removeMarker(Marker marker) throws BoardNotBuildException, InvalidTileException, ItemNotOnTileException {
+    public void removeMarker(MarkerSmell markersmell) throws BoardNotBuildException, InvalidTileException, ItemNotOnTileException {
         boardInitCheck();
 
-        int x_position = marker.getTile().getX();
-        int y_position = marker.getTile().getY();
+        int x_position = markersmell.getTile().getX();
+        int y_position = markersmell.getTile().getY();
 
         Tile found = findTileByCoordinates(x_position, y_position);
-        found.remove(marker);
+        found.remove(markersmell);
     }
 
     @Override
     public void checkMarkers() throws BoardNotBuildException, InvalidTileException, ItemNotOnTileException {
         boardInitCheck();
 
-        if (placed_markers == null || placed_markers.isEmpty()) return;
-
-        for (Map.Entry<Integer, Marker> entry : placed_markers.entrySet()) {
-            if (entry.getValue().getCurrentDuration() == 0) {
-                removeMarker(entry.getValue());
-                placed_markers.remove(entry);
+        if (placed_markers.size() > 0) {
+            int i = 0;
+            while (i < placed_markers.size()) {
+                placed_markers.get(i).decrementCurrentDuration();
+                if (placed_markers.get(i).getCurrentDuration() == 0) {
+                    removeMarker(placed_markers.get(i));
+                    placed_markers.remove(placed_markers.get(i));
+                } else {
+                    i++;
+                }
             }
-            entry.getValue().decrementCurrentDuration();
         }
+
+
     }
 
     @Override
-    public HashMap<Integer, Marker> getListOfPlacedMarkers() {
+    public ArrayList<MarkerSmell> getListOfPlacedMarkers() {
         return placed_markers;
     }
 

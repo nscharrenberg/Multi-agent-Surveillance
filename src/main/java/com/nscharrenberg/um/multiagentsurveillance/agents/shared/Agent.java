@@ -195,7 +195,6 @@ public abstract class Agent {
     public abstract Action decide() throws InvalidTileException, BoardNotBuildException, ItemNotOnTileException;
 
     public void execute() throws InvalidTileException, BoardNotBuildException, ItemNotOnTileException {
-        Factory.getMapRepository().checkMarkers();
         execute(decide());
     }
 

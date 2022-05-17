@@ -2,6 +2,7 @@ package com.nscharrenberg.um.multiagentsurveillance.headless.repositories;
 
 import com.nscharrenberg.um.multiagentsurveillance.agents.SBO.SBOAgent;
 import com.nscharrenberg.um.multiagentsurveillance.agents.frontier.yamauchi.YamauchiAgent;
+import com.nscharrenberg.um.multiagentsurveillance.agents.probabilistic.evader.EvaderAgent;
 import com.nscharrenberg.um.multiagentsurveillance.agents.random.RandomAgent;
 import com.nscharrenberg.um.multiagentsurveillance.agents.shared.Agent;
 import com.nscharrenberg.um.multiagentsurveillance.headless.Factory;
@@ -222,6 +223,8 @@ public class PlayerRepository implements IPlayerRepository {
             agent = new YamauchiAgent(player);
         } else if (agentClass.equals(SBOAgent.class)) {
             agent = new SBOAgent(player);
+        } else if (agentClass.equals(EvaderAgent.class)) {
+            agent = new EvaderAgent(player);
         }
 
         if (agent == null) {

@@ -21,10 +21,12 @@ module com.nscharrenberg.um.multiagentsurveillance {
     opens com.nscharrenberg.um.multiagentsurveillance.agents.frontier.yamauchi to cloning;
     opens com.nscharrenberg.um.multiagentsurveillance.agents.SBO to cloning;
     opens com.nscharrenberg.um.multiagentsurveillance.agents.shared.utils to cloning;
-    opens com.nscharrenberg.um.multiagentsurveillance.agents.frontier.yamauchi.comparator to cloning;
+    opens com.nscharrenberg.um.multiagentsurveillance.agents.frontier.yamauchi.comparator.guard to cloning;
+    opens com.nscharrenberg.um.multiagentsurveillance.agents.frontier.yamauchi.comparator.intruder to cloning;
     opens com.nscharrenberg.um.multiagentsurveillance.agents.shared.algorithms.pathfinding.AStar to cloning;
     opens com.nscharrenberg.um.multiagentsurveillance.headless.utils to cloning;
     exports com.nscharrenberg.um.multiagentsurveillance.headless.utils.recorder;
+    exports com.nscharrenberg.um.multiagentsurveillance.agents.probabilistic;
     opens com.nscharrenberg.um.multiagentsurveillance.headless.utils.recorder to com.google.gson, javafx.fxml;
     exports com.nscharrenberg.um.multiagentsurveillance.headless.utils.recorder.json;
     opens com.nscharrenberg.um.multiagentsurveillance.headless.utils.recorder.json to com.google.gson, javafx.fxml;
@@ -41,4 +43,6 @@ module com.nscharrenberg.um.multiagentsurveillance {
     opens com.nscharrenberg.um.multiagentsurveillance.headless.utils.Vision to cloning;
     opens com.nscharrenberg.um.multiagentsurveillance.headless.utils.AreaEffects.AudioEffect to cloning;
     opens com.nscharrenberg.um.multiagentsurveillance.headless.utils.AreaEffects to cloning;
+    opens com.nscharrenberg.um.multiagentsurveillance.agents.probabilistic.pursuer to cloning;
+    opens com.nscharrenberg.um.multiagentsurveillance.agents.probabilistic.evader to cloning;
 }

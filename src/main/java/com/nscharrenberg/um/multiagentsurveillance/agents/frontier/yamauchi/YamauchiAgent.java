@@ -1,14 +1,15 @@
 package com.nscharrenberg.um.multiagentsurveillance.agents.frontier.yamauchi;
 
-import com.nscharrenberg.um.multiagentsurveillance.agents.frontier.yamauchi.comparator.IWeightComparator;
-import com.nscharrenberg.um.multiagentsurveillance.agents.frontier.yamauchi.comparator.MinDistanceUnknownAreaComparator;
+import com.nscharrenberg.um.multiagentsurveillance.agents.frontier.yamauchi.comparator.guard.IWeightComparatorGuard;
+import com.nscharrenberg.um.multiagentsurveillance.agents.frontier.yamauchi.comparator.guard.MinDistanceUnknownAreaComparator;
+import com.nscharrenberg.um.multiagentsurveillance.agents.frontier.yamauchi.comparator.intruder.CloseToTarget;
+import com.nscharrenberg.um.multiagentsurveillance.agents.frontier.yamauchi.comparator.intruder.IWeightComparatorIntruder;
 import com.nscharrenberg.um.multiagentsurveillance.agents.shared.Agent;
 import com.nscharrenberg.um.multiagentsurveillance.agents.shared.algorithms.distanceCalculator.CalculateDistance;
 import com.nscharrenberg.um.multiagentsurveillance.agents.shared.algorithms.distanceCalculator.ManhattanDistance;
 import com.nscharrenberg.um.multiagentsurveillance.agents.shared.algorithms.pathfinding.AStar.AStar;
 import com.nscharrenberg.um.multiagentsurveillance.agents.shared.algorithms.pathfinding.IPathFinding;
 import com.nscharrenberg.um.multiagentsurveillance.agents.shared.utils.QueueNode;
-import com.nscharrenberg.um.multiagentsurveillance.headless.Factory;
 import com.nscharrenberg.um.multiagentsurveillance.headless.contracts.repositories.IGameRepository;
 import com.nscharrenberg.um.multiagentsurveillance.headless.contracts.repositories.IMapRepository;
 import com.nscharrenberg.um.multiagentsurveillance.headless.contracts.repositories.IPlayerRepository;
@@ -18,6 +19,8 @@ import com.nscharrenberg.um.multiagentsurveillance.headless.models.Items.Collisi
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Items.Item;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Map.Area;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Map.Tile;
+import com.nscharrenberg.um.multiagentsurveillance.headless.models.Player.Guard;
+import com.nscharrenberg.um.multiagentsurveillance.headless.models.Player.Intruder;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Player.Player;
 import com.nscharrenberg.um.multiagentsurveillance.headless.utils.BoardUtils;
 
@@ -30,7 +33,8 @@ public class YamauchiAgent extends Agent {
     private Frontier chosenFrontier = null;
     private SecureRandom random;
     private final IPathFinding pathFindingAlgorithm = new AStar();
-    private final IWeightComparator weightDetector = new MinDistanceUnknownAreaComparator();
+    private final IWeightComparatorGuard weightDetectorGuard = new MinDistanceUnknownAreaComparator();
+    private final IWeightComparatorIntruder weightDetectorIntruder = new CloseToTarget();
     private final CalculateDistance calculateDistance = new ManhattanDistance();
     private final static boolean pathNotForAll = true;
 
@@ -152,7 +156,10 @@ public class YamauchiAgent extends Agent {
             if (bestFrontier == null)
                 bestFrontier = frontier;
 
-            bestFrontier = weightDetector.compare(frontier, bestFrontier);
+            if(player instanceof Guard)
+                bestFrontier = weightDetectorGuard.compare(frontier, bestFrontier);
+            else if (player instanceof Intruder)
+                bestFrontier = weightDetectorIntruder.compare(frontier, bestFrontier, ((Intruder)player).getTarget());
 
         }
 
@@ -246,7 +253,8 @@ public class YamauchiAgent extends Agent {
     private boolean detectFrontierByRegion(){
         int x = player.getTile().getX();
         int y = player.getTile().getY();
-        HashMap<Integer, HashMap<Integer, Tile>> region = knowledge.subset(x - 10, y - 10, x + 10, y + 10);
+        int RANGE = 20;
+        HashMap<Integer, HashMap<Integer, Tile>> region = knowledge.subset(x - RANGE, y - RANGE, x + RANGE, y + RANGE);
 
         frontiers.clear();
         chosenFrontier = null;

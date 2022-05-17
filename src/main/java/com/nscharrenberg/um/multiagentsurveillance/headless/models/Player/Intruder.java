@@ -2,8 +2,6 @@ package com.nscharrenberg.um.multiagentsurveillance.headless.models.Player;
 
 import com.nscharrenberg.um.multiagentsurveillance.headless.Factory;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Angle.AdvancedAngle;
-import com.nscharrenberg.um.multiagentsurveillance.headless.models.Angle.Angle;
-import com.nscharrenberg.um.multiagentsurveillance.headless.models.Action;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Map.Tile;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Map.TileArea;
 import com.nscharrenberg.um.multiagentsurveillance.headless.utils.files.MapImporter;
@@ -17,11 +15,9 @@ import java.util.Objects;
 public class Intruder extends Player {
     private double sprintSpeed;
     private boolean isSprinting = false;
-    private Angle targetDirection;
-    private AdvancedAngle targetDirectionAdvancedAngle;
+    private AdvancedAngle targetDirection;
 
-
-    public Intruder(Tile position, Action direction) {
+    public Intruder(Tile position, AdvancedAngle direction) {
         // TODO: Read speed from Configuration
         super(position, direction, 10);
 
@@ -29,7 +25,7 @@ public class Intruder extends Player {
         this.sprintSpeed = 20;
 
         // this.targetDirection = TargetDirection.computeTargetDirection(position.getX(), position.getY());
-        this.targetDirectionAdvancedAngle = TargetDirection.computeTargetDirectionInAdvancedAngle(position.getX(), position.getY());
+        this.targetDirection = TargetDirection.computeTargetDirectionInAdvancedAngle(position.getX(), position.getY());
     }
 
     public double getSprintSpeed() {
@@ -71,9 +67,9 @@ public class Intruder extends Player {
         return Objects.hash(super.hashCode(), sprintSpeed, isSprinting);
     }
 
-    public void getTarget(){
-
+    public AdvancedAngle getTargetDirection()
+    {
+        return targetDirection;
     }
-
-
+    
 }

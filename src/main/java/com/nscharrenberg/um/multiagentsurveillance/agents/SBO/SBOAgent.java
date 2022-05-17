@@ -50,10 +50,15 @@ public class SBOAgent extends Agent {
     @Override
     public Action decide() throws InvalidTileException, BoardNotBuildException {
 
-        Action markerChecked = player.getAgent().markerCheck();
-        if (markerChecked != null) {
-            return markerChecked;
-        }
+//        Action markerChecked = player.getAgent().markerCheck();
+//        if (markerChecked != null) {
+//            return markerChecked;
+//        }
+
+        // TODO: If stack is empty, search for teleporter
+        System.out.println("Players Tile: " + player.getTile().getX() + "  " + player.getTile().getY());
+        System.out.println("Current goal Tile: " + goal.getX() + "  " + goal.getY());
+        System.out.println("Stack size: " + scanned.size());
 
         for (Item it: player.getTile().getItems()) {
 
@@ -85,11 +90,6 @@ public class SBOAgent extends Agent {
                 break;
             }
         }
-
-        // TODO: If stack is empty, search for teleporter
-        System.out.println("Players Tile: " + player.getTile().getX() + "  " + player.getTile().getY());
-        System.out.println("Current goal Tile: " + goal.getX() + "  " + goal.getY());
-        System.out.println("Stack size: " + scanned.size());
 
         // Turn goal tile into Queue angle
         BFS bfs = new BFS();

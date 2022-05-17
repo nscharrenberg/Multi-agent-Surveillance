@@ -200,8 +200,8 @@ public class DQN_Agent extends Agent {
 
         int dx, dy;
         for (Audio sound : audioList) {
-            dx = sound.ActionDirection().getxIncrement();
-            dy = sound.ActionDirection().getyIncrement();
+            dx = sound.actionDirection().getxIncrement();
+            dy = sound.actionDirection().getyIncrement();
 
             state[2][xP + dx][yP + dy] += sound.effectLevel();
         }

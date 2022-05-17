@@ -460,15 +460,18 @@ public class PlayerRepository implements IPlayerRepository {
             if (escapedIntruders.size() >= 1) {
                 gameRepository.setRunning(false);
                 gameRepository.setGameState(GameState.INTRUDERS_WON);
+                return;
             }
 
             // Guards won if all intruders are caught
             if (intruders.isEmpty()) {
                 gameRepository.setRunning(false);
                 gameRepository.setGameState(GameState.GUARDS_WON);
+                return;
             }
 
             gameRepository.setGameState(GameState.NO_RESULT);
+            return;
         }
 
         // All intruders must escape to win
@@ -476,16 +479,19 @@ public class PlayerRepository implements IPlayerRepository {
             // Intruders still on the board, so no results
             if (!intruders.isEmpty()) {
                 gameRepository.setGameState(GameState.NO_RESULT);
+                return;
             }
             // Guards won if at least one intruder is caught
             if (!caughtIntruders.isEmpty()) {
                 gameRepository.setRunning(false);
                 gameRepository.setGameState(GameState.GUARDS_WON);
+                return;
             }
 
             // Intruders win if they all escaped
             gameRepository.setRunning(false);
             gameRepository.setGameState(GameState.INTRUDERS_WON);
+            return;
         }
 
         gameRepository.setGameState(GameState.NO_RESULT);

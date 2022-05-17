@@ -272,13 +272,16 @@ public class PlayerRepository implements IPlayerRepository {
 
     @Override
     public void move(Player player, Action direction) throws CollisionException, InvalidTileException, ItemNotOnTileException, ItemAlreadyOnTileException, BoardNotBuildException {
-        if(player instanceof Guard){
-            basicMove(player, direction);
-            if(((Guard) player).isHunting())
-                player.setRepresentedSoundRange(YELL);
-        } else if(player instanceof Intruder){
-            ((Intruder) player).updateTargetInfo();
-            basicMove(player, direction);
+        if(player instanceof Guard guard){
+            basicMove(guard, direction);
+            if(guard.isHunting())
+                guard.setRepresentedSoundRange(YELL);
+
+            capture(guard);
+        } else if(player instanceof Intruder intruder){
+            intruder.updateTargetInfo();
+            basicMove(intruder, direction);
+            escape(intruder);
         } else {
             throw new RuntimeException("Wrong player class");
         }
@@ -287,12 +290,6 @@ public class PlayerRepository implements IPlayerRepository {
 
     @Override
     public void basicMove(Player player, Action direction) throws CollisionException, InvalidTileException, ItemNotOnTileException, ItemAlreadyOnTileException, BoardNotBuildException {
-        if (player instanceof Guard guard) {
-            capture(guard);
-        } else if (player instanceof Intruder intruder) {
-            escape(intruder);
-        }
-
         Action currentDirection = player.getDirection();
         Tile currentTilePlayer = player.getTile();
         int visionLength = 6;
@@ -480,7 +477,7 @@ public class PlayerRepository implements IPlayerRepository {
                 int count = intrudersAboutToEscape.get(intruder.getId());
 
                 // Intruder escaped & is removed from the board.
-                if (count > timeStepsToEscape) {
+                if (count >= timeStepsToEscape) {
                     System.out.println("Intruder " + intruder.getId() + " has escaped");
 
                     escapedIntruders.add(intruder);

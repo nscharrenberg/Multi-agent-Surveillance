@@ -1,5 +1,6 @@
 package com.nscharrenberg.um.multiagentsurveillance.agents.SBO;
 
+import com.nscharrenberg.um.multiagentsurveillance.headless.models.Action;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Angle.*;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Player.Player;
 import com.nscharrenberg.um.multiagentsurveillance.headless.utils.AngleConverter;
@@ -12,7 +13,7 @@ public class RLmodel {
     double prioscaler = 1;
     double strengthbias = 1;
     double baseline = 0;
-    Queue<Angle> redirect = null;
+    Queue<Action> redirect = null;
     ArrayList<Parameter> inputs;
 
 
@@ -55,7 +56,7 @@ public class RLmodel {
         this.baseline = baseline;
     }
 
-    public Queue<Angle> getRedirect() {
+    public Queue<Action> getRedirect() {
         return redirect;
     }
 

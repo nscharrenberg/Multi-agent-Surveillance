@@ -5,10 +5,7 @@ import com.nscharrenberg.um.multiagentsurveillance.headless.models.Angle.Advance
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Angle.Angle;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Map.Tile;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Map.TileArea;
-import com.nscharrenberg.um.multiagentsurveillance.headless.utils.files.MapImporter;
 
-import java.io.File;
-import java.io.IOException;
 import java.util.List;
 
 public class TargetDirection {
@@ -130,49 +127,5 @@ public class TargetDirection {
         }
     }
 
-    public static Angle computeTargetDirectionTesting(int x1, int y1) {
 
-        File file = new File("src/test/resources/maps/testmap6.txt");
-
-        if (!file.exists()) {
-            throw new RuntimeException("Resource not found");
-        }
-
-        String path = file.getAbsolutePath();
-
-        MapImporter importer = new MapImporter();
-
-        try {
-            importer.load(path);
-
-        } catch (IOException e) {
-            throw new RuntimeException("Importer failed");
-        }
-
-        return computeTargetDirection(x1, y1);
-
-    }
-
-    public static AdvancedAngle computeTargetDirectionInAdvancedAngleTesting(int x, int y) {
-
-        File file = new File("src/test/resources/maps/testmap6.txt");
-
-        if (!file.exists()) {
-            throw new RuntimeException("Resource not found");
-        }
-
-        String path = file.getAbsolutePath();
-
-        MapImporter importer = new MapImporter();
-
-        try {
-            importer.load(path);
-
-        } catch (IOException e) {
-            throw new RuntimeException("Importer failed");
-        }
-
-        return computeTargetDirectionInAdvancedAngle(x, y);
-
-    }
 }

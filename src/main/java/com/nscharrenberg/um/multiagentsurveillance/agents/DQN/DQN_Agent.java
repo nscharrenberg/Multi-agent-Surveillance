@@ -4,6 +4,7 @@ import com.nscharrenberg.um.multiagentsurveillance.agents.DQN.neuralNetwork.Netw
 import com.nscharrenberg.um.multiagentsurveillance.agents.DQN.training.EpsilonGreedy;
 import com.nscharrenberg.um.multiagentsurveillance.agents.DQN.training.Experience;
 import com.nscharrenberg.um.multiagentsurveillance.agents.DQN.training.TrainingData;
+import com.nscharrenberg.um.multiagentsurveillance.agents.frontier.yamauchi.YamauchiAgent;
 import com.nscharrenberg.um.multiagentsurveillance.agents.shared.Agent;
 import com.nscharrenberg.um.multiagentsurveillance.headless.Factory;
 import com.nscharrenberg.um.multiagentsurveillance.headless.exceptions.*;
@@ -31,20 +32,21 @@ public class DQN_Agent extends Agent {
     private final double gamma = 0.999;
 
     // TODO: Decide on exploration policy
-    private Agent explorationAgent;
+    private Agent explorationAgent = new YamauchiAgent(player);
 
     public DQN_Agent(){
         super(null);
         initAgent();
     }
 
-    public void setPlayer(Player player){
-        this.player = player;
-    }
-
     public DQN_Agent(Player player) {
         super(player);
         initAgent();
+    }
+
+    public void setPlayer(Player player){
+        this.player = player;
+        explorationAgent.setPlayer(player);
     }
 
     private void initAgent(){
@@ -183,6 +185,8 @@ public class DQN_Agent extends Agent {
 
         // TODO: Add reward moving towards target area
         // TODO: Add reward for being in target area
+
+
 
         return rewardScalar * (dSP + dVP);
     }

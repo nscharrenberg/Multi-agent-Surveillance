@@ -26,9 +26,10 @@ public class TrainingSimulation {
     private final int batchSize = 256;
 
     public TrainingSimulation() throws Exception {
+        initTraining(2,2);
     }
 
-    private void initTraining(int numGuards, int numIntruders){
+    private void initTraining(int numGuards, int numIntruders) throws Exception {
 
         guards = new DQN_Agent[numGuards];
         guardsData = new TrainingData[numGuards];
@@ -46,7 +47,7 @@ public class TrainingSimulation {
             }
         }
 
-
+        runTraining(10);
     }
 
     private void runTraining(int numEpisodes) throws Exception {
@@ -62,7 +63,7 @@ public class TrainingSimulation {
             Factory.getGameRepository().startGame(guards, intruders);
             Factory.getGameRepository().setRunning(true);
 
-            while (!gameComplete()){
+            while (Factory.getGameRepository().isRunning()){
 
                 for (int j = 0; j < intruders.length; j++) {
                     state = intruders[j].updateState();
@@ -70,7 +71,7 @@ public class TrainingSimulation {
                     intruders[j].execute(action);
                     nextState = intruders[j].updateState();
                     reward = intruders[j].calculateReward(state, nextState);
-                    done = false;                                                       // TODO: Check if final state is reached
+                    done = Factory.getGameRepository().isRunning();                                                       // TODO: Check if final state is reached
                     experience = new Experience(state, action, reward, nextState, done);
                     intrudersData[j].push(experience);
 

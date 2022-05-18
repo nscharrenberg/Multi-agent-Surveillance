@@ -482,6 +482,10 @@ public abstract class Agent {
         return true;
     }
 
+    public void setPlayer(Player player){
+        this.player = player;
+    }
+
     public int getDeadEndMarkers() {
         return deadEndMarkers;
     }

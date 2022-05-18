@@ -34,6 +34,7 @@ public class AudioCheckTest {
 
     @Test
     void testNavigationByAudio() throws Exception {
+        Factory.init();
         new MapImporter().load("src/test/resources/maps/testAudioMap.txt");
         new GameConfigurationRecorder().setUpConfFiles();
 

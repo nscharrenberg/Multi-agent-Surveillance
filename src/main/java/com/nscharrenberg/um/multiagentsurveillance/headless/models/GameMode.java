@@ -5,7 +5,8 @@ import java.util.Optional;
 
 public enum GameMode {
     EXPLORATION(0, "Exploration"),
-    GUARD_INTRUDER(1, "Guard vs Intruder");
+    GUARD_INTRUDER_ALL(1, "Guard vs Intruder (All intruders must escape)"),
+    GUARD_INTRUDER_ONE(2, "Guard vs Intruder (At least one intruders must escape)");
 
     GameMode(int id, String name) {
         this.id = id;

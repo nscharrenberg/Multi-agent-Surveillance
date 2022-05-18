@@ -15,7 +15,7 @@ import com.nscharrenberg.um.multiagentsurveillance.headless.models.Map.Tile;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Player.Guard;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Player.Intruder;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Player.Player;
-import com.nscharrenberg.um.multiagentsurveillance.headless.utils.AreaEffects.AudioEffect.Audio;
+import com.nscharrenberg.um.multiagentsurveillance.headless.utils.AreaEffects.AudioEffect.Sound;
 
 import java.util.*;
 
@@ -247,7 +247,7 @@ public class DQN_Agent extends Agent {
     public double[][][] updateState(){
 
         double[][][] state = new double[channels][length][length];
-        List<Audio> audioList = player.getAudioEffects();
+        List<Sound> SoundList = player.getSoundEffects();
         List<Item> items;
         int xP = player.getTile().getX();
         int yP = player.getTile().getY();
@@ -274,7 +274,7 @@ public class DQN_Agent extends Agent {
         }
 
         int dx, dy;
-        for (Audio sound : audioList) {
+        for (Sound sound : SoundList) {
             dx = sound.actionDirection().getxIncrement();
             dy = sound.actionDirection().getyIncrement();
 

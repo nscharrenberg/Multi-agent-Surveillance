@@ -4,8 +4,7 @@ import com.nscharrenberg.um.multiagentsurveillance.agents.shared.Agent;
 import com.nscharrenberg.um.multiagentsurveillance.agents.shared.algorithms.distanceCalculator.CalculateDistance;
 import com.nscharrenberg.um.multiagentsurveillance.agents.shared.algorithms.distanceCalculator.EuclideanDistance;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Map.Tile;
-import com.nscharrenberg.um.multiagentsurveillance.headless.utils.AreaEffects.AudioEffect.Audio;
-import com.nscharrenberg.um.multiagentsurveillance.headless.utils.AreaEffects.AudioEffect.IAudioEffect;
+import com.nscharrenberg.um.multiagentsurveillance.headless.utils.AreaEffects.AudioEffect.ISoundEffect;
 
 import java.util.List;
 
@@ -15,7 +14,7 @@ public class DistanceEffects {
 
     public static void areaEffects(Agent agent, List<Agent> agentList){
 
-        agent.getPlayer().getAudioEffects().clear();
+        agent.getPlayer().getSoundEffects().clear();
 
         Tile agentTile = agent.getPlayer().getTile();
 
@@ -24,12 +23,12 @@ public class DistanceEffects {
                 continue;
 
             Tile someAgentTile = someAgent.getPlayer().getTile();
-            IAudioEffect representedSoundOfAgent = someAgent.getPlayer().getRepresentedSound();
+            ISoundEffect representedSoundOfAgent = someAgent.getPlayer().getRepresentedSound();
 
             int distance = (int) calculateDistance.compute(agentTile, someAgentTile);
 
             if (representedSoundOfAgent.isEffectReachable(distance)) {
-                agent.getPlayer().getAudioEffects().add(representedSoundOfAgent.getAudioEffect(agent, someAgent, distance));
+                agent.getPlayer().getSoundEffects().add(representedSoundOfAgent.getSoundEffect(agent, someAgent, distance));
             }
 
         }

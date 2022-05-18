@@ -3,13 +3,13 @@ package com.nscharrenberg.um.multiagentsurveillance.headless.utils.AreaEffects.A
 
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Action;
 
-public class Audio {
+public class Sound {
 
     private double effectLevel;
 
     private Action ActionDirection;
 
-    public Audio(double effectLevel, Action ActionDirection) {
+    public Sound(double effectLevel, Action ActionDirection) {
         this.effectLevel = effectLevel;
         this.ActionDirection = ActionDirection;
     }

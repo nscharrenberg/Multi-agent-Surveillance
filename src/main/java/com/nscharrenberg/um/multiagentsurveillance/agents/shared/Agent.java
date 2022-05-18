@@ -174,7 +174,7 @@ public abstract class Agent {
         return mapRepository;
     }
 
-    public IGameRepository getGameRepository() {
+    public IGameRepository gameRepository() {
         return gameRepository;
     }
 
@@ -246,7 +246,7 @@ public abstract class Agent {
                             }
                         }
                     }
-                    else if ((Factory.getMapRepository().getTargetArea().within(colEntry.getValue().getX(), colEntry.getValue().getY())) && getTargetMarkers() > 0) {
+                    else if ((mapRepository.getTargetArea().within(colEntry.getValue().getX(), colEntry.getValue().getY())) && getTargetMarkers() > 0) {
                         if (!lookForSameMarker(vision, Marker.MarkerType.TARGET, player)) {
                             if (!lookForMarkerPlacedByPlayer(player, Marker.MarkerType.TARGET)) {
                                 return Action.PLACE_MARKER_TARGET;
@@ -299,7 +299,7 @@ public abstract class Agent {
     }
 
     public boolean lookForMarkerPlacedByPlayer(Player player, Marker.MarkerType typeOfMarker) {
-        ArrayList<MarkerSmell> listOfPlacedMarkers = Factory.getMapRepository().getListOfPlacedMarkers();
+        ArrayList<MarkerSmell> listOfPlacedMarkers = mapRepository.getListOfPlacedMarkers();
 
         if (listOfPlacedMarkers == null) {
             return false;
@@ -330,8 +330,8 @@ public abstract class Agent {
         if (differenceFromWallToCurrentX > 0 && differenceFromWallToCurrentY >= 0) {
             for (Point coordinate : deadEndTilesBottomLeft) {
                 boolean tileFound = false;
-                if (coordinate.getX() >= 0 && coordinate.getY() >= 0 && coordinate.getX() <= Factory.getGameRepository().getWidth() && coordinate.getY() <= Factory.getGameRepository().getHeight()) {
-                    Tile currentTile = Factory.getMapRepository().findTileByCoordinates((int) coordinate.getX(), (int) coordinate.getY());
+                if (coordinate.getX() >= 0 && coordinate.getY() >= 0 && coordinate.getX() <= gameRepository.getWidth() && coordinate.getY() <= gameRepository.getHeight()) {
+                    Tile currentTile = mapRepository.findTileByCoordinates((int) coordinate.getX(), (int) coordinate.getY());
                     for (Map.Entry<Integer, HashMap<Integer, Tile>> rowEntry : vision.entrySet()) {
                         for (Map.Entry<Integer, Tile> colEntry : rowEntry.getValue().entrySet()) {
                             if (colEntry.getValue() == currentTile) {
@@ -368,8 +368,8 @@ public abstract class Agent {
         else if (differenceFromWallToCurrentX <= 0 && differenceFromWallToCurrentY > 0) {
             for (Point coordinate : deadEndTilesBottomLeft) {
                 boolean tileFound = false;
-                if (coordinate.getX() >= 0 && coordinate.getY() >= 0 && coordinate.getX() <= Factory.getGameRepository().getWidth() && coordinate.getY() <= Factory.getGameRepository().getHeight()) {
-                    Tile currentTile = Factory.getMapRepository().findTileByCoordinates((int) coordinate.getX(), (int) coordinate.getY());
+                if (coordinate.getX() >= 0 && coordinate.getY() >= 0 && coordinate.getX() <= gameRepository.getWidth() && coordinate.getY() <= gameRepository.getHeight()) {
+                    Tile currentTile = mapRepository.findTileByCoordinates((int) coordinate.getX(), (int) coordinate.getY());
                     for (Map.Entry<Integer, HashMap<Integer, Tile>> rowEntry : vision.entrySet()) {
                         for (Map.Entry<Integer, Tile> colEntry : rowEntry.getValue().entrySet()) {
                             if (colEntry.getValue() == currentTile) {
@@ -406,8 +406,8 @@ public abstract class Agent {
         else if (differenceFromWallToCurrentX >= 0 && differenceFromWallToCurrentY < 0) {
             for (Point coordinate : deadEndTilesTopRight) {
                 boolean tileFound = false;
-                if (coordinate.getX() >= 0 && coordinate.getY() >= 0 && coordinate.getX() <= Factory.getGameRepository().getWidth() && coordinate.getY() <= Factory.getGameRepository().getHeight()) {
-                    Tile currentTile = Factory.getMapRepository().findTileByCoordinates((int) coordinate.getX(), (int) coordinate.getY());
+                if (coordinate.getX() >= 0 && coordinate.getY() >= 0 && coordinate.getX() <= gameRepository.getWidth() && coordinate.getY() <= gameRepository.getHeight()) {
+                    Tile currentTile = mapRepository.findTileByCoordinates((int) coordinate.getX(), (int) coordinate.getY());
                     for (Map.Entry<Integer, HashMap<Integer, Tile>> rowEntry : vision.entrySet()) {
                         for (Map.Entry<Integer, Tile> colEntry : rowEntry.getValue().entrySet()) {
                             if (colEntry.getValue() == currentTile) {
@@ -444,8 +444,8 @@ public abstract class Agent {
         else if (differenceFromWallToCurrentX < 0 && differenceFromWallToCurrentY <= 0) {
             for (Point coordinate : deadEndTilesTopLeft) {
                 boolean tileFound = false;
-                if (coordinate.getX() >= 0 && coordinate.getY() >= 0 && coordinate.getX() <= Factory.getGameRepository().getWidth() && coordinate.getY() <= Factory.getGameRepository().getHeight()) {
-                    Tile currentTile = Factory.getMapRepository().findTileByCoordinates((int) coordinate.getX(), (int) coordinate.getY());
+                if (coordinate.getX() >= 0 && coordinate.getY() >= 0 && coordinate.getX() <= gameRepository.getWidth() && coordinate.getY() <= gameRepository.getHeight()) {
+                    Tile currentTile = mapRepository.findTileByCoordinates((int) coordinate.getX(), (int) coordinate.getY());
                     for (Map.Entry<Integer, HashMap<Integer, Tile>> rowEntry : vision.entrySet()) {
                         for (Map.Entry<Integer, Tile> colEntry : rowEntry.getValue().entrySet()) {
                             if (colEntry.getValue() == currentTile) {

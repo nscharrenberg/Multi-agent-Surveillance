@@ -181,7 +181,7 @@ public class Filter {
      * @param scale - scalar for the subtract matrix
      * @return the main matrix minus the scaled subtract matrix
      */
-    private static double[][] scaleSubtract(double[][] main, double[][] subtract, double scale){
+    public static double[][] scaleSubtract(double[][] main, double[][] subtract, double scale){
         assert main.length == subtract.length : "Unequal lengths provided";
 
         double[][] out = new double[main.length][main.length];

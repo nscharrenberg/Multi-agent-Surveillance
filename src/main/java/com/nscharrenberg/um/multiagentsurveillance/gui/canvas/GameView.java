@@ -46,14 +46,14 @@ import static com.nscharrenberg.um.multiagentsurveillance.gui.canvas.CanvasApp.M
 
 public class GameView extends StackPane {
     private static final int DELAY = 30;
-    protected static Color BASIC_TILE_COLOR = Color.MINTCREAM;
+    protected static Color BASIC_TILE_COLOR = Color.LIGHTGREY;
     protected static Color WALL_TILE_COLOR = Color.DARKBLUE.darker().darker();
     protected static Color TELEPORT_INPUT_TILE_COLOR = Color.PURPLE;
     protected static Color TELEPORT_OUT_TILE_COLOR = Color.MEDIUMPURPLE;
     protected static Color SHADED_TILE_COLOR = Color.BLACK;
     protected static Color GUARD_COLOR = Color.BLUE;
     protected static Color INTRUDER_COLOR = Color.INDIANRED;
-    protected static Color VISION_COLOR = Color.LIGHTGOLDENRODYELLOW;
+    protected static Color VISION_COLOR = Color.YELLOW;
     protected static Color KNOWLEDGE_COLOR = Color.LIGHTBLUE;
     protected static Color TARGET_COLOR = Color.TEAL;
     

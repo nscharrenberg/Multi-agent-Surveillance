@@ -2,7 +2,7 @@ package com.nscharrenberg.um.multiagentsurveillance.agents.DQN.CNN;
 import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
 
-import static com.nscharrenberg.um.multiagentsurveillance.agents.DQN.DQN_Util.scaleSubtract;
+import static com.nscharrenberg.um.multiagentsurveillance.agents.DQN.CNN.Filter.scaleSubtract;
 
 public class Kernel {
     private int size = 3;

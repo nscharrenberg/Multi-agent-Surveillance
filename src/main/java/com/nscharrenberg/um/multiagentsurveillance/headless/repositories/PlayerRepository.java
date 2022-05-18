@@ -6,6 +6,7 @@ import com.nscharrenberg.um.multiagentsurveillance.agents.probabilistic.evader.E
 import com.nscharrenberg.um.multiagentsurveillance.agents.probabilistic.pursuer.PursuerAgent;
 import com.nscharrenberg.um.multiagentsurveillance.agents.random.RandomAgent;
 import com.nscharrenberg.um.multiagentsurveillance.agents.shared.Agent;
+import com.nscharrenberg.um.multiagentsurveillance.agents.shared.algorithms.distanceCalculator.ManhattanDistance;
 import com.nscharrenberg.um.multiagentsurveillance.headless.Factory;
 import com.nscharrenberg.um.multiagentsurveillance.headless.contracts.repositories.IGameRepository;
 import com.nscharrenberg.um.multiagentsurveillance.headless.contracts.repositories.IMapRepository;
@@ -14,6 +15,7 @@ import com.nscharrenberg.um.multiagentsurveillance.headless.exceptions.*;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Action;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Angle.AdvancedAngle;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.GameMode;
+import com.nscharrenberg.um.multiagentsurveillance.headless.models.GameState;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Items.Collision.Collision;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Items.Item;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Items.Teleporter;
@@ -56,6 +58,13 @@ public class PlayerRepository implements IPlayerRepository {
 
     private float explorationPercentage = 0;
 
+    private double captureRange = 2.0;
+    private int timeStepsToEscape = 3;
+
+    private HashMap<String, Integer> intrudersAboutToEscape;
+    private List<Intruder> caughtIntruders;
+    private List<Intruder> escapedIntruders;
+
     public PlayerRepository(IMapRepository mapRepository, IGameRepository gameRepository) {
         this.mapRepository = mapRepository;
         this.gameRepository = gameRepository;
@@ -65,6 +74,31 @@ public class PlayerRepository implements IPlayerRepository {
         this.agents = new ArrayList<>();
         this.completeKnowledgeProgress = new TileArea();
         this.stopWatch = new StopWatch();
+
+        this.intrudersAboutToEscape = new HashMap<>();
+        this.caughtIntruders = new ArrayList<>();
+        this.escapedIntruders = new ArrayList<>();
+
+        try {
+            this.random = SecureRandom.getInstanceStrong();
+        } catch (NoSuchAlgorithmException e) {
+            System.out.println("Error while generating Random Class");
+        }
+    }
+
+    public PlayerRepository() {
+        this.mapRepository = Factory.getMapRepository();
+        this.gameRepository = Factory.getGameRepository();
+
+        this.intruders = new ArrayList<>();
+        this.guards = new ArrayList<>();
+        this.agents = new ArrayList<>();
+        this.completeKnowledgeProgress = new TileArea();
+        this.stopWatch = new StopWatch();
+
+        this.intrudersAboutToEscape = new HashMap<>();
+        this.caughtIntruders = new ArrayList<>();
+        this.escapedIntruders = new ArrayList<>();
 
         try {
             this.random = SecureRandom.getInstanceStrong();
@@ -113,13 +147,12 @@ public class PlayerRepository implements IPlayerRepository {
         float totalTileCount = mapRepository.getBoard().height() * mapRepository.getBoard().width();
         float discoveredAreaTileCount = completeKnowledgeProgress.size();
 
-
         // no tiles = 100% (division by 0 not possible)
         if (totalTileCount <= 0 || explorationPercentage >= (100 - TOLERANCE_RATE)) {
             explorationPercentage = 100;
-            if (!getGameRepository().getGameMode().equals(GameMode.EXPLORATION)) {
+            if (gameRepository.getGameMode().equals(GameMode.EXPLORATION)) {
                 //end game
-                Factory.getGameRepository().setRunning(false);
+                gameRepository.setRunning(false);
             }
 
             return 100;
@@ -129,23 +162,6 @@ public class PlayerRepository implements IPlayerRepository {
         explorationPercentage = percentage;
 
         return percentage;
-    }
-
-    public PlayerRepository() {
-        this.mapRepository = Factory.getMapRepository();
-        this.gameRepository = Factory.getGameRepository();
-
-        this.intruders = new ArrayList<>();
-        this.guards = new ArrayList<>();
-        this.agents = new ArrayList<>();
-        this.completeKnowledgeProgress = new TileArea();
-        this.stopWatch = new StopWatch();
-
-        try {
-            this.random = SecureRandom.getInstanceStrong();
-        } catch (NoSuchAlgorithmException e) {
-            System.out.println("Error while generating Random Class");
-        }
     }
 
     @Override
@@ -169,6 +185,43 @@ public class PlayerRepository implements IPlayerRepository {
     }
 
     @Override
+    public boolean spawn(Class<? extends Player> playerClass, Tile tile) {
+        boolean invalid = false;
+
+        for (Item item : tile.getItems()) {
+            if (item instanceof Collision) {
+                invalid = true;
+                break;
+            }
+        }
+
+        if (!invalid) {
+            try {
+
+                Agent agent = null;
+                if (playerClass.equals(Intruder.class)) {
+                    Intruder intruder = new Intruder(tile, Action.UP);
+                    tile.add(intruder);
+                    intruders.add(intruder);
+                    agent = spawnAgent(intruder, intruderType);
+                } else {
+                    Guard guard = new Guard(tile, Action.UP);
+                    tile.add(guard);
+                    guards.add(guard);
+                    agent = spawnAgent(guard, guardType);
+                }
+
+                agent.addKnowledge(tile);
+                return true;
+            } catch (ItemAlreadyOnTileException e) {
+                System.out.println("Player Already on tile - this shouldn't happen");
+            }
+        }
+
+        return false;
+    }
+
+    @Override
     public void spawn(Class<? extends Player> playerClass, TileArea playerSpawnArea) {
         HashMap<Integer, HashMap<Integer, Tile>> spawnArea = playerSpawnArea.getRegion();
 
@@ -182,36 +235,10 @@ public class PlayerRepository implements IPlayerRepository {
             int colIndex = random.nextInt(bounds.getValue().getKey(), bounds.getValue().getValue()+1);
             Tile tile = row.get(colIndex);
 
-            boolean invalid = false;
+            boolean spawned = spawn(playerClass, tile);
 
-            for (Item item : tile.getItems()) {
-                if (item instanceof Collision) {
-                    invalid = true;
-                    break;
-                }
-            }
-
-            if (!invalid) {
-                try {
-
-                    Agent agent = null;
-                    if (playerClass.equals(Intruder.class)) {
-                        Intruder intruder = new Intruder(tile, Action.UP);
-                        tile.add(intruder);
-                        intruders.add(intruder);
-                        agent = spawnAgent(intruder, intruderType);
-                    } else {
-                        Guard guard = new Guard(tile, Action.UP);
-                        tile.add(guard);
-                        guards.add(guard);
-                        agent = spawnAgent(guard, guardType);
-                    }
-
-                    agent.addKnowledge(tile);
-                    tileAssigned = true;
-                } catch (ItemAlreadyOnTileException e) {
-                    System.out.println("Player Already on tile - this shouldn't happen");
-                }
+            if (spawned) {
+                tileAssigned = true;
             }
         }
     }
@@ -220,15 +247,15 @@ public class PlayerRepository implements IPlayerRepository {
         Agent agent = null;
 
         if (agentClass.equals(RandomAgent.class)) {
-            agent = new RandomAgent(player);
+            agent = new RandomAgent(player, mapRepository, gameRepository, this);
         } else if (agentClass.equals(YamauchiAgent.class)) {
-            agent = new YamauchiAgent(player);
+            agent = new YamauchiAgent(player, mapRepository, gameRepository, this);
         } else if (agentClass.equals(SBOAgent.class)) {
-            agent = new SBOAgent(player);
+            agent = new SBOAgent(player, mapRepository, gameRepository, this);
         } else if (agentClass.equals(PursuerAgent.class)){
-            agent = new PursuerAgent(player);
+            agent = new PursuerAgent(player, mapRepository, gameRepository, this);
         } else if (agentClass.equals(EvaderAgent.class)){
-            agent = new EvaderAgent(player);
+            agent = new EvaderAgent(player, mapRepository, gameRepository, this);
         }
 
         if (agent == null) {
@@ -257,15 +284,29 @@ public class PlayerRepository implements IPlayerRepository {
 
     @Override
     public void move(Player player, Action direction) throws CollisionException, InvalidTileException, ItemNotOnTileException, ItemAlreadyOnTileException, BoardNotBuildException {
-        if(player instanceof Guard){
-            basicMove(player, direction);
-            if(((Guard) player).isHunting())
-                player.setRepresentedSoundRange(YELL);
-        } else if(player instanceof Intruder){
-            ((Intruder) player).updateTargetInfo();
-            basicMove(player, direction);
+        if(player instanceof Guard guard){
+            basicMove(guard, direction);
+            if(guard.isHunting()) {
+                guard.setRepresentedSoundRange(YELL);
+            }
+
+            capture(guard);
+        } else if(player instanceof Intruder intruder){
+            updateTargetInfo(intruder);
+            basicMove(intruder, direction);
+            escape(intruder);
         } else {
             throw new RuntimeException("Wrong player class");
+        }
+    }
+
+    public void updateTargetInfo(Intruder intruder) {
+        intruder.setTargetAngle(gameRepository.getTargetGameAngle(intruder));
+
+        if(intruder.getTarget() == null) {
+            intruder.setTarget(intruder.getTargetPositionCalculator().calculate(gameRepository.getTargetRealAngle(intruder), intruder.getTile()));
+        } else {
+            intruder.setDistanceToTarget(intruder.getCalculateDistance().compute(intruder.getTarget(), intruder.getTile()));
         }
     }
 
@@ -318,32 +359,32 @@ public class PlayerRepository implements IPlayerRepository {
 
         if ((nextPosition.getX() == currentPosition.getX()) && (nextPosition.getY() == currentPosition.getY())) {
             if (direction == Action.PLACE_MARKER_DEADEND) {
-                Factory.getMapRepository().addMarker(Marker.MarkerType.DEAD_END, currentPosition.getX(), currentPosition.getY(), player);
+                mapRepository.addMarker(Marker.MarkerType.DEAD_END, currentPosition.getX(), currentPosition.getY(), player);
                 player.getAgent().decrementDeadEndMarkers();
                 return;
             }
             else if (direction == Action.PLACE_MARKER_GUARDSPOTTED) {
-                Factory.getMapRepository().addMarker(Marker.MarkerType.GUARD_SPOTTED, currentPosition.getX(), currentPosition.getY(), player);
+                mapRepository.addMarker(Marker.MarkerType.GUARD_SPOTTED, currentPosition.getX(), currentPosition.getY(), player);
                 player.getAgent().decrementGuardSpottedMarkers();
                 return;
             }
             else if (direction == Action.PLACE_MARKER_INTRUDERSPOTTED) {
-                Factory.getMapRepository().addMarker(Marker.MarkerType.INTRUDER_SPOTTED, currentPosition.getX(), currentPosition.getY(), player);
+                mapRepository.addMarker(Marker.MarkerType.INTRUDER_SPOTTED, currentPosition.getX(), currentPosition.getY(), player);
                 player.getAgent().decrementIntruderSpottedMarkers();
                 return;
             }
             else if (direction == Action.PLACE_MARKER_SHADED) {
-                Factory.getMapRepository().addMarker(Marker.MarkerType.SHADED, currentPosition.getX(), currentPosition.getY(), player);
+                mapRepository.addMarker(Marker.MarkerType.SHADED, currentPosition.getX(), currentPosition.getY(), player);
                 player.getAgent().decrementShadedMarkers();
                 return;
             }
             else if (direction == Action.PLACE_MARKER_TARGET) {
-                Factory.getMapRepository().addMarker(Marker.MarkerType.TARGET, currentPosition.getX(), currentPosition.getY(), player);
+                mapRepository.addMarker(Marker.MarkerType.TARGET, currentPosition.getX(), currentPosition.getY(), player);
                 player.getAgent().decrementTargetMarkers();
                 return;
             }
             else if (direction == Action.PLACE_MARKER_TELEPORTER) {
-                Factory.getMapRepository().addMarker(Marker.MarkerType.TELEPORTER, currentPosition.getX(), currentPosition.getY(), player);
+                mapRepository.addMarker(Marker.MarkerType.TELEPORTER, currentPosition.getX(), currentPosition.getY(), player);
                 player.getAgent().decrementTeleporterMarkers();
                 return;
             }
@@ -394,7 +435,6 @@ public class PlayerRepository implements IPlayerRepository {
 
                 //Set the represented sound range
                 player.setRepresentedSoundRange(WAIT);
-
             }
 
             return;
@@ -424,7 +464,131 @@ public class PlayerRepository implements IPlayerRepository {
         }
     }
 
+    private void checkGameState() {
+        // At least one intruder must escape to win
+        if (gameRepository.getGameMode().equals(GameMode.GUARD_INTRUDER_ONE)) {
+            // Intruders win if one escaped
+            if (escapedIntruders.size() >= 1) {
+                gameRepository.setRunning(false);
+                gameRepository.setGameState(GameState.INTRUDERS_WON);
+                return;
+            }
 
+            // Guards won if all intruders are caught
+            if (intruders.isEmpty()) {
+                gameRepository.setRunning(false);
+                gameRepository.setGameState(GameState.GUARDS_WON);
+                return;
+            }
+
+            gameRepository.setGameState(GameState.NO_RESULT);
+            return;
+        }
+
+        // All intruders must escape to win
+        if (gameRepository.getGameMode().equals(GameMode.GUARD_INTRUDER_ALL)) {
+            // Intruders still on the board, so no results
+            if (!intruders.isEmpty()) {
+                gameRepository.setGameState(GameState.NO_RESULT);
+                return;
+            }
+            // Guards won if at least one intruder is caught
+            if (!caughtIntruders.isEmpty()) {
+                gameRepository.setRunning(false);
+                gameRepository.setGameState(GameState.GUARDS_WON);
+                return;
+            }
+
+            // Intruders win if they all escaped
+            gameRepository.setRunning(false);
+            gameRepository.setGameState(GameState.INTRUDERS_WON);
+            return;
+        }
+
+        gameRepository.setGameState(GameState.NO_RESULT);
+    }
+
+    /**
+     * Check if the given guard is capturing an intruder
+     * @param guard - the given guard
+     */
+    private void capture(Guard guard) {
+        ManhattanDistance manhattanDistance = new ManhattanDistance();
+
+        try {
+            for (Iterator<Intruder> itr = intruders.iterator(); itr.hasNext();) {
+                Intruder intruder = itr.next();
+
+                double distance = manhattanDistance.compute(guard.getTile(), intruder.getTile());
+
+                if (distance <= captureRange) {
+                    System.out.println("Intruder " + intruder.getId() + " has been Caught");
+
+                    caughtIntruders.add(intruder);
+
+                    itr.remove();
+                    agents.remove(intruder.getAgent());
+                    try {
+                        intruder.getTile().remove(intruder);
+                    } catch (ItemNotOnTileException e) {
+                        e.printStackTrace();
+                    }
+
+                    checkGameState();
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Check if the given intruder is in the process of escaping
+     * @param intruder - the given intruder
+     */
+    private void escape(Intruder intruder) {
+        if (mapRepository.getTargetArea().within(intruder.getTile().getX(), intruder.getTile().getY())) {
+            if (intrudersAboutToEscape.containsKey(intruder.getId())) {
+                int count = intrudersAboutToEscape.get(intruder.getId());
+
+                // Intruder escaped & is removed from the board.
+                if (count >= timeStepsToEscape) {
+                    System.out.println("Intruder " + intruder.getId() + " has escaped");
+
+                    escapedIntruders.add(intruder);
+
+                    intrudersAboutToEscape.remove(intruder.getId());
+                    intruders.remove(intruder);
+                    agents.remove(intruder.getAgent());
+
+                    try {
+                        intruder.getTile().remove(intruder);
+                    } catch (ItemNotOnTileException e) {
+                        e.printStackTrace();
+                    }
+
+                    checkGameState();
+                    return;
+                }
+
+                int newCount = count + 1;
+
+                System.out.println("Intruder " + intruder.getId() + " is trying to escape (" + newCount + ")");
+
+                // Intruder is about to escape, just a few more timesteps to go!
+                intrudersAboutToEscape.put(intruder.getId(), newCount);
+
+                return;
+            }
+
+            System.out.println("Intruder " + intruder.getId() + " entered the target zone");
+            intrudersAboutToEscape.put(intruder.getId(), 0);
+        } else if (intrudersAboutToEscape.containsKey(intruder.getId())) {
+            System.out.println("Intruder " + intruder.getId() + " has left the target zone");
+            // The intruder left the targetZone
+            intrudersAboutToEscape.remove(intruder.getId());
+        }
+    }
 
     @Override
     public boolean isLegalMove(Player player, Action direction) {
@@ -531,5 +695,15 @@ public class PlayerRepository implements IPlayerRepository {
     @Override
     public void setStopWatch(StopWatch stopWatch) {
         this.stopWatch = stopWatch;
+    }
+
+    @Override
+    public List<Intruder> getCaughtIntruders() {
+        return caughtIntruders;
+    }
+
+    @Override
+    public List<Intruder> getEscapedIntruders() {
+        return escapedIntruders;
     }
 }

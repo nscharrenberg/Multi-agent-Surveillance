@@ -40,7 +40,27 @@ public class Intruder extends Player {
         return this.target;
     }
 
-    public void updateTargetInfo() {
+    public void setTargetAngle(Action targetAngle) {
+        this.targetAngle = targetAngle;
+    }
+
+    public void setDistanceToTarget(double distanceToTarget) {
+        this.distanceToTarget = distanceToTarget;
+    }
+
+    public void setTarget(Tile target) {
+        this.target = target;
+    }
+
+    public TargetPositionCalculator getTargetPositionCalculator() {
+        return targetPositionCalculator;
+    }
+
+    public CalculateDistance getCalculateDistance() {
+        return calculateDistance;
+    }
+
+    public void updateTargetInfo(Action targetAngle) {
         this.targetAngle = Factory.getGameRepository().getTargetGameAngle(this);
 
         if(this.target == null) {

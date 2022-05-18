@@ -102,7 +102,8 @@ public class GameRepository implements IGameRepository {
         return 0.0;
     }
 
-    private void setupAgents() {
+    @Override
+    public void setupAgents() {
         for (int i = 0; i < getGuardCount(); i++) {
             playerRepository.spawn(Guard.class);
         }

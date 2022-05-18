@@ -184,6 +184,43 @@ public class PlayerRepository implements IPlayerRepository {
     }
 
     @Override
+    public boolean spawn(Class<? extends Player> playerClass, Tile tile) {
+        boolean invalid = false;
+
+        for (Item item : tile.getItems()) {
+            if (item instanceof Collision) {
+                invalid = true;
+                break;
+            }
+        }
+
+        if (!invalid) {
+            try {
+
+                Agent agent = null;
+                if (playerClass.equals(Intruder.class)) {
+                    Intruder intruder = new Intruder(tile, Action.UP);
+                    tile.add(intruder);
+                    intruders.add(intruder);
+                    agent = spawnAgent(intruder, intruderType);
+                } else {
+                    Guard guard = new Guard(tile, Action.UP);
+                    tile.add(guard);
+                    guards.add(guard);
+                    agent = spawnAgent(guard, guardType);
+                }
+
+                agent.addKnowledge(tile);
+                return true;
+            } catch (ItemAlreadyOnTileException e) {
+                System.out.println("Player Already on tile - this shouldn't happen");
+            }
+        }
+
+        return false;
+    }
+
+    @Override
     public void spawn(Class<? extends Player> playerClass, TileArea playerSpawnArea) {
         HashMap<Integer, HashMap<Integer, Tile>> spawnArea = playerSpawnArea.getRegion();
 
@@ -197,36 +234,10 @@ public class PlayerRepository implements IPlayerRepository {
             int colIndex = random.nextInt(bounds.getValue().getKey(), bounds.getValue().getValue()+1);
             Tile tile = row.get(colIndex);
 
-            boolean invalid = false;
+            boolean spawned = spawn(playerClass, tile);
 
-            for (Item item : tile.getItems()) {
-                if (item instanceof Collision) {
-                    invalid = true;
-                    break;
-                }
-            }
-
-            if (!invalid) {
-                try {
-
-                    Agent agent = null;
-                    if (playerClass.equals(Intruder.class)) {
-                        Intruder intruder = new Intruder(tile, Action.UP);
-                        tile.add(intruder);
-                        intruders.add(intruder);
-                        agent = spawnAgent(intruder, intruderType);
-                    } else {
-                        Guard guard = new Guard(tile, Action.UP);
-                        tile.add(guard);
-                        guards.add(guard);
-                        agent = spawnAgent(guard, guardType);
-                    }
-
-                    agent.addKnowledge(tile);
-                    tileAssigned = true;
-                } catch (ItemAlreadyOnTileException e) {
-                    System.out.println("Player Already on tile - this shouldn't happen");
-                }
+            if (spawned) {
+                tileAssigned = true;
             }
         }
     }

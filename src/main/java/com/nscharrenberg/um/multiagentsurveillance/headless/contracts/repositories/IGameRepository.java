@@ -10,6 +10,8 @@ public interface IGameRepository {
 
     void stopGame();
 
+    void setupAgents();
+
     String getName();
 
     void setName(String name);

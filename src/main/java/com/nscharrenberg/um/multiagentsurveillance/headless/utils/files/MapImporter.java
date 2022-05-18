@@ -56,7 +56,7 @@ public class MapImporter {
      * Parses a line from the imported file
      * @param currentLine - the line to be parsed
      */
-    private void parseLine(String currentLine) {
+    public void parseLine(String currentLine) {
         // Delimit line by "="
         String[] split = currentLine.split("=");
 

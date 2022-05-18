@@ -3,6 +3,7 @@ package com.nscharrenberg.um.multiagentsurveillance.headless.contracts.repositor
 import com.nscharrenberg.um.multiagentsurveillance.agents.shared.Agent;
 import com.nscharrenberg.um.multiagentsurveillance.headless.exceptions.*;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Action;
+import com.nscharrenberg.um.multiagentsurveillance.headless.models.Map.Tile;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Map.TileArea;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Player.Guard;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Player.Intruder;
@@ -22,6 +23,8 @@ public interface IPlayerRepository {
      * @param playerInstance - the player instance to be spawned
      */
     void spawn(Class<?> playerInstance);
+
+    boolean spawn(Class<? extends Player> playerClass, Tile tile);
 
     void spawn(Class<? extends Player> playerClass, TileArea playerSpawnArea);
 

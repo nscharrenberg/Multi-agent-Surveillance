@@ -79,4 +79,8 @@ public interface IPlayerRepository {
     StopWatch getStopWatch();
 
     void setStopWatch(StopWatch stopWatch);
+
+    List<Intruder> getCaughtIntruders();
+
+    List<Intruder> getEscapedIntruders();
 }

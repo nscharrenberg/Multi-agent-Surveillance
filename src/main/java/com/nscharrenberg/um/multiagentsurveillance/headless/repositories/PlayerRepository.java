@@ -146,11 +146,10 @@ public class PlayerRepository implements IPlayerRepository {
         float totalTileCount = mapRepository.getBoard().height() * mapRepository.getBoard().width();
         float discoveredAreaTileCount = completeKnowledgeProgress.size();
 
-
         // no tiles = 100% (division by 0 not possible)
         if (totalTileCount <= 0 || explorationPercentage >= (100 - TOLERANCE_RATE)) {
             explorationPercentage = 100;
-            if (!getGameRepository().getGameMode().equals(GameMode.EXPLORATION)) {
+            if (gameRepository.getGameMode().equals(GameMode.EXPLORATION)) {
                 //end game
                 gameRepository.setRunning(false);
             }
@@ -678,5 +677,15 @@ public class PlayerRepository implements IPlayerRepository {
     @Override
     public void setStopWatch(StopWatch stopWatch) {
         this.stopWatch = stopWatch;
+    }
+
+    @Override
+    public List<Intruder> getCaughtIntruders() {
+        return caughtIntruders;
+    }
+
+    @Override
+    public List<Intruder> getEscapedIntruders() {
+        return escapedIntruders;
     }
 }

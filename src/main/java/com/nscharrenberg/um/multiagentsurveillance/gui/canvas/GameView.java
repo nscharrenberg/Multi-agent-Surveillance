@@ -9,6 +9,7 @@ import com.nscharrenberg.um.multiagentsurveillance.headless.exceptions.InvalidTi
 import com.nscharrenberg.um.multiagentsurveillance.headless.exceptions.ItemNotOnTileException;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Action;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.GameMode;
+import com.nscharrenberg.um.multiagentsurveillance.headless.models.GameState;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Items.Collision.Wall;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Items.Item;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Items.Teleporter;
@@ -42,7 +43,7 @@ import java.util.Map;
 import static com.nscharrenberg.um.multiagentsurveillance.gui.canvas.CanvasApp.MANUAL_PLAYER;
 
 public class GameView extends StackPane {
-    private static final int DELAY = 50;
+    private static final int DELAY = 30;
     protected static Color BASIC_TILE_COLOR = Color.FORESTGREEN;
     protected static Color WALL_TILE_COLOR = Color.BROWN;
     protected static Color TELEPORT_INPUT_TILE_COLOR = Color.PURPLE;
@@ -57,7 +58,6 @@ public class GameView extends StackPane {
     private IGameRepository gameRepository;
     private IPlayerRepository playerRepository;
     private IMapRepository mapRepository;
-
 
     public static HashMap<String, Color> getMapColours(){
         HashMap<String, Color> out = new HashMap<>();
@@ -131,13 +131,15 @@ public class GameView extends StackPane {
             protected Object call() throws Exception {
                 gameLoop();
 
-                System.out.println(" Game Finished ");
-                gameFinished();
-                gameRepository.setRunning(false);
-
                 return null;
             }
         };
+
+        task.setOnSucceeded(e -> {
+            System.out.println(" Game Finished ");
+            gameFinished();
+            gameRepository.setRunning(false);
+        });
 
         Thread thread = new Thread(task);
         thread.setDaemon(true);
@@ -160,9 +162,18 @@ public class GameView extends StackPane {
         gameRepository.stopGame();
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle("Game is Finished");
-        alert.setHeaderText("Game Finished");
-        String s =" gone over all steps";
-        alert.setContentText(s);
+
+        if (gameRepository.getGameMode().equals(GameMode.EXPLORATION)) {
+            alert.setHeaderText("Map is explored!");
+            alert.setContentText("The map has been fully explored by the agent");
+        } else {
+            alert.setHeaderText(gameRepository.getGameState().getMessage());
+            int caughtCount = playerRepository.getCaughtIntruders().size();
+            int escapeCount = playerRepository.getEscapedIntruders().size();
+
+            alert.setContentText("Intruders Caught: " + caughtCount + "\nIntruders Escaped: " + escapeCount);
+        }
+
         alert.show();
     }
 
@@ -181,6 +192,10 @@ public class GameView extends StackPane {
                         agent.execute();
                     } catch (Exception e) {
                         e.printStackTrace();
+                    }
+
+                    if (!gameRepository.isRunning()) {
+                        break;
                     }
                 }
 

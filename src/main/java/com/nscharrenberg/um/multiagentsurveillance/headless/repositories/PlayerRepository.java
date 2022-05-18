@@ -53,8 +53,8 @@ public class PlayerRepository implements IPlayerRepository {
 
     private List<Agent> agents;
 
-    private static final Class<? extends Agent> guardType = PursuerAgent.class;
-    private static final Class<? extends Agent> intruderType = EvaderAgent.class;
+    public static final Class<? extends Agent> guardType = PursuerAgent.class;
+    public static final Class<? extends Agent> intruderType = EvaderAgent.class;
 
     private float explorationPercentage = 0;
 
@@ -342,7 +342,7 @@ public class PlayerRepository implements IPlayerRepository {
         } else if (agentClass.equals(EvaderAgent.class)){
             agent = new EvaderAgent(player, mapRepository, gameRepository, this);
         } else if (agentClass.equals(DQN_Agent.class)){
-            agent = new DQN_Agent(player);
+            agent = new DQN_Agent(player, mapRepository, gameRepository, this);
         }
 
         if (agent == null) {
@@ -793,4 +793,6 @@ public class PlayerRepository implements IPlayerRepository {
     public List<Intruder> getEscapedIntruders() {
         return escapedIntruders;
     }
+
+
 }

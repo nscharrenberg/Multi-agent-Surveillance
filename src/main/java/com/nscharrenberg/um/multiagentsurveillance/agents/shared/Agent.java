@@ -128,6 +128,12 @@ public abstract class Agent {
         this.playerRepository = Factory.getPlayerRepository();
     }
 
+    public void initRepositories(IMapRepository mapRepository, IGameRepository gameRepository, IPlayerRepository playerRepository) {
+        this.mapRepository = mapRepository;
+        this.gameRepository = gameRepository;
+        this.playerRepository = playerRepository;
+    }
+
     public Area<Tile> getKnowledge() {
         return knowledge;
     }

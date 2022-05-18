@@ -81,7 +81,8 @@ public class GameRepository implements IGameRepository {
         }
     }
 
-    private void importMap() {
+    @Override
+    public void importMap() {
         File file = new File(MAP_PATH);
         String path = file.getAbsolutePath();
         MapImporter importer = new MapImporter(this, mapRepository, playerRepository);
@@ -128,15 +129,26 @@ public class GameRepository implements IGameRepository {
     }
 
     @Override
-    public void setupAgents() {
-        for (int i = 0; i < getGuardCount(); i++) {
-            playerRepository.spawn(Guard.class);
+    public void setupAgents(Class<? extends Player> playerClass) {
+        if (playerClass.equals(Guard.class)) {
+            for (int i = 0; i < getGuardCount(); i++) {
+                playerRepository.spawn(Guard.class);
+            }
+
+            return;
         }
 
+        for (int i = 0; i < getIntruderCount(); i++) {
+            playerRepository.spawn(Intruder.class);
+        }
+    }
+
+    @Override
+    public void setupAgents() {
+        setupAgents(Guard.class);
+
         if (getGameMode().equals(GameMode.GUARD_INTRUDER_ALL) || getGameMode().equals(GameMode.GUARD_INTRUDER_ONE)) {
-            for (int i = 0; i < getIntruderCount(); i++) {
-                playerRepository.spawn(Intruder.class);
-            }
+            setupAgents(Intruder.class);
         }
     }
 

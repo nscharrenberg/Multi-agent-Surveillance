@@ -11,6 +11,8 @@ public interface IGameRepository {
 
     void stopGame();
 
+    void setupAgents(Class<? extends Player> playerClass);
+
     void setupAgents();
 
     String getName();
@@ -62,6 +64,8 @@ public interface IGameRepository {
     void setRunning(boolean running);
 
     void startGame(DQN_Agent[] guards, DQN_Agent[] intruders);
+
+    void importMap();
 
     Action getTargetGameAngle(Player player);
 

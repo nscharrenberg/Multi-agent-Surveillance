@@ -64,7 +64,6 @@ public class TrainingSimulation {
             Factory.getGameRepository().setRunning(true);
 
             while (Factory.getGameRepository().isRunning()){
-
                 for (int j = 0; j < intruders.length; j++) {
                     state = intruders[j].updateState();
                     action = intruders[j].selectAction(episode, state);

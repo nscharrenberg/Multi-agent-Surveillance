@@ -9,7 +9,6 @@ import com.nscharrenberg.um.multiagentsurveillance.headless.exceptions.InvalidTi
 import com.nscharrenberg.um.multiagentsurveillance.headless.exceptions.ItemNotOnTileException;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Action;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.GameMode;
-import com.nscharrenberg.um.multiagentsurveillance.headless.models.GameState;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Items.Collision.Wall;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Items.Item;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Items.Teleporter;
@@ -24,7 +23,6 @@ import com.nscharrenberg.um.multiagentsurveillance.headless.repositories.MapRepo
 import com.nscharrenberg.um.multiagentsurveillance.headless.repositories.PlayerRepository;
 import javafx.animation.AnimationTimer;
 import javafx.concurrent.Task;
-import javafx.concurrent.WorkerStateEvent;
 import javafx.geometry.Insets;
 import javafx.scene.SnapshotParameters;
 import javafx.scene.canvas.Canvas;
@@ -108,6 +106,8 @@ public class GameView extends StackPane {
 
         this.mapRepository.setPlayerRepository(playerRepository);
         this.mapRepository.setGameRepository(gameRepository);
+
+
 
         gameRepository.startGame();
         WIDTH = gameRepository.getWidth() + 1;

@@ -7,6 +7,9 @@ import com.nscharrenberg.um.multiagentsurveillance.agents.DQN.training.TrainingD
 import com.nscharrenberg.um.multiagentsurveillance.agents.frontier.yamauchi.YamauchiAgent;
 import com.nscharrenberg.um.multiagentsurveillance.agents.shared.Agent;
 import com.nscharrenberg.um.multiagentsurveillance.headless.Factory;
+import com.nscharrenberg.um.multiagentsurveillance.headless.contracts.repositories.IGameRepository;
+import com.nscharrenberg.um.multiagentsurveillance.headless.contracts.repositories.IMapRepository;
+import com.nscharrenberg.um.multiagentsurveillance.headless.contracts.repositories.IPlayerRepository;
 import com.nscharrenberg.um.multiagentsurveillance.headless.exceptions.*;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Action;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Items.Collision.Wall;
@@ -30,25 +33,36 @@ public class DQN_Agent extends Agent {
     private Network policyNetwork, targetNetwork;
     private final Random random = new Random();
     private final double gamma = 0.999;
+    private TrainingData trainingData;
 
     // TODO: Decide on exploration policy
     private Agent explorationAgent = new YamauchiAgent(player);
 
     public DQN_Agent(){
-        super(null);
+        super(null, Factory.getMapRepository(), Factory.getGameRepository(), Factory.getPlayerRepository());
         initAgent();
     }
 
     public DQN_Agent(Player player) {
-        super(player);
+        super(player, Factory.getMapRepository(), Factory.getGameRepository(), Factory.getPlayerRepository());
+        initAgent();
+    }
+
+    public DQN_Agent(IMapRepository mapRepository, IGameRepository gameRepository, IPlayerRepository playerRepository){
+        super(null, mapRepository, gameRepository, playerRepository);
+        initAgent();
+    }
+
+    public DQN_Agent(Player player, IMapRepository mapRepository, IGameRepository gameRepository, IPlayerRepository playerRepository) {
+        super(player, mapRepository, gameRepository, playerRepository);
         initAgent();
     }
 
     public void setPlayer(Player player){
         this.player = player;
-        this.initRepositories();
+        this.initRepositories(mapRepository, gameRepository, playerRepository);
         explorationAgent.setPlayer(player);
-        explorationAgent.initRepositories();
+        explorationAgent.initRepositories(mapRepository, gameRepository, playerRepository);
     }
 
     private void initAgent(){
@@ -280,7 +294,7 @@ public class DQN_Agent extends Agent {
             dx = sound.actionDirection().getxIncrement();
             dy = sound.actionDirection().getyIncrement();
 
-            state[2][xP + dx][yP + dy] += sound.effectLevel();
+            state[2][xOffset + dx][yOffset + dy] += sound.effectLevel();
         }
 
         return state;
@@ -296,16 +310,16 @@ public class DQN_Agent extends Agent {
         int velocity = 1;
         switch (direction){
             case UP -> {
-                return Factory.getMapRepository().findTileByCoordinates(x,y - velocity).isCollision();
+                return mapRepository.findTileByCoordinates(x,y - velocity).isCollision();
             }
             case DOWN -> {
-                return Factory.getMapRepository().findTileByCoordinates(x,y + velocity).isCollision();
+                return mapRepository.findTileByCoordinates(x,y + velocity).isCollision();
             }
             case LEFT -> {
-                return Factory.getMapRepository().findTileByCoordinates(x - velocity, y).isCollision();
+                return mapRepository.findTileByCoordinates(x - velocity, y).isCollision();
             }
             case RIGHT -> {
-                return Factory.getMapRepository().findTileByCoordinates(x + velocity, y).isCollision();
+                return mapRepository.findTileByCoordinates(x + velocity, y).isCollision();
             }
         }
 
@@ -353,4 +367,45 @@ public class DQN_Agent extends Agent {
         return maxInd;
     }
 
+    public IGameRepository getGameRepository() {
+        return gameRepository;
+    }
+
+    public void setGameRepository(IGameRepository gameRepository) {
+        this.gameRepository = gameRepository;
+    }
+
+    @Override
+    public IMapRepository getMapRepository() {
+        return mapRepository;
+    }
+
+    public void setMapRepository(IMapRepository mapRepository) {
+        this.mapRepository = mapRepository;
+    }
+
+    @Override
+    public IPlayerRepository getPlayerRepository() {
+        return playerRepository;
+    }
+
+    public void setPlayerRepository(IPlayerRepository playerRepository) {
+        this.playerRepository = playerRepository;
+    }
+
+    public TrainingData getTrainingData() {
+        return trainingData;
+    }
+
+    public void setTrainingData(TrainingData trainingData) {
+        this.trainingData = trainingData;
+    }
+
+    public Agent getExplorationAgent() {
+        return explorationAgent;
+    }
+
+    public void setExplorationAgent(Agent explorationAgent) {
+        this.explorationAgent = explorationAgent;
+    }
 }

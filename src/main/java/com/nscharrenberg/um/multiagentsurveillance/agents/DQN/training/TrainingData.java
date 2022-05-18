@@ -34,6 +34,7 @@ public class TrainingData {
 
     private void init(){
         int initCapacity = capacity == 0 ? 10000 : capacity;
+        capacity = initCapacity;
         states = new ArrayList<>(initCapacity);
         nextStates = new ArrayList<>(initCapacity);
         actions = new ArrayList<>(initCapacity);
@@ -69,8 +70,12 @@ public class TrainingData {
             bound = count;
         else bound = capacity;
 
-        while (indexSet.size() != batchSize)
+        while (indexSet.size() != batchSize) {
+            if (bound <= 0) {
+                System.out.println("Bound is " + bound);
+            }
             indexSet.add(random.nextInt(bound));
+        }
 
         Iterator<Integer> iterator = indexSet.iterator();
         Experience sampleExperience;

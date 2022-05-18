@@ -38,6 +38,7 @@ public class TrainingData {
         nextStates = new ArrayList<>(initCapacity);
         actions = new ArrayList<>(initCapacity);
         rewards = new ArrayList<>(initCapacity);
+        ends = new ArrayList<>(initCapacity);
     }
 
     public void push(Experience experience) {

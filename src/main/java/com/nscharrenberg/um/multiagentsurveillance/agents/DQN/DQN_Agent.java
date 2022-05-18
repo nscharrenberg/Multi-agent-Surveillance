@@ -46,7 +46,9 @@ public class DQN_Agent extends Agent {
 
     public void setPlayer(Player player){
         this.player = player;
+        this.initRepositories();
         explorationAgent.setPlayer(player);
+        explorationAgent.initRepositories();
     }
 
     private void initAgent(){

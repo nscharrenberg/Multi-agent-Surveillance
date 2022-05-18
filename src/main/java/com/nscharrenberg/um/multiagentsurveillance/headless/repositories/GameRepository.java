@@ -103,8 +103,8 @@ public class GameRepository implements IGameRepository {
         }
 
         if (getGameMode().equals(GameMode.GUARD_INTRUDER_ALL) || getGameMode().equals(GameMode.GUARD_INTRUDER_ONE)) {
-            for (int i = 0; i < getIntruderCount(); i++) {
-                playerRepository.spawn(Intruder.class);
+            for (int i = 0; i < intruders.length; i++) {
+                playerRepository.spawn(Intruder.class, intruders[i]);
             }
         }
     }

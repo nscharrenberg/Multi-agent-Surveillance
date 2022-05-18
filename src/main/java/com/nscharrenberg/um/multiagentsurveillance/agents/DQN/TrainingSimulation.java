@@ -26,7 +26,7 @@ public class TrainingSimulation {
     private final int batchSize = 256;
 
     public TrainingSimulation() throws Exception {
-        initTraining(2,2);
+        initTraining(0,2);
     }
 
     private void initTraining(int numGuards, int numIntruders) throws Exception {

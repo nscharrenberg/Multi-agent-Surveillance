@@ -33,9 +33,9 @@ public abstract class Agent {
     protected Area<Tile> vision;
     protected Queue<Action> plannedMoves;
 
-    protected final IMapRepository mapRepository;
-    protected final IGameRepository gameRepository;
-    protected final IPlayerRepository playerRepository;
+    protected IMapRepository mapRepository;
+    protected IGameRepository gameRepository;
+    protected IPlayerRepository playerRepository;
 
     protected int deadEndMarkers;
     protected int targetMarkers;
@@ -120,6 +120,12 @@ public abstract class Agent {
         this.mapRepository = mapRepository;
         this.gameRepository = gameRepository;
         this.playerRepository = playerRepository;
+    }
+
+    public void initRepositories(){
+        this.mapRepository = Factory.getMapRepository();
+        this.gameRepository = Factory.getGameRepository();
+        this.playerRepository = Factory.getPlayerRepository();
     }
 
     public Area<Tile> getKnowledge() {

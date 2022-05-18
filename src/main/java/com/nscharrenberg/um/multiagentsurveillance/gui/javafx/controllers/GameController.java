@@ -52,6 +52,8 @@ public class GameController {
         while (Factory.getGameRepository().isRunning()) {
             for (Agent agent : Factory.getPlayerRepository().getAgents()) {
                 try {
+                    // Remove previous sound & Create new sound
+
                     agent.execute();
                 } catch (Exception e) {
                     e.printStackTrace();

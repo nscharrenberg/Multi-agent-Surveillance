@@ -7,6 +7,7 @@ import com.nscharrenberg.um.multiagentsurveillance.headless.contracts.repositori
 import com.nscharrenberg.um.multiagentsurveillance.headless.contracts.repositories.IPlayerRepository;
 import com.nscharrenberg.um.multiagentsurveillance.headless.exceptions.*;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Action;
+import com.nscharrenberg.um.multiagentsurveillance.headless.models.Items.Collision.Collision;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Items.Collision.Wall;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Items.Item;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Map.Tile;
@@ -22,6 +23,7 @@ public class SBOAgent extends Agent {
     private final TileArea visited = new TileArea();
     private final RLmodel agentmodel = new RLmodel();
     Tile goal = this.player.getTile();
+    private Random random = new Random();
 
     public SBOAgent(Player agent) {
         super(agent);
@@ -55,7 +57,6 @@ public class SBOAgent extends Agent {
 //            return markerChecked;
 //        }
 
-        // TODO: If stack is empty, search for teleporter
         System.out.println("Players Tile: " + player.getTile().getX() + "  " + player.getTile().getY());
         System.out.println("Current goal Tile: " + goal.getX() + "  " + goal.getY());
         System.out.println("Stack size: " + scanned.size());
@@ -108,6 +109,29 @@ public class SBOAgent extends Agent {
             System.out.println("invalid goal?");
         }
 
+        // Just to prevent errors
+        if(plannedMoves.isEmpty()) {
+            Optional<Tile> nextTileOpt = knowledge.getByCoordinates(player.getTile().getX() + player.getDirection().getxIncrement(),
+                    player.getTile().getY() + player.getDirection().getyIncrement());
+
+            boolean nextBlocked = false;
+            if (nextTileOpt.isPresent()) {
+                for (Item items : nextTileOpt.get().getItems()) {
+                    if (items instanceof Collision) {
+                        nextBlocked = true;
+                        break;
+                    }
+                }
+            }
+
+            int pick = this.random.nextInt(Action.values().length);
+            while (Action.values()[pick] == player.getDirection()) {
+                pick = this.random.nextInt(Action.values().length);
+            }
+
+            return Action.values()[pick];
+        }
+
         return plannedMoves.poll();
     }
 
@@ -120,8 +144,10 @@ public class SBOAgent extends Agent {
                         if (vt != null) {
                             if (unobstructedTile(mapRepository.getBoard(), vt)) {
                                 for (Tile at : getAdjacent(vt)) {
-                                    if (this.knowledge.getByCoordinates(at.getX(), at.getY()).isEmpty()) {
-                                        scanned.add(at);
+                                    if(mapRepository.getBoard().getByCoordinates(at.getX(), at.getY()).isPresent()) {
+                                        if (this.knowledge.getByCoordinates(at.getX(), at.getY()).isEmpty()) {
+                                            scanned.add(at);
+                                        }
                                     }
                                 }
                             }

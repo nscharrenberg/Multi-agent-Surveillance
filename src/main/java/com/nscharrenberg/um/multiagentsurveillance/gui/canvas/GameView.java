@@ -24,6 +24,7 @@ import com.nscharrenberg.um.multiagentsurveillance.headless.repositories.MapRepo
 import com.nscharrenberg.um.multiagentsurveillance.headless.repositories.PlayerRepository;
 import javafx.animation.AnimationTimer;
 import javafx.concurrent.Task;
+import javafx.concurrent.WorkerStateEvent;
 import javafx.geometry.Insets;
 import javafx.scene.SnapshotParameters;
 import javafx.scene.canvas.Canvas;
@@ -38,6 +39,7 @@ import javafx.stage.Stage;
 import java.text.DecimalFormat;
 import java.util.ConcurrentModificationException;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
 import static com.nscharrenberg.um.multiagentsurveillance.gui.canvas.CanvasApp.MANUAL_PLAYER;
@@ -141,6 +143,13 @@ public class GameView extends StackPane {
             gameRepository.setRunning(false);
         });
 
+        task.exceptionProperty().addListener((observable, oldValue, newValue) ->  {
+            if(newValue != null) {
+                Exception ex = (Exception) newValue;
+                ex.printStackTrace();
+            }
+        });
+
         Thread thread = new Thread(task);
         thread.setDaemon(true);
         thread.start();
@@ -148,9 +157,13 @@ public class GameView extends StackPane {
         AnimationTimer timer = new AnimationTimer() {
             @Override
             public void handle(long now) {
-                if (gameRepository.isRunning()) {
-                    playerRepository.calculateExplorationPercentage();
-                    updateAndDraw();
+                try {
+                    if (gameRepository.isRunning()) {
+                        playerRepository.calculateExplorationPercentage();
+                        updateAndDraw();
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
             }
         };
@@ -186,17 +199,23 @@ public class GameView extends StackPane {
                 } catch (BoardNotBuildException | InvalidTileException | ItemNotOnTileException e) {
                 }
                 playerRepository.updateSounds(playerRepository.getAgents());
-                for (Agent agent : playerRepository.getAgents()) {
-                    System.out.println("Agent");
-                    try {
-                        agent.execute();
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
 
-                    if (!gameRepository.isRunning()) {
-                        break;
+                try {
+                    for (Iterator<Agent> itr = playerRepository.getAgents().iterator(); itr.hasNext();) {
+                        Agent agent = itr.next();
+
+                        try {
+                            agent.execute();
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+
+                        if (!gameRepository.isRunning()) {
+                            break;
+                        }
                     }
+                } catch (Exception e) {
+                    System.out.println(e.getMessage());
                 }
 
                 if (DELAY > 0) {
@@ -278,6 +297,8 @@ public class GameView extends StackPane {
 
     private void drawAgents(Tile tile) {
         try {
+            if (tile == null) return;
+
             for (Item item : tile.getItems()) {
                 if (item instanceof Guard) {
                     Player player = (Player) item;

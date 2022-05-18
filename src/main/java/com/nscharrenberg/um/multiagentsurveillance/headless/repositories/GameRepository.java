@@ -64,8 +64,7 @@ public class GameRepository implements IGameRepository {
         try {
             playerRepository.getStopWatch().stop();
         } catch (Exception e) {
-            e.printStackTrace();
-            //System.out.println(e.getMessage());
+            System.out.println(e.getMessage());
         }
     }
 
@@ -108,7 +107,7 @@ public class GameRepository implements IGameRepository {
             playerRepository.spawn(Guard.class);
         }
 
-        if (getGameMode().equals(GameMode.GUARD_INTRUDER_ALL)) {
+        if (getGameMode().equals(GameMode.GUARD_INTRUDER_ALL) || getGameMode().equals(GameMode.GUARD_INTRUDER_ONE)) {
             for (int i = 0; i < getIntruderCount(); i++) {
                 playerRepository.spawn(Intruder.class);
             }

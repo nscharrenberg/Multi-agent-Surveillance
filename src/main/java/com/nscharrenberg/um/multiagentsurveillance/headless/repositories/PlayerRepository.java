@@ -503,24 +503,30 @@ public class PlayerRepository implements IPlayerRepository {
     private void capture(Guard guard) {
         ManhattanDistance manhattanDistance = new ManhattanDistance();
 
-        for (Intruder intruder : intruders) {
-            double distance = manhattanDistance.compute(guard.getTile(), intruder.getTile());
+        try {
+            for (Iterator<Intruder> itr = intruders.iterator(); itr.hasNext();) {
+                Intruder intruder = itr.next();
 
-            if (distance <= captureRange) {
-                System.out.println("Intruder " + intruder.getId() + " has been Caught");
+                double distance = manhattanDistance.compute(guard.getTile(), intruder.getTile());
 
-                caughtIntruders.add(intruder);
+                if (distance <= captureRange) {
+                    System.out.println("Intruder " + intruder.getId() + " has been Caught");
 
-                intruders.remove(intruder);
-                agents.remove(intruder.getAgent());
-                try {
-                    intruder.getTile().remove(intruder);
-                } catch (ItemNotOnTileException e) {
-                    e.printStackTrace();
+                    caughtIntruders.add(intruder);
+
+                    itr.remove();
+                    agents.remove(intruder.getAgent());
+                    try {
+                        intruder.getTile().remove(intruder);
+                    } catch (ItemNotOnTileException e) {
+                        e.printStackTrace();
+                    }
+
+                    checkGameState();
                 }
-
-                checkGameState();
             }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 

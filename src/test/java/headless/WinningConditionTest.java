@@ -95,8 +95,6 @@ public class WinningConditionTest {
         Assertions.assertEquals(0, playerRepository.getEscapedIntruders().size());
         Assertions.assertEquals(0, playerRepository.getCaughtIntruders().size());
 
-        System.out.println(playerRepository.getIntruders().get(0).getTile().getX() + ", " + playerRepository.getIntruders().get(0).getTile().getY());
-
         playerRepository.move(playerRepository.getIntruders().get(0), Action.LEFT);
         playerRepository.move(playerRepository.getIntruders().get(0), Action.LEFT);
         playerRepository.move(playerRepository.getIntruders().get(0), Action.LEFT);
@@ -118,8 +116,6 @@ public class WinningConditionTest {
         playerRepository.move(playerRepository.getIntruders().get(0), Action.PLACE_MARKER_TARGET);
         playerRepository.move(playerRepository.getIntruders().get(0), Action.PLACE_MARKER_TARGET);
 
-        System.out.println(playerRepository.getIntruders().get(0).getTile().getX() + ", " + playerRepository.getIntruders().get(0).getTile().getY());
-
         Assertions.assertEquals(GameState.NO_RESULT, gameRepository.getGameState());
         Assertions.assertTrue(gameRepository.isRunning());
 
@@ -137,7 +133,6 @@ public class WinningConditionTest {
         playerRepository.move(playerRepository.getIntruders().get(0), Action.PLACE_MARKER_TARGET);
         playerRepository.move(playerRepository.getIntruders().get(0), Action.PLACE_MARKER_TARGET);
         playerRepository.move(playerRepository.getIntruders().get(0), Action.PLACE_MARKER_TARGET);
-
 
         Assertions.assertEquals(GameState.INTRUDERS_WON, gameRepository.getGameState());
         Assertions.assertFalse(gameRepository.isRunning());

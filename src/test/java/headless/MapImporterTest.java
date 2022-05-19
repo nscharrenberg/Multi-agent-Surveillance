@@ -16,6 +16,7 @@ import com.nscharrenberg.um.multiagentsurveillance.headless.models.Player.Guard;
 import com.nscharrenberg.um.multiagentsurveillance.headless.utils.files.MapImporter;
 import com.rits.cloning.Cloner;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -25,6 +26,11 @@ import java.security.SecureRandom;
 import java.util.*;
 
 public class MapImporterTest {
+    @BeforeEach
+    void setup() {
+        Factory.init();
+    }
+
     @DisplayName("Decoupled Repository Import Successful")
     @Test
     void testDecoupledRepositoriesSuccessful() {

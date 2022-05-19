@@ -8,7 +8,7 @@ import com.nscharrenberg.um.multiagentsurveillance.headless.contracts.repositori
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Action;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Map.Tile;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Player.Guard;
-import com.nscharrenberg.um.multiagentsurveillance.headless.utils.AreaEffects.AudioEffect.Audio;
+import com.nscharrenberg.um.multiagentsurveillance.headless.utils.AreaEffects.AudioEffect.Sound;
 import com.nscharrenberg.um.multiagentsurveillance.headless.utils.AreaEffects.DistanceEffects;
 import com.nscharrenberg.um.multiagentsurveillance.headless.utils.files.MapImporter;
 import com.nscharrenberg.um.multiagentsurveillance.headless.utils.recorder.GameConfigurationRecorder;
@@ -34,6 +34,7 @@ public class AudioCheckTest {
 
     @Test
     void testNavigationByAudio() throws Exception {
+        Factory.init();
         new MapImporter().load("src/test/resources/maps/testAudioMap.txt");
         new GameConfigurationRecorder().setUpConfFiles();
 
@@ -83,18 +84,18 @@ public class AudioCheckTest {
         while (Factory.getGameRepository().isRunning()) {
 
             DistanceEffects.areaEffects(agent, agents);
-            List<Audio> audioList = agent.getPlayer().getAudioEffects();
+            List<Sound> soundList = agent.getPlayer().getSoundEffects();
 
-            if(audioList.size() == 0)
-                throw new RuntimeException("Audio is Empty");
+            if(soundList.size() == 0)
+                throw new RuntimeException("Sound is Empty");
 
-            Audio audio = audioList.get(0);
-            if(audio.effectLevel() >= 91.5) {
+            Sound sound = soundList.get(0);
+            if(sound.effectLevel() >= 91.5) {
                 FLAG = true;
                 break;
             }
 
-            agent.execute(audio.actionDirection());
+            agent.execute(sound.actionDirection());
 
 
             List<AgentJSON> listAgentJSON = data.get(agentId);

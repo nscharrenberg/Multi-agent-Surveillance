@@ -359,12 +359,13 @@ public class GameView extends StackPane {
             if (marker instanceof MarkerSmell) {
                 if (((MarkerSmell) marker).getPlayer() instanceof Guard) {
                     drawMarkerSmellGuard(marker.getTile(), ((MarkerSmell) marker).getType());
-                } else if (((MarkerSmell) marker).getPlayer() instanceof Intruder) {
+                } else {
                     drawMarkerSmellIntruder(marker.getTile(), ((MarkerSmell) marker).getType());
                 }
             }
         }
     }
+
 
     private void drawTargetArea() {
         TileArea targetArea = mapRepository.getTargetArea();
@@ -462,7 +463,6 @@ public class GameView extends StackPane {
         }
     }
 
-    //TODO: Change the markerTypes
     private void drawMarkerSmellIntruder(Tile tile, Marker.MarkerType markerType) {
         double alpha = 0.5;
         if (markerType == Marker.MarkerType.DEAD_END) {

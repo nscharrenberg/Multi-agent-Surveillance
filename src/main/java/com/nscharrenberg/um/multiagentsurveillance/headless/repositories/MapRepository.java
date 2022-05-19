@@ -21,6 +21,7 @@ import com.nscharrenberg.um.multiagentsurveillance.headless.models.Marker;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.MarkerSmell;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Player.Player;
 import com.nscharrenberg.um.multiagentsurveillance.headless.utils.AreaEffects.MarkerRange;
+import com.nscharrenberg.um.multiagentsurveillance.headless.utils.Vision.Geometrics;
 
 import java.util.*;
 
@@ -28,11 +29,15 @@ public class MapRepository implements IMapRepository {
     private IGameRepository gameRepository;
     private IPlayerRepository playerRepository;
 
+    int counter = 0;
+
     private TileArea board;
     private TileArea targetArea;
     private TileArea guardSpawnArea;
     private TileArea intruderSpawnArea;
     private Tile targetCenter;
+
+    private Geometrics geometrics = new Geometrics();
 
     private ArrayList<MarkerSmell> placed_markers = new ArrayList<MarkerSmell>();
 
@@ -245,10 +250,35 @@ public class MapRepository implements IMapRepository {
 
         Tile[] neighboringTiles = calculateNeigboringTiles(marker);
         for (int i = 0; i < neighboringTiles.length; i++) {
+            boolean intersectionFound = false;
+            boolean tileIsWall = false;
             if (neighboringTiles[i] != null) {
-                MarkerSmell markersmell = new MarkerSmell(neighboringTiles[i], marker.getType(), mr.getStrength(neighboringTiles[i], found), mr.getDirection(neighboringTiles[i], found), player, 10);
-                neighboringTiles[i].add(markersmell);
-                placed_markers.add(markersmell);
+                if (!found.equals(neighboringTiles[i])) {
+                    ArrayList<Tile> intersectingTiles = geometrics.getIntersectingTiles(found, neighboringTiles[i]);
+                    ArrayList<Tile> actualTiles = new ArrayList<Tile>();
+                    for (Tile tile : intersectingTiles) {
+                        actualTiles.add(findTileByCoordinates(tile.getX(), tile.getY()));
+                    }
+                    for (Tile tile : actualTiles) {
+                        for (Item item : tile.getItems()) {
+                            if (item instanceof Wall) {
+                                intersectionFound = true;
+                                break;
+                            }
+                        }
+                    }
+                }
+                for (Item item : neighboringTiles[i].getItems()) {
+                    if (item instanceof Wall) {
+                        tileIsWall = true;
+                        break;
+                    }
+                }
+                if (!intersectionFound && !tileIsWall) {
+                    MarkerSmell markersmell = new MarkerSmell(neighboringTiles[i], marker.getType(), mr.getStrength(neighboringTiles[i], found), mr.getDirection(neighboringTiles[i], found), player, 10);
+                    neighboringTiles[i].add(markersmell);
+                    placed_markers.add(markersmell);
+                }
             }
         }
     }
@@ -292,7 +322,6 @@ public class MapRepository implements IMapRepository {
     @Override
     public void checkMarkers() throws BoardNotBuildException, InvalidTileException, ItemNotOnTileException {
         boardInitCheck();
-
         if (placed_markers.size() > 0) {
             int i = 0;
             while (i < placed_markers.size()) {

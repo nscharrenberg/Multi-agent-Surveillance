@@ -23,9 +23,9 @@ public class Marker extends Item {
         SHADED
     }
 
-    public Marker(MarkerType type, Tile tile, Player player) {
+    public Marker(MarkerType type, Tile tile, Player player, int duration) {
         super(tile);
-        currentDuration = DURATION;
+        this.currentDuration = 1000000000;
         this.type = type;
         this.tile = tile;
         this.player = player;

@@ -221,12 +221,12 @@ public class MapRepository implements IMapRepository {
         boardInitCheck();
 
         Tile found = findTileByCoordinates(x1, y1);
-        Marker marker = new Marker(type, found, player);
+        Marker marker = new Marker(type, found, player, 10);
 
         Tile[] neighboringTiles = calculateNeigboringTiles(marker);
         for (int i = 0; i < neighboringTiles.length; i++) {
             if (neighboringTiles[i] != null) {
-                MarkerSmell markersmell = new MarkerSmell(neighboringTiles[i], marker.getType(), mr.getStrength(neighboringTiles[i], found), mr.getDirection(neighboringTiles[i], found), player);
+                MarkerSmell markersmell = new MarkerSmell(neighboringTiles[i], marker.getType(), mr.getStrength(neighboringTiles[i], found), mr.getDirection(neighboringTiles[i], found), player, 10);
                 neighboringTiles[i].add(markersmell);
                 placed_markers.add(markersmell);
             }

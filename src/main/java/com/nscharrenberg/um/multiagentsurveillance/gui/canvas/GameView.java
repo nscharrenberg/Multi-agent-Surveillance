@@ -13,6 +13,8 @@ import com.nscharrenberg.um.multiagentsurveillance.headless.models.Items.Telepor
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Map.ShadowTile;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Map.Tile;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Map.TileArea;
+import com.nscharrenberg.um.multiagentsurveillance.headless.models.Marker;
+import com.nscharrenberg.um.multiagentsurveillance.headless.models.MarkerSmell;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Player.Guard;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Player.Intruder;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Player.Player;
@@ -26,6 +28,8 @@ import javafx.scene.control.Alert;
 import javafx.scene.image.WritableImage;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Circle;
+import javafx.scene.shape.Line;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
 
@@ -37,6 +41,7 @@ import java.util.Map;
 import static com.nscharrenberg.um.multiagentsurveillance.gui.canvas.CanvasApp.MANUAL_PLAYER;
 
 public class GameView extends StackPane {
+    private static final int DELAY = 30;
     protected static Color BASIC_TILE_COLOR = Color.FORESTGREEN;
     protected static Color WALL_TILE_COLOR = Color.BROWN;
     protected static Color TELEPORT_INPUT_TILE_COLOR = Color.PURPLE;
@@ -49,7 +54,7 @@ public class GameView extends StackPane {
     protected static Color TARGET_COLOR = Color.TEAL;
 
 
-    public static HashMap<String, Color> getMapColours(){
+    public static HashMap<String, Color> getMapColours() {
         HashMap<String, Color> out = new HashMap<>();
 
         out.put("Basic Tile", BASIC_TILE_COLOR);
@@ -138,13 +143,13 @@ public class GameView extends StackPane {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle("Game is Finished");
         alert.setHeaderText("Game Finished");
-        String s =" gone over all steps";
+        String s = " gone over all steps";
         alert.setContentText(s);
         alert.show();
     }
 
     private void gameLoop() throws InvalidTileException, BoardNotBuildException, ItemNotOnTileException {
-        if(!MANUAL_PLAYER) {
+        if (!MANUAL_PLAYER) {
             Factory.getGameRepository().setRunning(true);
             while (Factory.getGameRepository().isRunning()) {
                 Factory.getMapRepository().checkMarkers();
@@ -155,8 +160,18 @@ public class GameView extends StackPane {
                         e.printStackTrace();
                     }
                 }
+
+                if (DELAY > 0) {
+                    try {
+                        Thread.sleep(DELAY);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
             }
         }
+
+
     }
 
     private void drawText(String text) {
@@ -208,9 +223,15 @@ public class GameView extends StackPane {
     }
 
     private void detectAndDrawTile(Tile tile) {
-        for (Item item : tile.getItems()) {
+         for (Item item : tile.getItems()) {
             if (item instanceof Wall) {
                 drawWall(tile);
+            } else if (item instanceof MarkerSmell) {
+                if (((MarkerSmell) item).getPlayer() instanceof Guard) {
+                    drawMarkerSmellGuard(tile, ((MarkerSmell) item).getType());
+                } else if (((MarkerSmell) item).getPlayer() instanceof Intruder) {
+                    drawMarkerSmellIntruder(tile, ((MarkerSmell) item).getType());
+                }
             } else if (item instanceof Teleporter teleporter) {
                 if (teleporter.getTile().equals(tile)) {
                     drawTeleportOutput(tile);
@@ -334,7 +355,7 @@ public class GameView extends StackPane {
         drawTile(tile, SHADED_TILE_COLOR, 0.25);
     }
 
-    private void drawTile(Tile tile, Color color) {;
+    private void drawTile(Tile tile, Color color) {
         drawTile(tile, color, 1);
     }
 
@@ -343,4 +364,83 @@ public class GameView extends StackPane {
         graphicsContext.setFill(color);
         graphicsContext.fillRect(getPoint(tile.getX()), getPoint(tile.getY()), GSSD, GSSD);
     }
+
+    private void drawMarkerSmellGuard(Tile tile, Marker.MarkerType markerType) {
+        if (markerType == Marker.MarkerType.DEAD_END) {
+            graphicsContext.setStroke(Color.RED);
+            graphicsContext.beginPath();
+            graphicsContext.moveTo(tile.getX()+1/6.0, tile.getY()+1*5.0/6.0);
+            graphicsContext.lineTo(tile.getX()+1*5.0/6.0, tile.getY()+1/6.0);
+            graphicsContext.moveTo(tile.getX()+1/6.0, tile.getY()+1/6.0);
+            graphicsContext.lineTo(tile.getX()+1*5.0/6.0, tile.getY()+1*5.0/6.0);
+            graphicsContext.closePath();
+        }
+        else if (markerType == Marker.MarkerType.TELEPORTER) {
+            graphicsContext.setStroke(Color.RED);
+            graphicsContext.beginPath();
+            graphicsContext.moveTo(tile.getX()+1/6.0, tile.getY()+1*5.0/6.0);
+            graphicsContext.lineTo(tile.getX()+1*5.0/6.0, tile.getY()+1/6.0);
+            graphicsContext.moveTo(tile.getX()+1/6.0, tile.getY()+1/6.0);
+            graphicsContext.lineTo(tile.getX()+1*5.0/6.0, tile.getY()+1*5.0/6.0);
+            graphicsContext.closePath();
+        }
+        else if (markerType == Marker.MarkerType.INTRUDER_SPOTTED) {
+            graphicsContext.setStroke(Color.RED);
+            graphicsContext.beginPath();
+            graphicsContext.moveTo(tile.getX()+1/6.0, tile.getY()+1*5.0/6.0);
+            graphicsContext.lineTo(tile.getX()+1*5.0/6.0, tile.getY()+1/6.0);
+            graphicsContext.moveTo(tile.getX()+1/6.0, tile.getY()+1/6.0);
+            graphicsContext.lineTo(tile.getX()+1*5.0/6.0, tile.getY()+1*5.0/6.0);
+            graphicsContext.closePath();
+        }
+        else if (markerType == Marker.MarkerType.SHADED) {
+            graphicsContext.setStroke(Color.RED);
+            graphicsContext.beginPath();
+            graphicsContext.moveTo(tile.getX()+1/6.0, tile.getY()+1*5.0/6.0);
+            graphicsContext.lineTo(tile.getX()+1*5.0/6.0, tile.getY()+1/6.0);
+            graphicsContext.moveTo(tile.getX()+1/6.0, tile.getY()+1/6.0);
+            graphicsContext.lineTo(tile.getX()+1*5.0/6.0, tile.getY()+1*5.0/6.0);
+            graphicsContext.closePath();
+        }
+    }
+
+    //TODO: Change the markerTypes
+    private void drawMarkerSmellIntruder(Tile tile, Marker.MarkerType markerType) {
+        if (markerType == Marker.MarkerType.DEAD_END) {
+            graphicsContext.setStroke(Color.RED);
+            graphicsContext.setLineWidth(5);
+            graphicsContext.strokeOval(tile.getX()+1/6.0, tile.getY()+1/6.0, tile.getX()+1/2.0, tile.getY()+1/2.0);
+            graphicsContext.setFill(Color.RED);
+            graphicsContext.fillOval(tile.getX()+1/6.0, tile.getY()+1/6.0, tile.getX()+1/2.0, tile.getY()+1/2.0);
+        }
+        else if (markerType == Marker.MarkerType.TARGET) {
+            graphicsContext.setStroke(Color.RED);
+            graphicsContext.setLineWidth(5);
+            graphicsContext.strokeOval(tile.getX()+1/6.0, tile.getY()+1/6.0, tile.getX()+1/2.0, tile.getY()+1/2.0);
+            graphicsContext.setFill(Color.RED);
+            graphicsContext.fillOval(tile.getX()+1/6.0, tile.getY()+1/6.0, tile.getX()+1/2.0, tile.getY()+1/2.0);
+        }
+        else if (markerType == Marker.MarkerType.GUARD_SPOTTED) {
+            graphicsContext.setStroke(Color.RED);
+            graphicsContext.setLineWidth(5);
+            graphicsContext.strokeOval(tile.getX()+1/6.0, tile.getY()+1/6.0, tile.getX()+1/2.0, tile.getY()+1/2.0);
+            graphicsContext.setFill(Color.RED);
+            graphicsContext.fillOval(tile.getX()+1/6.0, tile.getY()+1/6.0, tile.getX()+1/2.0, tile.getY()+1/2.0);
+        }
+        else if (markerType == Marker.MarkerType.SHADED) {
+            graphicsContext.setStroke(Color.RED);
+            graphicsContext.setLineWidth(5);
+            graphicsContext.strokeOval(tile.getX()+1/6.0, tile.getY()+1/6.0, tile.getX()+1/2.0, tile.getY()+1/2.0);
+            graphicsContext.setFill(Color.RED);
+            graphicsContext.fillOval(tile.getX()+1/6.0, tile.getY()+1/6.0, tile.getX()+1/2.0, tile.getY()+1/2.0);
+        }
+        else if (markerType == Marker.MarkerType.TELEPORTER) {
+            graphicsContext.setStroke(Color.RED);
+            graphicsContext.setLineWidth(5);
+            graphicsContext.strokeOval(tile.getX()+1/6.0, tile.getY()+1/6.0, tile.getX()+1/2.0, tile.getY()+1/2.0);
+            graphicsContext.setFill(Color.RED);
+            graphicsContext.fillOval(tile.getX()+1/6.0, tile.getY()+1/6.0, tile.getX()+1/2.0, tile.getY()+1/2.0);
+        }
+    }
+
 }

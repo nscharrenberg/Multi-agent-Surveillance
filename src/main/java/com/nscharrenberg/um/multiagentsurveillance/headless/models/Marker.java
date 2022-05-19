@@ -25,7 +25,7 @@ public class Marker extends Item {
 
     public Marker(MarkerType type, Tile tile, Player player, int duration) {
         super(tile);
-        this.currentDuration = 1000000000;
+        this.currentDuration = 100;
         this.type = type;
         this.tile = tile;
         this.player = player;

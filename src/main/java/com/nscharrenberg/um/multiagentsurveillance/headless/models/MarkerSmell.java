@@ -15,8 +15,8 @@ public class MarkerSmell extends Marker {
 
 
     // TODO: We need some way of distinguishing markers (and add it to itemtype)
-    public MarkerSmell(Tile tile, Marker.MarkerType marking, int strength, AdvancedAngle direction, Player player) {
-        super(marking, tile, player);
+    public MarkerSmell(Tile tile, Marker.MarkerType marking, int strength, AdvancedAngle direction, Player player, int duration) {
+        super(marking, tile, player, duration);
         this.strength = strength;
         this.direction = direction;
     }

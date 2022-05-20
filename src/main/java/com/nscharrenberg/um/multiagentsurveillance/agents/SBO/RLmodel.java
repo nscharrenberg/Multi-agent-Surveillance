@@ -38,9 +38,10 @@ public class RLmodel {
         double val = 0;
         val = (input.type.getPriority() * prioscaler) - (strengthbias * input.strength);
 
-        if(val >= baseline) {
+        if(val > baseline) {
             // Set new angle (might need to duplicate in order to actually perform move)
             redirect.addAll(AngleConverter.split(input.direction));
+            System.out.println("Updated path: " + input.direction);
 
             // Set new baseline (so new inputs dont overwrite existing higher priority ones)
             baseline = val;

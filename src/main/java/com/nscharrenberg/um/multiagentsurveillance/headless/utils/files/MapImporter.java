@@ -10,6 +10,7 @@ import com.nscharrenberg.um.multiagentsurveillance.headless.exceptions.ItemAlrea
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Action;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.GameMode;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Map.TileArea;
+import com.nscharrenberg.um.multiagentsurveillance.headless.models.Marker;
 import com.nscharrenberg.um.multiagentsurveillance.headless.utils.AngleConverter;
 
 import java.io.*;
@@ -68,7 +69,7 @@ public class MapImporter {
         if (isConfiguration(id)) {
             try {
                 addToConfig(id, value);
-            } catch (InvalidTileException | BoardNotBuildException e) {
+            } catch (InvalidTileException | BoardNotBuildException | ItemAlreadyOnTileException e) {
                 e.printStackTrace();
             }
         } else if (isMap(id)) {
@@ -87,7 +88,7 @@ public class MapImporter {
      * @throws BoardNotBuildException - Thrown when the board has not been build (no tiles exist)
      * @throws InvalidTileException - Thrown when the tile is outside the board.
      */
-    private void addToConfig(String id, String value) throws InvalidTileException, BoardNotBuildException {
+    private void addToConfig(String id, String value) throws InvalidTileException, BoardNotBuildException, ItemAlreadyOnTileException {
         if (id.equals(FileItems.NAME.getKey())) {
             gameRepository.setName(value);
         } else if (id.equals(FileItems.GAME_MODE.getKey())) {
@@ -194,6 +195,11 @@ public class MapImporter {
             int y2 = Integer.parseInt(items[3]);
 
             mapRepository.addShaded(x1, y1, x2, y2);
+        } else if (id.equals(FileItems.DEADEND_MARKER.getKey())) {
+            int x1 = Integer.parseInt(items[0]);
+            int y1 = Integer.parseInt(items[1]);
+
+            mapRepository.addMarker(Marker.MarkerType.DEAD_END, x1, y1, null);
         } else if (id.equals(FileItems.TEXTURE.getKey())) {
             // TODO: Implement once we know what it is
         }
@@ -230,6 +236,7 @@ public class MapImporter {
         return id.equals(FileItems.WALL.getKey())
                         || id.equals(FileItems.TELEPORT.getKey())
                         || id.equals(FileItems.SHADED.getKey())
-                        || id.equals(FileItems.TEXTURE.getKey());
+                        || id.equals(FileItems.TEXTURE.getKey())
+                        || id.equals(FileItems.DEADEND_MARKER.getKey());
     }
 }

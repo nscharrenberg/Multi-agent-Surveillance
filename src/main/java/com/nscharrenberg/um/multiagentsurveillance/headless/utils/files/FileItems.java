@@ -18,7 +18,8 @@ public enum FileItems {
     WALL("wall"),
     TELEPORT("teleport"),
     SHADED("shaded"),
-    TEXTURE("texture");
+    TEXTURE("texture"),
+    DEADEND_MARKER("deadendMarker");
 
     FileItems(String key) {
         this.key = key;

@@ -211,7 +211,7 @@ public class CharacterVision{
 
             if (tile.getItems().size() != 0) {
                 for (Item im : tile.getItems()) {
-                    if (im instanceof Collision) {
+                    if (im instanceof Wall) { // Cant update to collision cause players inherit collision
                         return true;
                     }
                 }

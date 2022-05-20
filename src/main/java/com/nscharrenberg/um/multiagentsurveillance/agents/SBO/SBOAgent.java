@@ -194,7 +194,7 @@ public class SBOAgent extends Agent {
         if(board.getByCoordinates(t.getX(), t.getY()).isPresent()) {
             if (board.getByCoordinates(t.getX(), t.getY()).get().getItems().size() != 0) {
                 for (Item im : board.getByCoordinates(t.getX(), t.getY()).get().getItems()) {
-                    if (im instanceof Collision) {
+                    if (im instanceof Wall) {
                         return false;
                     }
                 }

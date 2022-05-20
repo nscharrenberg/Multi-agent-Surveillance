@@ -16,14 +16,13 @@ import com.nscharrenberg.um.multiagentsurveillance.headless.models.Map.Area;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Map.ShadowTile;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Map.Tile;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Map.TileArea;
-import com.nscharrenberg.um.multiagentsurveillance.headless.models.Marker;
-import com.nscharrenberg.um.multiagentsurveillance.headless.models.MarkerSmell;
+import com.nscharrenberg.um.multiagentsurveillance.headless.models.Items.Marker;
+import com.nscharrenberg.um.multiagentsurveillance.headless.models.Items.MarkerSmell;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Player.Guard;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Player.Intruder;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Player.Player;
 
 import java.awt.*;
-import java.lang.annotation.Target;
 import java.util.*;
 import java.util.List;
 

@@ -22,7 +22,7 @@ import com.nscharrenberg.um.multiagentsurveillance.headless.models.Items.Telepor
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Map.ShadowTile;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Map.Tile;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Map.TileArea;
-import com.nscharrenberg.um.multiagentsurveillance.headless.models.Marker;
+import com.nscharrenberg.um.multiagentsurveillance.headless.models.Items.Marker;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Player.Guard;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Player.Intruder;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Player.Player;

@@ -1,21 +1,21 @@
-package com.nscharrenberg.um.multiagentsurveillance.headless.models;
+package com.nscharrenberg.um.multiagentsurveillance.headless.models.Items;
 
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Angle.AdvancedAngle;
-import com.nscharrenberg.um.multiagentsurveillance.headless.models.Items.Item;
+import com.nscharrenberg.um.multiagentsurveillance.headless.models.Items.Marker;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Map.Tile;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Player.Player;
 
 
-public class SoundWave extends Item {
-    private int strength; // Sound strength
-    private AdvancedAngle direction; // Sound direction (where it is coming from)
-    private Player owner;
+public class MarkerSmell extends Marker {
 
-    public SoundWave(Tile tile, int strength, AdvancedAngle direction, Player owner) {
-        super(tile);
+    private int strength;
+    private AdvancedAngle direction;
+
+
+    public MarkerSmell(Tile tile, Marker.MarkerType marking, int strength, AdvancedAngle direction, Player player, int duration) {
+        super(marking, tile, player, duration);
         this.strength = strength;
         this.direction = direction;
-        this.owner = owner;
     }
 
     public int getStrength() {
@@ -33,9 +33,4 @@ public class SoundWave extends Item {
     public void setDirection(AdvancedAngle direction) {
         this.direction = direction;
     }
-
-    public Player getOwner() { return owner; }
-
-    public void setOwner(Player owner) { this.owner = owner; }
-
 }

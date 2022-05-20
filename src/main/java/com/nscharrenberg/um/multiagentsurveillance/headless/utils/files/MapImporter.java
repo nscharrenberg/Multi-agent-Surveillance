@@ -10,7 +10,7 @@ import com.nscharrenberg.um.multiagentsurveillance.headless.exceptions.ItemAlrea
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Action;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.GameMode;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Map.TileArea;
-import com.nscharrenberg.um.multiagentsurveillance.headless.models.Marker;
+import com.nscharrenberg.um.multiagentsurveillance.headless.models.Items.Marker;
 import com.nscharrenberg.um.multiagentsurveillance.headless.utils.AngleConverter;
 
 import java.io.*;

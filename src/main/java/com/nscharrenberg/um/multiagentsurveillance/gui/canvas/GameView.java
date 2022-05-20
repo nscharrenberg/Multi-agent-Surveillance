@@ -9,15 +9,14 @@ import com.nscharrenberg.um.multiagentsurveillance.headless.exceptions.InvalidTi
 import com.nscharrenberg.um.multiagentsurveillance.headless.exceptions.ItemNotOnTileException;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Action;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.GameMode;
-import com.nscharrenberg.um.multiagentsurveillance.headless.models.GameState;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Items.Collision.Wall;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Items.Item;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Items.Teleporter;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Map.ShadowTile;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Map.Tile;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Map.TileArea;
-import com.nscharrenberg.um.multiagentsurveillance.headless.models.Marker;
-import com.nscharrenberg.um.multiagentsurveillance.headless.models.MarkerSmell;
+import com.nscharrenberg.um.multiagentsurveillance.headless.models.Items.Marker;
+import com.nscharrenberg.um.multiagentsurveillance.headless.models.Items.MarkerSmell;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Player.Guard;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Player.Intruder;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Player.Player;
@@ -26,7 +25,6 @@ import com.nscharrenberg.um.multiagentsurveillance.headless.repositories.MapRepo
 import com.nscharrenberg.um.multiagentsurveillance.headless.repositories.PlayerRepository;
 import javafx.animation.AnimationTimer;
 import javafx.concurrent.Task;
-import javafx.concurrent.WorkerStateEvent;
 import javafx.geometry.Insets;
 import javafx.scene.SnapshotParameters;
 import javafx.scene.canvas.Canvas;
@@ -35,8 +33,6 @@ import javafx.scene.control.Alert;
 import javafx.scene.image.WritableImage;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Circle;
-import javafx.scene.shape.Line;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
 

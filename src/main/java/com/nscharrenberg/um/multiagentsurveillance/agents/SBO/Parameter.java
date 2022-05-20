@@ -1,12 +1,10 @@
 package com.nscharrenberg.um.multiagentsurveillance.agents.SBO;
 
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Angle.*;
-import com.nscharrenberg.um.multiagentsurveillance.headless.models.Items.*;
-import com.nscharrenberg.um.multiagentsurveillance.headless.models.Map.*;
-import com.nscharrenberg.um.multiagentsurveillance.headless.models.Marker;
-import com.nscharrenberg.um.multiagentsurveillance.headless.models.MarkerSmell;
+import com.nscharrenberg.um.multiagentsurveillance.headless.models.Items.Marker;
+import com.nscharrenberg.um.multiagentsurveillance.headless.models.Items.MarkerSmell;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Player.Player;
-import com.nscharrenberg.um.multiagentsurveillance.headless.models.SoundWave;
+import com.nscharrenberg.um.multiagentsurveillance.headless.models.Items.SoundWave;
 
 
 

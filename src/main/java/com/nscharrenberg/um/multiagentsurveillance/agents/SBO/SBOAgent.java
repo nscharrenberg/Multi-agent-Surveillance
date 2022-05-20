@@ -12,9 +12,7 @@ import com.nscharrenberg.um.multiagentsurveillance.headless.models.Items.Collisi
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Items.Item;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Map.Tile;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Map.TileArea;
-import com.nscharrenberg.um.multiagentsurveillance.headless.models.MarkerSmell;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Player.Player;
-import com.nscharrenberg.um.multiagentsurveillance.headless.models.SoundWave;
 
 import java.util.*;
 
@@ -61,16 +59,19 @@ public class SBOAgent extends Agent {
         System.out.println("Current goal Tile: " + goal.getX() + "  " + goal.getY());
         System.out.println("Stack size: " + scanned.size());
 
-        for (Item it: player.getTile().getItems()) {
-
-            if(it instanceof SoundWave) {
-                if(agentmodel.parameterEvaluation(new Parameter((SoundWave) it), this.player))
-                    plannedMoves = agentmodel.getRedirect();
-            } else if(it instanceof MarkerSmell) {
-                if(agentmodel.parameterEvaluation(new Parameter((MarkerSmell) it), this.player))
-                    plannedMoves = agentmodel.getRedirect();
-            }
+        for (Item i:mapRepository.getBoard().getByCoordinates(34, 3).get().getItems()) {
+            System.out.println(i);
         }
+
+//        for (Item it: player.getTile().getItems()) {
+//            if(it instanceof SoundWave) {
+//                if(agentmodel.parameterEvaluation(new Parameter((SoundWave) it), this.player))
+//                    plannedMoves = agentmodel.getRedirect();
+//            } else if(it instanceof MarkerSmell) {
+//                if(agentmodel.parameterEvaluation(new Parameter((MarkerSmell) it), this.player))
+//                    plannedMoves = agentmodel.getRedirect();
+//            }
+//        }
 
         // Continue queue
         // && knowledge.getByCoordinates(goal.getX(), goal.getY()).isEmpty()
@@ -124,9 +125,9 @@ public class SBOAgent extends Agent {
                 }
             }
 
-            int pick = this.random.nextInt(Action.values().length);
+            int pick = this.random.nextInt(4);
             while (Action.values()[pick] == player.getDirection()) {
-                pick = this.random.nextInt(Action.values().length);
+                pick = this.random.nextInt(4);
             }
 
             return Action.values()[pick];

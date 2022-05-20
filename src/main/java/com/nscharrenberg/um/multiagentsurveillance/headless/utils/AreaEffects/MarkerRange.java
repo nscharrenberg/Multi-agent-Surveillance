@@ -1,13 +1,7 @@
 package com.nscharrenberg.um.multiagentsurveillance.headless.utils.AreaEffects;
 
-import com.nscharrenberg.um.multiagentsurveillance.headless.exceptions.ItemAlreadyOnTileException;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Angle.*;
-import com.nscharrenberg.um.multiagentsurveillance.headless.models.SoundWave;
-import com.nscharrenberg.um.multiagentsurveillance.headless.models.Items.*;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Map.*;
-
-import java.util.HashMap;
-import java.util.Map;
 
 import static java.lang.Math.abs;
 

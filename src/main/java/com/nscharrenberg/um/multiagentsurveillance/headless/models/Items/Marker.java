@@ -1,4 +1,4 @@
-package com.nscharrenberg.um.multiagentsurveillance.headless.models;
+package com.nscharrenberg.um.multiagentsurveillance.headless.models.Items;
 
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Items.Item;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Map.Tile;

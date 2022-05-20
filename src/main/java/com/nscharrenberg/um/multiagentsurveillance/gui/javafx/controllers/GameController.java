@@ -2,11 +2,6 @@ package com.nscharrenberg.um.multiagentsurveillance.gui.javafx.controllers;
 
 import com.nscharrenberg.um.multiagentsurveillance.agents.shared.Agent;
 import com.nscharrenberg.um.multiagentsurveillance.headless.Factory;
-import com.nscharrenberg.um.multiagentsurveillance.headless.exceptions.BoardNotBuildException;
-import com.nscharrenberg.um.multiagentsurveillance.headless.exceptions.InvalidTileException;
-import com.nscharrenberg.um.multiagentsurveillance.headless.exceptions.ItemAlreadyOnTileException;
-import com.nscharrenberg.um.multiagentsurveillance.headless.models.Marker;
-import com.nscharrenberg.um.multiagentsurveillance.headless.models.Player.Player;
 import javafx.application.Platform;
 import javafx.concurrent.Task;
 import javafx.scene.control.Alert;

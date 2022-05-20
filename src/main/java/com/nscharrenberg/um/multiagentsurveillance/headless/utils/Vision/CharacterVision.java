@@ -1,6 +1,7 @@
 package com.nscharrenberg.um.multiagentsurveillance.headless.utils.Vision;
 
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Action;
+import com.nscharrenberg.um.multiagentsurveillance.headless.models.Items.Collision.Collision;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Items.Item;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Items.Collision.Wall;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Map.ShadowTile;
@@ -210,7 +211,7 @@ public class CharacterVision{
 
             if (tile.getItems().size() != 0) {
                 for (Item im : tile.getItems()) {
-                    if (im instanceof Wall) {   // Might have to add other checks to this later
+                    if (im instanceof Collision) {
                         return true;
                     }
                 }

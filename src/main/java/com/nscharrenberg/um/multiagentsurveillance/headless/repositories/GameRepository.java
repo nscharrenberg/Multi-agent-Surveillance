@@ -19,7 +19,7 @@ import java.io.IOException;
 
 public class GameRepository implements IGameRepository {
     private static String MAP_PATH = "src/test/resources/maps/trainingExampleMap.txt";
-    //private static String MAP_PATH = "src/test/resources/maps/testmap5.txt";
+    //private static String MAP_PATH = "src/test/resources/maps/testmap.txt";
     private IMapRepository mapRepository;
     private IPlayerRepository playerRepository;
 

@@ -72,4 +72,32 @@ public class AngleConverter {
 
     }
 
+    public static AdvancedAngle AngleInverter(AdvancedAngle inputangle) {
+        if(inputangle == AdvancedAngle.UP)
+            return AdvancedAngle.DOWN;
+
+        if(inputangle == AdvancedAngle.DOWN)
+            return AdvancedAngle.UP;
+
+        if(inputangle == AdvancedAngle.LEFT)
+            return AdvancedAngle.RIGHT;
+
+        if(inputangle == AdvancedAngle.RIGHT)
+            return AdvancedAngle.LEFT;
+
+        if(inputangle == AdvancedAngle.TOP_RIGHT)
+            return AdvancedAngle.BOTTOM_LEFT;
+
+        if(inputangle == AdvancedAngle.TOP_LEFT)
+            return AdvancedAngle.BOTTOM_RIGHT;
+
+        if(inputangle == AdvancedAngle.BOTTOM_RIGHT)
+            return AdvancedAngle.TOP_LEFT;
+
+        if(inputangle == AdvancedAngle.BOTTOM_LEFT)
+            return AdvancedAngle.TOP_RIGHT;
+
+        return null;
+    }
+
 }

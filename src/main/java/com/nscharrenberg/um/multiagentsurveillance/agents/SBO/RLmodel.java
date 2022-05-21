@@ -7,13 +7,14 @@ import com.nscharrenberg.um.multiagentsurveillance.headless.utils.AngleConverter
 
 
 import java.util.ArrayList;
+import java.util.PriorityQueue;
 import java.util.Queue;
 
 public class RLmodel {
     double prioscaler = 1;
     double strengthbias = 1;
     double baseline = 0;
-    Queue<Action> redirect = null;
+    Queue<Action> redirect = new PriorityQueue<>();
     ArrayList<Parameter> inputs;
 
 
@@ -31,7 +32,7 @@ public class RLmodel {
     */
     public boolean parameterEvaluation(Parameter input, Player player) {
         // Skip its own inputs
-        if(input.owner == null || input.owner == player) {
+        if(input.owner == player) {
             return false;
         }
 
@@ -46,6 +47,14 @@ public class RLmodel {
             // Set new baseline (so new inputs dont overwrite existing higher priority ones)
             baseline = val;
             return true;
+        }
+
+        if(val < 0) {
+            // Return inverse angle
+            redirect.addAll(AngleConverter.split(AngleConverter.AngleInverter(input.direction)));
+            System.out.println("Updated path: " + redirect);
+            return true;
+
         }
 
         return false;

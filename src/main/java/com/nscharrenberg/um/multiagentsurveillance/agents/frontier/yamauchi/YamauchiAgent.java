@@ -1,5 +1,7 @@
 package com.nscharrenberg.um.multiagentsurveillance.agents.frontier.yamauchi;
 
+import com.nscharrenberg.um.multiagentsurveillance.agents.SBO.Parameter;
+import com.nscharrenberg.um.multiagentsurveillance.agents.SBO.RLmodel;
 import com.nscharrenberg.um.multiagentsurveillance.agents.frontier.yamauchi.comparator.guard.IWeightComparatorGuard;
 import com.nscharrenberg.um.multiagentsurveillance.agents.frontier.yamauchi.comparator.guard.MinDistanceUnknownAreaComparator;
 import com.nscharrenberg.um.multiagentsurveillance.agents.frontier.yamauchi.comparator.intruder.CloseToTarget;
@@ -17,6 +19,8 @@ import com.nscharrenberg.um.multiagentsurveillance.headless.exceptions.*;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Action;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Items.Collision.Collision;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Items.Item;
+import com.nscharrenberg.um.multiagentsurveillance.headless.models.Items.MarkerSmell;
+import com.nscharrenberg.um.multiagentsurveillance.headless.models.Items.SoundWave;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Map.Area;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Map.Tile;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Player.Guard;
@@ -84,10 +88,25 @@ public class YamauchiAgent extends Agent {
     @Override
     public Action decide() throws InvalidTileException, BoardNotBuildException{
 
-        Action markerChecked = player.getAgent().markerCheck();
-        if (markerChecked != null) {
-            return markerChecked;
+//        Action markerChecked = player.getAgent().markerCheck();
+//        if (markerChecked != null) {
+//            return markerChecked;
+//        }
+
+        RLmodel agentmodel = new RLmodel();
+
+        if(player.getTile().getItems().size() >= 2) {
+            for (Item it: player.getTile().getItems()) {
+                if(it instanceof SoundWave) {
+                    if(agentmodel.parameterEvaluation(new Parameter((SoundWave) it), this.player))
+                        plannedMoves = agentmodel.getRedirect();
+                } else if(it instanceof MarkerSmell) {
+                    if(agentmodel.parameterEvaluation(new Parameter((MarkerSmell) it), this.player))
+                        plannedMoves = agentmodel.getRedirect();
+                }
+            }
         }
+
 
         // Inconsistent with explorer% ????
 //        System.out.println("Knowledge Size: " + this.knowledge.getRegion().entrySet().size());
@@ -122,7 +141,7 @@ public class YamauchiAgent extends Agent {
             }
 
             if (value <= 30 || nextBlocked) {
-                int pick = this.random.nextInt(Action.values().length);
+                int pick = this.random.nextInt(4);
                 move = Action.values()[pick];
             }
 

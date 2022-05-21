@@ -44,7 +44,7 @@ import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class DQNView extends StackPane {
-    private static final int DELAY = 100;
+    private static final int DELAY = 30;
     protected static Color BASIC_TILE_COLOR = Color.LIGHTGREY;
     protected static Color WALL_TILE_COLOR = Color.DARKBLUE.darker().darker();
     protected static Color TELEPORT_INPUT_TILE_COLOR = Color.PURPLE;
@@ -223,14 +223,15 @@ public class DQNView extends StackPane {
         for (int episode = 1; episode <= numEpisodes ; episode++) {
             initFactory();
 
-            gameRepository.importMap();
+            startGame();
             setupGuards();
             setupIntruders();
+
+
 
             gameRepository.setRunning(true);
 
             runGame(episode);
-
         }
 
         // TODO: Save data here
@@ -270,15 +271,23 @@ public class DQNView extends StackPane {
                 e.printStackTrace();
             }
 
+            if (!gameRepository.isRunning()) {
+                continue;
+            }
+
             try {
 
                 for (Iterator<Intruder> itr = playerRepository.getIntruders().iterator(); itr.hasNext(); ) {
+                    if (!gameRepository.isRunning()) {
+                        break;
+                    }
+
                     DQN_Agent agent = (DQN_Agent) itr.next().getAgent();
 
                     state = agent.updateState();
                     action = agent.selectAction(episode, state);
                     agent.execute(action);
-                    done = !gameRepository.isRunning();
+                    done = !agent.getGameRepository().isRunning();
 
                     if (!done) {
                         nextState = agent.updateState();

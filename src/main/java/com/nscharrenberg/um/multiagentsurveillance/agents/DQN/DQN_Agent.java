@@ -94,7 +94,7 @@ public class DQN_Agent extends Agent {
         if (strategy.explorationRate(episodeNum) > random.nextDouble()) {
         //if (0.5 > random.nextDouble()){
             action = randomAction();
-            System.out.println(strategy.explorationRate(episodeNum));
+//            System.out.println(strategy.explorationRate(episodeNum));
             // This is a terrible fix :(
             while (action.equals(player.getDirection()) && collisionForward()) {
                 action = explorationAgent.decide();
@@ -348,6 +348,9 @@ public class DQN_Agent extends Agent {
         if (player == null)
             System.out.println("Null");
 
+        if (player.getTile() == null) {
+            System.out.println("test");
+        }
 
         int xP = player.getTile().getX();
         int yP = player.getTile().getY();

@@ -32,14 +32,23 @@ public class TrainingData {
         init();
     }
 
+    public void clearBatch(){
+        states.clear();
+        actions.clear();
+        rewards.clear();
+        nextStates.clear();
+        ends.clear();
+        count = 0;
+        index = 0;
+    }
+
     private void init(){
-        int initCapacity = capacity == 0 ? 10000 : capacity;
-        capacity = initCapacity;
-        states = new ArrayList<>(initCapacity);
-        nextStates = new ArrayList<>(initCapacity);
-        actions = new ArrayList<>(initCapacity);
-        rewards = new ArrayList<>(initCapacity);
-        ends = new ArrayList<>(initCapacity);
+        capacity = capacity == 0 ? 10000 : capacity;
+        states = new ArrayList<>(capacity);
+        nextStates = new ArrayList<>(capacity);
+        actions = new ArrayList<>(capacity);
+        rewards = new ArrayList<>(capacity);
+        ends = new ArrayList<>(capacity);
     }
 
     public void push(Experience experience) {

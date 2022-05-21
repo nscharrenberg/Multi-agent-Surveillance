@@ -41,9 +41,10 @@ import javafx.stage.Stage;
 
 import java.text.DecimalFormat;
 import java.util.*;
+import java.util.concurrent.ThreadLocalRandom;
 
 public class DQNView extends StackPane {
-    private static final int DELAY = -1;
+    private static final int DELAY = 100;
     protected static Color BASIC_TILE_COLOR = Color.LIGHTGREY;
     protected static Color WALL_TILE_COLOR = Color.DARKBLUE.darker().darker();
     protected static Color TELEPORT_INPUT_TILE_COLOR = Color.PURPLE;
@@ -63,7 +64,7 @@ public class DQNView extends StackPane {
     private String NETWORK_EXTENSION = ".agent";
     private Stack<Network> networks = new Stack<>();
     private DQN_Agent[] intruders;
-    private final int batchSize = 256;
+    private final int batchSize = 128;
     private final int numEpisodes = 10;
 
     public static HashMap<String, Color> getMapColours(){
@@ -218,11 +219,6 @@ public class DQNView extends StackPane {
     }
 
     private void gameLoop() {
-        double[][][] state, nextState;
-        Experience experience;
-        boolean done;
-        Action action;
-        double reward;
 
         for (int episode = 1; episode <= numEpisodes ; episode++) {
             initFactory();
@@ -232,71 +228,91 @@ public class DQNView extends StackPane {
             setupIntruders();
 
             gameRepository.setRunning(true);
-            while (gameRepository.isRunning()) {
-                try {
-                    mapRepository.checkMarkers();
-                } catch (BoardNotBuildException | InvalidTileException | ItemNotOnTileException e) {
-                }
-                playerRepository.updateSounds(playerRepository.getAgents());
 
-                try {
-                    for (Iterator<Guard> itr = playerRepository.getGuards().iterator(); itr.hasNext();) {
-                        Agent agent = itr.next().getAgent();
+            runGame(episode);
 
-                        try {
-                            agent.execute();
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
+        }
 
-                        if (!gameRepository.isRunning()) {
-                            break;
-                        }
+        // TODO: Save data here
+    }
+
+
+    private void runGame(int episode) {
+
+        double[][][] state, nextState;
+        Experience experience;
+        boolean done;
+        Action action;
+        double reward;
+
+        while (gameRepository.isRunning()) {
+            try {
+                mapRepository.checkMarkers();
+            } catch (BoardNotBuildException | InvalidTileException | ItemNotOnTileException e) {
+            }
+            playerRepository.updateSounds(playerRepository.getAgents());
+
+            try {
+                for (Iterator<Guard> itr = playerRepository.getGuards().iterator(); itr.hasNext(); ) {
+                    Agent agent = itr.next().getAgent();
+
+                    try {
+                        agent.execute();
+                    } catch (Exception e) {
+                        e.printStackTrace();
                     }
-                } catch (Exception e) {
-                    e.printStackTrace();
+
+                    if (!gameRepository.isRunning()) {
+                        break;
+                    }
                 }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
 
-                try {
+            try {
 
-                    for (Iterator<Intruder> itr = playerRepository.getIntruders().iterator(); itr.hasNext();) {
-                        DQN_Agent agent = (DQN_Agent) itr.next().getAgent();
+                for (Iterator<Intruder> itr = playerRepository.getIntruders().iterator(); itr.hasNext(); ) {
+                    DQN_Agent agent = (DQN_Agent) itr.next().getAgent();
 
-                        state = agent.updateState();
-                        action = agent.selectAction(episode, state);
-                        agent.execute(action);
+                    state = agent.updateState();
+                    action = agent.selectAction(episode, state);
+                    agent.execute(action);
+                    done = !gameRepository.isRunning();
+
+                    if (!done) {
                         nextState = agent.updateState();
-                        reward = agent.calculateReward(state, nextState);
-                        done = gameRepository.isRunning();                                                       // TODO: Check if final state is reached
+                        reward = agent.calculateReward(state, nextState, action);                         // TODO: Check if final state is reached
                         experience = new Experience(state, action, reward, nextState, done);
                         agent.getTrainingData().push(experience);
 
                         // Preform training on a batch of experiences
-                        if (agent.getTrainingData().hasBatch(batchSize))
+                        if (agent.getTrainingData().hasBatch(batchSize) && 0.5 > ThreadLocalRandom.current().nextDouble() && false) {
+                            System.out.println("Batch Training");
                             agent.trainAgent(agent.getTrainingData().randomSample(batchSize));
-                            // Preform a single step of back propagation
-                            // This might need to be done with a certain probability, or it might be too slow
-                            // Who knows though
-                        else agent.trainAgent(experience);
-
-                        if (!gameRepository.isRunning()) {
-                            break;
+                            agent.getTrainingData().clearBatch();
                         }
+                        // Preform a single step of back propagation
+                        // This might need to be done with a certain probability, or it might be too slow
+                        // Who knows though
+                        else agent.trainAgent(experience);
                     }
-                } catch (Exception e) {
-                   e.printStackTrace();
+                    else return;
                 }
-
-                if (DELAY > 0) {
-                    try {
-                        Thread.sleep(DELAY);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            if (!gameRepository.isRunning()) {
+                break;
             }
 
-            // TODO: Save data here
+            if (DELAY > 0) {
+                try {
+                    Thread.sleep(DELAY);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
         }
     }
 

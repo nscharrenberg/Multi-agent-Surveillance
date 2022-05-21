@@ -42,10 +42,10 @@ public class Neuron {
 
         // TODO: Decide if updates are + | -
         for (int i = 0; i < weights.length; i++) {
-            weights[i] += learningRate * dEdW[i];
+            weights[i] -= learningRate * dEdW[i];
         }
 
-        bias += learningRate * dEdY;
+        bias -= learningRate * dEdY;
     }
 
 

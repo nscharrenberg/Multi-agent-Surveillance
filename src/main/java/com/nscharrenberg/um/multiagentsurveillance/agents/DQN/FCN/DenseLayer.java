@@ -6,10 +6,12 @@ public class DenseLayer {
     private int numInputs, numOutputs;
     private double[] inputs;
     private double[] outputs;
+    private double learningRate;
 
     public DenseLayer(int numInputs, int numOutputs, double learningRate){
         this.numInputs = numInputs;
         this.numOutputs = numOutputs;
+        this.learningRate = learningRate;
         initNeurons(learningRate);
     }
 
@@ -48,7 +50,7 @@ public class DenseLayer {
 
         for (int i = 0; i < dEdX.length; i++) {
             for (int j = 0; j < dEdY.length; j++) {
-                dEdX[i] += dEdY[j] + layerWeights[j][i];
+                dEdX[i] += learningRate * (dEdY[j] + layerWeights[j][i]);
             }
         }
 

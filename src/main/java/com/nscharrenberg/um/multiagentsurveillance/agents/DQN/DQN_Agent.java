@@ -5,6 +5,7 @@ import com.nscharrenberg.um.multiagentsurveillance.agents.DQN.training.EpsilonGr
 import com.nscharrenberg.um.multiagentsurveillance.agents.DQN.training.Experience;
 import com.nscharrenberg.um.multiagentsurveillance.agents.DQN.training.TrainingData;
 import com.nscharrenberg.um.multiagentsurveillance.agents.frontier.yamauchi.YamauchiAgent;
+import com.nscharrenberg.um.multiagentsurveillance.agents.probabilistic.evader.EvaderAgent;
 import com.nscharrenberg.um.multiagentsurveillance.agents.shared.Agent;
 import com.nscharrenberg.um.multiagentsurveillance.headless.Factory;
 import com.nscharrenberg.um.multiagentsurveillance.headless.contracts.repositories.IGameRepository;
@@ -15,17 +16,28 @@ import com.nscharrenberg.um.multiagentsurveillance.headless.models.Action;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Items.Collision.Wall;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Items.Item;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Map.Tile;
+import com.nscharrenberg.um.multiagentsurveillance.headless.models.Map.TileArea;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Player.Guard;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Player.Intruder;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Player.Player;
 import com.nscharrenberg.um.multiagentsurveillance.headless.utils.AreaEffects.AudioEffect.Sound;
+
+/*
+    Note:
+    1. The state might need to store the current direction of the agent for training
+        a. Add this to the state matrix in the player index
+        b. Create a state object
+    2.
+
+
+*/
 
 import java.util.*;
 
 public class DQN_Agent extends Agent {
 
     private EpsilonGreedy strategy;
-    private final int rewardScalar = 5;
+    private final int rewardScalar = 1;
     private final int channels = 3;
     private final int length = 13;
     private final int xOffset = 6;
@@ -34,9 +46,10 @@ public class DQN_Agent extends Agent {
     private final Random random = new Random();
     private final double gamma = 0.999;
     private TrainingData trainingData;
+    private double minTargetDistance = Double.POSITIVE_INFINITY;
 
     // TODO: Decide on exploration policy
-    private Agent explorationAgent = new YamauchiAgent(player);
+    private Agent explorationAgent = new EvaderAgent(player);
 
     public DQN_Agent(){
         super(null, Factory.getMapRepository(), Factory.getGameRepository(), Factory.getPlayerRepository());
@@ -76,122 +89,145 @@ public class DQN_Agent extends Agent {
 
         Action action;
 
+        int i = 0;
         // Exploration V Exploitation
-        if (strategy.explorationRate(episodeNum) > random.nextDouble())
-            action = explorationAgent.decide();
+        if (strategy.explorationRate(episodeNum) > random.nextDouble()) {
+        //if (0.5 > random.nextDouble()){
+            action = randomAction();
+            System.out.println(strategy.explorationRate(episodeNum));
+            // This is a terrible fix :(
+            while (action.equals(player.getDirection()) && collisionForward()) {
+                action = explorationAgent.decide();
+                //System.out.println("Evasion stuck");
+                action.setPrediction(actionIndex(action));
+                if (i++ > 15)
+                    action = predictAction(state);
+            }
+        }
         else
             action = predictAction(state);
 
 
+
         return action;
+    }
+
+    private Action randomAction() throws Exception {
+        switch (random.nextInt(4)){
+            case 0 -> {
+                if (!collisionForward())
+                    return player.getDirection();
+            }
+            case 1 -> {
+                return turnLeft(player.getDirection());
+            }
+            case 2 -> {
+                return turnRight(player.getDirection());
+            }
+        }
+        return random.nextDouble() > 0.5 ? turnRight(player.getDirection()) : turnLeft(player.getDirection());
+    }
+
+    private int actionIndex(Action action) throws Exception {
+        Action direction = player.getDirection();
+
+        if (action.equals(direction))
+            return 0;
+        if (action.equals(turnRight(direction)))
+            return 1;
+        if (action.equals(turnLeft(direction)))
+            return 2;
+
+        System.out.println("Illegal action 180");
+        return -1;
     }
 
     private Action predictAction(double[][][] state) throws Exception {
 
         double[] qValues = policyNetwork.forwardPropagate(state);
 
+        while (argmax(qValues) == 0 && collisionForward()){
+            trainAgentCollision(qValues);
+            qValues = policyNetwork.forwardPropagate(state);
+            System.out.println("DQN stuck");
+        }
+
+        System.out.println("QValues = [ " + qValues[0] + " " + qValues[1]  + " " + qValues[2]  + " ]");
         Action currentDirection = player.getDirection();
         Action action;
 
         // TODO: Add marker handling
 
-        switch (optAction(qValues)){
+        int prediction = argmax(qValues);
+
+        switch (prediction){
             case 0 -> action = currentDirection;
             case 1 -> action = turnRight(currentDirection);
             case 2 -> action = turnLeft(currentDirection);
             default -> throw new Exception("Invalid Move Selected");
         }
 
+        action.setPrediction(prediction);
+
         return action;
     }
 
-    private int optAction(double[] qValues) throws Exception {
-        int start = 0;
+    public void trainAgentCollision(double[] predictedQV){
 
-        // TODO: Train if agent selects moving into a wall. Not sure about other collisions
+        double[] targetQV = predictedQV.clone();
+        targetQV[0] = targetQV[0] - 0.1;
 
-        if (collisionForward())
-            start = 1;
-
-        return argmax(qValues, start);
+        policyNetwork.backwardPropagate(targetQV, predictedQV);
     }
 
-    public void trainAgent(Experience experience){
+    public void trainAgent(Experience experience) throws Exception {
 
         double[] predictedQV, targetQV;
 
         predictedQV = policyNetwork.forwardPropagate(experience.state);
-        targetQV = targetQValues(experience.nextState, predictedQV.clone(), experience.reward);
+                                                // This shouldn't be .clone
+        targetQV = targetQValues(experience.nextState, predictedQV.clone(), experience.action, experience.reward);
         policyNetwork.backwardPropagate(targetQV, predictedQV);
     }
 
-    public void trainAgent(TrainingData batch){
+    public void trainAgent(TrainingData batch) throws Exception {
 
         ArrayList<double[][][]> states = batch.states, nextStates = batch.nextStates;
         ArrayList<Double> rewards = batch.rewards;
-        double[] predictedQV, targetQV, loss = new double[0];
+        ArrayList<Action> actions = batch.actions;
 
+        double[] predictedQV, targetQV, loss = new double[0];
 
         for (int i = 0; i < states.size(); i++) {
             predictedQV = policyNetwork.forwardPropagate(states.get(i));
-            targetQV = targetQValues(nextStates.get(i), predictedQV.clone(), rewards.get(i));
+            targetQV = targetQValues(nextStates.get(i), predictedQV.clone(), actions.get(i), rewards.get(i));
             policyNetwork.backwardPropagate(targetQV, predictedQV);
         }
 
     }
 
-    private double[] targetQValues(double[][][] state, double[] qValues, double reward){
+    private double[] targetQValues(double[][][] state, double[] qValues, Action action, double reward) throws Exception {
 
         double[] temp = targetNetwork.forwardPropagate(state);
-        qValues[argmax(temp)] = temp[argmax(temp)] * gamma + reward;
+
+        if (action.getPrediction()<0)
+            throw new Exception("Illegal Action");
+
+        //System.out.println(action.getPrediction() + " Reward " + reward);
+        qValues[action.getPrediction()] = temp[action.getPrediction()] * gamma + reward;
+
+        //qValues[argmax(temp)] += argmax(temp) == action.getPrediction() ? -0.1 : 0;
+        //System.out.println("Target QValues = [ " + qValues[0] + " " + qValues[1]  + " " + qValues[2]  + " ]");
 
         return qValues;
     }
 
-    private int predictMove() throws InvalidTileException, BoardNotBuildException {
+    public double calculateReward(double[][][] previousState, double[][][] state, Action action) throws Exception {
 
-        double[] qValues = policyNetwork.forwardPropagate(updateState());
-
-        // TODO: check if moves collide with wall or other guard/intruder
-
-        int start = 0;
-
-        if (collisionForward())
-            start = 1;
-
-        return argmax(qValues, start);
-    }
-
-    private Action turnRight(Action playerDirection) throws Exception{
-        if (playerDirection.equals(Action.UP))
-            return Action.RIGHT;
-        if (playerDirection.equals(Action.DOWN))
-            return Action.LEFT;
-        if (playerDirection.equals(Action.LEFT))
-            return Action.UP;
-        if (playerDirection.equals(Action.RIGHT))
-            return Action.DOWN;
-        else
-            throw new Exception("Player has no direction");
-    }
-
-    private Action turnLeft(Action playerDirection) throws Exception{
-        if (playerDirection.equals(Action.UP))
-            return Action.LEFT;
-        if (playerDirection.equals(Action.DOWN))
-            return Action.RIGHT;
-        if (playerDirection.equals(Action.LEFT))
-            return Action.DOWN;
-        if (playerDirection.equals(Action.RIGHT))
-            return Action.UP;
-        else
-            throw new Exception("Player has no direction");
-    }
-
-    public double calculateReward(double[][][] previousState, double[][][] state){
+        double distanceReward = .5;
 
         // Delta Sound Proximity & Delta Vision Proximity
-        double dSP = 0, dVP = 0;
+        double dSP, dVP;
 
         // Positive if sound intensity from all sides and behind is decreasing
         dSP = soundProximity(previousState) - soundProximity(state);
@@ -199,12 +235,29 @@ public class DQN_Agent extends Agent {
         // Positive if visible distance from all guards is decreasing
         dVP = visionProximity(previousState) - visionProximity(state);
 
-        // TODO: Add reward moving towards target area
-        // TODO: Add reward for being in target area
 
+        Intruder intruder = (Intruder) this.player;
+        double reward = 0;
 
+        if (player.getDirection().equals(intruder.getTargetAngle()))
+            reward = 0.005;
 
-        return rewardScalar * (dSP + dVP);
+        double targetDistance = intruder.getDistanceToTarget();
+
+        if (targetDistance < minTargetDistance){
+            System.out.println("Getting closer");
+            minTargetDistance = targetDistance;
+            reward += distanceReward;
+        }
+
+        TileArea targetArea = mapRepository.getTargetArea();
+
+        if (targetArea.within(player.getTile().getX(), player.getTile().getY()))
+            reward += 10;
+
+        state[0][xOffset][yOffset] = actionIndex(action);
+
+        return rewardScalar * (dSP + dVP ) + reward;
     }
 
     private double soundProximity(double[][][] state){
@@ -260,11 +313,42 @@ public class DQN_Agent extends Agent {
         }
     }*/
 
+    private Action turnRight(Action playerDirection) throws Exception{
+        if (playerDirection.equals(Action.UP))
+            return Action.RIGHT;
+        if (playerDirection.equals(Action.DOWN))
+            return Action.LEFT;
+        if (playerDirection.equals(Action.LEFT))
+            return Action.UP;
+        if (playerDirection.equals(Action.RIGHT))
+            return Action.DOWN;
+        else
+            throw new Exception("Player has no direction");
+    }
+
+    private Action turnLeft(Action playerDirection) throws Exception{
+        if (playerDirection.equals(Action.UP))
+            return Action.LEFT;
+        if (playerDirection.equals(Action.DOWN))
+            return Action.RIGHT;
+        if (playerDirection.equals(Action.LEFT))
+            return Action.DOWN;
+        if (playerDirection.equals(Action.RIGHT))
+            return Action.UP;
+        else
+            throw new Exception("Player has no direction");
+    }
+
     public double[][][] updateState(){
 
         double[][][] state = new double[channels][length][length];
         List<Sound> SoundList = player.getSoundEffects();
         List<Item> items;
+
+        if (player == null)
+            System.out.println("Null");
+
+
         int xP = player.getTile().getX();
         int yP = player.getTile().getY();
         int VIX, VIY;
@@ -355,6 +439,20 @@ public class DQN_Agent extends Agent {
 
 
         return action;
+    }
+
+    private int predictMove() throws InvalidTileException, BoardNotBuildException {
+
+        double[] qValues = policyNetwork.forwardPropagate(updateState());
+
+        // TODO: check if moves collide with wall or other guard/intruder
+
+        int start = 0;
+
+        if (collisionForward())
+            start = 1;
+
+        return argmax(qValues, start);
     }
 
     private int argmax(double[] input){

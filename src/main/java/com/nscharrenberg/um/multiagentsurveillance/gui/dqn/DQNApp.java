@@ -22,7 +22,7 @@ import java.util.List;
 public class DQNApp extends Application {
     private DQNView view;
     private static int WIDTH = 1200;
-    private static int HEIGHT = 1000;
+    private static int HEIGHT = 800;
     public static final boolean MANUAL_PLAYER = false;
 
     @Override

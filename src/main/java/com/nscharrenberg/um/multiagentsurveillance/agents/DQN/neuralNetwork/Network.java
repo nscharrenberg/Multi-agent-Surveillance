@@ -16,7 +16,7 @@ public class Network {
     private int kernelSize = 3;
     private double learningRate = 0.001;;
     private int outputLength = 3;
-    private int c1Filters = 32, c2Filters = 128, c3Filters = 32;
+    private int c1Filters = 16, c2Filters = 64, c3Filters = 16;
     private int conv3Length;
 
     private double[] networkOutput;
@@ -96,7 +96,7 @@ public class Network {
         double[] dEdY = new double[target.length];
 
         for (int i = 0; i < dEdY.length; i++)
-            dEdY[i] = -(target[i] - predicted[i]);
+            dEdY[i] = (predicted[i] - target[i]);
 
         return dEdY;
     }

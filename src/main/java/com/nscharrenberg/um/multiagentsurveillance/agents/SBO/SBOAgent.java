@@ -11,6 +11,7 @@ import com.nscharrenberg.um.multiagentsurveillance.headless.models.Action;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Items.Collision.Collision;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Items.Collision.Wall;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Items.Item;
+import com.nscharrenberg.um.multiagentsurveillance.headless.models.Items.Marker;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Items.MarkerSmell;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Items.SoundWave;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Map.Tile;
@@ -58,23 +59,18 @@ public class SBOAgent extends Agent {
 //            return markerChecked;
 //        }
 
-        System.out.println("Players Tile: " + player.getTile().getX() + "  " + player.getTile().getY());
-        System.out.println("Current goal Tile: " + goal.getX() + "  " + goal.getY());
-        System.out.println("Stack size: " + scanned.size());
-
-        for (Item it: player.getTile().getItems()) {
-            if(it instanceof SoundWave) {
-                if(agentmodel.parameterEvaluation(new Parameter((SoundWave) it), this.player))
-                    plannedMoves = agentmodel.getRedirect();
-            } else if(it instanceof MarkerSmell) {
-                if(agentmodel.parameterEvaluation(new Parameter((MarkerSmell) it), this.player))
-                    plannedMoves = agentmodel.getRedirect();
-            }
-        }
+//        for (Item it: player.getTile().getItems()) {
+//            if(it instanceof SoundWave) {
+//                if(agentmodel.parameterEvaluation(new Parameter((SoundWave) it), this.player))
+//                    plannedMoves = agentmodel.getRedirect();
+//            } else if(it instanceof MarkerSmell) {
+//                if(agentmodel.parameterEvaluation(new Parameter((MarkerSmell) it), this.player))
+//                    plannedMoves = agentmodel.getRedirect();
+//            }
+//        }
 
         // Continue queue
-        // && knowledge.getByCoordinates(goal.getX(), goal.getY()).isEmpty()
-        if (!plannedMoves.isEmpty()) {
+        if (!plannedMoves.isEmpty() && knowledge.getByCoordinates(goal.getX(), goal.getY()).isEmpty()) {
             return plannedMoves.poll();
         }
 
@@ -92,23 +88,21 @@ public class SBOAgent extends Agent {
             }
         }
 
-        AStar as = new AStar();
-        if (as.execute(mapRepository.getBoard(), this.player, goal).isPresent()) {
-            plannedMoves = as.execute(mapRepository.getBoard(), this.player, goal).get().getMoves();
-        } else if (knowledge.getByCoordinates(goal.getX(), goal.getY()).isEmpty()) {
-            for (Tile agt : getAdjacent(goal)) {
-                if (knowledge.getByCoordinates(agt.getX(), agt.getY()).isPresent()) {
-                    if (as.execute(mapRepository.getBoard(), this.player, agt).isPresent()) {
-                        plannedMoves = as.execute(mapRepository.getBoard(), this.player, agt).get().getMoves();
-                        break;
-                    }
-                }
-            }
-        } else {
-            System.out.println("invalid goal?");
-        }
-
-/*        BFS
+//        AStar as = new AStar();
+//        if (as.execute(mapRepository.getBoard(), this.player, goal).isPresent()) {
+//            plannedMoves = as.execute(mapRepository.getBoard(), this.player, goal).get().getMoves();
+//        } else if (knowledge.getByCoordinates(goal.getX(), goal.getY()).isEmpty()) {
+//            for (Tile agt : getAdjacent(goal)) {
+//                if (knowledge.getByCoordinates(agt.getX(), agt.getY()).isPresent()) {
+//                    if (as.execute(mapRepository.getBoard(), this.player, agt).isPresent()) {
+//                        plannedMoves = as.execute(mapRepository.getBoard(), this.player, agt).get().getMoves();
+//                        break;
+//                    }
+//                }
+//            }
+//        } else {
+//            System.out.println("invalid goal?");
+//        }
 
         BFS bfs = new BFS();
         if (bfs.execute(mapRepository.getBoard(), this.player, goal).isPresent()) {
@@ -125,11 +119,17 @@ public class SBOAgent extends Agent {
         } else {
             System.out.println("invalid goal?");
         }
-*/
 
+        System.out.println("Players Tile: " + player.getTile().getX() + "  " + player.getTile().getY());
+        System.out.println("Current goal Tile: " + goal.getX() + "  " + goal.getY());
+        System.out.println("Stack size: " + scanned.size());
+
+        // Stop agent for testing
+        if(scanned.isEmpty() && plannedMoves.isEmpty())
+            gameRepository.setRunning(false);
 
         // Switches to random agent if no more tiles in the stack
-        if(plannedMoves.isEmpty()) {
+        if(scanned.isEmpty() || plannedMoves.isEmpty()) {
             Optional<Tile> nextTileOpt = knowledge.getByCoordinates(player.getTile().getX() + player.getDirection().getxIncrement(),
                     player.getTile().getY() + player.getDirection().getyIncrement());
 
@@ -142,12 +142,10 @@ public class SBOAgent extends Agent {
                     }
                 }
             }
-
             int pick = this.random.nextInt(4);
-            while (Action.values()[pick] == player.getDirection()) {
+            while (nextBlocked && Action.values()[pick] == player.getDirection()) {
                 pick = this.random.nextInt(4);
             }
-
             return Action.values()[pick];
         }
 
@@ -156,29 +154,28 @@ public class SBOAgent extends Agent {
 
 
     private void gatherV2() {
-            if (this.player.getVision() != null) {
-                for (Map.Entry<Integer, HashMap<Integer, Tile>> rowEntry : this.player.getVision().getRegion().entrySet()) {
-                    for (Map.Entry<Integer, Tile> colEntry : rowEntry.getValue().entrySet()) {
-                        Tile vt = colEntry.getValue();
-                        if (vt != null) {
-                            if (unobstructedTile(mapRepository.getBoard(), vt)) {
-                                for (Tile at : getAdjacent(vt)) {
-                                    if(mapRepository.getBoard().getByCoordinates(at.getX(), at.getY()).isPresent()) {
-                                        if(unobstructedTile(mapRepository.getBoard(), at)) {
-                                            if (this.knowledge.getByCoordinates(at.getX(), at.getY()).isEmpty()) {
-                                                scanned.add(at);
-                                            }
-                                        }
+        if (this.player.getVision() != null) {
+            for (Map.Entry<Integer, HashMap<Integer, Tile>> rowEntry : this.player.getVision().getRegion().entrySet()) {
+                for (Map.Entry<Integer, Tile> colEntry : rowEntry.getValue().entrySet()) {
+                    Tile vt = colEntry.getValue();
+                    if (vt != null) {
+                        if (unobstructedTile(mapRepository.getBoard(), vt)) {
+                            for (Tile at : getAdjacent(vt)) {
+                                if(mapRepository.getBoard().getByCoordinates(at.getX(), at.getY()).isPresent()) {
+                                    if (this.knowledge.getByCoordinates(at.getX(), at.getY()).isEmpty()) {
+                                        if(unobstructedTile(mapRepository.getBoard(), at))
+                                            scanned.add(at);
                                     }
                                 }
                             }
                         }
                     }
                 }
-            } else {
-                System.out.println("Vision not updated! ");
-                scanned.addAll(getAdjacent(this.player.getTile()));
             }
+        } else {
+            System.out.println("Vision not updated! ");
+            scanned.addAll(getAdjacent(this.player.getTile()));
+        }
     }
 
     private List<Tile> getAdjacent(Tile pos) {

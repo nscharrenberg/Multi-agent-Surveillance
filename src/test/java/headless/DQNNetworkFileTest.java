@@ -86,7 +86,7 @@ public class DQNNetworkFileTest {
                 Assertions.assertArrayEquals(original.getInputs(), imported.getInputs());
                 Assertions.assertArrayEquals(original.getOutputs(), imported.getOutputs());
                 Assertions.assertEquals(original.getNumInputs(), imported.getNumInputs());
-                Assertions.assertEquals(original.getNumOutputs(), imported.getNumOutputs());
+                Assertions.assertEquals(original.getNumNeurons(), imported.getNumNeurons());
 
                 for (int m = 0; m < original.getNeurons().length; m++) {
                     Neuron originalNeuron = original.getNeurons()[m];

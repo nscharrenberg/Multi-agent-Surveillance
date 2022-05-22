@@ -1,14 +1,14 @@
 height = 50
 width = 50
 gameMode = 2
-numGuards = 0
+numGuards = 1
 numIntruders = 1
 baseSpeedGuard = 5
 distanceViewing = 10
 numberMarkers = 5
 smellingDistance = 5
 spawnAreaGuards = 2 2 20 10
-targetArea = 0 30 50 35
+targetArea = 1 30 50 35
 spawnAreaIntruders = 40 40 49 49
 wall = 0 0 50 1
 wall = 0 1 1 50

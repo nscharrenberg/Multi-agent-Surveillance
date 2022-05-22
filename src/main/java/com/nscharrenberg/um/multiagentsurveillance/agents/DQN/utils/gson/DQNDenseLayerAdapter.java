@@ -35,7 +35,7 @@ public class DQNDenseLayerAdapter extends TypeAdapter<DenseLayer> {
         writer.value(value.getNumInputs());
 
         writer.name(NUM_OUTPUTS.getKey());
-        writer.value(value.getNumOutputs());
+        writer.value(value.getNumNeurons());
 
         writer.name(INPUTS.getKey());
 
@@ -91,7 +91,7 @@ public class DQNDenseLayerAdapter extends TypeAdapter<DenseLayer> {
                 if (fieldName.equals(NUM_INPUTS.getKey())) {
                    denseLayer.setNumInputs(reader.nextInt());
                 } else if (fieldName.equals(NUM_OUTPUTS.getKey())) {
-                    denseLayer.setNumOutputs(reader.nextInt());
+                    denseLayer.setNumNeurons(reader.nextInt());
                 } else if (fieldName.equals(INPUTS.getKey())) {
                     reader.beginArray();
 

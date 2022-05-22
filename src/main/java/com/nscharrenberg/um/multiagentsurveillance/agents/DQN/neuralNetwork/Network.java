@@ -37,15 +37,15 @@ public class Network {
         };
 
         conv3Length = outDim(input3Length);
-        int numDenseIn = conv3Length * conv3Length * c3Filters;
+        int numNeurons = conv3Length * conv3Length * c3Filters;
 
 
         denseLayers = new DenseLayer[]{
-            new DenseLayer(numDenseIn, numDenseIn, learningRate),
-            new DenseLayer(numDenseIn, outputLength, learningRate)
+            new DenseLayer(numNeurons, numNeurons, learningRate),
+            new DenseLayer(numNeurons, outputLength, learningRate)
         };
 
-        activationLayer = new ActivationLayer(numDenseIn);
+        activationLayer = new ActivationLayer(numNeurons);
     }
 
 
@@ -71,7 +71,6 @@ public class Network {
         return networkOutput;
     }
 
-    // TODO: Implement and validate backward propagation
 
     public void backwardPropagate(double[] target, double[] predicted){
 
@@ -159,7 +158,7 @@ public class Network {
     }
 
     public Network clone(){
-        return new Network(convLayers, denseLayers, activationLayer);
+        return new Network(convLayers.clone(), denseLayers.clone(), activationLayer);
     }
 
     private int outDim(int length){

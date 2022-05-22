@@ -23,16 +23,12 @@ import com.nscharrenberg.um.multiagentsurveillance.headless.models.Map.TileArea;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Player.Guard;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Player.Intruder;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Player.Player;
-import com.nscharrenberg.um.multiagentsurveillance.headless.repositories.GameRepository;
-import com.nscharrenberg.um.multiagentsurveillance.headless.repositories.MapRepository;
-import com.nscharrenberg.um.multiagentsurveillance.headless.repositories.PlayerRepository;
 import javafx.animation.AnimationTimer;
 import javafx.concurrent.Task;
 import javafx.geometry.Insets;
 import javafx.scene.SnapshotParameters;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.control.Alert;
 import javafx.scene.image.WritableImage;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
@@ -44,7 +40,7 @@ import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class DQNView extends StackPane {
-    private static final int DELAY = 30;
+    private static final int DELAY = -1;
     protected static Color BASIC_TILE_COLOR = Color.LIGHTGREY;
     protected static Color WALL_TILE_COLOR = Color.DARKBLUE.darker().darker();
     protected static Color TELEPORT_INPUT_TILE_COLOR = Color.PURPLE;
@@ -65,7 +61,7 @@ public class DQNView extends StackPane {
     private Stack<Network> networks = new Stack<>();
     private DQN_Agent[] intruders;
     private final int batchSize = 128;
-    private final int numEpisodes = 10;
+    private final int numEpisodes = 100;
 
     public static HashMap<String, Color> getMapColours(){
         HashMap<String, Color> out = new HashMap<>();
@@ -102,9 +98,8 @@ public class DQNView extends StackPane {
 
         this.stage = stage;
 
-        initFactory();
+        init();
 
-        startGame();
         WIDTH = gameRepository.getWidth() + 1;
         HEIGHT = gameRepository.getHeight() + 1;
 
@@ -165,19 +160,13 @@ public class DQNView extends StackPane {
         timer.start();
     }
 
-    private void initFactory() {
-        this.gameRepository = new GameRepository();
-        this.playerRepository = new PlayerRepository();
-        this.mapRepository = new MapRepository();
+    private void init(){
+        Factory.init();
 
-        this.gameRepository.setMapRepository(mapRepository);
-        this.gameRepository.setPlayerRepository(playerRepository);
-
-        this.playerRepository.setMapRepository(mapRepository);
-        this.playerRepository.setGameRepository(gameRepository);
-
-        this.mapRepository.setPlayerRepository(playerRepository);
-        this.mapRepository.setGameRepository(gameRepository);
+        gameRepository = Factory.getGameRepository();
+        playerRepository = Factory.getPlayerRepository();
+        mapRepository = Factory.getMapRepository();
+        gameRepository.importMap();
     }
 
     private void setupGuards() {
@@ -195,6 +184,7 @@ public class DQNView extends StackPane {
         for (Iterator<Intruder> itr = playerRepository.getIntruders().iterator(); itr.hasNext();) {
             Intruder intruder = itr.next();
 
+            intruders[index].initRepositories();
             playerRepository.getAgents().remove(intruder.getAgent());
             intruder.setAgent(intruders[index]);
             intruders[index].setPlayer(intruder);
@@ -213,21 +203,31 @@ public class DQNView extends StackPane {
         }
     }
 
-    private void startGame() {
+    private void reset(){
+
+        Factory.reset();
+
+        this.mapRepository = Factory.getMapRepository();
+        this.gameRepository = Factory.getGameRepository();
+        this.playerRepository = Factory.getPlayerRepository();
         gameRepository.importMap();
-        setupDQNAgents();
+//        playerRepository.getGuards().clear();
+//        mapRepository.buildEmptyBoard();
+//        gameRepository.importMap();
+
+
     }
 
     private void gameLoop() {
 
-        for (int episode = 1; episode <= numEpisodes ; episode++) {
-            initFactory();
+        setupDQNAgents();
 
-            startGame();
+        for (int episode = 1; episode <= numEpisodes ; episode++) {
+
+            reset();
+
             setupGuards();
             setupIntruders();
-
-
 
             gameRepository.setRunning(true);
 
@@ -291,7 +291,7 @@ public class DQNView extends StackPane {
 
                     if (!done) {
                         nextState = agent.updateState();
-                        reward = agent.calculateReward(state, nextState, action);                         // TODO: Check if final state is reached
+                        reward = agent.calculateReward(nextState);                         // TODO: Check if final state is reached
                         experience = new Experience(state, action, reward, nextState, done);
                         agent.getTrainingData().push(experience);
 
@@ -305,8 +305,7 @@ public class DQNView extends StackPane {
                         // This might need to be done with a certain probability, or it might be too slow
                         // Who knows though
                         else agent.trainAgent(experience);
-                    }
-                    else return;
+                    } else System.out.println("Endeded");
                 }
             } catch (Exception e) {
                 e.printStackTrace();

@@ -5,16 +5,14 @@ import java.util.concurrent.ThreadLocalRandom;
 
 public class Neuron {
 
-    private double[] weights, input;
-    private double bias;
-    private int numInputs;
+    private double[] weights;
+    private int numOutputs;
     private double learningRate;
 
-    public Neuron(int numInputs, double learningRate) {
-        this.numInputs = numInputs;
+    public Neuron(int numOutputs, double learningRate) {
+        this.numOutputs = numOutputs;
         this.learningRate = learningRate;
-        weights = new double[numInputs];
-        bias = 0;
+        weights = new double[numOutputs];
         initWeights();
     }
 
@@ -22,48 +20,27 @@ public class Neuron {
     }
 
     public double[] getWeights() { return weights; }
-    public double getBias() { return bias; }
+    public double getBias() { return 0; }
 
-    public double calculateForward(double[] input){
-
-        this.input = input;
-        double out = 0;
-
-        for (int i = 0; i < input.length; i++) {
-            out += input[i] * weights[i];
-        }
-        out += bias;
-
-        return out;
+    public double forward(double input, int index){
+        return input * weights[index];
     }
 
-    public void calculateBackward(double dEdY){
-        double[] dEdW = dEdW(dEdY);
+    public void backward(double[] dEdW){
 
         // TODO: Decide if updates are + | -
         for (int i = 0; i < weights.length; i++) {
             weights[i] -= learningRate * dEdW[i];
         }
 
-        bias -= learningRate * dEdY;
     }
 
-
-    private double[] dEdW(double dEdY){
-        double[] dEdW = new double[weights.length];
-
-        for (int i = 0; i < dEdW.length; i++) {
-            dEdW[i] = dEdY * input[i];
-        }
-
-        return dEdW;
-    }
 
     /**
-     * Method uniformly initials weights based on the number of inputs
+     * Method uniformly initials weights based on the number of outputs
      */
     private void initWeights(){
-        double k = 1 / Math.sqrt(numInputs);
+        double k = 1 / Math.sqrt(numOutputs);
         Random random = new Random();
 
         for (int i = 0; i < weights.length; i++)
@@ -74,16 +51,17 @@ public class Neuron {
         this.weights = weights;
     }
 
+    // TODO: UPDATE
     public void setBias(double bias) {
-        this.bias = bias;
-    }
 
+    }
+    // TODO: UPDATE
     public int getNumInputs() {
-        return numInputs;
+        return 0;
     }
 
+    // TODO: UPDATE
     public void setNumInputs(int numInputs) {
-        this.numInputs = numInputs;
     }
 
     public double getLearningRate() {

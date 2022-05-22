@@ -22,16 +22,6 @@ import com.nscharrenberg.um.multiagentsurveillance.headless.models.Player.Intrud
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Player.Player;
 import com.nscharrenberg.um.multiagentsurveillance.headless.utils.AreaEffects.AudioEffect.Sound;
 
-/*
-    Note:
-    1. The state might need to store the current direction of the agent for training
-        a. Add this to the state matrix in the player index
-        b. Create a state object
-    2.
-
-
-*/
-
 import java.util.*;
 
 public class DQN_Agent extends Agent {
@@ -188,6 +178,8 @@ public class DQN_Agent extends Agent {
                                                 // This shouldn't be .clone
         targetQV = targetQValues(experience.nextState, predictedQV.clone(), experience.action, experience.reward);
         policyNetwork.backwardPropagate(targetQV, predictedQV);
+
+        targetNetwork = policyNetwork.clone();
     }
 
     public void trainAgent(TrainingData batch) throws Exception {
@@ -210,6 +202,8 @@ public class DQN_Agent extends Agent {
 
         double[] temp = targetNetwork.forwardPropagate(state);
 
+
+
         if (action.getPrediction()<0)
             throw new Exception("Illegal Action");
 
@@ -222,18 +216,16 @@ public class DQN_Agent extends Agent {
         return qValues;
     }
 
-    public double calculateReward(double[][][] previousState, double[][][] state, Action action) throws Exception {
-
-        double distanceReward = .5;
+    public double calculateReward(double[][][] state) throws Exception {
 
         // Delta Sound Proximity & Delta Vision Proximity
         double dSP, dVP;
 
         // Positive if sound intensity from all sides and behind is decreasing
-        dSP = soundProximity(previousState) - soundProximity(state);
+        dSP =  -soundProximity(state) / 100;
 
         // Positive if visible distance from all guards is decreasing
-        dVP = visionProximity(previousState) - visionProximity(state);
+        dVP = -visionProximity(state) / 10;
 
 
         Intruder intruder = (Intruder) this.player;
@@ -245,19 +237,15 @@ public class DQN_Agent extends Agent {
         double targetDistance = intruder.getDistanceToTarget();
 
         if (targetDistance < minTargetDistance){
-            System.out.println("Getting closer");
-            minTargetDistance = targetDistance;
-            reward += distanceReward;
+            reward += 0.05;
         }
 
         TileArea targetArea = mapRepository.getTargetArea();
 
         if (targetArea.within(player.getTile().getX(), player.getTile().getY()))
-            reward += 10;
-
-        state[0][xOffset][yOffset] = actionIndex(action);
-
-        return rewardScalar * (dSP + dVP ) + reward;
+            reward += 1;
+        
+        return dSP + dVP + reward;
     }
 
     private double soundProximity(double[][][] state){
@@ -298,20 +286,6 @@ public class DQN_Agent extends Agent {
         return proximity;
     }
 
-/*    public double OLD_calculateReward(){
-        double reward = 0;
-        double dx,dy;
-
-        for (int i = 0; i < length; i++) {
-            for (int j = 0; j < length; j++) {
-                if (previousState[0][i][j] == 1){
-                    dx = i - xOffset;
-                    dy = j - yOffset;
-                    reward = (1 / Math.sqrt(dx*dx + dy*dy)) * rewardScalar;
-                }
-            }
-        }
-    }*/
 
     private Action turnRight(Action playerDirection) throws Exception{
         if (playerDirection.equals(Action.UP))
@@ -345,25 +319,19 @@ public class DQN_Agent extends Agent {
         List<Sound> SoundList = player.getSoundEffects();
         List<Item> items;
 
-        if (player == null)
-            System.out.println("Null");
-
-        if (player.getTile() == null) {
-            System.out.println("test");
-        }
 
         int xP = player.getTile().getX();
         int yP = player.getTile().getY();
         int VIX, VIY;
 
-        for (Map.Entry<Integer, HashMap<Integer, Tile>> rowEntry : vision.getRegion().entrySet()) {
+        for (Map.Entry<Integer, HashMap<Integer, Tile>> rowEntry : player.getVision().getRegion().entrySet()) {
             for (Map.Entry<Integer, Tile> colEntry : rowEntry.getValue().entrySet()) {
 
                 // Get the vision index for x and y position in state tensor
                 VIX = (colEntry.getValue().getX() - xP) + xOffset;
                 VIY = (colEntry.getValue().getY() - yP) + yOffset;
 
-                items = player.getTile().getItems();
+                items = colEntry.getValue().getItems();
 
                 for (Item item : items) {
                     if (item instanceof Guard)

@@ -69,7 +69,7 @@ public class TrainingSimulation {
                     action = intruders[j].selectAction(episode, state);
                     intruders[j].execute(action);
                     nextState = intruders[j].updateState();
-                    reward = intruders[j].calculateReward(state, nextState, action);
+                    reward = intruders[j].calculateReward(nextState);
                     done = Factory.getGameRepository().isRunning();                                                       // TODO: Check if final state is reached
                     experience = new Experience(state, action, reward, nextState, done);
                     intrudersData[j].push(experience);

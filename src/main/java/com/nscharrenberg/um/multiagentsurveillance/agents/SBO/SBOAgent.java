@@ -3,6 +3,7 @@ package com.nscharrenberg.um.multiagentsurveillance.agents.SBO;
 import com.nscharrenberg.um.multiagentsurveillance.agents.shared.Agent;
 import com.nscharrenberg.um.multiagentsurveillance.agents.shared.algorithms.pathfinding.AStar.AStar;
 import com.nscharrenberg.um.multiagentsurveillance.agents.shared.algorithms.pathfinding.BFS.BFS;
+import com.nscharrenberg.um.multiagentsurveillance.agents.shared.algorithms.pathfinding.IPathFinding;
 import com.nscharrenberg.um.multiagentsurveillance.headless.contracts.repositories.IGameRepository;
 import com.nscharrenberg.um.multiagentsurveillance.headless.contracts.repositories.IMapRepository;
 import com.nscharrenberg.um.multiagentsurveillance.headless.contracts.repositories.IPlayerRepository;
@@ -24,6 +25,7 @@ public class SBOAgent extends Agent {
     private final Stack<Tile> scanned = new Stack<>();
     private final TileArea visited = new TileArea();
     private final RLmodel agentmodel = new RLmodel();
+    private final IPathFinding PFA = new AStar();
     Tile goal = this.player.getTile();
     private Random random = new Random();
 
@@ -59,15 +61,15 @@ public class SBOAgent extends Agent {
 //            return markerChecked;
 //        }
 
-//        for (Item it: player.getTile().getItems()) {
-//            if(it instanceof SoundWave) {
-//                if(agentmodel.parameterEvaluation(new Parameter((SoundWave) it), this.player))
-//                    plannedMoves = agentmodel.getRedirect();
-//            } else if(it instanceof MarkerSmell) {
-//                if(agentmodel.parameterEvaluation(new Parameter((MarkerSmell) it), this.player))
-//                    plannedMoves = agentmodel.getRedirect();
-//            }
-//        }
+        for (Item it: player.getTile().getItems()) {
+            if(it instanceof SoundWave) {
+                if(agentmodel.parameterEvaluation(new Parameter((SoundWave) it), this.player))
+                    plannedMoves = agentmodel.getRedirect();
+            } else if(it instanceof MarkerSmell) {
+                if(agentmodel.parameterEvaluation(new Parameter((MarkerSmell) it), this.player))
+                    plannedMoves = agentmodel.getRedirect();
+            }
+        }
 
         // Continue queue
         if (!plannedMoves.isEmpty() && knowledge.getByCoordinates(goal.getX(), goal.getY()).isEmpty()) {
@@ -88,30 +90,13 @@ public class SBOAgent extends Agent {
             }
         }
 
-//        AStar as = new AStar();
-//        if (as.execute(mapRepository.getBoard(), this.player, goal).isPresent()) {
-//            plannedMoves = as.execute(mapRepository.getBoard(), this.player, goal).get().getMoves();
-//        } else if (knowledge.getByCoordinates(goal.getX(), goal.getY()).isEmpty()) {
-//            for (Tile agt : getAdjacent(goal)) {
-//                if (knowledge.getByCoordinates(agt.getX(), agt.getY()).isPresent()) {
-//                    if (as.execute(mapRepository.getBoard(), this.player, agt).isPresent()) {
-//                        plannedMoves = as.execute(mapRepository.getBoard(), this.player, agt).get().getMoves();
-//                        break;
-//                    }
-//                }
-//            }
-//        } else {
-//            System.out.println("invalid goal?");
-//        }
-
-        BFS bfs = new BFS();
-        if (bfs.execute(mapRepository.getBoard(), this.player, goal).isPresent()) {
-            plannedMoves = bfs.execute(mapRepository.getBoard(), this.player, goal).get().getMoves();
+        if (PFA.execute(mapRepository.getBoard(), this.player, goal).isPresent()) {
+            plannedMoves = PFA.execute(mapRepository.getBoard(), this.player, goal).get().getMoves();
         } else if (knowledge.getByCoordinates(goal.getX(), goal.getY()).isEmpty()) {
             for (Tile agt : getAdjacent(goal)) {
                 if (knowledge.getByCoordinates(agt.getX(), agt.getY()).isPresent()) {
-                    if (bfs.execute(mapRepository.getBoard(), this.player, agt).isPresent()) {
-                        plannedMoves = bfs.execute(mapRepository.getBoard(), this.player, agt).get().getMoves();
+                    if (PFA.execute(mapRepository.getBoard(), this.player, agt).isPresent()) {
+                        plannedMoves = PFA.execute(mapRepository.getBoard(), this.player, agt).get().getMoves();
                         break;
                     }
                 }

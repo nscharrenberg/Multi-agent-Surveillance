@@ -23,6 +23,16 @@ public enum Action {
     private int xIncrement = 0;
     private int yIncrement = 0;
 
+    private int prediction;
+
+    public int getPrediction() {
+        return prediction;
+    }
+
+    public void setPrediction(int prediction){
+        this.prediction = prediction;
+    }
+
     public int getxIncrement() {
         return xIncrement;
     }

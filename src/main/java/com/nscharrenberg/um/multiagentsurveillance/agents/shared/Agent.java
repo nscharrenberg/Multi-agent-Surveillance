@@ -28,14 +28,14 @@ import java.util.*;
 import java.util.List;
 
 public abstract class Agent {
-    protected final Player player;
+    protected Player player;
     protected Area<Tile> knowledge;
     protected Area<Tile> vision;
     protected Queue<Action> plannedMoves;
 
-    protected final IMapRepository mapRepository;
-    protected final IGameRepository gameRepository;
-    protected final IPlayerRepository playerRepository;
+    protected IMapRepository mapRepository;
+    protected IGameRepository gameRepository;
+    protected IPlayerRepository playerRepository;
 
     protected int deadEndMarkers;
     protected int targetMarkers;
@@ -122,6 +122,18 @@ public abstract class Agent {
         this.playerRepository = playerRepository;
     }
 
+    public void initRepositories(){
+        this.mapRepository = Factory.getMapRepository();
+        this.gameRepository = Factory.getGameRepository();
+        this.playerRepository = Factory.getPlayerRepository();
+    }
+
+    public void initRepositories(IMapRepository mapRepository, IGameRepository gameRepository, IPlayerRepository playerRepository) {
+        this.mapRepository = mapRepository;
+        this.gameRepository = gameRepository;
+        this.playerRepository = playerRepository;
+    }
+
     public Area<Tile> getKnowledge() {
         return knowledge;
     }
@@ -192,9 +204,9 @@ public abstract class Agent {
 
     public abstract void execute(Action action);
 
-    public abstract Action decide() throws InvalidTileException, BoardNotBuildException, ItemNotOnTileException;
+    public abstract Action decide() throws Exception;
 
-    public void execute() throws InvalidTileException, BoardNotBuildException, ItemNotOnTileException {
+    public void execute() throws Exception {
         execute(decide());
     }
 
@@ -480,6 +492,10 @@ public abstract class Agent {
         }
 
         return true;
+    }
+
+    public void setPlayer(Player player){
+        this.player = player;
     }
 
     public int getDeadEndMarkers() {

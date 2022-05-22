@@ -1,5 +1,6 @@
 package com.nscharrenberg.um.multiagentsurveillance.headless.repositories;
 
+import com.nscharrenberg.um.multiagentsurveillance.agents.DQN.DQN_Agent;
 import com.nscharrenberg.um.multiagentsurveillance.agents.SBO.SBOAgent;
 import com.nscharrenberg.um.multiagentsurveillance.agents.frontier.yamauchi.YamauchiAgent;
 import com.nscharrenberg.um.multiagentsurveillance.agents.probabilistic.evader.EvaderAgent;
@@ -52,8 +53,8 @@ public class PlayerRepository implements IPlayerRepository {
 
     private List<Agent> agents;
 
-    private static final Class<? extends Agent> guardType = PursuerAgent.class;
-    private static final Class<? extends Agent> intruderType = EvaderAgent.class;
+    public static final Class<? extends Agent> guardType = PursuerAgent.class;
+    public static final Class<? extends Agent> intruderType = DQN_Agent.class;
 
     private float explorationPercentage = 0;
 
@@ -179,8 +180,93 @@ public class PlayerRepository implements IPlayerRepository {
     }
 
     private void spawnIntruder() {
-        TileArea guardSpawnArea = mapRepository.getIntruderSpawnArea();
-        spawn(Intruder.class, guardSpawnArea);
+        TileArea intruderSpawnArea = mapRepository.getIntruderSpawnArea();
+        spawn(Intruder.class, intruderSpawnArea);
+    }
+
+    @Override
+    public void spawn(Class<?> playerInstance, DQN_Agent agent) {
+        if (playerInstance.equals(Intruder.class)) {
+            spawnIntruder(agent);
+            return;
+        }
+
+        spawnGuard(agent);
+    }
+
+    private void spawnGuard(DQN_Agent guard) {
+        TileArea guardSpawnArea = mapRepository.getGuardSpawnArea();
+        spawn(Guard.class, guardSpawnArea, guard);
+    }
+
+    private void spawnIntruder(DQN_Agent intruder) {
+        TileArea intruderSpawnArea = mapRepository.getIntruderSpawnArea();
+        spawn(Intruder.class, intruderSpawnArea, intruder);
+    }
+
+    public void spawn(Class<? extends Player> playerClass, TileArea playerSpawnArea, DQN_Agent agent) {
+        HashMap<Integer, HashMap<Integer, Tile>> spawnArea = playerSpawnArea.getRegion();
+
+        boolean tileAssigned = false;
+        Map.Entry<Map.Entry<Integer, Integer>, Map.Entry<Integer, Integer>> bounds = playerSpawnArea.bounds();
+
+        while (!tileAssigned) {
+            int rowIndex = random.nextInt(bounds.getKey().getKey(), bounds.getKey().getValue()+1);
+            HashMap<Integer, Tile> row = spawnArea.get(rowIndex);
+
+            int colIndex = random.nextInt(bounds.getValue().getKey(), bounds.getValue().getValue()+1);
+            Tile tile = row.get(colIndex);
+
+            boolean invalid = false;
+
+            for (Item item : tile.getItems()) {
+                if (item instanceof Collision) {
+                    invalid = true;
+                    break;
+                }
+            }
+
+            if (!invalid) {
+                try {
+                    if (playerClass.equals(Intruder.class)) {
+                        Intruder intruder = new Intruder(tile, Action.UP);
+                        tile.add(intruder);
+                        intruders.add(intruder);
+                        spawnAgent(intruder, agent);
+                    } else {
+                        Guard guard = new Guard(tile, Action.UP);
+                        tile.add(guard);
+                        guards.add(guard);
+                        spawnAgent(guard, agent);
+                    }
+
+                    agent.addKnowledge(tile);
+                    tileAssigned = true;
+                } catch (ItemAlreadyOnTileException e) {
+                    System.out.println("Player Already on tile - this shouldn't happen");
+                }
+            }
+        }
+    }
+
+    public void spawnAgent(Player player, DQN_Agent agent) {
+
+        this.agents.add(agent);
+        agent.setPlayer(player);
+        player.setAgent(agent);
+        agent.addKnowledge(player.getTile());
+
+        int visionLength = 6;
+
+        if(player.getTile() instanceof ShadowTile)
+            visionLength /= 2;
+
+        CharacterVision characterVision = new CharacterVision(visionLength, player.getDirection(), player);
+        List<Tile> vision = characterVision.getVision(mapRepository.getBoard(), player.getTile());
+        player.getAgent().addKnowledge(vision);
+        completeKnowledgeProgress.add(vision);
+        player.setVision(new TileArea(vision));
+
     }
 
     @Override
@@ -255,6 +341,8 @@ public class PlayerRepository implements IPlayerRepository {
             agent = new PursuerAgent(player, mapRepository, gameRepository, this);
         } else if (agentClass.equals(EvaderAgent.class)){
             agent = new EvaderAgent(player, mapRepository, gameRepository, this);
+        } else if (agentClass.equals(DQN_Agent.class)){
+            agent = new DQN_Agent(player, mapRepository, gameRepository, this);
         }
 
         if (agent == null) {
@@ -705,4 +793,6 @@ public class PlayerRepository implements IPlayerRepository {
     public List<Intruder> getEscapedIntruders() {
         return escapedIntruders;
     }
+
+
 }

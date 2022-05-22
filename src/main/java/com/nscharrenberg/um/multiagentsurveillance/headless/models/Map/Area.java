@@ -76,4 +76,5 @@ public abstract class Area<T> {
     public int hashCode() {
         return Objects.hash(region);
     }
+
 }

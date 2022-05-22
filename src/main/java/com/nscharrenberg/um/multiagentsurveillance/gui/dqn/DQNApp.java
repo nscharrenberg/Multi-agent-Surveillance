@@ -1,4 +1,4 @@
-package com.nscharrenberg.um.multiagentsurveillance.gui.canvas;
+package com.nscharrenberg.um.multiagentsurveillance.gui.dqn;
 
 import com.nscharrenberg.um.multiagentsurveillance.agents.shared.Agent;
 import com.nscharrenberg.um.multiagentsurveillance.headless.Factory;
@@ -19,10 +19,10 @@ import javafx.stage.Stage;
 import java.util.HashMap;
 import java.util.List;
 
-public class CanvasApp extends Application {
-    private GameView view;
+public class DQNApp extends Application {
+    private DQNView view;
     private static int WIDTH = 1200;
-    private static int HEIGHT = 1000;
+    private static int HEIGHT = 800;
     public static final boolean MANUAL_PLAYER = false;
 
     @Override
@@ -30,7 +30,7 @@ public class CanvasApp extends Application {
         try {
             primaryStage.setWidth(WIDTH);
             primaryStage.setHeight(HEIGHT);
-            GameView view = new GameView(primaryStage);
+            DQNView view = new DQNView(primaryStage);
 
             Scene scene = new Scene(view, 800, 800);
 
@@ -86,7 +86,7 @@ public class CanvasApp extends Application {
         int size = 20;
         GridPane legend = new GridPane();
 
-        HashMap<String, Color> legendItems = GameView.getMapColours();
+        HashMap<String, Color> legendItems = DQNView.getMapColours();
         Color color;
         Polygon polygon;
 

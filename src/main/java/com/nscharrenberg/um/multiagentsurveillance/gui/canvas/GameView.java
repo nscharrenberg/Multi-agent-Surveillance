@@ -46,15 +46,15 @@ import static com.nscharrenberg.um.multiagentsurveillance.gui.canvas.CanvasApp.M
 
 public class GameView extends StackPane {
     private static final int DELAY = 30;
-    protected static Color BASIC_TILE_COLOR = Color.FORESTGREEN;
-    protected static Color WALL_TILE_COLOR = Color.BROWN;
+    protected static Color BASIC_TILE_COLOR = Color.LIGHTGREY;
+    protected static Color WALL_TILE_COLOR = Color.DARKBLUE.darker().darker();
     protected static Color TELEPORT_INPUT_TILE_COLOR = Color.PURPLE;
     protected static Color TELEPORT_OUT_TILE_COLOR = Color.MEDIUMPURPLE;
     protected static Color SHADED_TILE_COLOR = Color.BLACK;
     protected static Color GUARD_COLOR = Color.BLUE;
     protected static Color INTRUDER_COLOR = Color.INDIANRED;
-    protected static Color VISION_COLOR = Color.LIGHTGOLDENRODYELLOW;
-    protected static Color KNOWLEDGE_COLOR = Color.LAWNGREEN;
+    protected static Color VISION_COLOR = Color.YELLOW;
+    protected static Color KNOWLEDGE_COLOR = Color.LIGHTBLUE;
     protected static Color TARGET_COLOR = Color.TEAL;
     
     private IGameRepository gameRepository;
@@ -92,7 +92,7 @@ public class GameView extends StackPane {
 
     private WritableImage initialBoard;
 
-    public GameView(Stage stage) throws InvalidTileException, BoardNotBuildException, ItemNotOnTileException {
+    public GameView(Stage stage) throws Exception {
 
         this.stage = stage;
 
@@ -108,6 +108,8 @@ public class GameView extends StackPane {
 
         this.mapRepository.setPlayerRepository(playerRepository);
         this.mapRepository.setGameRepository(gameRepository);
+
+
 
         gameRepository.startGame();
         WIDTH = gameRepository.getWidth() + 1;
@@ -241,7 +243,7 @@ public class GameView extends StackPane {
         return point * GSSD;
     }
 
-    public void init(Stage stage) throws InvalidTileException, BoardNotBuildException, ItemNotOnTileException {
+    public void init(Stage stage) throws Exception {
         canvas = new Canvas(stage.getWidth(), stage.getHeight());
         graphicsContext = canvas.getGraphicsContext2D();
 
@@ -406,7 +408,7 @@ public class GameView extends StackPane {
     }
 
     private void drawKnowledge(Tile tile) {
-        drawTile(tile, KNOWLEDGE_COLOR, .1);
+        drawTile(tile, KNOWLEDGE_COLOR, .3);
     }
 
     private void drawGuard(Tile tile, Action angle) {

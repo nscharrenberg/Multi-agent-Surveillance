@@ -2,6 +2,7 @@ package com.nscharrenberg.um.multiagentsurveillance.headless.repositories;
 
 import com.nscharrenberg.um.multiagentsurveillance.agents.shared.algorithms.angleCalculator.AngleTilesCalculator;
 import com.nscharrenberg.um.multiagentsurveillance.agents.shared.algorithms.angleCalculator.ComputeDoubleAngleTiles;
+import com.nscharrenberg.um.multiagentsurveillance.agents.DQN.DQN_Agent;
 import com.nscharrenberg.um.multiagentsurveillance.headless.Factory;
 import com.nscharrenberg.um.multiagentsurveillance.headless.contracts.repositories.IGameRepository;
 import com.nscharrenberg.um.multiagentsurveillance.headless.contracts.repositories.IMapRepository;
@@ -18,8 +19,6 @@ import java.io.File;
 import java.io.IOException;
 
 public class GameRepository implements IGameRepository {
-    //private static String MAP_PATH = "src/test/resources/RLtrainingMaps/trainingExampleMap.txt";
-    //private static String MAP_PATH = "src/test/resources/RLtrainingMaps/markerPathTestMap.txt";
     private static String MAP_PATH = "src/test/resources/maps/dqn_training_map_1.txt";
     private IMapRepository mapRepository;
     private IPlayerRepository playerRepository;
@@ -48,6 +47,18 @@ public class GameRepository implements IGameRepository {
         this.playerRepository = playerRepository;
     }
 
+    public void startGame(DQN_Agent[] guards, DQN_Agent[] intruders) {
+        importMap();
+
+        if (gameMode == null) {
+            setGameMode(GameMode.EXPLORATION);
+        }
+
+        setupAgents(guards, intruders);
+
+//        playerRepository.getStopWatch().start();
+    }
+
     @Override
     public void startGame() {
         importMap();
@@ -70,7 +81,8 @@ public class GameRepository implements IGameRepository {
         }
     }
 
-    private void importMap() {
+    @Override
+    public void importMap() {
         File file = new File(MAP_PATH);
         String path = file.getAbsolutePath();
         MapImporter importer = new MapImporter(this, mapRepository, playerRepository);
@@ -83,6 +95,18 @@ public class GameRepository implements IGameRepository {
         } catch (IOException e) {
             e.printStackTrace();
 //            Factory.getGameRepository().setRunning(false);
+        }
+    }
+
+    private void setupAgents(DQN_Agent[] guards, DQN_Agent[] intruders) {
+        for (int i = 0; i < guards.length; i++) {
+            Factory.getPlayerRepository().spawn(Guard.class, guards[i]);
+        }
+
+        if (getGameMode().equals(GameMode.GUARD_INTRUDER_ALL) || getGameMode().equals(GameMode.GUARD_INTRUDER_ONE)) {
+            for (int i = 0; i < intruders.length; i++) {
+                playerRepository.spawn(Intruder.class, intruders[i]);
+            }
         }
     }
 
@@ -105,15 +129,26 @@ public class GameRepository implements IGameRepository {
     }
 
     @Override
-    public void setupAgents() {
-        for (int i = 0; i < getGuardCount(); i++) {
-            playerRepository.spawn(Guard.class);
+    public void setupAgents(Class<? extends Player> playerClass) {
+        if (playerClass.equals(Guard.class)) {
+            for (int i = 0; i < getGuardCount(); i++) {
+                playerRepository.spawn(Guard.class);
+            }
+
+            return;
         }
 
+        for (int i = 0; i < getIntruderCount(); i++) {
+            playerRepository.spawn(Intruder.class);
+        }
+    }
+
+    @Override
+    public void setupAgents() {
+        setupAgents(Guard.class);
+
         if (getGameMode().equals(GameMode.GUARD_INTRUDER_ALL) || getGameMode().equals(GameMode.GUARD_INTRUDER_ONE)) {
-            for (int i = 0; i < getIntruderCount(); i++) {
-                playerRepository.spawn(Intruder.class);
-            }
+            setupAgents(Intruder.class);
         }
     }
 

@@ -244,7 +244,7 @@ public class DQN_Agent extends Agent {
 
         if (targetArea.within(player.getTile().getX(), player.getTile().getY()))
             reward += 1;
-        
+
         return dSP + dVP + reward;
     }
 
@@ -434,6 +434,10 @@ public class DQN_Agent extends Agent {
         int maxInd = start;
         for (int i = start; i < input.length; i++) maxInd = input[i] > input[maxInd] ?  i : maxInd;
         return maxInd;
+    }
+
+    public Network getNetwork(){
+        return policyNetwork;
     }
 
     public IGameRepository getGameRepository() {

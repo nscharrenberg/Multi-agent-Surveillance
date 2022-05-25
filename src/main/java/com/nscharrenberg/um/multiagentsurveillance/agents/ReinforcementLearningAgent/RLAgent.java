@@ -1,15 +1,17 @@
-package com.nscharrenberg.um.multiagentsurveillance.agents.frontier.yamauchi;
+package com.nscharrenberg.um.multiagentsurveillance.agents.ReinforcementLearningAgent;
 
-import com.nscharrenberg.um.multiagentsurveillance.agents.ReinforcementLearningAgent.Parameter;
-import com.nscharrenberg.um.multiagentsurveillance.agents.ReinforcementLearningAgent.RLmodel;
+import com.nscharrenberg.um.multiagentsurveillance.agents.frontier.yamauchi.Frontier;
 import com.nscharrenberg.um.multiagentsurveillance.agents.frontier.yamauchi.comparator.guard.IWeightComparatorGuard;
 import com.nscharrenberg.um.multiagentsurveillance.agents.frontier.yamauchi.comparator.guard.MinDistanceUnknownAreaComparator;
 import com.nscharrenberg.um.multiagentsurveillance.agents.frontier.yamauchi.comparator.intruder.CloseToTarget;
 import com.nscharrenberg.um.multiagentsurveillance.agents.frontier.yamauchi.comparator.intruder.IWeightComparatorIntruder;
+import com.nscharrenberg.um.multiagentsurveillance.agents.probabilistic.State;
+import com.nscharrenberg.um.multiagentsurveillance.agents.probabilistic.pursuer.PursuerAgent;
 import com.nscharrenberg.um.multiagentsurveillance.agents.shared.Agent;
 import com.nscharrenberg.um.multiagentsurveillance.agents.shared.algorithms.distanceCalculator.CalculateDistance;
 import com.nscharrenberg.um.multiagentsurveillance.agents.shared.algorithms.distanceCalculator.ManhattanDistance;
 import com.nscharrenberg.um.multiagentsurveillance.agents.shared.algorithms.pathfinding.AStar.AStar;
+import com.nscharrenberg.um.multiagentsurveillance.agents.shared.algorithms.pathfinding.BFS.BFS;
 import com.nscharrenberg.um.multiagentsurveillance.agents.shared.algorithms.pathfinding.IPathFinding;
 import com.nscharrenberg.um.multiagentsurveillance.agents.shared.utils.QueueNode;
 import com.nscharrenberg.um.multiagentsurveillance.headless.contracts.repositories.IGameRepository;
@@ -32,17 +34,19 @@ import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.util.*;
 
-public class YamauchiAgent extends Agent {
+public class RLAgent extends Agent {
     private final List<Frontier> frontiers = new ArrayList<>();
     private Frontier chosenFrontier = null;
     private SecureRandom random;
+    private RLmodel rlmodel = new RLmodel();
+    private Tile goal = this.player.getTile();
     private final IPathFinding pathFindingAlgorithm = new AStar();
     private final IWeightComparatorGuard weightDetectorGuard = new MinDistanceUnknownAreaComparator();
     private final IWeightComparatorIntruder weightDetectorIntruder = new CloseToTarget();
     private final CalculateDistance calculateDistance = new ManhattanDistance();
     private final static boolean pathNotForAll = true;
 
-    public YamauchiAgent(Player player) {
+    public RLAgent(Player player) {
         super(player);
         try {
             this.random = SecureRandom.getInstanceStrong();
@@ -51,7 +55,7 @@ public class YamauchiAgent extends Agent {
         }
     }
 
-    public YamauchiAgent(Player player, IMapRepository mapRepository, IGameRepository gameRepository, IPlayerRepository playerRepository) {
+    public RLAgent(Player player, IMapRepository mapRepository, IGameRepository gameRepository, IPlayerRepository playerRepository) {
         super(player, mapRepository, gameRepository, playerRepository);
         try {
             this.random = SecureRandom.getInstanceStrong();
@@ -60,7 +64,7 @@ public class YamauchiAgent extends Agent {
         }
     }
 
-    public YamauchiAgent(Player player, Area<Tile> knowledge, Queue<Action> plannedMoves, IMapRepository mapRepository, IGameRepository gameRepository, IPlayerRepository playerRepository) {
+    public RLAgent(Player player, Area<Tile> knowledge, Queue<Action> plannedMoves, IMapRepository mapRepository, IGameRepository gameRepository, IPlayerRepository playerRepository) {
         super(player, knowledge, plannedMoves, mapRepository, gameRepository, playerRepository);
         try {
             this.random = SecureRandom.getInstanceStrong();
@@ -88,16 +92,26 @@ public class YamauchiAgent extends Agent {
     @Override
     public Action decide() throws InvalidTileException, BoardNotBuildException{
 
-//        Action markerChecked = player.getAgent().markerCheck();
-//        if (markerChecked != null) {
-//            return markerChecked;
-//        }
+        // Parameter assessment
+        rlmodel.reset();
+        if(player.getTile().getItems().size() >= 2) {
+            for (Item it: player.getTile().getItems()) {
+                if(it instanceof SoundWave) {
+                    rlmodel.parameterEvaluation(new Parameter((SoundWave) it), this.player, 0);
+                } else if(it instanceof MarkerSmell) {
+                    rlmodel.parameterEvaluation(new Parameter((MarkerSmell) it), this.player, 0);
+                }
+            }
 
+            if(rlmodel.getRedirect().size() != 0) {
+                plannedMoves = rlmodel.getRedirect();
+            }
+        }
 
-        // Inconsistent with explorer% ????
-//        System.out.println("Knowledge Size: " + this.knowledge.getRegion().entrySet().size());
+        // Check the agents vision
+        ScanVision();
 
-        // If moves are alread planned just continue deciding them.
+        // Continue
         if (!plannedMoves.isEmpty()) {
             return plannedMoves.poll();
         }
@@ -106,19 +120,18 @@ public class YamauchiAgent extends Agent {
 
         Optional<Frontier> chosenFrontierOpt = pickBestFrontier();
 
-        // No Frontier found, just do a random move for now
+        // Current path, select random move
         if (chosenFrontierOpt.isEmpty() || chosenFrontierOpt.get().getQueueNode() == null) {
             int value = this.random.nextInt(100);
 
             Action move = player.getDirection();
 
-            Optional<Tile> nextTileOpt = knowledge.getByCoordinates(player.getTile().getX() + move.getxIncrement(), player.getTile().getY() + player.getDirection().getyIncrement());
+            Optional<Tile> nextTileOpt = knowledge.getByCoordinates(player.getTile().getX() + move.getxIncrement(),
+                    player.getTile().getY() + player.getDirection().getyIncrement());
 
             boolean nextBlocked = false;
             if (nextTileOpt.isPresent()) {
-                Tile nextTile = nextTileOpt.get();
-
-                for (Item items : nextTile.getItems()) {
+                for (Item items : nextTileOpt.get().getItems()) {
                     if (items instanceof Collision) {
                         nextBlocked = true;
                         break;
@@ -135,11 +148,28 @@ public class YamauchiAgent extends Agent {
         }
 
         Frontier chosenFrontier = chosenFrontierOpt.get();
+        goal = chosenFrontier.getQueueNode().getTile();
 
         plannedMoves = chosenFrontier.getQueueNode().getMoves();
 
         return plannedMoves.poll();
 
+    }
+
+    // Vision assessment
+    private void ScanVision() {
+        for (Map.Entry<Integer, HashMap<Integer, Tile>> rowEntry : this.player.getVision().getRegion().entrySet()) {
+            for (Map.Entry<Integer, Tile> colEntry : rowEntry.getValue().entrySet()) {
+                Tile seen = colEntry.getValue();
+                if (seen.hasIntruder()) {
+                    Optional<QueueNode> queueNodeOpt = pathFindingAlgorithm.execute(this.knowledge, this.player, seen);
+                    queueNodeOpt.ifPresent(queueNode -> plannedMoves = queueNode.getMoves());
+                    System.out.println("Players Tile: " + player.getTile().getX() + "  " + player.getTile().getY());
+                    System.out.println(seen.getX() + " - " + seen.getY());
+                    System.out.println(plannedMoves);
+                }
+            }
+        }
     }
 
     private Optional<Frontier> pickBestFrontier() {

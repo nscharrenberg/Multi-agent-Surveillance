@@ -18,9 +18,9 @@ import java.io.File;
 import java.io.IOException;
 
 public class GameRepository implements IGameRepository {
-    private static String MAP_PATH = "src/test/resources/RLtrainingMaps/trainingExampleMap.txt";
-    //private static String MAP_PATH = "src/test/resources/RLtrainingMaps/markerPathTestMap.txt";
-    //private static String MAP_PATH = "src/test/resources/maps/testmap.txt";
+    //private static String MAP_PATH = "src/test/resources/RLtrainingMaps/trainingExampleMap.txt";
+    private static String MAP_PATH = "src/test/resources/RLtrainingMaps/ChasingTestMap.txt";
+    //private static String MAP_PATH = "src/test/resources/maps/rust.txt";
     private IMapRepository mapRepository;
     private IPlayerRepository playerRepository;
 

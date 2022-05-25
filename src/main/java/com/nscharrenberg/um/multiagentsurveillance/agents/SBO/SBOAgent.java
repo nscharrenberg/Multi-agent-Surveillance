@@ -1,8 +1,9 @@
 package com.nscharrenberg.um.multiagentsurveillance.agents.SBO;
 
+import com.nscharrenberg.um.multiagentsurveillance.agents.ReinforcementLearningAgent.Parameter;
+import com.nscharrenberg.um.multiagentsurveillance.agents.ReinforcementLearningAgent.RLmodel;
 import com.nscharrenberg.um.multiagentsurveillance.agents.shared.Agent;
 import com.nscharrenberg.um.multiagentsurveillance.agents.shared.algorithms.pathfinding.AStar.AStar;
-import com.nscharrenberg.um.multiagentsurveillance.agents.shared.algorithms.pathfinding.BFS.BFS;
 import com.nscharrenberg.um.multiagentsurveillance.agents.shared.algorithms.pathfinding.IPathFinding;
 import com.nscharrenberg.um.multiagentsurveillance.headless.contracts.repositories.IGameRepository;
 import com.nscharrenberg.um.multiagentsurveillance.headless.contracts.repositories.IMapRepository;
@@ -12,7 +13,6 @@ import com.nscharrenberg.um.multiagentsurveillance.headless.models.Action;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Items.Collision.Collision;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Items.Collision.Wall;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Items.Item;
-import com.nscharrenberg.um.multiagentsurveillance.headless.models.Items.Marker;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Items.MarkerSmell;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Items.SoundWave;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Map.Tile;
@@ -23,7 +23,7 @@ import java.util.*;
 
 public class SBOAgent extends Agent {
     private final Stack<Tile> scanned = new Stack<>();
-    private final RLmodel agentmodel = new RLmodel();
+    private final RLmodel rlmodel = new RLmodel();
     private final IPathFinding PFA = new AStar();
     private Tile goal = this.player.getTile();
     private final Random random = new Random();
@@ -60,15 +60,21 @@ public class SBOAgent extends Agent {
 //            return markerChecked;
 //        }
 
-//        for (Item it: player.getTile().getItems()) {
-//            if(it instanceof SoundWave) {
-//                if(agentmodel.parameterEvaluation(new Parameter((SoundWave) it), this.player))
-//                    plannedMoves = agentmodel.getRedirect();
-//            } else if(it instanceof MarkerSmell) {
-//                if(agentmodel.parameterEvaluation(new Parameter((MarkerSmell) it), this.player))
-//                    plannedMoves = agentmodel.getRedirect();
-//            }
-//        }
+        // Parameter assessment
+        rlmodel.reset();
+        if(player.getTile().getItems().size() >= 2) {
+            for (Item it: player.getTile().getItems()) {
+                if(it instanceof SoundWave) {
+                    rlmodel.parameterEvaluation(new Parameter((SoundWave) it), this.player, 0);
+                } else if(it instanceof MarkerSmell) {
+                    rlmodel.parameterEvaluation(new Parameter((MarkerSmell) it), this.player, 0);
+                }
+            }
+
+            if(rlmodel.getRedirect().size() != 0) {
+                plannedMoves = rlmodel.getRedirect();
+            }
+        }
 
         // Continue queue
         if (!plannedMoves.isEmpty() && knowledge.getByCoordinates(goal.getX(), goal.getY()).isEmpty()) {
@@ -89,10 +95,10 @@ public class SBOAgent extends Agent {
             }
         }
 
-        if (PFA.execute(mapRepository.getBoard(), this.player, goal).isPresent()) {
-            plannedMoves = PFA.execute(mapRepository.getBoard(), this.player, goal).get().getMoves();
+        if (PFA.execute(mapRepository.getBoard(), this.player, mapRepository.findTileByCoordinates(goal.getX(), goal.getY())).isPresent()) {
+            plannedMoves = PFA.execute(mapRepository.getBoard(), this.player, mapRepository.findTileByCoordinates(goal.getX(), goal.getY())).get().getMoves();
         } else if (knowledge.getByCoordinates(goal.getX(), goal.getY()).isEmpty()) {
-            for (Tile agt : getAdjacent(goal)) {
+            for (Tile agt : getAdjacent(mapRepository.findTileByCoordinates(goal.getX(), goal.getY()))) {
                 if (knowledge.getByCoordinates(agt.getX(), agt.getY()).isPresent()) {
                     if (PFA.execute(mapRepository.getBoard(), this.player, agt).isPresent()) {
                         plannedMoves = PFA.execute(mapRepository.getBoard(), this.player, agt).get().getMoves();

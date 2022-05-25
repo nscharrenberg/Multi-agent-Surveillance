@@ -1,12 +1,10 @@
-package com.nscharrenberg.um.multiagentsurveillance.agents.SBO;
+package com.nscharrenberg.um.multiagentsurveillance.agents.ReinforcementLearningAgent;
 
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Angle.*;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Items.Marker;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Items.MarkerSmell;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Player.Player;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Items.SoundWave;
-
-
 
 public class Parameter {
     AdvancedAngle direction;

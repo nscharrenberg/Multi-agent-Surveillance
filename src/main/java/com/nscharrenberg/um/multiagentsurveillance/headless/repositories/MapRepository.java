@@ -179,7 +179,7 @@ public class MapRepository implements IMapRepository {
         Tile found = findTileByCoordinates(x1, y1);
 
         if (found instanceof ShadowTile) {
-            throw new ItemAlreadyOnTileException();
+//            throw new ItemAlreadyOnTileException();
         }
 
         ShadowTile shadedTile = new ShadowTile(found.getX(), found.getY(), found.getItems());

@@ -314,10 +314,10 @@ public class PlayerRepository implements IPlayerRepository {
         Map.Entry<Map.Entry<Integer, Integer>, Map.Entry<Integer, Integer>> bounds = playerSpawnArea.bounds();
 
         while (!tileAssigned) {
-            int rowIndex = random.nextInt(bounds.getKey().getKey(), bounds.getKey().getValue()+1);
+            int rowIndex = random.nextInt(spawnArea.size());
             HashMap<Integer, Tile> row = spawnArea.get(rowIndex);
 
-            int colIndex = random.nextInt(bounds.getValue().getKey(), bounds.getValue().getValue()+1);
+            int colIndex = random.nextInt(spawnArea.get(0).size());
             Tile tile = row.get(colIndex);
 
             boolean spawned = spawn(playerClass, tile);

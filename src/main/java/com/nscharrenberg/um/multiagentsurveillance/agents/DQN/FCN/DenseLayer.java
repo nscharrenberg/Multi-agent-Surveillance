@@ -164,4 +164,6 @@ public class DenseLayer {
     public void setOutputs(double[] outputs) {
         this.outputs = outputs;
     }
+
+    public double[] getBias(){ return bias; }
 }

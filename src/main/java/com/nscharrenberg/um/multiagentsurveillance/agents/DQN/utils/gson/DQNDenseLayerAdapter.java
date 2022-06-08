@@ -13,7 +13,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.nscharrenberg.um.multiagentsurveillance.agents.DQN.utils.properties.DQNActivationLayerProperties.OUTPUTS;
 import static com.nscharrenberg.um.multiagentsurveillance.agents.DQN.utils.properties.DQNDenseLayerProperties.*;
 
 public class DQNDenseLayerAdapter extends TypeAdapter<DenseLayer> {
@@ -31,29 +30,12 @@ public class DQNDenseLayerAdapter extends TypeAdapter<DenseLayer> {
     public void write(JsonWriter writer, DenseLayer value) throws IOException {
         writer.beginObject();
 
-        writer.name(NUM_INPUTS.getKey());
-        writer.value(value.getNumInputs());
-
-        writer.name(NUM_OUTPUTS.getKey());
-        writer.value(value.getNumNeurons());
-
-        writer.name(INPUTS.getKey());
+        writer.name(BIAS.getKey());
 
         writer.beginArray();
 
-        for (double input : value.getInputs()) {
-            writer.value(input);
-        }
-
-        writer.endArray();
-
-        writer.name(OUTPUTS.getKey());
-
-        writer.beginArray();
-
-        for (double input : value.getOutputs()) {
-            writer.value(input);
-        }
+        for (double weight : value.getBias())
+            writer.value(weight);
 
         writer.endArray();
 
@@ -87,51 +69,7 @@ public class DQNDenseLayerAdapter extends TypeAdapter<DenseLayer> {
 
             if (fieldName != null) {
                 token = reader.peek();
-
-                if (fieldName.equals(NUM_INPUTS.getKey())) {
-                   denseLayer.setNumInputs(reader.nextInt());
-                } else if (fieldName.equals(NUM_OUTPUTS.getKey())) {
-                    denseLayer.setNumNeurons(reader.nextInt());
-                } else if (fieldName.equals(INPUTS.getKey())) {
-                    reader.beginArray();
-
-                    List<Double> inputs = new ArrayList<>();
-
-                    while (reader.hasNext()) {
-                        reader.peek();
-                        inputs.add(reader.nextDouble());
-                    }
-
-                    reader.endArray();
-
-                    // Convert back to primitive - TODO: Improve efficiency
-                    double[] inputArray = new double[inputs.size()];
-
-                    for (int i = 0; i < inputs.size(); i++) {
-                        inputArray[i] = inputs.get(i);
-                    }
-
-                    denseLayer.setInputs(inputArray);
-                } else if (fieldName.equals(OUTPUTS.getKey())) {
-                    reader.beginArray();
-
-                    List<Double> outputs = new ArrayList<>();
-
-                    while (reader.hasNext()) {
-                        outputs.add(reader.nextDouble());
-                    }
-
-                    reader.endArray();
-
-                    // Convert back to primitive - TODO: Improve efficiency
-                    double[] outputArray = new double[outputs.size()];
-
-                    for (int i = 0; i < outputs.size(); i++) {
-                        outputArray[i] = outputs.get(i);
-                    }
-
-                    denseLayer.setOutputs(outputArray);
-                } else if (fieldName.equals(NEURONS.getKey())) {
+                if (fieldName.equals(NEURONS.getKey())) {
                     reader.beginArray();
 
                     List<Neuron> outputs = new ArrayList<>();

@@ -9,7 +9,6 @@ import com.nscharrenberg.um.multiagentsurveillance.agents.DQN.FCN.Neuron;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-
 import static com.nscharrenberg.um.multiagentsurveillance.agents.DQN.utils.properties.DQNNeuronProperties.*;
 
 public class DQNNeuronAdapter extends TypeAdapter<Neuron> {
@@ -26,15 +25,6 @@ public class DQNNeuronAdapter extends TypeAdapter<Neuron> {
         }
 
         writer.endArray();
-
-        writer.name(BIAS.getKey());
-        writer.value(value.getBias());
-
-        writer.name(NUM_INPUTS.getKey());
-        writer.value(value.getNumInputs());
-
-        writer.name(LEARNING_RATE.getKey());
-        writer.value(value.getLearningRate());
 
         writer.endObject();
     }
@@ -54,35 +44,31 @@ public class DQNNeuronAdapter extends TypeAdapter<Neuron> {
                 fieldName = reader.nextName();
             }
 
-           if (fieldName != null) {
-               if (fieldName.equals(BIAS.getKey())) {
-                   neuron.setBias(reader.nextDouble());
-               } else if (fieldName.equals(NUM_INPUTS.getKey())) {
-                   neuron.setNumInputs(reader.nextInt());
-               } else if (fieldName.equals(LEARNING_RATE.getKey())) {
-                   neuron.setLearningRate(reader.nextDouble());
-               } else if (fieldName.equals(WEIGHTS.getKey())) {
-                   reader.beginArray();
+            if (fieldName != null) {
+            // TODO: Something here??
+                if (fieldName.equals(WEIGHTS.getKey())) {
+                    reader.beginArray();
 
-                   List<Double> weights = new ArrayList<>();
+                    List<Double> weights = new ArrayList<>();
 
-                   while (reader.hasNext()) {
-                       reader.peek();
-                       weights.add(reader.nextDouble());
-                   }
+                    while (reader.hasNext()) {
+                    reader.peek();
+                    weights.add(reader.nextDouble());
+                    }
 
-                   reader.endArray();
+                    reader.endArray();
 
-                   double[] weightsArray = new double[weights.size()];
+                    double[] weightsArray = new double[weights.size()];
 
-                   for (int i = 0; i < weights.size(); i++) {
-                       weightsArray[i] = weights.get(i);
-                   }
+                    for (int i = 0; i < weights.size(); i++) {
+                    weightsArray[i] = weights.get(i);
+                    }
 
-                   neuron.setWeights(weightsArray);
-               }
-           }
+                    neuron.setWeights(weightsArray);
+                }
+            }
         }
+
 
         reader.endObject();
 

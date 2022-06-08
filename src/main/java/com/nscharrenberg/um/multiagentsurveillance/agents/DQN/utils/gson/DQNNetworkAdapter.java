@@ -26,37 +26,11 @@ public class DQNNetworkAdapter extends TypeAdapter<Network> {
         GsonBuilder builder = new GsonBuilder();
         builder.registerTypeAdapter(ConvLayer.class, new DQNConvLayerAdapter());
         builder.registerTypeAdapter(DenseLayer.class, new DQNDenseLayerAdapter());
-        builder.registerTypeAdapter(ActivationLayer.class, new DQNActivationLayerAdapter());
         this.gson = builder.create();
     }
 
     @Override
     public void write(JsonWriter writer, Network value) throws IOException {
-        writer.beginObject();
-
-        writer.name(C1_FILTERS.getKey());
-        writer.value(value.getC1Filters());
-
-        writer.name(C2_FILTERS.getKey());
-        writer.value(value.getC2Filters());
-
-        writer.name(C3_FILTERS.getKey());
-        writer.value(value.getC3Filters());
-
-        writer.name(LEARNING_RATE.getKey());
-        writer.value(value.getLearningRate());
-
-        writer.name(KERNEL_SIZE.getKey());
-        writer.value(value.getKernelSize());
-
-        writer.name(OUTPUT_LENGTH.getKey());
-        writer.value(value.getOutputLength());
-
-        writer.name(CONV3_LENGTH.getKey());
-        writer.value(value.getConv3Length());
-
-        writer.name(ACTIVATION_LAYER.getKey());
-
         writer.beginObject();
 
         writer.value(gson.toJson(value.getActivationLayer(), ActivationLayer.class));
@@ -104,25 +78,8 @@ public class DQNNetworkAdapter extends TypeAdapter<Network> {
                 // Assumption that if fieldNAme isn't null that we always want to peek at this point.
                 token = reader.peek();
 
-                if (fieldName.equals(LEARNING_RATE.getKey())) {
-                    network.setLearningRate(reader.nextDouble());
-                } else if (fieldName.equals(KERNEL_SIZE.getKey())) {
-                    network.setKernelSize(reader.nextInt());
-                } else if (fieldName.equals(OUTPUT_LENGTH.getKey())) {
-                    network.setOutputLength(reader.nextInt());
-                } else if (fieldName.equals(C1_FILTERS.getKey())) {
-                    network.setC1Filters(reader.nextInt());
-                } else if (fieldName.equals(C2_FILTERS.getKey())) {
-                    network.setC2Filters(reader.nextInt());
-                } else if (fieldName.equals(C3_FILTERS.getKey())) {
-                    network.setC3Filters(reader.nextInt());
-                } else if (fieldName.equals(CONV3_LENGTH.getKey())) {
-                    network.setConv3Length(reader.nextInt());
-                } else if (fieldName.equals(ACTIVATION_LAYER.getKey())) {
-                    reader.beginObject();
-                    network.setActivationLayer(gson.fromJson(reader.nextString(), ActivationLayer.class));
-                    reader.endObject();
-                } else if (fieldName.equals(DENSE_LAYER.getKey())) {
+
+                if (fieldName.equals(DENSE_LAYER.getKey())) {
                     reader.beginArray();
 
                     List<DenseLayer> denseLayers = new ArrayList<>();

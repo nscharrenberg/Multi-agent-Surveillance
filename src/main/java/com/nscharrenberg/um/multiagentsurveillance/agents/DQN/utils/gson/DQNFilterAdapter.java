@@ -32,22 +32,6 @@ public class DQNFilterAdapter extends TypeAdapter<Filter> {
     public void write(JsonWriter writer, Filter value) throws IOException {
         writer.beginObject();
 
-        writer.name(CHANNELS.getKey());
-        writer.value(value.getChannels());
-
-        writer.name(KERNEL_SIZE.getKey());
-        writer.value(value.getKernelSize());
-
-        writer.name(INPUT_LENGTH.getKey());
-        writer.value(value.getInputLength());
-
-        writer.name(SIZE.getKey());
-        writer.value(value.getSize());
-
-        writer.name(LEARNING_RATE.getKey());
-        writer.value(value.getLearningRate());
-
-        writer.name(INPUT.getKey());
 
         writer.beginArray();
 
@@ -110,66 +94,8 @@ public class DQNFilterAdapter extends TypeAdapter<Filter> {
             if (fieldName != null) {
                 token = reader.peek();
 
-                if (fieldName.equals(CHANNELS.getKey())) {
-                    filter.setChannels(reader.nextInt());
-                } else if (fieldName.equals(KERNEL_SIZE.getKey())) {
-                    filter.setKernelSize(reader.nextInt());
-                } else if (fieldName.equals(INPUT_LENGTH.getKey())) {
-                    filter.setInputLength(reader.nextInt());
-                } else if (fieldName.equals(SIZE.getKey())) {
-                    filter.setSize(reader.nextInt());
-                } else if (fieldName.equals(LEARNING_RATE.getKey())) {
-                    filter.setLearningRate(reader.nextDouble());
-                } else if (fieldName.equals(INPUT.getKey())) {
-                    reader.beginArray();
 
-                    List<List<List<Double>>> biasRow = new ArrayList<>();
-
-                    while (reader.hasNext()) {
-                        reader.peek();
-
-                        reader.beginArray();
-
-                        List<List<Double>> biasCol = new ArrayList<>();
-
-                        while (reader.hasNext()) {
-                            reader.peek();
-
-                            reader.beginArray();
-
-                            List<Double> biasDepth = new ArrayList<>();
-
-                            while (reader.hasNext()) {
-                                reader.peek();
-
-                                biasDepth.add(reader.nextDouble());
-                            }
-
-                            reader.endArray();
-
-                            biasCol.add(biasDepth);
-                        }
-
-                        reader.endArray();
-
-                        biasRow.add(biasCol);
-                    }
-
-                    reader.endArray();
-
-                    // Convert back to primitive - TODO: Improve efficiency
-                    double[][][] inputArray = new double[biasRow.size()][biasRow.get(0).size()][biasRow.get(0).get(0).size()];
-
-                    for (int i = 0; i < biasRow.size(); i++) {
-                        for (int j = 0; j < biasRow.get(i).size(); j++) {
-                            for (int k = 0; k < biasRow.get(i).get(j).size(); j++) {
-                                inputArray[i][j][k] = biasRow.get(i).get(j).get(k);
-                            }
-                        }
-                    }
-
-                    filter.setInput(inputArray);
-                } else if (fieldName.equals(KERNELS.getKey())) {
+                if (fieldName.equals(KERNELS.getKey())) {
                     reader.beginArray();
 
                     List<Kernel> outputs = new ArrayList<>();

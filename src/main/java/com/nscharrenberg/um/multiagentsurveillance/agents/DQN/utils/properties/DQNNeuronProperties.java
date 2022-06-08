@@ -1,10 +1,7 @@
 package com.nscharrenberg.um.multiagentsurveillance.agents.DQN.utils.properties;
 
 public enum DQNNeuronProperties {
-    WEIGHTS("weights"),
-    BIAS("bias"),
-    NUM_INPUTS("numInputs"),
-    LEARNING_RATE("learningRate");
+    WEIGHTS("weights");
 
     final String key;
 

@@ -1,14 +1,8 @@
 package com.nscharrenberg.um.multiagentsurveillance.agents.DQN.utils.properties;
 
 public enum DQNFilterProperties {
-    CHANNELS("channels"),
-    INPUT("input"),
-    KERNEL_SIZE("kernelSize"),
     KERNELS("kernels"),
-    BIAS("bias"),
-    INPUT_LENGTH("inputLength"),
-    SIZE("size"),
-    LEARNING_RATE("learningRate");
+    BIAS("bias");
 
     final String key;
 

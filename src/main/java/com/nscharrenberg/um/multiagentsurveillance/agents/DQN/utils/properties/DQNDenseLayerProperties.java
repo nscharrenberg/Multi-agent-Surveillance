@@ -2,10 +2,7 @@ package com.nscharrenberg.um.multiagentsurveillance.agents.DQN.utils.properties;
 
 public enum DQNDenseLayerProperties {
     NEURONS("neurons"),
-    NUM_INPUTS("numInputs"),
-    NUM_OUTPUTS("numOutputs"),
-    INPUTS("inputs"),
-    OUTPUTS("outputs");
+    BIAS("bias");
 
     final String key;
 

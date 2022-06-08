@@ -17,20 +17,17 @@ public class DQNKernelAdapter extends TypeAdapter<Kernel> {
     public void write(JsonWriter writer, Kernel value) throws IOException {
         writer.beginObject();
 
-        writer.name(SIZE.getKey());
-        writer.value(value.getSize());
-
         writer.name(WEIGHTS.getKey());
 
         writer.beginArray();
 
-       for (int i = 0; i < value.getWeights().length; i++) {
+        for (int i = 0; i < value.getWeights().length; i++) {
            writer.beginArray();
            for (int j = 0; j < value.getWeights()[i].length; i++) {
                writer.value(value.getWeights()[i][j]);
            }
            writer.endArray();
-       }
+        }
 
         writer.endArray();
 
@@ -55,9 +52,7 @@ public class DQNKernelAdapter extends TypeAdapter<Kernel> {
             if (fieldName != null) {
                 token = reader.peek();
 
-                if (fieldName.equals(SIZE.getKey())) {
-                    kernel.setSize(reader.nextInt());
-                } else if (fieldName.equals(WEIGHTS.getKey())) {
+                if (fieldName.equals(WEIGHTS.getKey())) {
                     reader.beginArray();
 
                     List<List<Double>> weightsRow = new ArrayList<>();

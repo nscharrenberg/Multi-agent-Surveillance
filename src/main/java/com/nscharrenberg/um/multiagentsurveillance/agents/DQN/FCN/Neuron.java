@@ -51,10 +51,7 @@ public class Neuron {
         this.weights = weights;
     }
 
-    // TODO: UPDATE
-    public void setBias(double bias) {
 
-    }
     // TODO: UPDATE
     public int getNumInputs() {
         return 0;

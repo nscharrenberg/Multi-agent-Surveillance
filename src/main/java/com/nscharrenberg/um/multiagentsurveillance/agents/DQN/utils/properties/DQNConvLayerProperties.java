@@ -1,13 +1,8 @@
 package com.nscharrenberg.um.multiagentsurveillance.agents.DQN.utils.properties;
 
 public enum DQNConvLayerProperties {
-    INPUT_LENGTH("inputLength"),
-    NUM_FILTERS("numFilters"),
-    CHANNELS("channels"),
-    KERNEL_SIZE("kernelSize"),
-    FILTERS("filtes"),
-    OUTPUT("output"),
-    LENGTH("length");
+
+    FILTERS("filters");
 
     final String key;
 

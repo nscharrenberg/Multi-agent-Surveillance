@@ -14,7 +14,7 @@ public class Network {
     private DenseLayer[] denseLayers;
     private ActivationLayer activationLayer;
     private int kernelSize = 3;
-    private double learningRate = 0.001;;
+    private double learningRate = 0.001;
     private int outputLength = 3;
     private int c1Filters = 16, c2Filters = 64, c3Filters = 16;
     private int conv3Length;

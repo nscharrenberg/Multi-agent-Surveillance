@@ -7,7 +7,6 @@ import com.nscharrenberg.um.multiagentsurveillance.headless.contracts.repositori
 import com.nscharrenberg.um.multiagentsurveillance.headless.contracts.repositories.IPlayerRepository;
 import com.nscharrenberg.um.multiagentsurveillance.headless.exceptions.BoardNotBuildException;
 import com.nscharrenberg.um.multiagentsurveillance.headless.exceptions.InvalidTileException;
-import com.nscharrenberg.um.multiagentsurveillance.headless.exceptions.ItemNotOnTileException;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Action;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Items.Collision.Wall;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Items.Item;
@@ -23,7 +22,6 @@ import com.nscharrenberg.um.multiagentsurveillance.headless.models.Player.Intrud
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Player.Player;
 
 import java.awt.*;
-import java.lang.annotation.Target;
 import java.util.*;
 import java.util.List;
 
@@ -211,7 +209,7 @@ public abstract class Agent {
     }
 
     public Action markerCheck() throws InvalidTileException, BoardNotBuildException {
-        if (!gameRepository.isMarkersEnabled()) {
+        if (!gameRepository.isCanPlaceMarkers()) {
             return null;
         }
 

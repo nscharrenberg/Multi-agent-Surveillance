@@ -107,7 +107,11 @@ public interface IGameRepository {
 
     void setDistanceViewing(double distanceViewing);
 
-    boolean isMarkersEnabled();
+    boolean isCanPlaceMarkers();
 
-    void setMarkersEnabled(boolean markersEnabled);
+    void setCanPlaceMarkers(boolean canPlaceMarkers);
+
+    boolean isCanHearThroughWalls();
+
+    void setCanHearThroughWalls(boolean canHearThroughWalls);
 }

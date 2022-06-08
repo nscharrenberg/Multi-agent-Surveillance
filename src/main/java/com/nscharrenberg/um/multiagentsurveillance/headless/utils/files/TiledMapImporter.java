@@ -13,13 +13,9 @@ import com.nscharrenberg.um.multiagentsurveillance.headless.models.GameMode;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Map.TileArea;
 import com.nscharrenberg.um.multiagentsurveillance.headless.utils.AngleConverter;
 
-import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import java.security.Key;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 import java.util.Map;
 
 public class TiledMapImporter extends Importer{
@@ -108,7 +104,9 @@ public class TiledMapImporter extends Importer{
         } else if (id.equals(FileItems.DISTANCE_VIEWING.getKey())) {
             gameRepository.setDistanceViewing((Double) value);
         } else if (id.equals(FileItems.MARKERS_ENABLED.getKey())) {
-            gameRepository.setMarkersEnabled((Boolean) value);
+            gameRepository.setCanPlaceMarkers((Boolean) value);
+        } else if (id.equals(FileItems.HEAR_THROUGH_WALLS_ENABLED.getKey())) {
+            gameRepository.setCanHearThroughWalls((Boolean) value);
         } else {
             initCheck();
         }

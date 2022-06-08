@@ -1,5 +1,6 @@
 package com.nscharrenberg.um.multiagentsurveillance.headless.utils.Vision;
 
+import com.nscharrenberg.um.multiagentsurveillance.headless.Factory;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Map.Tile;
 
 import java.util.ArrayList;
@@ -49,6 +50,14 @@ public class Geometrics {
         // Remove start and end tiles
         linetiles.removeIf(tc -> (tc.getX() == position.getX() && tc.getY() == position.getY()));
         linetiles.removeIf(tc -> (tc.getX() == endpoint.getX() && tc.getY() == endpoint.getY()));
+
+        // TODO: @Tjardo fix this, use original Board (mapRepository.getBoard() stuff) and return result.
+//        ArrayList<Tile> result = new ArrayList<>();
+//        for(Tile tile : linetiles){
+//            int x = tile.getX();
+//            int y = tile.getY();
+//            result.add();
+//        }
 
         return linetiles;
     }

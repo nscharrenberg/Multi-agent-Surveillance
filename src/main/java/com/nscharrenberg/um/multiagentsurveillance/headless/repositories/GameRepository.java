@@ -46,7 +46,9 @@ public class GameRepository implements IGameRepository {
 
     private double distanceViewing = 4;
 
-    private boolean markersEnabled = true;
+    private boolean canPlaceMarkers = true;
+
+    private boolean canHearThroughWalls = false;
 
     public GameRepository() {
         this.mapRepository = Factory.getMapRepository();
@@ -374,12 +376,22 @@ public class GameRepository implements IGameRepository {
     }
 
     @Override
-    public boolean isMarkersEnabled() {
-        return markersEnabled;
+    public boolean isCanPlaceMarkers() {
+        return canPlaceMarkers;
     }
 
     @Override
-    public void setMarkersEnabled(boolean markersEnabled) {
-        this.markersEnabled = markersEnabled;
+    public void setCanPlaceMarkers(boolean canPlaceMarkers) {
+        this.canPlaceMarkers = canPlaceMarkers;
+    }
+
+    @Override
+    public boolean isCanHearThroughWalls() {
+        return canHearThroughWalls;
+    }
+
+    @Override
+    public void setCanHearThroughWalls(boolean canHearThroughWalls) {
+        this.canHearThroughWalls = canHearThroughWalls;
     }
 }

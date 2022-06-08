@@ -36,7 +36,8 @@ public enum FileItems {
     DISTANCE_SOUND_WAITING("distanceSoundWaiting"),
     DISTANCE_SOUND_YELLING("distanceSoundYelling"),
     DISTANCE_VIEWING("distanceViewing"),
-    MARKERS_ENABLED("markerEnabled");
+    MARKERS_ENABLED("markerEnabled"),
+    HEAR_THROUGH_WALLS_ENABLED("hearThroughWallsEnabled");
 
 
 

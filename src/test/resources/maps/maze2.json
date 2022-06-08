@@ -12,6 +12,7 @@
   "distanceSoundWaiting": 0,
   "distanceSoundYelling": 15,
   "markerEnabled": true,
+  "hearThroughWallsEnabled": false,
   "numberMarkers": 5,
   "smellingDistance": 5,
   "wallTexture": [21, 98, 44, 101, 59, 23, 61],

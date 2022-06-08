@@ -711,7 +711,7 @@ public class PlayerRepository implements IPlayerRepository {
     @Override
     public void updateSounds(List<Agent> agentList) {
         for(Agent agent : agentList){
-            DistanceEffects.areaEffects(agent, agentList);
+            DistanceEffects.areaEffects(agent, agentList, gameRepository.isCanHearThroughWalls());
         }
     }
 

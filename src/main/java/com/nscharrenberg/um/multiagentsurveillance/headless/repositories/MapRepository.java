@@ -21,6 +21,7 @@ import com.nscharrenberg.um.multiagentsurveillance.headless.models.Marker;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.MarkerSmell;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Player.Player;
 import com.nscharrenberg.um.multiagentsurveillance.headless.utils.AreaEffects.MarkerRange;
+import com.nscharrenberg.um.multiagentsurveillance.headless.utils.Vision.Geometrics;
 
 import java.util.*;
 
@@ -28,11 +29,15 @@ public class MapRepository implements IMapRepository {
     private IGameRepository gameRepository;
     private IPlayerRepository playerRepository;
 
+    int counter = 0;
+
     private TileArea board;
     private TileArea targetArea;
     private TileArea guardSpawnArea;
     private TileArea intruderSpawnArea;
     private Tile targetCenter;
+
+    private Geometrics geometrics = new Geometrics();
 
     private ArrayList<MarkerSmell> placed_markers = new ArrayList<MarkerSmell>();
 
@@ -136,6 +141,27 @@ public class MapRepository implements IMapRepository {
     }
 
     @Override
+    public void addTargetArea(int x1, int y1) throws BoardNotBuildException, InvalidTileException {
+        boardInitCheck();
+
+        Tile found = findTileByCoordinates(x1, y1);
+
+        if (targetArea == null) {
+            targetArea = new TileArea();
+        }
+
+        targetArea.add(found);
+
+        if (!targetArea.isEmpty()) {
+            Point A = new Point(x1, y1);
+            Point B = new Point(x1+1, y1+1);
+            Point C = new Point(x1, y1+1);
+            Point D = new Point(x1+1, y1);
+            targetCenter = IntersectionPoint.calculateIntersectionPoint(A, B, C, D);
+        }
+    }
+
+    @Override
     public void addTeleporter(int x1, int y1, int x2, int y2, int destX, int destY, Action direction) throws InvalidTileException, BoardNotBuildException, ItemAlreadyOnTileException {
         boardInitCheck();
 
@@ -152,6 +178,23 @@ public class MapRepository implements IMapRepository {
         }
 
         teleporter.setSource(found);
+    }
+
+    @Override
+    public void addTeleporter(int x1, int y1, int destX, int destY, Action direction) throws InvalidTileException, BoardNotBuildException, ItemAlreadyOnTileException {
+        boardInitCheck();
+
+        Tile found = findTileByCoordinates(x1, y1);
+        Tile destination = findTileByCoordinates(destX, destY);
+
+        TileArea area = new TileArea();
+        area.add(found);
+
+        Teleporter teleporter = new Teleporter(area, destination, direction);
+        destination.add(teleporter);
+        found.add(teleporter);
+
+        teleporter.setSource(area);
     }
 
     @Override
@@ -174,7 +217,7 @@ public class MapRepository implements IMapRepository {
         Tile found = findTileByCoordinates(x1, y1);
 
         if (found instanceof ShadowTile) {
-            throw new ItemAlreadyOnTileException();
+//            throw new ItemAlreadyOnTileException();
         }
 
         ShadowTile shadedTile = new ShadowTile(found.getX(), found.getY(), found.getItems());
@@ -224,6 +267,19 @@ public class MapRepository implements IMapRepository {
     }
 
     @Override
+    public void addGuardSpawnArea(int x1, int y1) throws BoardNotBuildException, InvalidTileException {
+        boardInitCheck();
+
+        Tile found = findTileByCoordinates(x1, y1);
+
+        if (guardSpawnArea == null) {
+            guardSpawnArea = new TileArea();
+        }
+
+        guardSpawnArea.add(found);
+    }
+
+    @Override
     public void addIntruderSpawnArea(int x1, int y1, int x2, int y2) throws BoardNotBuildException, InvalidTileException {
         boardInitCheck();
 
@@ -237,18 +293,56 @@ public class MapRepository implements IMapRepository {
     }
 
     @Override
+    public void addIntruderSpawnArea(int x1, int y1) throws BoardNotBuildException, InvalidTileException {
+        boardInitCheck();
+
+        Tile found = findTileByCoordinates(x1, y1);
+
+        if (intruderSpawnArea == null) {
+            intruderSpawnArea = new TileArea();
+        }
+
+        intruderSpawnArea.add(found);
+    }
+
+    @Override
     public void addMarker(Marker.MarkerType type, int x1, int y1, Player player) throws BoardNotBuildException, InvalidTileException, ItemAlreadyOnTileException {
         boardInitCheck();
 
         Tile found = findTileByCoordinates(x1, y1);
-        Marker marker = new Marker(type, found, player);
+        Marker marker = new Marker(type, found, player, 10);
 
         Tile[] neighboringTiles = calculateNeigboringTiles(marker);
         for (int i = 0; i < neighboringTiles.length; i++) {
+            boolean intersectionFound = false;
+            boolean tileIsWall = false;
             if (neighboringTiles[i] != null) {
-                MarkerSmell markersmell = new MarkerSmell(neighboringTiles[i], marker.getType(), mr.getStrength(neighboringTiles[i], found), mr.getDirection(neighboringTiles[i], found), player);
-                neighboringTiles[i].add(markersmell);
-                placed_markers.add(markersmell);
+                if (!found.equals(neighboringTiles[i])) {
+                    ArrayList<Tile> intersectingTiles = geometrics.getIntersectingTiles(found, neighboringTiles[i]);
+                    ArrayList<Tile> actualTiles = new ArrayList<Tile>();
+                    for (Tile tile : intersectingTiles) {
+                        actualTiles.add(findTileByCoordinates(tile.getX(), tile.getY()));
+                    }
+                    for (Tile tile : actualTiles) {
+                        for (Item item : tile.getItems()) {
+                            if (item instanceof Wall) {
+                                intersectionFound = true;
+                                break;
+                            }
+                        }
+                    }
+                }
+                for (Item item : neighboringTiles[i].getItems()) {
+                    if (item instanceof Wall) {
+                        tileIsWall = true;
+                        break;
+                    }
+                }
+                if (!intersectionFound && !tileIsWall) {
+                    MarkerSmell markersmell = new MarkerSmell(neighboringTiles[i], marker.getType(), mr.getStrength(neighboringTiles[i], found), mr.getDirection(neighboringTiles[i], found), player, 10);
+                    neighboringTiles[i].add(markersmell);
+                    placed_markers.add(markersmell);
+                }
             }
         }
     }
@@ -292,7 +386,6 @@ public class MapRepository implements IMapRepository {
     @Override
     public void checkMarkers() throws BoardNotBuildException, InvalidTileException, ItemNotOnTileException {
         boardInitCheck();
-
         if (placed_markers.size() > 0) {
             int i = 0;
             while (i < placed_markers.size()) {

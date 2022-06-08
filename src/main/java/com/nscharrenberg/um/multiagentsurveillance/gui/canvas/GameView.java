@@ -15,6 +15,8 @@ import com.nscharrenberg.um.multiagentsurveillance.headless.models.Items.Telepor
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Map.ShadowTile;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Map.Tile;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Map.TileArea;
+import com.nscharrenberg.um.multiagentsurveillance.headless.models.Marker;
+import com.nscharrenberg.um.multiagentsurveillance.headless.models.MarkerSmell;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Player.Guard;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Player.Intruder;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Player.Player;
@@ -31,6 +33,8 @@ import javafx.scene.control.Alert;
 import javafx.scene.image.WritableImage;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Circle;
+import javafx.scene.shape.Line;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
 
@@ -227,6 +231,8 @@ public class GameView extends StackPane {
                 }
             }
         }
+
+
     }
 
     private void drawText(String text) {
@@ -278,10 +284,14 @@ public class GameView extends StackPane {
     }
 
     private void detectAndDrawTile(Tile tile) {
-        for (Item item : tile.getItems()) {
+        if (tile.getItems().size() >= 2) {
+            System.out.println("2 items");
+        }
+
+         for (Item item : tile.getItems()) {
             if (item instanceof Wall) {
                 drawWall(tile);
-            } else if (item instanceof Teleporter teleporter) {
+            }  else if (item instanceof Teleporter teleporter) {
                 if (teleporter.getTile().equals(tile)) {
                     drawTeleportOutput(tile);
                 } else {
@@ -307,6 +317,8 @@ public class GameView extends StackPane {
                     Player player = (Player) item;
                     drawIntruder(tile, player.getDirection());
                 }
+
+
             }
         } catch (ConcurrentModificationException e) {
             // do nothing
@@ -342,7 +354,18 @@ public class GameView extends StackPane {
                 }
             }
         }
+
+        for (Marker marker : mapRepository.getListOfPlacedMarkers()) {
+            if (marker instanceof MarkerSmell) {
+                if (((MarkerSmell) marker).getPlayer() instanceof Guard) {
+                    drawMarkerSmellGuard(marker.getTile(), ((MarkerSmell) marker).getType());
+                } else {
+                    drawMarkerSmellIntruder(marker.getTile(), ((MarkerSmell) marker).getType());
+                }
+            }
+        }
     }
+
 
     private void drawTargetArea() {
         TileArea targetArea = mapRepository.getTargetArea();
@@ -406,7 +429,7 @@ public class GameView extends StackPane {
         drawTile(tile, SHADED_TILE_COLOR, 0.25);
     }
 
-    private void drawTile(Tile tile, Color color) {;
+    private void drawTile(Tile tile, Color color) {
         drawTile(tile, color, 1);
     }
 
@@ -415,4 +438,58 @@ public class GameView extends StackPane {
         graphicsContext.setFill(color);
         graphicsContext.fillRect(getPoint(tile.getX()), getPoint(tile.getY()), GSSD, GSSD);
     }
+
+    private void drawMarkerSmellGuard(Tile tile, Marker.MarkerType markerType) {
+        double alpha = 0.5;
+        if (markerType == Marker.MarkerType.DEAD_END) {
+            graphicsContext.setGlobalAlpha(alpha);
+            graphicsContext.setFill(Color.YELLOW);
+            graphicsContext.fillRect(getPoint(tile.getX()), getPoint(tile.getY()), GSSD, GSSD);
+        }
+        else if (markerType == Marker.MarkerType.TELEPORTER) {
+            graphicsContext.setGlobalAlpha(alpha);
+            graphicsContext.setFill(Color.PINK);
+            graphicsContext.fillRect(getPoint(tile.getX()), getPoint(tile.getY()), GSSD, GSSD);
+        }
+        else if (markerType == Marker.MarkerType.INTRUDER_SPOTTED) {
+            graphicsContext.setGlobalAlpha(alpha);
+            graphicsContext.setFill(Color.LIGHTBLUE);
+            graphicsContext.fillRect(getPoint(tile.getX()), getPoint(tile.getY()), GSSD, GSSD);
+        }
+        else if (markerType == Marker.MarkerType.SHADED) {
+            graphicsContext.setGlobalAlpha(alpha);
+            graphicsContext.setFill(Color.LIGHTGOLDENRODYELLOW);
+            graphicsContext.fillRect(getPoint(tile.getX()), getPoint(tile.getY()), GSSD, GSSD);
+        }
+    }
+
+    private void drawMarkerSmellIntruder(Tile tile, Marker.MarkerType markerType) {
+        double alpha = 0.5;
+        if (markerType == Marker.MarkerType.DEAD_END) {
+            graphicsContext.setGlobalAlpha(alpha);
+            graphicsContext.setFill(Color.BROWN);
+            graphicsContext.fillRect(getPoint(tile.getX()), getPoint(tile.getY()), GSSD, GSSD);
+        }
+        else if (markerType == Marker.MarkerType.TARGET) {
+            graphicsContext.setGlobalAlpha(alpha);
+            graphicsContext.setFill(Color.BLACK);
+            graphicsContext.fillRect(getPoint(tile.getX()), getPoint(tile.getY()), GSSD, GSSD);
+        }
+        else if (markerType == Marker.MarkerType.GUARD_SPOTTED) {
+            graphicsContext.setGlobalAlpha(alpha);
+            graphicsContext.setFill(Color.DEEPPINK);
+            graphicsContext.fillRect(getPoint(tile.getX()), getPoint(tile.getY()), GSSD, GSSD);
+        }
+        else if (markerType == Marker.MarkerType.SHADED) {
+            graphicsContext.setGlobalAlpha(alpha);
+            graphicsContext.setFill(Color.DARKKHAKI);
+            graphicsContext.fillRect(getPoint(tile.getX()), getPoint(tile.getY()), GSSD, GSSD);
+        }
+        else if (markerType == Marker.MarkerType.TELEPORTER) {
+            graphicsContext.setGlobalAlpha(alpha);
+            graphicsContext.setFill(Color.DARKVIOLET);
+            graphicsContext.fillRect(getPoint(tile.getX()), getPoint(tile.getY()), GSSD, GSSD);
+        }
+    }
+
 }

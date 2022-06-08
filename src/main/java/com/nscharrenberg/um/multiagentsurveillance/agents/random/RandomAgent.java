@@ -69,7 +69,7 @@ public class RandomAgent extends Agent {
         }
 
         if (value <= 30 || nextBlocked) {
-            int pick = this.random.nextInt(Action.values().length);
+            int pick = this.random.nextInt(4);
             move = Action.values()[pick];
         }
 

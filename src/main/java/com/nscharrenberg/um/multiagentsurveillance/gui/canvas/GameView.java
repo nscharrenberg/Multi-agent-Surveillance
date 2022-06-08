@@ -1,5 +1,7 @@
 package com.nscharrenberg.um.multiagentsurveillance.gui.canvas;
 
+import com.nscharrenberg.um.multiagentsurveillance.agents.ReinforcementLearningAgent.Export;
+import com.nscharrenberg.um.multiagentsurveillance.agents.ReinforcementLearningAgent.TypePriority;
 import com.nscharrenberg.um.multiagentsurveillance.agents.shared.Agent;
 import com.nscharrenberg.um.multiagentsurveillance.headless.contracts.repositories.IGameRepository;
 import com.nscharrenberg.um.multiagentsurveillance.headless.contracts.repositories.IMapRepository;
@@ -183,6 +185,17 @@ public class GameView extends StackPane {
             alert.setHeaderText(gameRepository.getGameState().getMessage());
             int caughtCount = playerRepository.getCaughtIntruders().size();
             int escapeCount = playerRepository.getEscapedIntruders().size();
+
+            // Export data to csv
+            Export exp = new Export();
+            exp.addValue("Game: ", 0);
+            exp.addValue("Intruders caught: ", caughtCount);
+            exp.addValue("Intruders Escaped", escapeCount);
+            for (TypePriority tp: TypePriority.values()) {
+                exp.addValue(tp.name() + ": ", tp.getPriority());
+            }
+            exp.addValue("Duration: ", 0);
+            exp.parseValues();
 
             alert.setContentText("Intruders Caught: " + caughtCount + "\nIntruders Escaped: " + escapeCount);
         }

@@ -2,7 +2,7 @@ package headless;
 
 import com.nscharrenberg.um.multiagentsurveillance.headless.Factory;
 import com.nscharrenberg.um.multiagentsurveillance.headless.exceptions.*;
-import com.nscharrenberg.um.multiagentsurveillance.headless.models.Angle.Angle;
+import com.nscharrenberg.um.multiagentsurveillance.headless.models.Action;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Items.Item;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Items.Teleporter;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Items.Collision.Wall;
@@ -99,7 +99,7 @@ public class MapBuildTest {
 
     @DisplayName("Move Guard Success")
     @Test
-    void testMoveGuardSuccessful() throws ItemAlreadyOnTileException, CollisionException, InvalidTileException, ItemNotOnTileException {
+    void testMoveGuardSuccessful() throws ItemAlreadyOnTileException, CollisionException, InvalidTileException, ItemNotOnTileException, BoardNotBuildException {
         int x = 20;
         int y = 10;
 
@@ -111,7 +111,7 @@ public class MapBuildTest {
 
         Tile tile = tileOpt.get();
 
-        Guard guard = new Guard(tile, Angle.UP);
+        Guard guard = new Guard(tile, Action.UP);
         tile.add(guard);
 
         // Check if player exists
@@ -119,7 +119,7 @@ public class MapBuildTest {
         Assertions.assertEquals(1, tile.getItems().size());
         Assertions.assertEquals(guard, tile.getItems().get(0));
 
-        Angle move = Angle.DOWN;
+        Action move = Action.DOWN;
 
         // Rotate the player
         Factory.getPlayerRepository().move(guard, move);
@@ -163,7 +163,7 @@ public class MapBuildTest {
 
         Tile tile = tileOpt.get();
 
-        Guard guard = new Guard(tile, Angle.UP);
+        Guard guard = new Guard(tile, Action.UP);
         tile.add(guard);
 
         // Check if player exists
@@ -171,7 +171,7 @@ public class MapBuildTest {
         Assertions.assertEquals(1, tile.getItems().size());
         Assertions.assertEquals(guard, tile.getItems().get(0));
 
-        Angle move = Angle.UP;
+        Action move = Action.UP;
 
         // build wall
         int wallX = tile.getX() + move.getxIncrement();
@@ -200,7 +200,7 @@ public class MapBuildTest {
         int x2 = 6;
         int y2 = 3;
 
-        Angle facingDirection = Angle.LEFT;
+        Action facingDirection = Action.LEFT;
 
         // Destination
         int destX = 20;
@@ -220,10 +220,10 @@ public class MapBuildTest {
 
         Tile tile = tileOpt.get();
 
-        Guard guard = new Guard(tile, Angle.RIGHT);
+        Guard guard = new Guard(tile, Action.RIGHT);
         tile.add(guard);
 
-        Angle move = Angle.RIGHT;
+        Action move = Action.RIGHT;
 
         // build wall
         int teleportSourceX = tile.getX() + move.getxIncrement();

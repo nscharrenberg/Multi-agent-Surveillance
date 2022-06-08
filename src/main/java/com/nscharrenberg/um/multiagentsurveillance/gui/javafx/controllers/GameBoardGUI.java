@@ -2,7 +2,7 @@ package com.nscharrenberg.um.multiagentsurveillance.gui.javafx.controllers;
 
 import com.nscharrenberg.um.multiagentsurveillance.agents.frontier.yamauchi.Frontier;
 import com.nscharrenberg.um.multiagentsurveillance.agents.frontier.yamauchi.YamauchiAgent;
-import com.nscharrenberg.um.multiagentsurveillance.headless.models.Angle.Angle;
+import com.nscharrenberg.um.multiagentsurveillance.headless.models.Action;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Items.*;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Items.Collision.Door;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Items.Collision.Wall;
@@ -11,6 +11,8 @@ import com.nscharrenberg.um.multiagentsurveillance.headless.models.Map.Area;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Map.ShadowTile;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Map.Tile;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Map.TileArea;
+import com.nscharrenberg.um.multiagentsurveillance.headless.models.Marker;
+import com.nscharrenberg.um.multiagentsurveillance.headless.models.MarkerSmell;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Player.Guard;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Player.Intruder;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Player.Player;
@@ -26,8 +28,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Polygon;
-import javafx.scene.shape.Rectangle;
+import javafx.scene.shape.*;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 
@@ -58,7 +59,7 @@ public class GameBoardGUI extends Application {
     private HashMap<Integer, HashMap<Integer, StackPane>> gridPanes = new HashMap<>();
 
 
-    private ArrayList<TileComponents> components = new ArrayList<TileComponents>(Arrays.asList(TileComponents.SHADED, TileComponents.WALL, TileComponents.DOOR, TileComponents.WINDOW, TileComponents.TELEPORTER,
+    private ArrayList<TileComponents> components = new ArrayList<TileComponents>(Arrays.asList(TileComponents.SHADED, TileComponents.MARKERSMELL, TileComponents.WALL, TileComponents.DOOR, TileComponents.WINDOW, TileComponents.TELEPORTER,
             TileComponents.GUARD, TileComponents.INTRUDER));
 
     public enum TileComponents {
@@ -66,6 +67,7 @@ public class GameBoardGUI extends Application {
         SHADED,
         GUARD,
         INTRUDER,
+        MARKERSMELL,
         TELEPORTER,
         WALL,
         WINDOW,
@@ -191,7 +193,8 @@ public class GameBoardGUI extends Application {
                 }
             });
         } catch (Exception e) {
-            System.out.println(e.getMessage());
+			e.printStackTrace();
+            //System.out.println(e.getMessage());
         }
     }
 
@@ -348,11 +351,21 @@ public class GameBoardGUI extends Application {
         } else if (isKnowledge)
             rectangle.setStroke(Color.AQUA);
 
+        Line[] markerLines = new Line[0];
+        Circle markerCircle = null;
+
 
         for (Item item : orderedList) {
             if (item instanceof Wall) {
                 rectangle.setFill(Color.DARKGRAY);
                 rectangle.setOpacity(0.8);
+            } else if (item instanceof MarkerSmell) {
+                if (((MarkerSmell) item).getPlayer() instanceof Guard) {
+                    markerLines = drawMarkersGuard(((MarkerSmell) item).getType());
+                }
+                else if (((MarkerSmell) item).getPlayer() instanceof Intruder) {
+                    markerCircle = drawMarkersIntruders(((MarkerSmell) item).getType());
+                }
             } else if (item instanceof Window) {
                 rectangle.setFill(Color.BLUE);
             } else if (item instanceof Door) {
@@ -375,44 +388,57 @@ public class GameBoardGUI extends Application {
         if (!isKnowledge && !isVision)
             rectangle.setStroke(Color.BLACK);
 
-        if (polygon == null)
+        if (polygon == null && markerLines.length == 0 && markerCircle == null)
             return new StackPane(rectangle);
-        else
+        else if (markerLines.length == 0 && markerCircle == null)
             return new StackPane(rectangle, polygon);
+        else if (polygon == null && markerCircle == null)
+            return new StackPane(rectangle, markerLines[0], markerLines[1]);
+        else if (polygon == null && markerLines.length == 0)
+            return new StackPane(rectangle, markerCircle);
+        else if (polygon == null)
+            return new StackPane(rectangle, markerLines[0], markerLines[1], markerCircle);
+        else if (markerLines.length == 0)
+            return new StackPane(rectangle, polygon, markerCircle);
+        else if (markerCircle == null)
+            return new StackPane(rectangle, polygon, markerLines[0], markerLines[1]);
+        else
+            return new StackPane(rectangle, polygon, markerLines[0], markerLines[1], markerCircle);
     }
 
-    private Polygon createGuard(Angle angle){
+    private Polygon createGuard(Action action){
 
         Polygon polygon = new Polygon();
 
-        if (angle == Angle.UP)
+        if (action == Action.UP)
             polygon.getPoints().addAll(faceUP_Guard);
-        else if (angle == Angle.DOWN)
+        else if (action == Action.DOWN)
             polygon.getPoints().addAll(faceDOWN_Guard);
-        else if (angle == Angle.LEFT)
+        else if (action == Action.LEFT)
             polygon.getPoints().addAll(faceLEFT_Guard);
-        else if (angle == Angle.RIGHT)
+        else if (action == Action.RIGHT)
             polygon.getPoints().addAll(faceRIGHT_Guard);
 
         return polygon;
     }
 
-    private Polygon createIntruder(Angle angle){
+    private Polygon createIntruder(Action action){
 
         Polygon polygon = new Polygon();
 
-        if (angle == Angle.UP)
+        if (action == Action.UP)
             polygon.getPoints().addAll(faceUP_Intruder);
-        else if (angle == Angle.DOWN)
+        else if (action == Action.DOWN)
             polygon.getPoints().addAll(faceDOWN_Intruder);
-        else if (angle == Angle.LEFT)
+        else if (action == Action.LEFT)
             polygon.getPoints().addAll(faceLEFT_Intruder);
-        else if (angle == Angle.RIGHT)
+        else if (action == Action.RIGHT)
             polygon.getPoints().addAll(faceRIGHT_Intruder);
 
         return polygon;
 
     }
+
 
     private ArrayList<Item> orderList(ArrayList<Item> itemList){
 
@@ -423,6 +449,9 @@ public class GameBoardGUI extends Application {
         for (Item item : itemList) {
             if (item instanceof Wall) {
                 index = components.indexOf(TileComponents.WALL);
+                out.set(index, item);
+            } else if (item instanceof MarkerSmell) {
+                index = components.indexOf(TileComponents.MARKERSMELL);
                 out.set(index, item);
             } else if (item instanceof Window) {
                 index = components.indexOf(TileComponents.WINDOW);
@@ -463,6 +492,64 @@ public class GameBoardGUI extends Application {
         faceLEFT_Guard = new Double[]{GSSD / 6.0, GSSD / 2.0, GSSD / 2.0, GSSD * 5.0 / 6.0, GSSD * 5.0 / 6.0, GSSD * 5.0 / 6.0, GSSD * 5.0 / 6.0, GSSD / 6.0, GSSD / 2.0, GSSD / 6.0, GSSD / 6.0, GSSD / 2.0};
         faceRIGHT_Guard = new Double[]{GSSD * 5.0 / 6.0, GSSD / 2.0, GSSD / 2.0, GSSD / 6.0, GSSD / 6.0, GSSD / 6.0, GSSD / 6.0, GSSD * 5.0 / 6.0, GSSD / 2.0, GSSD * 5.0/ 6.0, GSSD * 5.0 / 6.0, GSSD / 2.0};
     }
+
+
+    private Circle createMarkerIntruderLegend() {
+        Circle marker_Intruder = new Circle(GSSD/2.0, GSSD/2.0, GSSD/3.0);
+        return marker_Intruder;
+    }
+
+    public Line[] drawMarkersGuard(Marker.MarkerType markerType) {
+        Line line1 = new Line(GSSD/6.0, GSSD*5.0/6.0, GSSD*5.0/6.0, GSSD/6.0);
+        Line line2 = new Line(GSSD/6.0, GSSD/6.0, GSSD*5.0/6.0, GSSD*5.0/6.0);
+        line1.setStrokeWidth(2);
+        line2.setStrokeWidth(2);
+        if (markerType == Marker.MarkerType.DEAD_END) {
+            line1.setFill(Color.RED);
+            line2.setFill(Color.RED);
+        }
+        else if (markerType == Marker.MarkerType.TARGET) {
+            line1.setFill(Color.RED);
+            line2.setFill(Color.RED);
+        }
+        else if (markerType == Marker.MarkerType.GUARD_SPOTTED) {
+            line1.setFill(Color.RED);
+            line2.setFill(Color.RED);
+        }
+        else if (markerType == Marker.MarkerType.INTRUDER_SPOTTED) {
+            line1.setFill(Color.RED);
+            line2.setFill(Color.RED);
+        }
+        else if (markerType == Marker.MarkerType.TELEPORTER) {
+            line1.setFill(Color.RED);
+            line2.setFill(Color.RED);
+        }
+
+        return new Line[]{line1, line2};
+    }
+
+
+    public Circle drawMarkersIntruders(Marker.MarkerType marker) {
+        Circle intruderMarker = createMarkerIntruderLegend();
+        if (marker == Marker.MarkerType.DEAD_END) {
+            intruderMarker.setFill(Color.RED);
+        }
+        else if (marker == Marker.MarkerType.TARGET) {
+            intruderMarker.setFill(Color.RED);
+        }
+        else if (marker == Marker.MarkerType.GUARD_SPOTTED) {
+            intruderMarker.setFill(Color.RED);
+        }
+        else if (marker == Marker.MarkerType.INTRUDER_SPOTTED) {
+            intruderMarker.setFill(Color.RED);
+        }
+        else if (marker == Marker.MarkerType.TELEPORTER) {
+            intruderMarker.setFill(Color.RED);
+        }
+        
+        return intruderMarker;
+    }
+
 
     public void showPath(Stage st, List<List<Coordinates>> data){
         TileArea board = Factory.getMapRepository().getBoardAsArea();

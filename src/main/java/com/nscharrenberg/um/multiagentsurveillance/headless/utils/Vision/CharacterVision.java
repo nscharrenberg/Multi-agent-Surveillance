@@ -1,11 +1,12 @@
 package com.nscharrenberg.um.multiagentsurveillance.headless.utils.Vision;
 
-import com.nscharrenberg.um.multiagentsurveillance.headless.models.Angle.Angle;
+import com.nscharrenberg.um.multiagentsurveillance.headless.models.Action;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Items.Item;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Items.Collision.Wall;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Map.ShadowTile;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Map.Tile;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Map.TileArea;
+import com.nscharrenberg.um.multiagentsurveillance.headless.models.Player.Guard;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Player.Player;
 
 import java.util.ArrayList;
@@ -14,11 +15,11 @@ import java.util.Optional;
 // probably have players inherit this class later
 public class CharacterVision{
     private int length;
-    private Angle direction;
+    private Action direction;
     private Geometrics gm;
     private Player player;
 
-    public CharacterVision(int length, Angle direction, Player player) {
+    public CharacterVision(int length, Action direction, Player player) {
         this.length = length;
         this.direction = direction;
         this.gm = new Geometrics();
@@ -37,10 +38,10 @@ public class CharacterVision{
         int py = position.getY();
 
         // Add left and right tiles
-        if (this.direction == Angle.UP || this.direction == Angle.DOWN) {
+        if (this.direction == Action.UP || this.direction == Action.DOWN) {
             vision.add(new Tile(px+1,py));
             vision.add(new Tile(px-1,py));
-        } else if(this.direction == Angle.RIGHT || this.direction == Angle.LEFT) {
+        } else if(this.direction == Action.RIGHT || this.direction == Action.LEFT) {
             vision.add(new Tile(px,py+1));
             vision.add(new Tile(px,py-1));
         }
@@ -93,7 +94,7 @@ public class CharacterVision{
         ArrayList<Tile> observation = new ArrayList<Tile>();
         observation.add(position);
 
-        if(this.direction == Angle.DOWN) {
+        if(this.direction == Action.DOWN) {
             for(int k=0; k < length; k++) {
                 for(int r=0; r < s; r++) {
                     observation.add(new Tile((px+length)-k-r, (py+length)-k));
@@ -101,7 +102,7 @@ public class CharacterVision{
                 s -= 2;
             }
         }
-        else if(this.direction == Angle.RIGHT) {
+        else if(this.direction == Action.RIGHT) {
             for(int k=0; k < length; k++) {
                 for(int r=0; r < s; r++) {
                     observation.add(new Tile((px+length)-k, (py+length)-k-r));
@@ -109,7 +110,7 @@ public class CharacterVision{
                 s -= 2;
             }
         }
-        else if(this.direction == Angle.UP) {
+        else if(this.direction == Action.UP) {
             for(int k=0; k < length; k++) {
                 for(int r=0; r < s; r++) {
                     observation.add(new Tile((px-length)+k+r, (py-length)+k));
@@ -117,7 +118,7 @@ public class CharacterVision{
                 s -= 2;
             }
         }
-        else if(this.direction == Angle.LEFT) {
+        else if(this.direction == Action.LEFT) {
             for(int k=0; k < length; k++) {
                 for(int r=0; r < s; r++) {
                     observation.add(new Tile((px-length)+k, (py-length)+k+r));
@@ -138,6 +139,9 @@ public class CharacterVision{
         rawvision.removeIf(tc -> (tc.getX() < 0 || tc.getY() < 0));
         rawvision.removeIf(tc -> (tc.getX() > board.width() || tc.getY() > board.height()));
 
+        //Guards
+        boolean isHunting = false;
+
         // Check remaining tiles for items
         for (Tile t : rawvision) {
             for (Tile it : gm.getIntersectingTiles(position, t)) {
@@ -153,12 +157,24 @@ public class CharacterVision{
                 if (tileAddOpt.isEmpty()) {
                     continue;
                 }
+                Tile tile = tileAddOpt.get();
+                finalvision.add(tile);
 
-                finalvision.add(tileAddOpt.get());
+                if(player instanceof Guard && !isHunting){
+                    if(tile.hasIntruder()){
+                        isHunting = true;
+                    }
+                }
+
+
             } else {
                 validtile = true;
             }
         }
+
+        if(player instanceof Guard guard)
+            guard.setHunting(isHunting);
+
 
         return finalvision;
     }
@@ -169,11 +185,11 @@ public class CharacterVision{
         int yDif = Math.abs(tile.getY() - playerTile.getY());
         int xDif = Math.abs(tile.getX() - playerTile.getX());
 
-        if(this.direction == Angle.UP || this.direction == Angle.DOWN){
+        if(this.direction == Action.UP || this.direction == Action.DOWN){
 
             return bound >= yDif;
 
-        }  else if(this.direction == Angle.LEFT || this.direction == Angle.RIGHT){
+        }  else if(this.direction == Action.LEFT || this.direction == Action.RIGHT){
 
             return bound >= xDif;
 
@@ -212,11 +228,11 @@ public class CharacterVision{
         this.length = length;
     }
 
-    public Angle getDirection() {
+    public Action getDirection() {
         return direction;
     }
 
-    public void setDirection(Angle direction) {
+    public void setDirection(Action direction) {
         this.direction = direction;
     }
 }

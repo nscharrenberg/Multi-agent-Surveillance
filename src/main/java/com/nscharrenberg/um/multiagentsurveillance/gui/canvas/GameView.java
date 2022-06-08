@@ -194,12 +194,20 @@ public class GameView extends StackPane {
         alert.show();
     }
 
+    /* TODO: add more extensive data here to analyse
+            - tiles explored
+            - time spend until intruders caught
+            - agent results
+            - more stuff
+     */
     private void exportEndData() {
         // Export data to csv
         Export exp = new Export();
         exp.addValue("Game: ", 0);
         exp.addValue("Intruders caught: ", playerRepository.getCaughtIntruders().size());
         exp.addValue("Intruders Escaped: ", playerRepository.getEscapedIntruders().size());
+        exp.addValue("Time: ", 0);
+        exp.addValue("Time: ", 0);
         for (TypePriority tp: TypePriority.values()) {
             exp.addValue(tp.name() + ": ", tp.getPriority());
         }

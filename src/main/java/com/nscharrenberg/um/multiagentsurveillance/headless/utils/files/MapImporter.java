@@ -18,23 +18,15 @@ import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.util.Scanner;
 
-public class MapImporter {
+public class MapImporter extends Importer {
     private boolean tilesInitialized = false;
 
-    private IGameRepository gameRepository;
-    private IMapRepository mapRepository;
-    private IPlayerRepository playerRepository;
-
     public MapImporter(IGameRepository gameRepository, IMapRepository mapRepository, IPlayerRepository playerRepository) {
-        this.gameRepository = gameRepository;
-        this.mapRepository = mapRepository;
-        this.playerRepository = playerRepository;
+        super(gameRepository, mapRepository,playerRepository);
     }
 
     public MapImporter() {
-        gameRepository = Factory.getGameRepository();
-        playerRepository = Factory.getPlayerRepository();
-        mapRepository = Factory.getMapRepository();
+        super();
     }
 
     /**
@@ -42,6 +34,7 @@ public class MapImporter {
      * @param path - the file path
      * @throws IOException - Thrown when the file could not be found or is unable to read the file
      */
+    @Override
     public void load(String path) throws IOException {
         try (FileInputStream fileInputStream = new FileInputStream(path); Scanner scanner = new Scanner(fileInputStream, StandardCharsets.UTF_8)) {
             while (scanner.hasNextLine()) {
@@ -211,33 +204,5 @@ public class MapImporter {
      * @param id - file item ID
      * @return - Whether the given id is a configuration
      */
-    private boolean isConfiguration(String id) {
-        return id.equals(FileItems.NAME.getKey())
-                        || id.equals(FileItems.GAME_MODE.getKey())
-                        || id.equals(FileItems.HEIGHT.getKey())
-                        || id.equals(FileItems.WIDTH.getKey())
-                        || id.equals(FileItems.SCALING.getKey())
-                        || id.equals(FileItems.NUM_GUARDS.getKey())
-                        || id.equals(FileItems.NUM_INTRUDERS.getKey())
-                        || id.equals(FileItems.BASE_SPEED_GUARD.getKey())
-                        || id.equals(FileItems.BASE_SPEED_INTRUDER.getKey())
-                        || id.equals(FileItems.SPRINT_SPEED_INTRUDER.getKey())
-                        || id.equals(FileItems.TIME_STEP.getKey())
-                        || id.equals(FileItems.TARGET_AREA.getKey())
-                        || id.equals(FileItems.SPAWN_AREA_GUARDS.getKey())
-                        || id.equals(FileItems.SPAWN_AREA_INTRUDERS.getKey());
-    }
 
-    /**
-     * Checks if the ID is part of the map generation
-     * @param id - file item ID
-     * @return - Whether the given id is a map generation
-     */
-    private boolean isMap(String id) {
-        return id.equals(FileItems.WALL.getKey())
-                        || id.equals(FileItems.TELEPORT.getKey())
-                        || id.equals(FileItems.SHADED.getKey())
-                        || id.equals(FileItems.TEXTURE.getKey())
-                        || id.equals(FileItems.DEADEND_MARKER.getKey());
-    }
 }

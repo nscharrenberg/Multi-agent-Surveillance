@@ -30,7 +30,7 @@ public class AudioTest {
 
         }
 
-        CharacterAudio CA = new CharacterAudio(3);
+        CharacterAudio CA = new CharacterAudio(1);
         Tile pos = new Tile(4, 4);
 
         TileArea map = Factory.getMapRepository().getBoard();

@@ -20,8 +20,9 @@ import java.util.HashMap;
 import java.util.List;
 
 public class CanvasApp extends Application {
-    private static final int WIDTH = 800;
-    private static final int HEIGHT = 800;
+    private GameView view;
+    private static int WIDTH = 1200;
+    private static int HEIGHT = 1000;
     public static final boolean MANUAL_PLAYER = false;
 
     @Override

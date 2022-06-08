@@ -1,7 +1,7 @@
 package com.nscharrenberg.um.multiagentsurveillance.headless.utils;
 
+import com.nscharrenberg.um.multiagentsurveillance.headless.models.Action;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Angle.AdvancedAngle;
-import com.nscharrenberg.um.multiagentsurveillance.headless.models.Angle.Angle;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Map.Area;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Map.Tile;
 
@@ -17,7 +17,7 @@ public class BoardUtils {
      * @param direction - the direction (the tile to your left, right, up or down)
      * @return Nothing or the next position
      */
-    public static Optional<Tile> nextPosition(Area<Tile> board, Tile tile, Angle direction) {
+    public static Optional<Tile> nextPosition(Area<Tile> board, Tile tile, Action direction) {
         int nextX = tile.getX() + direction.getxIncrement();
         int nextY = tile.getY() + direction.getyIncrement();
 

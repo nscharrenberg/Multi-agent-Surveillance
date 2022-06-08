@@ -18,7 +18,20 @@ public enum FileItems {
     WALL("wall"),
     TELEPORT("teleport"),
     SHADED("shaded"),
-    TEXTURE("texture");
+    TEXTURE("texture"),
+    DEADEND_MARKER("deadendMarker"),
+
+    WALL_TEXTURE("wallTexture"),
+    FLOOR_TEXTURE("floorTexture"),
+    GUARD_SPAWN_TEXTURE("guardSpawnTexture"),
+    INTRUDER_SPAWN_TEXTURE("intruderSpawnTexture"),
+    TELEPORT_DESTINATION_TEXTURE("teleportDestinationTexture"),
+    TELEPORT_SOURCE_TEXTURE("teleportSourceTexture"),
+    TARGET_AREA_TEXTURE("targetAreaTexture"),
+    SHADED_TEXTURE("shadedTexture"),
+    MAP_DATA("map");
+
+
 
     FileItems(String key) {
         this.key = key;

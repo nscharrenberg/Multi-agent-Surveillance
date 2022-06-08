@@ -147,7 +147,7 @@ public class TileArea extends Area<Tile> {
 
             for (Map.Entry<Integer, Tile> colEntry : rowEntry.getValue().entrySet()) {
                 if (lowerBoundCol == null || colEntry.getKey() < lowerBoundCol) {
-                    lowerBoundCol = rowEntry.getKey();
+                    lowerBoundCol = colEntry.getKey();
                 }
 
                 if (upperBoundCol == null || colEntry.getKey() > upperBoundCol) {

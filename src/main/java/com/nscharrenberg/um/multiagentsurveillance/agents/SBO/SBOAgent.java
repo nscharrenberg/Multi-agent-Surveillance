@@ -5,13 +5,10 @@ import com.nscharrenberg.um.multiagentsurveillance.agents.shared.algorithms.path
 import com.nscharrenberg.um.multiagentsurveillance.headless.contracts.repositories.IGameRepository;
 import com.nscharrenberg.um.multiagentsurveillance.headless.contracts.repositories.IMapRepository;
 import com.nscharrenberg.um.multiagentsurveillance.headless.contracts.repositories.IPlayerRepository;
-import com.nscharrenberg.um.multiagentsurveillance.headless.exceptions.CollisionException;
-import com.nscharrenberg.um.multiagentsurveillance.headless.exceptions.InvalidTileException;
-import com.nscharrenberg.um.multiagentsurveillance.headless.exceptions.ItemAlreadyOnTileException;
-import com.nscharrenberg.um.multiagentsurveillance.headless.exceptions.ItemNotOnTileException;
-import com.nscharrenberg.um.multiagentsurveillance.headless.models.Angle.Angle;
-import com.nscharrenberg.um.multiagentsurveillance.headless.models.Items.Item;
+import com.nscharrenberg.um.multiagentsurveillance.headless.exceptions.*;
+import com.nscharrenberg.um.multiagentsurveillance.headless.models.Action;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Items.Collision.Wall;
+import com.nscharrenberg.um.multiagentsurveillance.headless.models.Items.Item;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Map.Tile;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Map.TileArea;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Player.Player;
@@ -33,22 +30,28 @@ public class SBOAgent extends Agent {
     }
 
     @Override
-    public void execute() {
+    public void execute() throws InvalidTileException, BoardNotBuildException {
         execute(decide());
     }
 
     @Override
-    public void execute(Angle move) {
+    public void execute(Action move) {
         try {
             playerRepository.move(player, move);
-        } catch (CollisionException | InvalidTileException | ItemNotOnTileException | ItemAlreadyOnTileException e) {
+        } catch (CollisionException | InvalidTileException | ItemNotOnTileException | ItemAlreadyOnTileException | BoardNotBuildException e) {
             gameRepository.setRunning(false);
-            System.out.println(e.getMessage());
+			e.printStackTrace();
+            //System.out.println(e.getMessage());
         }
     }
 
     @Override
-    public Angle decide() {
+    public Action decide() throws InvalidTileException, BoardNotBuildException {
+
+        Action markerChecked = player.getAgent().markerCheck();
+        if (markerChecked != null) {
+            return markerChecked;
+        }
 
         // TODO: get all parameters from the vision (this might become a global thing)
         for (Item it: player.getTile().getItems()) {
@@ -68,9 +71,9 @@ public class SBOAgent extends Agent {
 
         gatherV2();
 
-        while(!scanned.isEmpty()) {
+        while (!scanned.isEmpty()) {
             Tile top = scanned.peek();
-            if(this.knowledge.getByCoordinates(top.getX(), top.getY()).isPresent()) {
+            if (this.knowledge.getByCoordinates(top.getX(), top.getY()).isPresent()) {
                 scanned.pop();
             } else {
                 goal = scanned.peek();
@@ -79,18 +82,18 @@ public class SBOAgent extends Agent {
         }
 
         // TODO: If stack is empty, search for teleporter
-        System.out.println("Players Tile: " + player.getTile().getX() +"  "+ player.getTile().getY());
-        System.out.println("Current goal Tile: " + goal.getX() +"  "+ goal.getY());
+        System.out.println("Players Tile: " + player.getTile().getX() + "  " + player.getTile().getY());
+        System.out.println("Current goal Tile: " + goal.getX() + "  " + goal.getY());
         System.out.println("Stack size: " + scanned.size());
 
         // Turn goal tile into Queue angle
         BFS bfs = new BFS();
-        if(bfs.execute(mapRepository.getBoard(), this.player, goal).isPresent()) {
+        if (bfs.execute(mapRepository.getBoard(), this.player, goal).isPresent()) {
             plannedMoves = bfs.execute(mapRepository.getBoard(), this.player, goal).get().getMoves();
-        } else if(knowledge.getByCoordinates(goal.getX(), goal.getY()).isEmpty()) {
-            for (Tile agt: getAdjacent(goal)) {
-                if(knowledge.getByCoordinates(agt.getX(),agt.getY()).isPresent()) {
-                    if(bfs.execute(mapRepository.getBoard(), this.player, agt).isPresent()) {
+        } else if (knowledge.getByCoordinates(goal.getX(), goal.getY()).isEmpty()) {
+            for (Tile agt : getAdjacent(goal)) {
+                if (knowledge.getByCoordinates(agt.getX(), agt.getY()).isPresent()) {
+                    if (bfs.execute(mapRepository.getBoard(), this.player, agt).isPresent()) {
                         plannedMoves = bfs.execute(mapRepository.getBoard(), this.player, agt).get().getMoves();
                         break;
                     }
@@ -105,25 +108,25 @@ public class SBOAgent extends Agent {
 
 
     private void gatherV2() {
-        if(this.player.getVision() != null) {
-            for (Map.Entry<Integer, HashMap<Integer, Tile>> rowEntry : this.player.getVision().getRegion().entrySet()) {
-                for (Map.Entry<Integer, Tile> colEntry : rowEntry.getValue().entrySet()) {
-                    Tile vt = colEntry.getValue();
-                    if(vt != null) {
-                        if(unobstructedTile(mapRepository.getBoard(), vt)) {
-                            for (Tile at:getAdjacent(vt)) {
-                                if(this.knowledge.getByCoordinates(at.getX(), at.getY()).isEmpty()) {
-                                    scanned.add(at);
+            if (this.player.getVision() != null) {
+                for (Map.Entry<Integer, HashMap<Integer, Tile>> rowEntry : this.player.getVision().getRegion().entrySet()) {
+                    for (Map.Entry<Integer, Tile> colEntry : rowEntry.getValue().entrySet()) {
+                        Tile vt = colEntry.getValue();
+                        if (vt != null) {
+                            if (unobstructedTile(mapRepository.getBoard(), vt)) {
+                                for (Tile at : getAdjacent(vt)) {
+                                    if (this.knowledge.getByCoordinates(at.getX(), at.getY()).isEmpty()) {
+                                        scanned.add(at);
+                                    }
                                 }
                             }
                         }
                     }
                 }
+            } else {
+                System.out.println("Vision not updated! ");
+                scanned.addAll(getAdjacent(this.player.getTile()));
             }
-        } else {
-            System.out.println("Vision not updated! ");
-            scanned.addAll(getAdjacent(this.player.getTile()));
-        }
     }
 
     private List<Tile> getAdjacent(Tile pos) {

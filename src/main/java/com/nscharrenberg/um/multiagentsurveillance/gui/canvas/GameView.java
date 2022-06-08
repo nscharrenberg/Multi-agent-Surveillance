@@ -188,21 +188,23 @@ public class GameView extends StackPane {
             int caughtCount = playerRepository.getCaughtIntruders().size();
             int escapeCount = playerRepository.getEscapedIntruders().size();
 
-            // Export data to csv
-            Export exp = new Export();
-            exp.addValue("Game: ", 0);
-            exp.addValue("Intruders caught: ", caughtCount);
-            exp.addValue("Intruders Escaped", escapeCount);
-            for (TypePriority tp: TypePriority.values()) {
-                exp.addValue(tp.name() + ": ", tp.getPriority());
-            }
-            exp.addValue("Duration: ", 0); //extract from stopwatch
-            exp.parseValues();
-
             alert.setContentText("Intruders Caught: " + caughtCount + "\nIntruders Escaped: " + escapeCount);
         }
 
         alert.show();
+    }
+
+    private void exportEndData() {
+        // Export data to csv
+        Export exp = new Export();
+        exp.addValue("Game: ", 0);
+        exp.addValue("Intruders caught: ", playerRepository.getCaughtIntruders().size());
+        exp.addValue("Intruders Escaped: ", playerRepository.getEscapedIntruders().size());
+        for (TypePriority tp: TypePriority.values()) {
+            exp.addValue(tp.name() + ": ", tp.getPriority());
+        }
+        exp.addValue("Duration: ", 0); //extract from stopwatch
+        exp.parseValues();
     }
 
     private void gameLoop() {

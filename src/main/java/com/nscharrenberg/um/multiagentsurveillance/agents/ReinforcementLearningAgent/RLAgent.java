@@ -102,8 +102,8 @@ public class RLAgent extends Agent {
         // Update current tile to previous tile
         previous = player.getTile();
 
-        // does this work?
-        System.out.println(Arrays.deepToString(visited));
+        // just a check
+        // System.out.println(Arrays.deepToString(visited));
 
 
         // Parameter assessment
@@ -123,7 +123,7 @@ public class RLAgent extends Agent {
         }
 
         // Check the agents vision
-        ScanVision();
+        //ScanVision();
 
         // Continue
         if (!plannedMoves.isEmpty() && visited[player.getTile().getX()][player.getTile().getY()] <= 3) {

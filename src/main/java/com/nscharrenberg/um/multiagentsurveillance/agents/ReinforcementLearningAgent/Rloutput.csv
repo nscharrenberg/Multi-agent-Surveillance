@@ -1,0 +1,24 @@
+
+Game: 0.0
+Intruders caught: 2.0
+Intruders Escaped1.0
+SoundWave: 0.5
+MarkerDeadEnd: -0.85
+MarkerTarget: 0.6
+MarkerGuard: -0.45
+MarkerIntruder: 0.92
+MarkerTeleporter: 0.2
+MarkerShaded: -0.3
+Duration: 0.0
+
+Game: 0.0
+Intruders caught: 1.0
+Intruders Escaped1.0
+SoundWave: 0.5
+MarkerDeadEnd: -0.85
+MarkerTarget: 0.6
+MarkerGuard: -0.45
+MarkerIntruder: 0.92
+MarkerTeleporter: 0.2
+MarkerShaded: -0.3
+Duration: 0.0

@@ -194,7 +194,7 @@ public class GameView extends StackPane {
             for (TypePriority tp: TypePriority.values()) {
                 exp.addValue(tp.name() + ": ", tp.getPriority());
             }
-            exp.addValue("Duration: ", 0);
+            exp.addValue("Duration: ", 0); //extract from stopwatch
             exp.parseValues();
 
             alert.setContentText("Intruders Caught: " + caughtCount + "\nIntruders Escaped: " + escapeCount);

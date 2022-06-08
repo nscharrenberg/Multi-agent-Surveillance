@@ -40,6 +40,8 @@ public class RLAgent extends Agent {
     private SecureRandom random;
     private RLmodel rlmodel = new RLmodel();
     private Tile goal = this.player.getTile();
+    private Tile previous = this.player.getTile();
+    private final int[][] visited = new int[mapRepository.getBoard().width()][mapRepository.getBoard().height()];
     private final IPathFinding pathFindingAlgorithm = new AStar();
     private final IWeightComparatorGuard weightDetectorGuard = new MinDistanceUnknownAreaComparator();
     private final IWeightComparatorIntruder weightDetectorIntruder = new CloseToTarget();
@@ -92,6 +94,18 @@ public class RLAgent extends Agent {
     @Override
     public Action decide() throws InvalidTileException, BoardNotBuildException{
 
+        // Store visited tiles
+        if(!previous.equals(player.getTile())) {
+            visited[player.getTile().getX()][player.getTile().getY()] += 1;
+        }
+
+        // Update current tile to previous tile
+        previous = player.getTile();
+
+        // does this work?
+        System.out.println(Arrays.deepToString(visited));
+
+
         // Parameter assessment
         rlmodel.reset();
         if(player.getTile().getItems().size() >= 2) {
@@ -112,7 +126,7 @@ public class RLAgent extends Agent {
         ScanVision();
 
         // Continue
-        if (!plannedMoves.isEmpty()) {
+        if (!plannedMoves.isEmpty() && visited[player.getTile().getX()][player.getTile().getY()] <= 3) {
             return plannedMoves.poll();
         }
 
@@ -122,29 +136,7 @@ public class RLAgent extends Agent {
 
         // Current path, select random move
         if (chosenFrontierOpt.isEmpty() || chosenFrontierOpt.get().getQueueNode() == null) {
-            int value = this.random.nextInt(100);
-
-            Action move = player.getDirection();
-
-            Optional<Tile> nextTileOpt = knowledge.getByCoordinates(player.getTile().getX() + move.getxIncrement(),
-                    player.getTile().getY() + player.getDirection().getyIncrement());
-
-            boolean nextBlocked = false;
-            if (nextTileOpt.isPresent()) {
-                for (Item items : nextTileOpt.get().getItems()) {
-                    if (items instanceof Collision) {
-                        nextBlocked = true;
-                        break;
-                    }
-                }
-            }
-
-            if (value <= 30 || nextBlocked) {
-                int pick = this.random.nextInt(4);
-                move = Action.values()[pick];
-            }
-
-            return move;
+            return selectRandom();
         }
 
         Frontier chosenFrontier = chosenFrontierOpt.get();
@@ -154,6 +146,33 @@ public class RLAgent extends Agent {
 
         return plannedMoves.poll();
 
+    }
+
+    // Get random move
+    private Action selectRandom() {
+        int value = this.random.nextInt(100);
+
+        Action move = player.getDirection();
+
+        Optional<Tile> nextTileOpt = knowledge.getByCoordinates(player.getTile().getX() + move.getxIncrement(),
+                player.getTile().getY() + player.getDirection().getyIncrement());
+
+        boolean nextBlocked = false;
+        if (nextTileOpt.isPresent()) {
+            for (Item items : nextTileOpt.get().getItems()) {
+                if (items instanceof Collision) {
+                    nextBlocked = true;
+                    break;
+                }
+            }
+        }
+
+        if (value <= 30 || nextBlocked) {
+            int pick = this.random.nextInt(4);
+            move = Action.values()[pick];
+        }
+
+        return move;
     }
 
     // Vision assessment

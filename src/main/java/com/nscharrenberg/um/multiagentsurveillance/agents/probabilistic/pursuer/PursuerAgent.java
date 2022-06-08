@@ -2,6 +2,7 @@ package com.nscharrenberg.um.multiagentsurveillance.agents.probabilistic.pursuer
 
 import com.nscharrenberg.um.multiagentsurveillance.agents.probabilistic.ProbabilisticAgent;
 import com.nscharrenberg.um.multiagentsurveillance.agents.probabilistic.State;
+import com.nscharrenberg.um.multiagentsurveillance.agents.shared.algorithms.angleCalculator.RightAngle;
 import com.nscharrenberg.um.multiagentsurveillance.agents.shared.algorithms.pathfinding.AStar.AStar;
 import com.nscharrenberg.um.multiagentsurveillance.agents.shared.algorithms.pathfinding.IPathFinding;
 import com.nscharrenberg.um.multiagentsurveillance.agents.shared.utils.QueueNode;
@@ -11,6 +12,7 @@ import com.nscharrenberg.um.multiagentsurveillance.headless.contracts.repositori
 import com.nscharrenberg.um.multiagentsurveillance.headless.exceptions.BoardNotBuildException;
 import com.nscharrenberg.um.multiagentsurveillance.headless.exceptions.InvalidTileException;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Action;
+import com.nscharrenberg.um.multiagentsurveillance.headless.models.Map.Tile;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Player.Guard;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Player.Player;
 
@@ -42,9 +44,15 @@ public class PursuerAgent extends ProbabilisticAgent {
             }
         } else if(heardSomeone && !ignoreSounds) {
 
-            for (int i = 0; i < 3; i++) {
-                huntingSteps.add(closestSound.actionDirection());
+            Tile position = getPlayer().getTile();
+            Optional<Tile> optTile = getKnowledge().getByCoordinates(position.getX() + closestSound.actionDirection().getxIncrement(), position.getY() + closestSound.actionDirection().getyIncrement());
+            if(optTile.isPresent()){
+                Tile tile = optTile.get();
+                if(tile.isCollision())
+                    return RightAngle.getRightAngle(closestSound.actionDirection());
             }
+
+            huntingSteps.add(closestSound.actionDirection());
 
             return huntingSteps.poll();
         }

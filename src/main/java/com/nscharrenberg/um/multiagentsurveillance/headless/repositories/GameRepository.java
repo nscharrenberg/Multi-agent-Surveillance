@@ -21,7 +21,7 @@ import java.io.File;
 import java.io.IOException;
 
 public class GameRepository implements IGameRepository {
-    private static String MAP_PATH = "src/test/resources/maps/maze1.json";
+    private static String MAP_PATH = "src/test/resources/maps/maze3.json";
     private IMapRepository mapRepository;
     private IPlayerRepository playerRepository;
 

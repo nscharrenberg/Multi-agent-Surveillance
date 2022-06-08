@@ -84,10 +84,10 @@ public class YamauchiAgent extends Agent {
     @Override
     public Action decide() throws InvalidTileException, BoardNotBuildException{
 
-        Action markerChecked = player.getAgent().markerCheck();
-        if (markerChecked != null) {
-            return markerChecked;
-        }
+//        Action markerChecked = player.getAgent().markerCheck();
+//        if (markerChecked != null) {
+//            return markerChecked;
+//        }
 
         // Inconsistent with explorer% ????
 //        System.out.println("Knowledge Size: " + this.knowledge.getRegion().entrySet().size());

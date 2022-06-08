@@ -141,6 +141,27 @@ public class MapRepository implements IMapRepository {
     }
 
     @Override
+    public void addTargetArea(int x1, int y1) throws BoardNotBuildException, InvalidTileException {
+        boardInitCheck();
+
+        Tile found = findTileByCoordinates(x1, y1);
+
+        if (targetArea == null) {
+            targetArea = new TileArea();
+        }
+
+        targetArea.add(found);
+
+        if (!targetArea.isEmpty()) {
+            Point A = new Point(x1, y1);
+            Point B = new Point(x1+1, y1+1);
+            Point C = new Point(x1, y1+1);
+            Point D = new Point(x1+1, y1);
+            targetCenter = IntersectionPoint.calculateIntersectionPoint(A, B, C, D);
+        }
+    }
+
+    @Override
     public void addTeleporter(int x1, int y1, int x2, int y2, int destX, int destY, Action direction) throws InvalidTileException, BoardNotBuildException, ItemAlreadyOnTileException {
         boardInitCheck();
 
@@ -157,6 +178,23 @@ public class MapRepository implements IMapRepository {
         }
 
         teleporter.setSource(found);
+    }
+
+    @Override
+    public void addTeleporter(int x1, int y1, int destX, int destY, Action direction) throws InvalidTileException, BoardNotBuildException, ItemAlreadyOnTileException {
+        boardInitCheck();
+
+        Tile found = findTileByCoordinates(x1, y1);
+        Tile destination = findTileByCoordinates(destX, destY);
+
+        TileArea area = new TileArea();
+        area.add(found);
+
+        Teleporter teleporter = new Teleporter(area, destination, direction);
+        destination.add(teleporter);
+        found.add(teleporter);
+
+        teleporter.setSource(area);
     }
 
     @Override
@@ -229,6 +267,19 @@ public class MapRepository implements IMapRepository {
     }
 
     @Override
+    public void addGuardSpawnArea(int x1, int y1) throws BoardNotBuildException, InvalidTileException {
+        boardInitCheck();
+
+        Tile found = findTileByCoordinates(x1, y1);
+
+        if (guardSpawnArea == null) {
+            guardSpawnArea = new TileArea();
+        }
+
+        guardSpawnArea.add(found);
+    }
+
+    @Override
     public void addIntruderSpawnArea(int x1, int y1, int x2, int y2) throws BoardNotBuildException, InvalidTileException {
         boardInitCheck();
 
@@ -239,6 +290,19 @@ public class MapRepository implements IMapRepository {
         }
 
         intruderSpawnArea = found;
+    }
+
+    @Override
+    public void addIntruderSpawnArea(int x1, int y1) throws BoardNotBuildException, InvalidTileException {
+        boardInitCheck();
+
+        Tile found = findTileByCoordinates(x1, y1);
+
+        if (intruderSpawnArea == null) {
+            intruderSpawnArea = new TileArea();
+        }
+
+        intruderSpawnArea.add(found);
     }
 
     @Override

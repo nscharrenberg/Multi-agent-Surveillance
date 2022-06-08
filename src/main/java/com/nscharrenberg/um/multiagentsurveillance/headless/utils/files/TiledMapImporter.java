@@ -8,8 +8,10 @@ import com.nscharrenberg.um.multiagentsurveillance.headless.contracts.repositori
 import com.nscharrenberg.um.multiagentsurveillance.headless.exceptions.BoardNotBuildException;
 import com.nscharrenberg.um.multiagentsurveillance.headless.exceptions.InvalidTileException;
 import com.nscharrenberg.um.multiagentsurveillance.headless.exceptions.ItemAlreadyOnTileException;
+import com.nscharrenberg.um.multiagentsurveillance.headless.models.Action;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.GameMode;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Map.TileArea;
+import com.nscharrenberg.um.multiagentsurveillance.headless.utils.AngleConverter;
 
 import java.io.FileReader;
 import java.io.IOException;
@@ -129,6 +131,18 @@ public class TiledMapImporter extends Importer{
             targetAreaTextures = (ArrayList<Double>) value;
         } else if (id.equals(FileItems.SHADED_TEXTURE.getKey())) {
             shadedTextures = (ArrayList<Double>) value;
+        } else if (id.equals(FileItems.TELEPORT.getKey())) {
+            ArrayList<ArrayList<Double>> teleporters = (ArrayList<ArrayList<Double>>) value;
+
+            for (ArrayList<Double> teleporter : teleporters) {
+                Double sourceX = teleporter.get(0);
+                Double sourceY = teleporter.get(1);
+                Double destX = teleporter.get(2);
+                Double destY = teleporter.get(3);
+                Double directionAngle = teleporter.get(4);
+                Action roundedAction = AngleConverter.convert(directionAngle);
+
+                mapRepository.addTeleporter(sourceX.intValue(), sourceY.intValue(), destX.intValue(), destY.intValue(), roundedAction);            }
         } else if (id.equals(FileItems.MAP_DATA.getKey())) {
             // Read Map Data
             ArrayList<Double> items = (ArrayList<Double>) value;
@@ -145,20 +159,16 @@ public class TiledMapImporter extends Importer{
                 if (wallTextures.contains(item)) {
                     mapRepository.addWall(x1, y1);
                 } else if (guardSpawnTextures.contains(item)) {
-                    mapRepository.addGuardSpawnArea(x1, y1, x2, y2);
+                    mapRepository.addGuardSpawnArea(x1, y1);
                 } else if (intruderSpawnTextures.contains(item)) {
-                    mapRepository.addIntruderSpawnArea(x1, y1, x2, y2);
-                } else if (teleportDestinationTextures.contains(item)) {
-//                    mapRepository.addWall(x1, y1, x2, y2);
-                } else if (teleportSourceTextures.contains(item)) {
-//                    mapRepository.addWall(x1, y1, x2, y2);
+                    mapRepository.addIntruderSpawnArea(x1, y1);
                 } else if (targetAreaTextures.contains(item)) {
-                    mapRepository.addTargetArea(x1, y1, x2, y2);
+                    mapRepository.addTargetArea(x1, y1);
                 } else if (shadedTextures.contains(item)) {
                     mapRepository.addShaded(x1, y1);
                 }
 
-                if (col >= gameRepository.getWidth()) {
+                if (col >= gameRepository.getWidth()-1) {
                     col = 0;
                     row++;
                 } else {

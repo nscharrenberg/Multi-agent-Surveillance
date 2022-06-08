@@ -105,7 +105,6 @@ public class RLAgent extends Agent {
         // just a check
         // System.out.println(Arrays.deepToString(visited));
 
-
         // Parameter assessment
         rlmodel.reset();
         if(player.getTile().getItems().size() >= 2) {

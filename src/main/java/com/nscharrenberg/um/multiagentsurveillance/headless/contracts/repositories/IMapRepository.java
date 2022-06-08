@@ -67,6 +67,7 @@ public interface IMapRepository {
      * @throws InvalidTileException - Thrown when there is at least one tile that is not within the board.
      */
     void addTargetArea(int x1, int y1, int x2, int y2) throws BoardNotBuildException, InvalidTileException;
+    void addTargetArea(int x1, int y1) throws BoardNotBuildException, InvalidTileException;
 
     /**
      * Assigns an area for the teleport source and a tile for its destination
@@ -82,6 +83,7 @@ public interface IMapRepository {
      * @throws ItemAlreadyOnTileException - Thrown when the item is already present on the given tile.
      */
     void addTeleporter(int x1, int y1, int x2, int y2, int destX, int destY, Action direction) throws InvalidTileException, BoardNotBuildException, ItemAlreadyOnTileException;
+    void addTeleporter(int x1, int y1, int destX, int destY, Action direction) throws InvalidTileException, BoardNotBuildException, ItemAlreadyOnTileException;
 
     /**
      * Turns a group of Tiles into shaded tiles
@@ -137,7 +139,7 @@ public interface IMapRepository {
      * @throws InvalidTileException - Thrown when there is at least one tile that is not within the board.
      */
     void addGuardSpawnArea(int x1, int y1, int x2, int y2) throws BoardNotBuildException, InvalidTileException;
-
+    void addGuardSpawnArea(int x1, int y1) throws BoardNotBuildException, InvalidTileException;
     /**
      * Assign an area as intruder spawn area
      * @param x1 - left bound
@@ -148,7 +150,7 @@ public interface IMapRepository {
      * @throws InvalidTileException - Thrown when there is at least one tile that is not within the board.
      */
     void addIntruderSpawnArea(int x1, int y1, int x2, int y2) throws BoardNotBuildException, InvalidTileException;
-
+    void addIntruderSpawnArea(int x1, int y1) throws BoardNotBuildException, InvalidTileException;
     Tile getTargetCenter();
 
     void addMarker(Marker.MarkerType type, int x1, int y1, Player player) throws BoardNotBuildException, InvalidTileException, ItemAlreadyOnTileException;

@@ -36,8 +36,6 @@ import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.util.*;
 
-import static com.nscharrenberg.um.multiagentsurveillance.headless.utils.AreaEffects.SoundEffectHelper.*;
-
 public class PlayerRepository implements IPlayerRepository {
     private IMapRepository mapRepository;
     private IGameRepository gameRepository;
@@ -374,7 +372,7 @@ public class PlayerRepository implements IPlayerRepository {
         if(player instanceof Guard guard){
             basicMove(guard, direction);
             if(guard.isHunting()) {
-                guard.setRepresentedSoundRange(YELL);
+                guard.setRepresentedSoundRange(gameRepository.getDistanceSoundYelling());
             }
 
             capture(guard);
@@ -426,7 +424,7 @@ public class PlayerRepository implements IPlayerRepository {
                 player.setVision(new TileArea(vision));
 
                 //Set the represented sound range
-                player.setRepresentedSoundRange(ROTATE);
+                player.setRepresentedSoundRange(gameRepository.getDistanceSoundRotating());
             }
 
             return;
@@ -521,7 +519,7 @@ public class PlayerRepository implements IPlayerRepository {
                 player.setVision(new TileArea(vision2));
 
                 //Set the represented sound range
-                player.setRepresentedSoundRange(WAIT);
+                player.setRepresentedSoundRange(gameRepository.getDistanceSoundWaiting());
             }
 
             return;
@@ -546,7 +544,7 @@ public class PlayerRepository implements IPlayerRepository {
             player.setVision(new TileArea(vision));
 
             //Set the represented sound range
-            player.setRepresentedSoundRange(WALK);
+            player.setRepresentedSoundRange(gameRepository.getDistanceSoundWalking());
 
         }
     }

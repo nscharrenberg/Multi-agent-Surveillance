@@ -29,7 +29,12 @@ public enum FileItems {
     TELEPORT_SOURCE_TEXTURE("teleportSourceTexture"),
     TARGET_AREA_TEXTURE("targetAreaTexture"),
     SHADED_TEXTURE("shadedTexture"),
-    MAP_DATA("map");
+    MAP_DATA("map"),
+    DISTANCE_SOUND_WALKING("distanceSoundWalking"),
+    DISTANCE_SOUND_ROTATING("distanceSoundRotating"),
+    DISTANCE_SOUND_SPRINTING("distanceSoundSprinting"),
+    DISTANCE_SOUND_WAITING("distanceSoundWaiting"),
+    DISTANCE_SOUND_YELLING("distanceSoundYelling");
 
 
 

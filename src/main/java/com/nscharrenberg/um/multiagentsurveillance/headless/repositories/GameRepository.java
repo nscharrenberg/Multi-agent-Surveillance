@@ -14,7 +14,6 @@ import com.nscharrenberg.um.multiagentsurveillance.headless.models.Player.Guard;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Player.Intruder;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Player.Player;
 import com.nscharrenberg.um.multiagentsurveillance.headless.utils.files.Importer;
-import com.nscharrenberg.um.multiagentsurveillance.headless.utils.files.MapImporter;
 import com.nscharrenberg.um.multiagentsurveillance.headless.utils.files.TiledMapImporter;
 
 import java.io.File;
@@ -38,6 +37,12 @@ public class GameRepository implements IGameRepository {
     private double timeStep;
     private boolean isRunning = false;
     private GameState gameState = GameState.NO_RESULT;
+
+    private double distanceSoundSprinting = 0;
+    private double distanceSoundWalking = 0;
+    private double distanceSoundRotating = 0;
+    private double distanceSoundWaiting = 0;
+    private double distanceSoundYelling = 0;
 
     public GameRepository() {
         this.mapRepository = Factory.getMapRepository();
@@ -302,5 +307,55 @@ public class GameRepository implements IGameRepository {
     @Override
     public void setPlayerRepository(IPlayerRepository playerRepository) {
         this.playerRepository = playerRepository;
+    }
+
+    @Override
+    public double getDistanceSoundSprinting() {
+        return distanceSoundSprinting;
+    }
+
+    @Override
+    public void setDistanceSoundSprinting(double distanceSoundSprinting) {
+        this.distanceSoundSprinting = distanceSoundSprinting;
+    }
+
+    @Override
+    public double getDistanceSoundWalking() {
+        return distanceSoundWalking;
+    }
+
+    @Override
+    public void setDistanceSoundWalking(double distanceSoundWalking) {
+        this.distanceSoundWalking = distanceSoundWalking;
+    }
+
+    @Override
+    public double getDistanceSoundRotating() {
+        return distanceSoundRotating;
+    }
+
+    @Override
+    public void setDistanceSoundRotating(double distanceSoundRotating) {
+        this.distanceSoundRotating = distanceSoundRotating;
+    }
+
+    @Override
+    public double getDistanceSoundWaiting() {
+        return distanceSoundWaiting;
+    }
+
+    @Override
+    public void setDistanceSoundWaiting(double distanceSoundWaiting) {
+        this.distanceSoundWaiting = distanceSoundWaiting;
+    }
+
+    @Override
+    public double getDistanceSoundYelling() {
+        return distanceSoundYelling;
+    }
+
+    @Override
+    public void setDistanceSoundYelling(double distanceSoundYelling) {
+        this.distanceSoundYelling = distanceSoundYelling;
     }
 }

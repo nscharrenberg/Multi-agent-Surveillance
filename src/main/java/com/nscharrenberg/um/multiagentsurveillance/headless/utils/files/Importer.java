@@ -40,7 +40,12 @@ public abstract class Importer {
                 || id.equals(FileItems.TIME_STEP.getKey())
                 || id.equals(FileItems.TARGET_AREA.getKey())
                 || id.equals(FileItems.SPAWN_AREA_GUARDS.getKey())
-                || id.equals(FileItems.SPAWN_AREA_INTRUDERS.getKey());
+                || id.equals(FileItems.SPAWN_AREA_INTRUDERS.getKey())
+                || id.equals(FileItems.DISTANCE_SOUND_ROTATING.getKey())
+                || id.equals(FileItems.DISTANCE_SOUND_SPRINTING.getKey())
+                || id.equals(FileItems.DISTANCE_SOUND_WAITING.getKey())
+                || id.equals(FileItems.DISTANCE_SOUND_WALKING.getKey())
+                || id.equals(FileItems.DISTANCE_SOUND_YELLING.getKey());
     }
 
     /**

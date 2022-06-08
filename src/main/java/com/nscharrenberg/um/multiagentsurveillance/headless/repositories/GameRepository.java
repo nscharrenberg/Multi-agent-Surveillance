@@ -20,7 +20,7 @@ import java.io.File;
 import java.io.IOException;
 
 public class GameRepository implements IGameRepository {
-    private static String MAP_PATH = "src/test/resources/maps/maze3.json";
+    private static String MAP_PATH = "src/test/resources/maps/maze2.json";
     private IMapRepository mapRepository;
     private IPlayerRepository playerRepository;
 
@@ -38,11 +38,13 @@ public class GameRepository implements IGameRepository {
     private boolean isRunning = false;
     private GameState gameState = GameState.NO_RESULT;
 
-    private double distanceSoundSprinting = 0;
-    private double distanceSoundWalking = 0;
-    private double distanceSoundRotating = 0;
-    private double distanceSoundWaiting = 0;
-    private double distanceSoundYelling = 0;
+    private double distanceSoundSprinting = 10;
+    private double distanceSoundWalking = 4;
+    private double distanceSoundRotating = 2;
+    private double distanceSoundWaiting = 1;
+    private double distanceSoundYelling = 15;
+
+    private double distanceViewing = 4;
 
     public GameRepository() {
         this.mapRepository = Factory.getMapRepository();
@@ -357,5 +359,15 @@ public class GameRepository implements IGameRepository {
     @Override
     public void setDistanceSoundYelling(double distanceSoundYelling) {
         this.distanceSoundYelling = distanceSoundYelling;
+    }
+
+    @Override
+    public double getDistanceViewing() {
+        return distanceViewing;
+    }
+
+    @Override
+    public void setDistanceViewing(double distanceViewing) {
+        this.distanceViewing = distanceViewing;
     }
 }

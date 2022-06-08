@@ -254,7 +254,7 @@ public class PlayerRepository implements IPlayerRepository {
         player.setAgent(agent);
         agent.addKnowledge(player.getTile());
 
-        int visionLength = 6;
+        int visionLength = Double.valueOf(gameRepository.getDistanceViewing()).intValue();
 
         if(player.getTile() instanceof ShadowTile)
             visionLength /= 2;
@@ -351,7 +351,7 @@ public class PlayerRepository implements IPlayerRepository {
         player.setAgent(agent);
         agent.addKnowledge(player.getTile());
 
-        int visionLength = 6;
+        int visionLength = Double.valueOf(gameRepository.getDistanceViewing()).intValue();
 
         if(player.getTile() instanceof ShadowTile)
             visionLength /= 2;
@@ -400,7 +400,7 @@ public class PlayerRepository implements IPlayerRepository {
     public void basicMove(Player player, Action direction) throws CollisionException, InvalidTileException, ItemNotOnTileException, ItemAlreadyOnTileException, BoardNotBuildException {
         Action currentDirection = player.getDirection();
         Tile currentTilePlayer = player.getTile();
-        int visionLength = 6;
+        int visionLength = Double.valueOf(gameRepository.getDistanceViewing()).intValue();
 
         if(currentTilePlayer instanceof ShadowTile)
             visionLength /= 2;

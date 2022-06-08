@@ -34,7 +34,8 @@ public enum FileItems {
     DISTANCE_SOUND_ROTATING("distanceSoundRotating"),
     DISTANCE_SOUND_SPRINTING("distanceSoundSprinting"),
     DISTANCE_SOUND_WAITING("distanceSoundWaiting"),
-    DISTANCE_SOUND_YELLING("distanceSoundYelling");
+    DISTANCE_SOUND_YELLING("distanceSoundYelling"),
+    DISTANCE_VIEWING("distanceViewing");
 
 
 

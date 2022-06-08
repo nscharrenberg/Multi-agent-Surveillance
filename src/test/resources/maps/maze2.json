@@ -5,7 +5,7 @@
   "numGuards": 10,
   "numIntruders": 10,
   "baseSpeedGuard": 5,
-  "distanceViewing": 10,
+  "distanceViewing": 5,
   "distanceSoundWalking": 10,
   "distanceSoundRotating": 5,
   "distanceSoundSprinting": 15,

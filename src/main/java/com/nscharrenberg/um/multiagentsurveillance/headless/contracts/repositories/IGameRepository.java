@@ -102,4 +102,8 @@ public interface IGameRepository {
     double getDistanceSoundYelling();
 
     void setDistanceSoundYelling(double distanceSoundYelling);
+
+    double getDistanceViewing();
+
+    void setDistanceViewing(double distanceViewing);
 }

@@ -139,23 +139,23 @@ public class TiledMapImporter extends Importer{
             for (Double item : items) {
                 int x1 = col;
                 int y1 = row;
-                int x2 = col + 1;
-                int y2 = row + 1;
+                int x2 = col+1;
+                int y2 = row+1;
 
                 if (wallTextures.contains(item)) {
-                    mapRepository.addWall(x1, y1, x2, y2);
+                    mapRepository.addWall(x1, y1);
                 } else if (guardSpawnTextures.contains(item)) {
                     mapRepository.addGuardSpawnArea(x1, y1, x2, y2);
                 } else if (intruderSpawnTextures.contains(item)) {
                     mapRepository.addIntruderSpawnArea(x1, y1, x2, y2);
                 } else if (teleportDestinationTextures.contains(item)) {
-                    mapRepository.addWall(x1, y1, x2, y2);
+//                    mapRepository.addWall(x1, y1, x2, y2);
                 } else if (teleportSourceTextures.contains(item)) {
-                    mapRepository.addWall(x1, y1, x2, y2);
+//                    mapRepository.addWall(x1, y1, x2, y2);
                 } else if (targetAreaTextures.contains(item)) {
                     mapRepository.addTargetArea(x1, y1, x2, y2);
                 } else if (shadedTextures.contains(item)) {
-                    mapRepository.addShaded(x1, y1, x2, y2);
+                    mapRepository.addShaded(x1, y1);
                 }
 
                 if (col >= gameRepository.getWidth()) {

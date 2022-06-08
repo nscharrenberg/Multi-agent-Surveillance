@@ -211,6 +211,10 @@ public abstract class Agent {
     }
 
     public Action markerCheck() throws InvalidTileException, BoardNotBuildException {
+        if (!gameRepository.isMarkersEnabled()) {
+            return null;
+        }
+
         HashMap<Integer, HashMap<Integer, Tile>> vision = player.getVision().getRegion();
 
         for (Map.Entry<Integer, HashMap<Integer, Tile>> rowEntry : vision.entrySet()) {

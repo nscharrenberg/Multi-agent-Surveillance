@@ -31,6 +31,7 @@ import com.nscharrenberg.um.multiagentsurveillance.headless.utils.AreaEffects.Di
 import com.nscharrenberg.um.multiagentsurveillance.headless.utils.BoardUtils;
 import com.nscharrenberg.um.multiagentsurveillance.headless.utils.StopWatch;
 import com.nscharrenberg.um.multiagentsurveillance.headless.utils.Vision.CharacterVision;
+import com.nscharrenberg.um.multiagentsurveillance.headless.utils.Vision.Geometrics;
 
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
@@ -607,6 +608,13 @@ public class PlayerRepository implements IPlayerRepository {
                 double distance = manhattanDistance.compute(guard.getTile(), intruder.getTile());
 
                 if (distance <= captureRange) {
+                    Geometrics geo = new Geometrics();
+                    for (Tile tile : geo.getIntersectingTiles(guard.getTile(), intruder.getTile())) {
+                        if (tile.isWall()) {
+                            return;
+                        }
+                    }
+
                     System.out.println("Intruder " + intruder.getId() + " has been Caught");
 
                     caughtIntruders.add(intruder);

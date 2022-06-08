@@ -106,4 +106,8 @@ public interface IGameRepository {
     double getDistanceViewing();
 
     void setDistanceViewing(double distanceViewing);
+
+    boolean isMarkersEnabled();
+
+    void setMarkersEnabled(boolean markersEnabled);
 }

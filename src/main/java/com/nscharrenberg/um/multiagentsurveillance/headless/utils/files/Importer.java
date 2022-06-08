@@ -46,7 +46,8 @@ public abstract class Importer {
                 || id.equals(FileItems.DISTANCE_SOUND_WAITING.getKey())
                 || id.equals(FileItems.DISTANCE_SOUND_WALKING.getKey())
                 || id.equals(FileItems.DISTANCE_SOUND_YELLING.getKey())
-                || id.equals(FileItems.DISTANCE_VIEWING.getKey());
+                || id.equals(FileItems.DISTANCE_VIEWING.getKey())
+                || id.equals(FileItems.MARKERS_ENABLED.getKey());
     }
 
     /**

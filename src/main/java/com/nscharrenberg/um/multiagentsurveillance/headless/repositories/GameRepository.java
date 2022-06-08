@@ -20,7 +20,7 @@ import java.io.File;
 import java.io.IOException;
 
 public class GameRepository implements IGameRepository {
-    private static String MAP_PATH = "src/test/resources/maps/maze2.json";
+    private static String MAP_PATH = "src/test/resources/maps/maze3.json";
     private IMapRepository mapRepository;
     private IPlayerRepository playerRepository;
 
@@ -45,6 +45,8 @@ public class GameRepository implements IGameRepository {
     private double distanceSoundYelling = 15;
 
     private double distanceViewing = 4;
+
+    private boolean markersEnabled = true;
 
     public GameRepository() {
         this.mapRepository = Factory.getMapRepository();
@@ -369,5 +371,15 @@ public class GameRepository implements IGameRepository {
     @Override
     public void setDistanceViewing(double distanceViewing) {
         this.distanceViewing = distanceViewing;
+    }
+
+    @Override
+    public boolean isMarkersEnabled() {
+        return markersEnabled;
+    }
+
+    @Override
+    public void setMarkersEnabled(boolean markersEnabled) {
+        this.markersEnabled = markersEnabled;
     }
 }

@@ -107,6 +107,8 @@ public class TiledMapImporter extends Importer{
             gameRepository.setDistanceSoundRotating((Double) value);
         } else if (id.equals(FileItems.DISTANCE_VIEWING.getKey())) {
             gameRepository.setDistanceViewing((Double) value);
+        } else if (id.equals(FileItems.MARKERS_ENABLED.getKey())) {
+            gameRepository.setMarkersEnabled((Boolean) value);
         } else {
             initCheck();
         }

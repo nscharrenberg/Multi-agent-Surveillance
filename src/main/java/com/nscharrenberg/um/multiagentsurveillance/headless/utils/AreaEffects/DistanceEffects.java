@@ -5,6 +5,7 @@ import com.nscharrenberg.um.multiagentsurveillance.agents.shared.algorithms.dist
 import com.nscharrenberg.um.multiagentsurveillance.agents.shared.algorithms.distanceCalculator.EuclideanDistance;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Map.Tile;
 import com.nscharrenberg.um.multiagentsurveillance.headless.utils.AreaEffects.AudioEffect.ISoundEffect;
+import com.nscharrenberg.um.multiagentsurveillance.headless.utils.Vision.Geometrics;
 
 import java.util.List;
 
@@ -28,6 +29,18 @@ public class DistanceEffects {
             int distance = (int) calculateDistance.compute(agentTile, someAgentTile);
 
             if (representedSoundOfAgent.isEffectReachable(distance)) {
+                boolean flag = false;
+                Geometrics geo = new Geometrics();
+                for (Tile tile : geo.getIntersectingTiles(agentTile, someAgentTile)) {
+                    if (tile.isWall()) {
+                        flag = true;
+                        break;
+                    }
+                }
+                if(flag)
+                    continue;
+
+
                 agent.getPlayer().getSoundEffects().add(representedSoundOfAgent.getSoundEffect(agent, someAgent, distance));
             }
 

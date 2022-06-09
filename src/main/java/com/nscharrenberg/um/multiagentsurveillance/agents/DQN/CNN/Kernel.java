@@ -38,15 +38,23 @@ public class Kernel {
     }
 
     public String saveKernel(){
-        String line = "";
 
-        for (int i = 0; i < size; i++) {
-            for (int j = 0; j < size; j++) {
+        String line = "";
+        for (int i = 0; i < size; i++)
+            for (int j = 0; j < size; j++)
                 line += weights[i][j] + ",";
-            }
-        }
+
 
         return line;
+    }
+
+    public void loadKernel(double[] nWeights) {
+        assert nWeights.length == size * size : "Kernel: Not enough weights to load";
+
+        int ind = 0;
+        for (int i = 0; i < size; i++)
+            for (int j = 0; j < size; j++)
+                weights[i][j] = nWeights[ind++];
     }
 
     public int getSize() {

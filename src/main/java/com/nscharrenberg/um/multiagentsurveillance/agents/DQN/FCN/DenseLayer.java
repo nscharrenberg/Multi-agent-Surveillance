@@ -107,18 +107,35 @@ public class DenseLayer {
     }
 
     public String[] saveDenseLayer(){
-/*        double[][] lW = getLayerWeights();
-        String[] out = new String[numNeurons];
+        double[][] lW = getLayerWeights();
+        String[] out = new String[numNeurons + 1];
 
         for (int i = 0; i < numNeurons; i++) {
-            out[i] = "";
-            for (int j = 0; j < numInputs; j++)
-                out[i] += lW[i][j]+ ",";
+            out[i] = "neuron" + i + ",";
+            for (int j = 0; j < numOutputs; j++)
+                out[i] += lW[i][j] + ",";
+        }
 
-            out[i] += neurons[i].getBias() + ",";
-        }*/
+        out[numNeurons] = "bias,";
+        for (int i = 0; i < numOutputs; i++)
+            out[numNeurons] += bias[i] + ",";
 
-        return null;
+        return out;
+    }
+
+    public void loadLayer(double[][] weights, double[] bias){
+        for (int i = 0; i < numNeurons; i++)
+            neurons[i].loadWeights(weights[i]);
+
+        loadBias(bias);
+    }
+
+    private void loadBias(double[] nBias){
+        assert bias.length == nBias.length : "DenseLayer: error loading bias";
+
+        for (int i = 0; i < numOutputs; i++) {
+            bias[i] = nBias[i];
+        }
     }
 
     public Neuron[] getNeurons() {
@@ -129,41 +146,13 @@ public class DenseLayer {
         this.neurons = neurons;
     }
 
-
-    // TODO: UPDATE
-
-    public int getNumInputs() {
-        return 0;
-    }
-
-    // TODO: UPDATE
-    public void setNumInputs(int numInputs) {
-
-    }
-
     public int getNumNeurons() {
         return numNeurons;
     }
 
-    public void setNumNeurons(int numNeurons) {
-        this.numNeurons = numNeurons;
-    }
-
-    public double[] getInputs() {
-        return inputs;
-    }
-
-    public void setInputs(double[] inputs) {
-        this.inputs = inputs;
-    }
-
-    public double[] getOutputs() {
-        return outputs;
-    }
-
-    public void setOutputs(double[] outputs) {
-        this.outputs = outputs;
-    }
-
     public double[] getBias(){ return bias; }
+
+    public int getNumOutputs(){
+        return numOutputs;
+    }
 }

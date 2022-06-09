@@ -5,6 +5,8 @@ import com.nscharrenberg.um.multiagentsurveillance.agents.DQN.FCN.ActivationLaye
 import com.nscharrenberg.um.multiagentsurveillance.agents.DQN.FCN.DenseLayer;
 
 import java.util.ArrayList;
+
+import static com.nscharrenberg.um.multiagentsurveillance.agents.DQN.neuralNetwork.NetworkWriter.readNetwork;
 import static com.nscharrenberg.um.multiagentsurveillance.agents.DQN.neuralNetwork.NetworkWriter.writeNetwork;
 
 public class Network {
@@ -135,9 +137,9 @@ public class Network {
     }
 
 
-    public void saveNetwork(int networkNum, String team){
+    public void saveNetwork(int networkNum){
 
-        String name = team + networkNum;
+        String name = Integer.toString(networkNum);
 
         ArrayList<String[][]> cLayers = new ArrayList<>();
         cLayers.add(convLayers[0].saveLayer());
@@ -151,10 +153,34 @@ public class Network {
         writeNetwork(cLayers, dLayers, name);
     }
 
+    public void loadNetwork(int networkNum) throws Exception {
+        readNetwork(networkNum, this);
+    }
+
     private Network(ConvLayer[] convLayers, DenseLayer[] denseLayers, ActivationLayer activationLayer) {
         this.convLayers = convLayers;
         this.denseLayers = denseLayers;
         this.activationLayer = activationLayer;
+    }
+
+    public int getFilterNumber(int layer){
+        return convLayers[layer].getNumFilters();
+    }
+
+    public int getKernelSize(int layer){
+        return convLayers[layer].getKernelSize();
+    }
+
+    public int getChannels(int layer){
+        return convLayers[layer].getChannels();
+    }
+
+    public void loadConvLayer(int layer, double[][][] weights, double[][] bias){
+        convLayers[layer].loadLayer(weights, bias);
+    }
+
+    public void loadDenseLayer(int layer, double[][] weights, double[] bias){
+        denseLayers[layer].loadLayer(weights, bias);
     }
 
     public Network clone(){
@@ -185,71 +211,4 @@ public class Network {
         return activationLayer;
     }
 
-    public void setActivationLayer(ActivationLayer activationLayer) {
-        this.activationLayer = activationLayer;
-    }
-
-    public int getKernelSize() {
-        return kernelSize;
-    }
-
-    public double getLearningRate() {
-        return learningRate;
-    }
-
-    public int getOutputLength() {
-        return outputLength;
-    }
-
-    public int getC1Filters() {
-        return c1Filters;
-    }
-
-    public int getC2Filters() {
-        return c2Filters;
-    }
-
-    public int getC3Filters() {
-        return c3Filters;
-    }
-
-    public int getConv3Length() {
-        return conv3Length;
-    }
-
-    public void setConv3Length(int conv3Length) {
-        this.conv3Length = conv3Length;
-    }
-
-    public double[] getNetworkOutput() {
-        return networkOutput;
-    }
-
-    public void setNetworkOutput(double[] networkOutput) {
-        this.networkOutput = networkOutput;
-    }
-
-    public void setLearningRate(double learningRate) {
-        this.learningRate = learningRate;
-    }
-
-    public void setKernelSize(int kernelSize) {
-        this.kernelSize = kernelSize;
-    }
-
-    public void setOutputLength(int outputLength) {
-        this.outputLength = outputLength;
-    }
-
-    public void setC1Filters(int c1Filters) {
-        this.c1Filters = c1Filters;
-    }
-
-    public void setC2Filters(int c2Filters) {
-        this.c2Filters = c2Filters;
-    }
-
-    public void setC3Filters(int c3Filters) {
-        this.c3Filters = c3Filters;
-    }
 }

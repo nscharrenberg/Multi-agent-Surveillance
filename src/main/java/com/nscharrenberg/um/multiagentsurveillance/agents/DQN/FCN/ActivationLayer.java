@@ -5,7 +5,6 @@ public class ActivationLayer {
     private int numInputs;
     private double[] inputs;
     private double[] outputs;
-
     public ActivationLayer(int numInputs){
         this.numInputs = numInputs;
     }

@@ -436,6 +436,14 @@ public class DQN_Agent extends Agent {
         return maxInd;
     }
 
+    public void saveNetwork(int index){
+        policyNetwork.saveNetwork(index);
+    }
+
+    public void loadNetwork(int index) throws Exception {
+        policyNetwork.loadNetwork(index);
+    }
+
     public Network getNetwork(){
         return policyNetwork;
     }

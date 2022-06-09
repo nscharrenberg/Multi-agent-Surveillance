@@ -7,7 +7,7 @@ public class Filter {
     private Kernel[] kernels;
     private double[][] bias;
     private int inputLength;
-    private int size;
+    private int outputSize;
     private double learningRate;
 
     /**
@@ -22,11 +22,11 @@ public class Filter {
         this.learningRate = learningRate;
 
         double k = Math.sqrt(1.0 / (channels*kernelSize*kernelSize));
-        size = inputLength - kernelSize + 1;
+        outputSize = inputLength - kernelSize + 1;
 
-        bias = new double[size][size];
-        for (int i = 0; i < size; i++) {
-            for (int j = 0; j < size; j++) {
+        bias = new double[outputSize][outputSize];
+        for (int i = 0; i < outputSize; i++) {
+            for (int j = 0; j < outputSize; j++) {
                 bias[i][j] = Math.random()*k*2 - k; // random nvr = 1
             }
         }
@@ -47,7 +47,7 @@ public class Filter {
         assert channels == input.length;
         this.input = input;
 
-        double[][] out = new double[size][size];
+        double[][] out = new double[outputSize][outputSize];
         double[][] temp;
 
         for (int k = 0; k < input.length; k++) {
@@ -208,30 +208,46 @@ public class Filter {
         return out;
     }
 
-
     public String[] saveFilter(int no){
         String[] out = new String[channels+3];
-        out[0] = "filter" + no;
-        for (int i = 1; i <  channels + 1; i++) {
+        out[0] = "filter" + no + ",";
+        for (int i = 1; i < channels + 1; i++) {
             out[i] = "";
             out[i] += kernels[i-1].saveKernel();
         }
 
-        out[channels + 1] = "bias";
+        out[channels + 1] = "bias" + no + ",";
         out[channels + 2] = saveBias();
 
         return out;
     }
 
-    public String saveBias(){
+    private String saveBias(){
         String out = "";
 
-        for (int i = 0; i < size; i++) {
-            for (int j = 0; j < size; j++) {
+        for (int i = 0; i < outputSize; i++) {
+            for (int j = 0; j < outputSize; j++) {
                 out += bias[i][j] + ",";
             }
         }
         return out;
+    }
+
+    public void loadFilter(double[][] weights, double[] bias){
+
+        for (int i = 0; i < channels; i++)
+            kernels[i].loadKernel(weights[i]);
+
+        loadBias(bias);
+    }
+
+    private void loadBias(double[] nBias){
+        assert nBias.length == outputSize * outputSize : "Filter: Not enough weights to load bias";
+
+        int ind = 0;
+        for (int i = 0; i < outputSize; i++)
+            for (int j = 0; j < outputSize; j++)
+                bias[i][j] = nBias[ind++];
     }
 
     public int getChannels() {
@@ -282,12 +298,12 @@ public class Filter {
         this.inputLength = inputLength;
     }
 
-    public int getSize() {
-        return size;
+    public int getOutputSize() {
+        return outputSize;
     }
 
-    public void setSize(int size) {
-        this.size = size;
+    public void setOutputSize(int outputSize) {
+        this.outputSize = outputSize;
     }
 
     public double getLearningRate() {

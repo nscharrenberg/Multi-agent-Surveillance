@@ -1,20 +1,11 @@
 package com.nscharrenberg.um.multiagentsurveillance.agents.DQN;
 
-import com.nscharrenberg.um.multiagentsurveillance.agents.DQN.DQN_Agent;
 import com.nscharrenberg.um.multiagentsurveillance.agents.DQN.neuralNetwork.Network;
-import com.nscharrenberg.um.multiagentsurveillance.agents.DQN.neuralNetwork.NetworkWriter;
 import com.nscharrenberg.um.multiagentsurveillance.agents.DQN.training.Experience;
 import com.nscharrenberg.um.multiagentsurveillance.agents.DQN.training.TrainingData;
-import com.nscharrenberg.um.multiagentsurveillance.agents.DQN.utils.NetworkUtils;
-import com.nscharrenberg.um.multiagentsurveillance.agents.shared.Agent;
 import com.nscharrenberg.um.multiagentsurveillance.headless.Factory;
-import com.nscharrenberg.um.multiagentsurveillance.headless.exceptions.BoardNotBuildException;
-import com.nscharrenberg.um.multiagentsurveillance.headless.exceptions.InvalidTileException;
-import com.nscharrenberg.um.multiagentsurveillance.headless.exceptions.ItemNotOnTileException;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Action;
-import com.nscharrenberg.um.multiagentsurveillance.headless.models.Player.Player;
 
-import java.util.List;
 import java.util.Stack;
 
 public class TrainingSimulation {

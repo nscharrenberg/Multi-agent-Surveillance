@@ -93,36 +93,22 @@ public class ConvLayer {
         return out;
     }
 
-    public int getInputLength() {
-        return inputLength;
+    public void loadLayer(double[][][] weights, double[][] bias){
+        for (int i = 0; i < numFilters; i++)
+            filters[i].loadFilter(weights[i], bias[i]);
     }
 
-    public void setInputLength(int inputLength) {
-        this.inputLength = inputLength;
+    public int getKernelSize(){
+        return kernelSize * kernelSize;
     }
+
 
     public int getNumFilters() {
         return numFilters;
     }
 
-    public void setNumFilters(int numFilters) {
-        this.numFilters = numFilters;
-    }
-
     public int getChannels() {
         return channels;
-    }
-
-    public void setChannels(int channels) {
-        this.channels = channels;
-    }
-
-    public int getKernelSize() {
-        return kernelSize;
-    }
-
-    public void setKernelSize(int kernelSize) {
-        this.kernelSize = kernelSize;
     }
 
     public Filter[] getFilters() {

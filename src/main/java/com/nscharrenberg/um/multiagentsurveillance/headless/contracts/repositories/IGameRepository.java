@@ -82,4 +82,36 @@ public interface IGameRepository {
     IPlayerRepository getPlayerRepository();
 
     void setPlayerRepository(IPlayerRepository playerRepository);
+
+    double getDistanceSoundSprinting();
+
+    void setDistanceSoundSprinting(double distanceSoundSprinting);
+
+    double getDistanceSoundWalking();
+
+    void setDistanceSoundWalking(double distanceSoundWalking);
+
+    double getDistanceSoundRotating();
+
+    void setDistanceSoundRotating(double distanceSoundRotating);
+
+    double getDistanceSoundWaiting();
+
+    void setDistanceSoundWaiting(double distanceSoundWaiting);
+
+    double getDistanceSoundYelling();
+
+    void setDistanceSoundYelling(double distanceSoundYelling);
+
+    double getDistanceViewing();
+
+    void setDistanceViewing(double distanceViewing);
+
+    boolean isCanPlaceMarkers();
+
+    void setCanPlaceMarkers(boolean canPlaceMarkers);
+
+    boolean isCanHearThroughWalls();
+
+    void setCanHearThroughWalls(boolean canHearThroughWalls);
 }

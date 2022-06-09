@@ -50,8 +50,14 @@ public class GameController {
 
     private void gameLoop() {
         while (Factory.getGameRepository().isRunning()) {
+
+            // Testing custom markers
+            //Factory.getMapRepository().addMarker(Marker.MarkerType.DEAD_END, 22, 9, null);
+
             for (Agent agent : Factory.getPlayerRepository().getAgents()) {
                 try {
+                    // Remove previous sound & Create new sound
+
                     agent.execute();
                 } catch (Exception e) {
                     e.printStackTrace();

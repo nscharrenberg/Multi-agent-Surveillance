@@ -18,8 +18,7 @@ import java.util.List;
 import java.util.Stack;
 
 public class TrainingSimulation {
-    private String NETWORK_PATH = "dqn_network_activation_layer";
-    private String NETWORK_EXTENSION = ".agent";
+
     private Stack<Network> networks = new Stack<>();
     private DQN_Agent[] guards, intruders;
     private TrainingData[] guardsData, intrudersData;

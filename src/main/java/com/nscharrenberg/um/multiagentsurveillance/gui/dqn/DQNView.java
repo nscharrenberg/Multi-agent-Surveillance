@@ -35,9 +35,12 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
 
+import java.io.IOException;
 import java.text.DecimalFormat;
 import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
+
+import static com.nscharrenberg.um.multiagentsurveillance.agents.DQN.utils.NetworkUtils.saveTraining;
 
 public class DQNView extends StackPane {
     private static final int DELAY = -1;
@@ -61,7 +64,7 @@ public class DQNView extends StackPane {
     private Stack<Network> networks = new Stack<>();
     private DQN_Agent[] intruders;
     private final int batchSize = 128;
-    private final int numEpisodes = 100;
+    private final int numEpisodes = 1;
 
     public static HashMap<String, Color> getMapColours(){
         HashMap<String, Color> out = new HashMap<>();
@@ -218,7 +221,7 @@ public class DQNView extends StackPane {
 
     }
 
-    private void gameLoop() {
+    private void gameLoop() throws IOException {
 
         setupDQNAgents();
 
@@ -234,7 +237,8 @@ public class DQNView extends StackPane {
             runGame(episode);
         }
 
-        // TODO: Save data here
+
+        saveTraining(intruders);
     }
 
 

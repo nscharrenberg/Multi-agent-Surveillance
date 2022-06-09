@@ -17,8 +17,8 @@ import com.nscharrenberg.um.multiagentsurveillance.headless.models.Items.Collisi
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Map.ShadowTile;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Map.Tile;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Map.TileArea;
-import com.nscharrenberg.um.multiagentsurveillance.headless.models.Marker;
-import com.nscharrenberg.um.multiagentsurveillance.headless.models.MarkerSmell;
+import com.nscharrenberg.um.multiagentsurveillance.headless.models.Items.Marker;
+import com.nscharrenberg.um.multiagentsurveillance.headless.models.Items.MarkerSmell;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Player.Player;
 import com.nscharrenberg.um.multiagentsurveillance.headless.utils.AreaEffects.MarkerRange;
 import com.nscharrenberg.um.multiagentsurveillance.headless.utils.Vision.Geometrics;

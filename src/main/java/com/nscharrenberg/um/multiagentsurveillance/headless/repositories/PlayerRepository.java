@@ -1,6 +1,7 @@
 package com.nscharrenberg.um.multiagentsurveillance.headless.repositories;
 
 import com.nscharrenberg.um.multiagentsurveillance.agents.DQN.DQN_Agent;
+import com.nscharrenberg.um.multiagentsurveillance.agents.ReinforcementLearningAgent.RLAgent;
 import com.nscharrenberg.um.multiagentsurveillance.agents.SBO.SBOAgent;
 import com.nscharrenberg.um.multiagentsurveillance.agents.frontier.yamauchi.YamauchiAgent;
 import com.nscharrenberg.um.multiagentsurveillance.agents.probabilistic.evader.EvaderAgent;
@@ -19,11 +20,11 @@ import com.nscharrenberg.um.multiagentsurveillance.headless.models.GameMode;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.GameState;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Items.Collision.Collision;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Items.Item;
+import com.nscharrenberg.um.multiagentsurveillance.headless.models.Items.Marker;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Items.Teleporter;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Map.ShadowTile;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Map.Tile;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Map.TileArea;
-import com.nscharrenberg.um.multiagentsurveillance.headless.models.Marker;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Player.Guard;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Player.Intruder;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Player.Player;
@@ -52,8 +53,12 @@ public class PlayerRepository implements IPlayerRepository {
 
     private List<Agent> agents;
 
-    public static final Class<? extends Agent> guardType = PursuerAgent.class;
+    //public static final Class<? extends Agent> guardType = PursuerAgent.class;
     public static final Class<? extends Agent> intruderType = EvaderAgent.class;
+
+    private static final Class<? extends Agent> guardType = RLAgent.class;
+    //private static final Class<? extends Agent> guardType = SBOAgent.class;
+    //private static final Class<? extends Agent> guardType = RandomAgent.class;
 
     private float explorationPercentage = 0;
 
@@ -342,6 +347,8 @@ public class PlayerRepository implements IPlayerRepository {
             agent = new EvaderAgent(player, mapRepository, gameRepository, this);
         } else if (agentClass.equals(DQN_Agent.class)){
             agent = new DQN_Agent(player, mapRepository, gameRepository, this);
+        } else if(agentClass.equals(RLAgent.class)) {
+            agent = new RLAgent(player, mapRepository, gameRepository, this);
         }
 
         if (agent == null) {

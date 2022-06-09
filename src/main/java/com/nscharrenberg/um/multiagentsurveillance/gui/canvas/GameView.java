@@ -1,5 +1,7 @@
 package com.nscharrenberg.um.multiagentsurveillance.gui.canvas;
 
+import com.nscharrenberg.um.multiagentsurveillance.agents.ReinforcementLearningAgent.Export;
+import com.nscharrenberg.um.multiagentsurveillance.agents.ReinforcementLearningAgent.TypePriority;
 import com.nscharrenberg.um.multiagentsurveillance.agents.shared.Agent;
 import com.nscharrenberg.um.multiagentsurveillance.headless.contracts.repositories.IGameRepository;
 import com.nscharrenberg.um.multiagentsurveillance.headless.contracts.repositories.IMapRepository;
@@ -15,8 +17,8 @@ import com.nscharrenberg.um.multiagentsurveillance.headless.models.Items.Telepor
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Map.ShadowTile;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Map.Tile;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Map.TileArea;
-import com.nscharrenberg.um.multiagentsurveillance.headless.models.Marker;
-import com.nscharrenberg.um.multiagentsurveillance.headless.models.MarkerSmell;
+import com.nscharrenberg.um.multiagentsurveillance.headless.models.Items.Marker;
+import com.nscharrenberg.um.multiagentsurveillance.headless.models.Items.MarkerSmell;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Player.Guard;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Player.Intruder;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Player.Player;
@@ -33,8 +35,6 @@ import javafx.scene.control.Alert;
 import javafx.scene.image.WritableImage;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Circle;
-import javafx.scene.shape.Line;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
 
@@ -192,6 +192,27 @@ public class GameView extends StackPane {
         }
 
         alert.show();
+    }
+
+    /* TODO: add more extensive data here to analyse
+            - tiles explored
+            - time spend until intruders caught
+            - agent results
+            - more stuff
+     */
+    private void exportEndData() {
+        // Export data to csv
+        Export exp = new Export();
+        exp.addValue("Game: ", 0);
+        exp.addValue("Intruders caught: ", playerRepository.getCaughtIntruders().size());
+        exp.addValue("Intruders Escaped: ", playerRepository.getEscapedIntruders().size());
+        exp.addValue("Time: ", 0);
+        exp.addValue("Time: ", 0);
+        for (TypePriority tp: TypePriority.values()) {
+            exp.addValue(tp.name() + ": ", tp.getPriority());
+        }
+        exp.addValue("Duration: ", 0); //extract from stopwatch
+        exp.parseValues();
     }
 
     private void gameLoop() {

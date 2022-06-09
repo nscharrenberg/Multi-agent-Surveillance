@@ -617,7 +617,13 @@ public class PlayerRepository implements IPlayerRepository {
                 if (distance <= captureRange) {
                     Geometrics geo = new Geometrics();
                     for (Tile tile : geo.getIntersectingTiles(guard.getTile(), intruder.getTile())) {
-                        if (tile.isWall()) {
+                        Optional<Tile> actualTileOpt = mapRepository.getBoard().getByCoordinates(tile.getX(), tile.getY());
+
+                        if (actualTileOpt.isEmpty()) {
+                            continue;
+                        }
+
+                        if (actualTileOpt.get().isWall()) {
                             return;
                         }
                     }

@@ -122,10 +122,10 @@ public class RLAgent extends Agent {
         }
 
         // Check the agents vision
-        //ScanVision();
+        ScanVision();
 
         // Continue
-        if (!plannedMoves.isEmpty() && visited[player.getTile().getX()][player.getTile().getY()] <= 3) {
+        if (!plannedMoves.isEmpty() && visited[player.getTile().getX()][player.getTile().getY()] <= 5) {
             return plannedMoves.poll();
         }
 

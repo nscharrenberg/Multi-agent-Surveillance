@@ -51,14 +51,6 @@ public class Geometrics {
         linetiles.removeIf(tc -> (tc.getX() == position.getX() && tc.getY() == position.getY()));
         linetiles.removeIf(tc -> (tc.getX() == endpoint.getX() && tc.getY() == endpoint.getY()));
 
-        // TODO: @Tjardo fix this, use original Board (mapRepository.getBoard() stuff) and return result.
-//        ArrayList<Tile> result = new ArrayList<>();
-//        for(Tile tile : linetiles){
-//            int x = tile.getX();
-//            int y = tile.getY();
-//            result.add();
-//        }
-
         return linetiles;
     }
 

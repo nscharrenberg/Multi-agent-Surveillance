@@ -1,8 +1,8 @@
 package com.nscharrenberg.um.multiagentsurveillance.headless.repositories;
 
+import com.nscharrenberg.um.multiagentsurveillance.agents.DQN.DQN_Agent;
 import com.nscharrenberg.um.multiagentsurveillance.agents.shared.algorithms.angleCalculator.AngleTilesCalculator;
 import com.nscharrenberg.um.multiagentsurveillance.agents.shared.algorithms.angleCalculator.ComputeDoubleAngleTiles;
-import com.nscharrenberg.um.multiagentsurveillance.agents.DQN.DQN_Agent;
 import com.nscharrenberg.um.multiagentsurveillance.headless.Factory;
 import com.nscharrenberg.um.multiagentsurveillance.headless.contracts.repositories.IGameRepository;
 import com.nscharrenberg.um.multiagentsurveillance.headless.contracts.repositories.IMapRepository;
@@ -14,13 +14,14 @@ import com.nscharrenberg.um.multiagentsurveillance.headless.models.Player.Guard;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Player.Intruder;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Player.Player;
 import com.nscharrenberg.um.multiagentsurveillance.headless.utils.files.Importer;
-import com.nscharrenberg.um.multiagentsurveillance.headless.utils.files.MapImporter;
 import com.nscharrenberg.um.multiagentsurveillance.headless.utils.files.TiledMapImporter;
+import org.deeplearning4j.rl4j.space.Encodable;
+import org.nd4j.linalg.api.ndarray.INDArray;
 
 import java.io.File;
 import java.io.IOException;
 
-public class GameRepository implements IGameRepository {
+public class GameRepository implements IGameRepository, Encodable {
     private static String MAP_PATH = "src/test/resources/maps/maze3.json";
     private IMapRepository mapRepository;
     private IPlayerRepository playerRepository;
@@ -302,5 +303,25 @@ public class GameRepository implements IGameRepository {
     @Override
     public void setPlayerRepository(IPlayerRepository playerRepository) {
         this.playerRepository = playerRepository;
+    }
+
+    @Override
+    public double[] toArray() {
+        return new double[0];
+    }
+
+    @Override
+    public boolean isSkipped() {
+        return false;
+    }
+
+    @Override
+    public INDArray getData() {
+        return null;
+    }
+
+    @Override
+    public Encodable dup() {
+        return null;
     }
 }

@@ -6,6 +6,10 @@ module com.nscharrenberg.um.multiagentsurveillance {
     requires java.datatransfer;
     requires java.desktop;
     requires java.base;
+    requires rl4j.core;
+    requires rl4j.api;
+    requires nd4j.api;
+
 
     opens com.nscharrenberg.um.multiagentsurveillance to javafx.fxml, cloning;
     exports com.nscharrenberg.um.multiagentsurveillance;
@@ -51,4 +55,7 @@ module com.nscharrenberg.um.multiagentsurveillance {
     opens com.nscharrenberg.um.multiagentsurveillance.headless.utils.AreaEffects to cloning;
     opens com.nscharrenberg.um.multiagentsurveillance.agents.probabilistic.pursuer to cloning;
     opens com.nscharrenberg.um.multiagentsurveillance.agents.probabilistic.evader to cloning;
+
+    opens com.nscharrenberg.um.multiagentsurveillance.agents.DQN_inbuilt to cloning;
+
 }

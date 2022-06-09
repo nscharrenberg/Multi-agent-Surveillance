@@ -8,11 +8,16 @@ plugins {
     id 'jacoco'
 }
 
+
+
 group 'com.nscharrenberg.um'
 version '1.0-SNAPSHOT'
 
 repositories {
     mavenCentral()
+    flatDir {
+        dirs 'lib'
+    }
 }
 
 ext {
@@ -45,6 +50,9 @@ javafx {
 }
 
 dependencies {
+
+    implementation name: 'rl4j-core-1.0.0-M1.1'
+    implementation('org.deeplearning4j:rl4j-api:1.0.0-M1.1')
     implementation 'com.google.code.gson:gson:2.9.0'
     implementation('io.github.kostaskougios:cloning:1.10.3')
     testImplementation("org.junit.jupiter:junit-jupiter-api:${junitVersion}")

@@ -65,6 +65,7 @@ public class PlayerRepository implements IPlayerRepository {
 
     private double captureRange = 2.0;
     private int timeStepsToEscape = 3;
+    private int timesteps = 0;
 
     private HashMap<String, Integer> intrudersAboutToEscape;
     private List<Intruder> caughtIntruders;

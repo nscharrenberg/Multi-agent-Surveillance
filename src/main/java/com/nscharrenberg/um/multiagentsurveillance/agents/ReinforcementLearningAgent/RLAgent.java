@@ -41,6 +41,7 @@ public class RLAgent extends Agent {
     private RLmodel rlmodel = new RLmodel();
     private Tile goal = this.player.getTile();
     private Tile previous = this.player.getTile();
+    private int stepcounter = 0;
     private final int[][] visited = new int[mapRepository.getBoard().width()][mapRepository.getBoard().height()];
     private final IPathFinding pathFindingAlgorithm = new AStar();
     private final IWeightComparatorGuard weightDetectorGuard = new MinDistanceUnknownAreaComparator();
@@ -93,6 +94,8 @@ public class RLAgent extends Agent {
 
     @Override
     public Action decide() throws InvalidTileException, BoardNotBuildException{
+
+        this.stepcounter++;
 
         // Store visited tiles
         if(!previous.equals(player.getTile())) {
@@ -188,6 +191,10 @@ public class RLAgent extends Agent {
                 }
             }
         }
+    }
+
+    public int getStepcounter() {
+        return this.stepcounter;
     }
 
     private Optional<Frontier> pickBestFrontier() {

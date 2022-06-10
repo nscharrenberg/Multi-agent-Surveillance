@@ -75,7 +75,7 @@ public class GameRepository implements IGameRepository {
 
         setupAgents();
 
-//        playerRepository.getStopWatch().start();
+        playerRepository.getStopWatch().start();
     }
 
     @Override

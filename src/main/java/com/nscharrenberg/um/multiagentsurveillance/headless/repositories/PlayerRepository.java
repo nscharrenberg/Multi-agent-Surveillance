@@ -491,7 +491,7 @@ public class PlayerRepository implements IPlayerRepository {
         Optional<Item> collisionFound = nextPosition.getItems().stream().filter(item -> item instanceof Collision).findFirst();
 
         if (collisionFound.isPresent()) {
-//            throw new CollisionException();
+            throw new CollisionException();
         }
 
         Optional<Item> teleporterFoundOpt = nextPosition.getItems().stream().filter(item -> item instanceof Teleporter).findFirst();

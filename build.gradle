@@ -2,7 +2,7 @@ plugins {
     id 'java'
     id 'application'
     id 'org.openjfx.javafxplugin' version '0.0.11'
-    id 'org.beryx.jlink' version '2.24.1'
+    id 'org.javamodularity.moduleplugin' version '1.8.10' apply false
     id 'org.sonarqube' version '3.3'
     id 'jacoco'
 }
@@ -14,9 +14,6 @@ version '1.0-SNAPSHOT'
 
 repositories {
     mavenCentral()
-    flatDir {
-        dirs 'lib'
-    }
 }
 
 ext {
@@ -45,19 +42,18 @@ sonarqube {
 javafx {
     version = '17.0.1'
     modules = ['javafx.controls', 'javafx.fxml']
+
 }
+
 
 dependencies {
 
-//    implementation name: 'rl4j-core-1.0.0-M1.1'
     implementation('org.deeplearning4j:rl4j-core:1.0.0-M1.1')
     implementation ('org.slf4j:slf4j-api:1.7.24')
     implementation ('org.slf4j:slf4j-simple:1.7.24')
     implementation ('org.nd4j:nd4j-backends:1.0.0-M1.1')
     implementation("org.nd4j:nd4j-native:1.0.0-M1.1")
     implementation("org.nd4j:nd4j-native-platform:1.0.0-M1.1")
-//    implementation("org.datavec:datavec-api:1.0.0-M1.1")
-//    implementation("org.slf4j:slf4j-api:1.7.21")
 
     implementation 'com.google.code.gson:gson:2.9.0'
     implementation('io.github.kostaskougios:cloning:1.10.3')
@@ -77,34 +73,18 @@ jacocoTestReport {
     }
 }
 
-jlink {
-    imageZip = project.file("${buildDir}/distributions/app-${javafx.platform.classifier}.zip")
-    options = ['--strip-debug', '--compress', '2', '--no-header-files', '--no-man-pages']
-    launcher {
-        name = 'app'
-    }
-}
-
-jlinkZip {
-    group = 'distribution'
-}
-
-task(original, dependsOn: 'classes', type: JavaExec) {
+task(original, type: JavaExec) {
     mainClass = 'com.nscharrenberg.um.multiagentsurveillance.gui.javafx.controllers.HomeScreen'
-    classpath = sourceSets.main.runtimeClasspath
 }
 
-task(canvas, dependsOn: 'classes', type: JavaExec) {
+task(canvas, type: JavaExec) {
     mainClass = 'com.nscharrenberg.um.multiagentsurveillance.gui.canvas.CanvasLauncher'
-    classpath = sourceSets.main.runtimeClasspath
 }
 
-task(dataManager, dependsOn: 'classes', type: JavaExec) {
+task(dataManager, type: JavaExec) {
     mainClass = 'com.nscharrenberg.um.multiagentsurveillance.gui.dataGUI.FileChooser'
-    classpath = sourceSets.main.runtimeClasspath
 }
 
-task(terminal, dependsOn: 'classes', type: JavaExec) {
+task(terminal, type: JavaExec) {
     mainClass = 'com.nscharrenberg.um.multiagentsurveillance.gui.terminal.TerminalApp'
-    classpath = sourceSets.main.runtimeClasspath
 }

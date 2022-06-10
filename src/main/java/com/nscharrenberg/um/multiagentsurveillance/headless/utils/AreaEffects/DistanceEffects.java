@@ -3,7 +3,6 @@ package com.nscharrenberg.um.multiagentsurveillance.headless.utils.AreaEffects;
 import com.nscharrenberg.um.multiagentsurveillance.agents.shared.Agent;
 import com.nscharrenberg.um.multiagentsurveillance.agents.shared.algorithms.distanceCalculator.CalculateDistance;
 import com.nscharrenberg.um.multiagentsurveillance.agents.shared.algorithms.distanceCalculator.EuclideanDistance;
-import com.nscharrenberg.um.multiagentsurveillance.headless.contracts.repositories.IGameRepository;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Map.Tile;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Map.TileArea;
 import com.nscharrenberg.um.multiagentsurveillance.headless.utils.AreaEffects.AudioEffect.ISoundEffect;
@@ -45,12 +44,12 @@ public class DistanceEffects {
 
                         if (actualTileOpt.get().isWall()) {
                             flag = true;
-                            System.out.println("Am a wall");
+//                            System.out.println("Am a wall");
                             break;
                         }
                     }
                     if(flag) {
-                        System.out.println("Am flaggin");
+//                        System.out.println("Am flaggin");
                         continue;
                     }
                 }

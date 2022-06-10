@@ -1,6 +1,7 @@
 package com.nscharrenberg.um.multiagentsurveillance.headless.repositories;
 
 import com.nscharrenberg.um.multiagentsurveillance.agents.DQN.DQN_Agent;
+import com.nscharrenberg.um.multiagentsurveillance.agents.DQN_inbuilt.MDP_Agent;
 import com.nscharrenberg.um.multiagentsurveillance.agents.ReinforcementLearningAgent.RLAgent;
 import com.nscharrenberg.um.multiagentsurveillance.agents.SBO.SBOAgent;
 import com.nscharrenberg.um.multiagentsurveillance.agents.frontier.yamauchi.YamauchiAgent;
@@ -53,10 +54,11 @@ public class PlayerRepository implements IPlayerRepository {
 
     private List<Agent> agents;
 
-    //public static final Class<? extends Agent> guardType = PursuerAgent.class;
-    public static final Class<? extends Agent> intruderType = EvaderAgent.class;
+    public static final Class<? extends Agent> guardType = PursuerAgent.class;
+//    public static final Class<? extends Agent> intruderType = EvaderAgent.class;
+    public static final Class<? extends Agent> intruderType = MDP_Agent.class;
 
-    private static final Class<? extends Agent> guardType = RLAgent.class;
+//    private static final Class<? extends Agent> guardType = RLAgent.class;
     //private static final Class<? extends Agent> guardType = SBOAgent.class;
     //private static final Class<? extends Agent> guardType = RandomAgent.class;
 
@@ -349,6 +351,8 @@ public class PlayerRepository implements IPlayerRepository {
             agent = new DQN_Agent(player, mapRepository, gameRepository, this);
         } else if(agentClass.equals(RLAgent.class)) {
             agent = new RLAgent(player, mapRepository, gameRepository, this);
+        } else if(agentClass.equals(MDP_Agent.class)){
+            agent = new MDP_Agent(player, mapRepository, gameRepository, this);
         }
 
         if (agent == null) {
@@ -487,7 +491,7 @@ public class PlayerRepository implements IPlayerRepository {
         Optional<Item> collisionFound = nextPosition.getItems().stream().filter(item -> item instanceof Collision).findFirst();
 
         if (collisionFound.isPresent()) {
-            throw new CollisionException();
+//            throw new CollisionException();
         }
 
         Optional<Item> teleporterFoundOpt = nextPosition.getItems().stream().filter(item -> item instanceof Teleporter).findFirst();

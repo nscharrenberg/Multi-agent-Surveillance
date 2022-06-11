@@ -306,7 +306,7 @@ public class DQNView extends StackPane {
                         agent.getTrainingData().push(experience);
 
                         // Preform training on a batch of experiences
-                        if (agent.getTrainingData().hasBatch(batchSize)) {
+                        if (agent.getTrainingData().hasBatch(batchSize) && false) {
                             System.out.println("Batch Training");
                             agent.trainAgent(agent.getTrainingData().randomSample(batchSize));
                             agent.getTrainingData().clearBatch();
@@ -337,7 +337,7 @@ public class DQNView extends StackPane {
     private void endTrain(DQN_Agent agent, Intruder intruder, double[][][] state, Action action) throws Exception {
 
         double reward;
-        double[][][] nextState = new double[state.length][state[0].length][state[0].length];
+        double[][][] nextState = state.clone();
 
         reward = caught(intruder) ? agent.calculateEndReward(false) : agent.calculateEndReward(true);
 

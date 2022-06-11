@@ -170,12 +170,26 @@ public class DQN_Agent extends Agent {
         policyNetwork.backwardPropagate(targetQV, predictedQV);
     }
 
+    public void trainAgentEnd(Experience experience){
+
+        double[] predictedQV, targetQV;
+
+        predictedQV = policyNetwork.forwardPropagate(experience.state);
+        targetQV = predictedQV.clone();
+        targetQV[experience.action.getPrediction()] *= gamma;
+        targetQV[experience.action.getPrediction()] += experience.getReward();
+        policyNetwork.backwardPropagate(targetQV, predictedQV);
+
+        targetNetwork = policyNetwork.clone();
+    }
+
+
     public void trainAgent(Experience experience) throws Exception {
 
         double[] predictedQV, targetQV;
 
         predictedQV = policyNetwork.forwardPropagate(experience.state);
-                                                // This shouldn't be .clone
+
         targetQV = targetQValues(experience.nextState, predictedQV.clone(), experience.action, experience.reward);
         policyNetwork.backwardPropagate(targetQV, predictedQV);
 
@@ -217,24 +231,19 @@ public class DQN_Agent extends Agent {
     }
 
     public double calculateEndReward(boolean escaped) {
-        return escaped ?  5 :  -5;
+        int reward = 1;
+        return escaped ?  reward : -reward;
     }
 
 
     public double calculateReward(double[][][] state) throws Exception {
 
-
-
-
         // Delta Sound Proximity & Delta Vision Proximity
         double dSP, dVP;
 
-        // Positive if sound intensity from all sides and behind is decreasing
         dSP =  -soundProximity(state) / 100;
 
-        // Positive if visible distance from all guards is decreasing
         dVP = -visionProximity(state) / 10;
-
 
         Intruder intruder = (Intruder) this.player;
         double reward = 0;
@@ -245,6 +254,7 @@ public class DQN_Agent extends Agent {
         double targetDistance = intruder.getDistanceToTarget();
 
         if (targetDistance < minTargetDistance){
+            minTargetDistance = targetDistance;
             reward += 0.05;
         }
 

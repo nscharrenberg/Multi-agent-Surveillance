@@ -46,7 +46,6 @@ public class SimulatorRecorder {
         thread.setDaemon(true);
         thread.start();
 
-
         int moveCount = 1;
         long splits = 0;
 

@@ -3,8 +3,6 @@ package com.nscharrenberg.um.multiagentsurveillance.headless.models.Items;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Items.Collision.Wall;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Map.ShadowTile;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Map.Tile;
-import com.nscharrenberg.um.multiagentsurveillance.headless.models.MarkerSmell;
-import com.nscharrenberg.um.multiagentsurveillance.headless.models.SoundWave;
 
 public enum ItemType {
     TILE(1, Tile.class),

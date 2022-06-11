@@ -51,4 +51,5 @@ module com.nscharrenberg.um.multiagentsurveillance {
     opens com.nscharrenberg.um.multiagentsurveillance.headless.utils.AreaEffects to cloning;
     opens com.nscharrenberg.um.multiagentsurveillance.agents.probabilistic.pursuer to cloning;
     opens com.nscharrenberg.um.multiagentsurveillance.agents.probabilistic.evader to cloning;
+    opens com.nscharrenberg.um.multiagentsurveillance.agents.ReinforcementLearningAgent to cloning;
 }

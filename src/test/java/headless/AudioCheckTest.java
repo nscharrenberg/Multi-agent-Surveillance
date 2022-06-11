@@ -83,7 +83,7 @@ public class AudioCheckTest {
 
         while (Factory.getGameRepository().isRunning()) {
 
-            DistanceEffects.areaEffects(agent, agents);
+            DistanceEffects.areaEffects(agent, agents, Factory.getGameRepository().isCanHearThroughWalls(), Factory.getMapRepository().getBoard());
             List<Sound> soundList = agent.getPlayer().getSoundEffects();
 
             if(soundList.size() == 0)

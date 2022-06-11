@@ -3,8 +3,7 @@ package com.nscharrenberg.um.multiagentsurveillance.headless.utils;
 import com.nscharrenberg.um.multiagentsurveillance.headless.exceptions.ItemAlreadyOnTileException;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Angle.*;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Map.TileArea;
-import com.nscharrenberg.um.multiagentsurveillance.headless.models.SoundWave;
-import com.nscharrenberg.um.multiagentsurveillance.headless.models.Items.*;
+import com.nscharrenberg.um.multiagentsurveillance.headless.models.Items.SoundWave;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Map.*;
 
 import java.util.HashMap;
@@ -29,7 +28,7 @@ public class CharacterAudio {
             for (Map.Entry<Integer, Tile> colEntry : rowEntry.getValue().entrySet()) {
                 Tile st = colEntry.getValue();
                 if (st != null) {
-                    st.add(new SoundWave(st, getWaveStrength(st, position), getWaveDirection(st, position)));
+                    st.add(new SoundWave(st, getWaveStrength(st, position), getWaveDirection(st, position), null));
                 }
             }
         }

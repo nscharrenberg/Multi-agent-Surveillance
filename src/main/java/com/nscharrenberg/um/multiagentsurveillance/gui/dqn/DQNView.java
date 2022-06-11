@@ -61,7 +61,7 @@ public class DQNView extends StackPane {
     private Stack<Network> networks = new Stack<>();
     private DQN_Agent[] intruders;
     private final int batchSize = 128;
-    private final int numEpisodes = 1;
+    private final int numEpisodes = 10;
 
     public static HashMap<String, Color> getMapColours(){
         HashMap<String, Color> out = new HashMap<>();
@@ -245,7 +245,7 @@ public class DQNView extends StackPane {
 
         double[][][] state, nextState;
         Experience experience;
-        boolean done;
+        boolean done, escaped;
         Action action;
         double reward;
 
@@ -285,11 +285,18 @@ public class DQNView extends StackPane {
                         break;
                     }
 
-                    DQN_Agent agent = (DQN_Agent) itr.next().getAgent();
+                    Intruder intruder = itr.next();
+                    DQN_Agent agent = (DQN_Agent) intruder.getAgent();
 
                     state = agent.updateState();
                     action = agent.selectAction(episode, state);
                     agent.execute(action);
+
+                    if (endState(intruder)) {
+                        endTrain(agent, intruder, state, action);
+                        continue;
+                    }
+
                     done = !agent.getGameRepository().isRunning();
 
                     if (!done) {
@@ -299,7 +306,7 @@ public class DQNView extends StackPane {
                         agent.getTrainingData().push(experience);
 
                         // Preform training on a batch of experiences
-                        if (agent.getTrainingData().hasBatch(batchSize) && 0.5 > ThreadLocalRandom.current().nextDouble() && false) {
+                        if (agent.getTrainingData().hasBatch(batchSize)) {
                             System.out.println("Batch Training");
                             agent.trainAgent(agent.getTrainingData().randomSample(batchSize));
                             agent.getTrainingData().clearBatch();
@@ -325,6 +332,31 @@ public class DQNView extends StackPane {
                 }
             }
         }
+    }
+
+    private void endTrain(DQN_Agent agent, Intruder intruder, double[][][] state, Action action) throws Exception {
+
+        double reward;
+        double[][][] nextState = new double[state.length][state[0].length][state[0].length];
+
+        reward = caught(intruder) ? agent.calculateEndReward(false) : agent.calculateEndReward(true);
+
+        Experience experience = new Experience(state, action, reward, nextState, true);
+        agent.getTrainingData().push(experience);
+
+        agent.trainAgent(experience);
+    }
+
+    private boolean endState(Intruder intruder){
+        return escaped(intruder) || caught(intruder);
+    }
+
+    private boolean escaped(Intruder intruder){
+        return playerRepository.getEscapedIntruders().contains(intruder);
+    }
+
+    private boolean caught(Intruder intruder){
+        return playerRepository.getCaughtIntruders().contains(intruder);
     }
 
     private void drawText(String text) {

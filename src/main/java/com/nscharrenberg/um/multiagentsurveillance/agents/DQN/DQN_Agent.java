@@ -216,7 +216,15 @@ public class DQN_Agent extends Agent {
         return qValues;
     }
 
+    public double calculateEndReward(boolean escaped) {
+        return escaped ?  5 :  -5;
+    }
+
+
     public double calculateReward(double[][][] state) throws Exception {
+
+
+
 
         // Delta Sound Proximity & Delta Vision Proximity
         double dSP, dVP;

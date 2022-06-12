@@ -343,9 +343,9 @@ public abstract class Agent {
 
         // This allows us to change how close we should be to a dead end for it to actually place a marker, since for
         // some maps dead ends are placed where it not exactly clear where the dead end markers roughly refer to.
-        if (Math.abs(differenceFromWallToCurrentX) > 3 || Math.abs(differenceFromWallToCurrentY) > 3) {
-            return false;
-        }
+//        if (Math.abs(differenceFromWallToCurrentX) > 3 || Math.abs(differenceFromWallToCurrentY) > 3) {
+//            return false;
+//        }
 
         if (differenceFromWallToCurrentX == 0 || differenceFromWallToCurrentY == 0) {
             return false;

@@ -97,6 +97,11 @@ public class RLAgent extends Agent {
 
         this.stepcounter++;
 
+        Action markerChecked = player.getAgent().markerCheck();
+        if (markerChecked != null) {
+            return markerChecked;
+        }
+
         // Store visited tiles
         if(!previous.equals(player.getTile())) {
             visited[player.getTile().getX()][player.getTile().getY()] += 1;

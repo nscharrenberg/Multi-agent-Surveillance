@@ -19,6 +19,7 @@ import com.nscharrenberg.um.multiagentsurveillance.headless.models.Angle.Advance
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.GameMode;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.GameState;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Items.Collision.Collision;
+import com.nscharrenberg.um.multiagentsurveillance.headless.models.Items.Collision.Wall;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Items.Item;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Items.Marker;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Items.Teleporter;
@@ -32,6 +33,7 @@ import com.nscharrenberg.um.multiagentsurveillance.headless.utils.AreaEffects.Di
 import com.nscharrenberg.um.multiagentsurveillance.headless.utils.BoardUtils;
 import com.nscharrenberg.um.multiagentsurveillance.headless.utils.StopWatch;
 import com.nscharrenberg.um.multiagentsurveillance.headless.utils.Vision.CharacterVision;
+import com.nscharrenberg.um.multiagentsurveillance.headless.utils.Vision.Geometrics;
 
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
@@ -617,6 +619,14 @@ public class PlayerRepository implements IPlayerRepository {
                 double distance = manhattanDistance.compute(guard.getTile(), intruder.getTile());
 
                 if (distance <= captureRange) {
+
+                    Geometrics gm = new Geometrics();
+                    for (Tile t:gm.getIntersectingTiles(guard.getTile(), intruder.getTile())) {
+                        Optional<Tile> ct = mapRepository.getBoard().getByCoordinates(t.getX(), t.getY());
+                        if(ct.get().getItems().get(0) instanceof Wall)
+                            return;
+                    }
+
                     System.out.println("Intruder " + intruder.getId() + " has been Caught");
 
                     caughtIntruders.add(intruder);

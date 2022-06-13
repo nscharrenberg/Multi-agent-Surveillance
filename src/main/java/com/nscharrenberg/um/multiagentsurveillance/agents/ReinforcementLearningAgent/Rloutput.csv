@@ -1,8 +1,7 @@
-
 Game: 0.0
-Intruders caught: 1.0
-Intruders Escaped: 0.0
-Knowledge size: 839.0
+Intruders caught: 0.0
+Intruders Escaped: 1.0
+Knowledge size: 735.0
 SoundWave: 0.5
 MarkerDeadEnd: -0.85
 MarkerTarget: 0.6
@@ -10,13 +9,13 @@ MarkerGuard: -0.45
 MarkerIntruder: 0.92
 MarkerTeleporter: 0.2
 MarkerShaded: -0.3
-Game duration in ms: 14076.0
-Game steps: 421.0
+Game duration in ms: 10738.0
+Game steps: 312.0
 
 Game: 0.0
 Intruders caught: 1.0
 Intruders Escaped: 0.0
-Knowledge size: 761.0
+Knowledge size: 354.0
 SoundWave: 0.5
 MarkerDeadEnd: -0.85
 MarkerTarget: 0.6
@@ -24,5 +23,171 @@ MarkerGuard: -0.45
 MarkerIntruder: 0.92
 MarkerTeleporter: 0.2
 MarkerShaded: -0.3
-Game duration in ms: 9784.0
-Game steps: 288.0
+Game duration in ms: 3021.0
+Game steps: 78.0
+
+Game: 0.0
+Intruders caught: 3.0
+Intruders Escaped: 0.0
+Knowledge size: 501.0
+Knowledge size: 86.0
+SoundWave: 0.5
+MarkerDeadEnd: -0.85
+MarkerTarget: 0.6
+MarkerGuard: -0.45
+MarkerIntruder: 0.92
+MarkerTeleporter: 0.2
+MarkerShaded: -0.3
+Game duration in ms: 6307.0
+Game steps: 169.0
+
+Game: 0.0
+Intruders caught: 3.0
+Intruders Escaped: 0.0
+Knowledge size: 804.0
+Knowledge size: 712.0
+SoundWave: 0.5
+MarkerDeadEnd: -0.85
+MarkerTarget: 0.6
+MarkerGuard: -0.45
+MarkerIntruder: 0.92
+MarkerTeleporter: 0.2
+MarkerShaded: -0.3
+Game duration in ms: 12485.0
+Game steps: 360.0
+
+Game: 0.0
+Intruders caught: 3.0
+Intruders Escaped: 0.0
+Knowledge size: 1085.0
+Knowledge size: 887.0
+SoundWave: 0.5
+MarkerDeadEnd: -0.65
+MarkerTarget: 0.6
+MarkerGuard: -0.45
+MarkerIntruder: 0.92
+MarkerTeleporter: 0.2
+MarkerShaded: -0.3
+Game duration in ms: 17129.0
+Game steps: 495.0
+
+Game: 0.0
+Intruders caught: 3.0
+Intruders Escaped: 0.0
+Knowledge size: 406.0
+Knowledge size: 928.0
+SoundWave: 0.5
+MarkerDeadEnd: -0.35
+MarkerTarget: 0.6
+MarkerGuard: -0.45
+MarkerIntruder: 0.92
+MarkerTeleporter: 0.2
+MarkerShaded: -0.3
+Game duration in ms: 14656.0
+Game steps: 433.0
+
+Game: 0.0
+Intruders caught: 3.0
+Intruders Escaped: 0.0
+Knowledge size: 912.0
+Knowledge size: 701.0
+SoundWave: 0.5
+MarkerDeadEnd: 0.35
+MarkerTarget: 0.6
+MarkerGuard: -0.45
+MarkerIntruder: 0.92
+MarkerTeleporter: 0.2
+MarkerShaded: -0.3
+Game duration in ms: 16857.0
+Game steps: 496.0
+
+Game: 0.0
+Intruders caught: 3.0
+Intruders Escaped: 0.0
+Knowledge size: 157.0
+Knowledge size: 875.0
+SoundWave: 0.5
+MarkerDeadEnd: 0.65
+MarkerTarget: 0.6
+MarkerGuard: -0.45
+MarkerIntruder: 0.92
+MarkerTeleporter: 0.2
+MarkerShaded: -0.3
+Game duration in ms: 16288.0
+Game steps: 478.0
+
+Game: 0.0
+Intruders caught: 3.0
+Intruders Escaped: 0.0
+Knowledge size: 517.0
+Knowledge size: 86.0
+SoundWave: 0.5
+MarkerDeadEnd: -0.85
+MarkerTarget: 0.6
+MarkerGuard: -0.45
+MarkerIntruder: 0.92
+MarkerTeleporter: 0.2
+MarkerShaded: -0.3
+Game duration in ms: 6567.0
+Game steps: 179.0
+
+Game: 0.0
+Intruders caught: 3.0
+Intruders Escaped: 0.0
+Knowledge size: 875.0
+Knowledge size: 1013.0
+SoundWave: 0.5
+MarkerDeadEnd: 0.85
+MarkerTarget: 0.6
+MarkerGuard: -0.45
+MarkerIntruder: 0.92
+MarkerTeleporter: 0.2
+MarkerShaded: -0.3
+Game duration in ms: 18070.0
+Game steps: 508.0
+
+Game: 0.0
+Intruders caught: 3.0
+Intruders Escaped: 0.0
+Knowledge size: 1517.0
+Knowledge size: 1395.0
+SoundWave: 0.5
+MarkerDeadEnd: -0.85
+MarkerTarget: 0.6
+MarkerGuard: -0.45
+MarkerIntruder: -0.92
+MarkerTeleporter: 0.2
+MarkerShaded: -0.3
+Game duration in ms: 53899.0
+Game steps: 1541.0
+
+Game: 0.0
+Intruders caught: 3.0
+Intruders Escaped: 0.0
+Knowledge size: 756.0
+Knowledge size: 95.0
+SoundWave: 0.5
+MarkerDeadEnd: -0.85
+MarkerTarget: 0.6
+MarkerGuard: -0.45
+MarkerIntruder: 0.92
+MarkerTeleporter: 0.2
+MarkerShaded: -0.3
+Game duration in ms: 12177.0
+Game steps: 345.0
+
+Game: 0.0
+src/test/resources/maps/deadEndMaze.json0.0
+Intruders caught: 3.0
+Intruders Escaped: 0.0
+Knowledge size: 1053.0
+Knowledge size: 913.0
+SoundWave: 0.5
+MarkerDeadEnd: -0.85
+MarkerTarget: 0.6
+MarkerGuard: -0.45
+MarkerIntruder: 0.92
+MarkerTeleporter: 0.2
+MarkerShaded: -0.3
+Game duration in ms: 18416.0
+Game steps: 524.0

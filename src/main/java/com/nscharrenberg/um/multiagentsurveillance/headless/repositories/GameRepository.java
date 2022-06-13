@@ -104,6 +104,10 @@ public class GameRepository implements IGameRepository {
         }
     }
 
+    public String getMap() {
+        return this.MAP_PATH;
+    }
+
     private void setupAgents(DQN_Agent[] guards, DQN_Agent[] intruders) {
         for (int i = 0; i < guards.length; i++) {
             Factory.getPlayerRepository().spawn(Guard.class, guards[i]);

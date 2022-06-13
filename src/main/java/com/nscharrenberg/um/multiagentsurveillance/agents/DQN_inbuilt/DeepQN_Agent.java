@@ -34,7 +34,7 @@ public class DeepQN_Agent extends Agent implements Encodable {
     private final CalculateDistance distance = new ManhattanDistance();
     private final Geometrics gm = new Geometrics();
     private final double maxDistance;
-    private String policyName = "src/test/resources/bins/retrain.bin";
+    private String policyName = "src/test/resources/bins/another-retrain.bin";
     private DQNPolicy<DeepQN_Agent> policy;
 
 

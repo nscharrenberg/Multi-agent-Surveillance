@@ -20,7 +20,7 @@ import java.io.File;
 import java.io.IOException;
 
 public class GameRepository implements IGameRepository {
-    private static String MAP_PATH = "src/test/resources/maps/maze3.json";
+    private static String MAP_PATH = "src/test/resources/maps/trainMap.json";
 //    private static String MAP_PATH = "src/test/resources/maps/deadEndMaze.json";
     //private static String MAP_PATH = "src/test/resources/RLtrainingMaps/trainingExampleMap.txt";
     //private static String MAP_PATH = "src/test/resources/RLtrainingMaps/ChasingTestMap.txt";

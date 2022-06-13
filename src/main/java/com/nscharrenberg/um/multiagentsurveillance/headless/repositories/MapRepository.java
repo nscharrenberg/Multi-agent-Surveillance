@@ -153,11 +153,7 @@ public class MapRepository implements IMapRepository {
         targetArea.add(found);
 
         if (!targetArea.isEmpty()) {
-            Point A = new Point(x1, y1);
-            Point B = new Point(x1+1, y1+1);
-            Point C = new Point(x1, y1+1);
-            Point D = new Point(x1+1, y1);
-            targetCenter = IntersectionPoint.calculateIntersectionPoint(A, B, C, D);
+            targetCenter = found;
         }
     }
 

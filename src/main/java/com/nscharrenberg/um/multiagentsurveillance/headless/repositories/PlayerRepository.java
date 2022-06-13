@@ -1,7 +1,7 @@
 package com.nscharrenberg.um.multiagentsurveillance.headless.repositories;
 
 import com.nscharrenberg.um.multiagentsurveillance.agents.DQN.DQN_Agent;
-import com.nscharrenberg.um.multiagentsurveillance.agents.DQN_inbuilt.MDP_Agent;
+import com.nscharrenberg.um.multiagentsurveillance.agents.DQN_inbuilt.DeepQN_Agent;
 import com.nscharrenberg.um.multiagentsurveillance.agents.ReinforcementLearningAgent.RLAgent;
 import com.nscharrenberg.um.multiagentsurveillance.agents.SBO.SBOAgent;
 import com.nscharrenberg.um.multiagentsurveillance.agents.frontier.yamauchi.YamauchiAgent;
@@ -56,7 +56,7 @@ public class PlayerRepository implements IPlayerRepository {
 
     public static final Class<? extends Agent> guardType = PursuerAgent.class;
 //    public static final Class<? extends Agent> intruderType = EvaderAgent.class;
-    public static final Class<? extends Agent> intruderType = MDP_Agent.class;
+    public static final Class<? extends Agent> intruderType = DeepQN_Agent.class;
 
 //    private static final Class<? extends Agent> guardType = RLAgent.class;
     //private static final Class<? extends Agent> guardType = SBOAgent.class;
@@ -351,8 +351,8 @@ public class PlayerRepository implements IPlayerRepository {
             agent = new DQN_Agent(player, mapRepository, gameRepository, this);
         } else if(agentClass.equals(RLAgent.class)) {
             agent = new RLAgent(player, mapRepository, gameRepository, this);
-        } else if(agentClass.equals(MDP_Agent.class)){
-            agent = new MDP_Agent(player, mapRepository, gameRepository, this);
+        } else if(agentClass.equals(DeepQN_Agent.class)){
+            agent = new DeepQN_Agent(player, mapRepository, gameRepository, this);
         }
 
         if (agent == null) {

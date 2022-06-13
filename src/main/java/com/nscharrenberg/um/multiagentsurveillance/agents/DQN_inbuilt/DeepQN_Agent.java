@@ -17,26 +17,33 @@ import com.nscharrenberg.um.multiagentsurveillance.headless.utils.AreaEffects.Au
 import com.nscharrenberg.um.multiagentsurveillance.headless.utils.Vision.CharacterVision;
 import com.nscharrenberg.um.multiagentsurveillance.headless.utils.Vision.Geometrics;
 import com.rits.cloning.Cloner;
+import org.deeplearning4j.rl4j.observation.Observation;
+import org.deeplearning4j.rl4j.policy.DQNPolicy;
 import org.deeplearning4j.rl4j.space.Encodable;
 import org.nd4j.linalg.api.ndarray.INDArray;
 import org.nd4j.linalg.factory.Nd4j;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 import java.util.Queue;
 
-public class MDP_Agent extends Agent implements Encodable {
+public class DeepQN_Agent extends Agent implements Encodable {
 
     private final int observationSize;
-    private final CalculateDistance calculateDistance = new ManhattanDistance();
+    private final CalculateDistance distance = new ManhattanDistance();
     private final Geometrics gm = new Geometrics();
+    private final double maxDistance;
+    private String policyName = "src/test/resources/bins/retrain.bin";
+    private DQNPolicy<DeepQN_Agent> policy;
 
-    public MDP_Agent(Player player) {
+
+    public DeepQN_Agent(Player player) {
         super(player);
         throw new RuntimeException("Wrong constructor");
     }
 
-    public MDP_Agent(Player player, IMapRepository mapRepository, IGameRepository gameRepository, IPlayerRepository playerRepository) {
+    public DeepQN_Agent(Player player, IMapRepository mapRepository, IGameRepository gameRepository, IPlayerRepository playerRepository) {
         super(player, mapRepository, gameRepository, playerRepository);
 
 
@@ -46,9 +53,18 @@ public class MDP_Agent extends Agent implements Encodable {
         List<Tile> vision = characterVision.getConeVision(new Tile(0, 0));
 
         this.observationSize = (vision.size()-1) + 12;
+        this.maxDistance = distance.compute(new Tile(gameRepository.getWidth(), gameRepository.getHeight()), new Tile(0, 0));
+
+        if(policyName != null){
+            try {
+                this.policy = DQNPolicy.load(policyName);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
-    public MDP_Agent(Player player, Area<Tile> knowledge, Queue<Action> plannedMoves, IMapRepository mapRepository, IGameRepository gameRepository, IPlayerRepository playerRepository) {
+    public DeepQN_Agent(Player player, Area<Tile> knowledge, Queue<Action> plannedMoves, IMapRepository mapRepository, IGameRepository gameRepository, IPlayerRepository playerRepository) {
         super(player, knowledge, plannedMoves, mapRepository, gameRepository, playerRepository);
         throw new RuntimeException("Wrong constructor");
     }
@@ -64,7 +80,8 @@ public class MDP_Agent extends Agent implements Encodable {
 
     @Override
     public Action decide() throws Exception {
-        return null;
+        Integer action = policy.nextAction(new Observation(Nd4j.expandDims(Nd4j.create(toArray()), 0)));
+        return Action.values()[action];
     }
 
     @Override
@@ -75,11 +92,14 @@ public class MDP_Agent extends Agent implements Encodable {
             return observation;
 
         observation[player.getDirection().ordinal()] = 1;
-
+//
         if(!(player instanceof Intruder intruder))
             throw new RuntimeException("MDP is not Intruder");
 
         double distanceToTarget = intruder.getDistanceToTarget();
+
+        if(distanceToTarget > maxDistance)
+            distanceToTarget = maxDistance;
 
         observation[4] = distanceToTarget;
 
@@ -113,7 +133,7 @@ public class MDP_Agent extends Agent implements Encodable {
 
         if(approxTargetTile == null){
             for (int j = i; j < observationSize; j++) {
-                observation[j] = Double.MAX_VALUE;
+                observation[j] = maxDistance;
                 i = j;
             }
             i++;
@@ -134,10 +154,10 @@ public class MDP_Agent extends Agent implements Encodable {
                     System.out.println("GG");
                 }
                 if(tile.getX() < 0 || tile.getY() < 0){
-                    observation[i++] = -1;
+                    observation[i++] = -7;
                     continue;
                 } else if(tile.getX() > board.width() || tile.getY() > board.height()){
-                    observation[i++] = -1;
+                    observation[i++] = -7;
                     continue;
                 } else if(tile.getX() == position.getX() && tile.getY() == position.getY())
                     continue;
@@ -153,7 +173,7 @@ public class MDP_Agent extends Agent implements Encodable {
                     Optional<Tile> tileAddOpt = board.getByCoordinates(tile.getX(), tile.getY());
 
                     if (tileAddOpt.isEmpty()) {
-                        observation[i++] = -1;
+                        observation[i++] = -7;
                         continue;
                     }
                     Tile tileBoard = tileAddOpt.get();
@@ -162,22 +182,24 @@ public class MDP_Agent extends Agent implements Encodable {
                         observation[i++] = -1;
                         continue;
                     }else if(tileBoard.hasGuard()){
-                        observation[i++] = -4;
+                        observation[i++] = -2;
                         continue;
                     } else if(tileBoard.isTeleport()){
                         observation[i++] = -3;
                         continue;
                     } else if(tileBoard.hasIntruder()){
-                        observation[i++] = -2;
+                        observation[i++] = -4;
+                        continue;
+                    } else if(mapRepository.getTargetArea().within(tileBoard.getX(), tileBoard.getY())){
+                        observation[i++] = 100;
                         continue;
                     }
 
-                    observation[i++] = calculateDistance.compute(tileBoard, approxTargetTile);
-
+                    observation[i++] = maxDistance - distance.compute(tileBoard, approxTargetTile);
 
                 } else {
 
-                    observation[i++] = 0;
+                    observation[i++] = -6;
                     validtile = true;
                 }
             }

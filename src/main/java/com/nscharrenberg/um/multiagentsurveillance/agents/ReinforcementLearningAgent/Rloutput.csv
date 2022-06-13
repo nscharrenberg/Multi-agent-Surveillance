@@ -191,3 +191,83 @@ MarkerTeleporter: 0.2
 MarkerShaded: -0.3
 Game duration in ms: 18416.0
 Game steps: 524.0
+
+src/test/resources/maps/deadEndMaze.json
+Intruders caught: 3.0
+Intruders Escaped: 0.0
+448f3690-2b61-46b8-97b0-beb25afc8630 - Knowledge size: 1022.0
+6acbf1a8-1723-498a-a8a7-adeee5680eda - Knowledge size: 934.0
+Agent parameters: 
+SoundWave: 0.5
+MarkerDeadEnd: -0.85
+MarkerTarget: 0.6
+MarkerGuard: -0.45
+MarkerIntruder: 0.92
+MarkerTeleporter: 0.2
+MarkerShaded: -0.3
+Game duration in ms: 21337.0
+Game steps: 622.0
+
+src/test/resources/maps/deadEndMaze.json
+Intruders caught: 3.0
+Intruders Escaped: 0.0
+5b806744-0882-4b49-b0aa-3ceafc19e81f - Knowledge size: 449.0
+a498a1a3-f896-4f22-ad09-ca5d56d927a1 - Knowledge size: 232.0
+Agent parameters: 
+SoundWave: 0.5
+MarkerDeadEnd: -0.85
+MarkerTarget: 0.6
+MarkerGuard: -0.45
+MarkerIntruder: 0.92
+MarkerTeleporter: 0.2
+MarkerShaded: -0.3
+Game duration in ms: 6461.0
+Game steps: 176.0
+
+src/test/resources/maps/deadEndMaze.json
+Intruders caught: 3.0
+Intruders Escaped: 0.0
+660864f2-f9ef-451f-918e-f728caa0f67d - Knowledge size: 684.0
+446f8f58-ed1a-4996-80a7-2b49ca51c00c - Knowledge size: 733.0
+Agent parameters: 
+SoundWave: 0.5
+MarkerDeadEnd: -0.85
+MarkerTarget: 0.6
+MarkerGuard: -0.45
+MarkerIntruder: 0.92
+MarkerTeleporter: 0.2
+MarkerShaded: -0.3
+Game duration in ms: 11118.0
+Game steps: 311.0
+
+src/test/resources/maps/deadEndMaze.json
+Intruders caught: 3.0
+Intruders Escaped: 0.0
+2fbdde44-bbc9-4b9e-b219-582018894512 - Knowledge size: 1240.0
+405655df-d3cc-4658-a216-fb85492e79af - Knowledge size: 1437.0
+Agent parameters: 
+SoundWave: 0.5
+MarkerDeadEnd: -0.85
+MarkerTarget: 0.6
+MarkerGuard: -0.45
+MarkerIntruder: 0.92
+MarkerTeleporter: 0.2
+MarkerShaded: -0.3
+Game duration in ms: 26402.0
+Game steps: 768.0
+
+src/test/resources/maps/deadEndMaze.json
+Intruders caught: 3.0
+Intruders Escaped: 0.0
+dae60474-ec2f-40ec-8259-44b25f9b4100 - Knowledge size: 1214.0
+027fc91c-b9df-4b27-870c-7698f3063f0b - Knowledge size: 858.0
+Agent parameters: 
+SoundWave: 0.5
+MarkerDeadEnd: -0.85
+MarkerTarget: 0.6
+MarkerGuard: -0.45
+MarkerIntruder: 0.92
+MarkerTeleporter: 0.2
+MarkerShaded: -0.3
+Game duration in ms: 23062.0
+Game steps: 669.0

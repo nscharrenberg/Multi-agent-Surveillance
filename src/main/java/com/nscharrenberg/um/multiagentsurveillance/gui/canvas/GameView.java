@@ -210,14 +210,14 @@ public class GameView extends StackPane {
     private void exportEndData() {
         // Export data to csv
         Export exp = new Export();
-        //exp.addValue("Game: ", 0);
-        exp.addValue(gameRepository.getMap(), 0);
+        exp.addHeader(gameRepository.getMap());
         exp.addValue("Intruders caught: ", playerRepository.getCaughtIntruders().size());
         exp.addValue("Intruders Escaped: ", playerRepository.getEscapedIntruders().size());
         for (Agent a : playerRepository.getAgents()) {
-            exp.addValue("Knowledge size: ", a.getKnowledge().size());
+            exp.addValue(a.getPlayer().getId() + " - Knowledge size: ", a.getKnowledge().size());
         }
 
+        exp.addHeader("Agent parameters: ");
         for (TypePriority tp: TypePriority.values()) {
             exp.addValue(tp.name() + ": ", tp.getPriority());
         }

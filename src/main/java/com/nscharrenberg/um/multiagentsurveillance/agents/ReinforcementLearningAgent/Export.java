@@ -29,6 +29,8 @@ public class Export {
         values.add(Arrays.asList(name, String.valueOf(value)));
     }
 
+    public void addHeader(String header) { values.add(List.of(header)); }
+
     public void parseValues(){
         try{
             for(List<String> record : values){

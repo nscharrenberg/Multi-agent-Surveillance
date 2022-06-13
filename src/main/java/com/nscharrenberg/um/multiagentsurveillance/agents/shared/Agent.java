@@ -330,15 +330,63 @@ public abstract class Agent {
         int wallY = wallTile.getY();
         int currentX = player.getTile().getX();
         int currentY = player.getTile().getY();
-        Point[] deadEndTilesTopLeft = new Point[]{new Point(wallX, wallY-1), new Point(wallX, wallY-2), new Point(wallX, wallY-3), new Point(wallX, wallY-4), new Point(wallX-1, wallY), new Point(wallX-2, wallY), new Point(wallX-3, wallY), new Point(wallX-4, wallY)};
-        Point[] deadEndTilesTopRight = new Point[]{new Point(wallX, wallY-1), new Point(wallX, wallY-2), new Point(wallX, wallY-3), new Point(wallX, wallY-4), new Point(wallX+1, wallY), new Point(wallX+2, wallY), new Point(wallX+3, wallY), new Point(wallX+4, wallY)};
-        Point[] deadEndTilesBottomLeft = new Point[]{new Point(wallX, wallY+1), new Point(wallX, wallY+2), new Point(wallX, wallY+3), new Point(wallX, wallY+4), new Point(wallX-1, wallY), new Point(wallX-2, wallY), new Point(wallX-3, wallY), new Point(wallX-4, wallY)};
-        Point[] deadEndTilesBottomRight = new Point[]{new Point(wallX, wallY+1), new Point(wallX, wallY+2), new Point(wallX, wallY+3), new Point(wallX, wallY+4), new Point(wallX+1, wallY), new Point(wallX+2, wallY), new Point(wallX+3, wallY), new Point(wallX+4, wallY)};
+        Point[] deadEndTilesTopLeft = new Point[]{new Point(wallX, wallY-1), new Point(wallX, wallY-2), new Point(wallX-1, wallY), new Point(wallX-2, wallY)};
+        Point[] deadEndTilesTopRight = new Point[]{new Point(wallX, wallY-1), new Point(wallX, wallY-2), new Point(wallX+1, wallY), new Point(wallX+2, wallY)};
+        Point[] deadEndTilesBottomLeft = new Point[]{new Point(wallX, wallY+1), new Point(wallX, wallY+2), new Point(wallX-1, wallY), new Point(wallX-2, wallY)};
+        Point[] deadEndTilesBottomRight = new Point[]{new Point(wallX, wallY+1), new Point(wallX, wallY+2), new Point(wallX+1, wallY), new Point(wallX+2, wallY)};
 
         int differenceFromWallToCurrentX = currentX - wallX;
         int differenceFromWallToCurrentY = currentY - wallY;
 
-        if (differenceFromWallToCurrentX > 0 && differenceFromWallToCurrentY >= 0) {
+        // This allows us to change how close we should be to a dead end for it to actually place a marker, since for
+        // some maps dead ends are placed where it not exactly clear where the dead end markers roughly refer to.
+//        if (Math.abs(differenceFromWallToCurrentX) > 3 || Math.abs(differenceFromWallToCurrentY) > 3) {
+//            return false;
+//        }
+
+        if (differenceFromWallToCurrentX == 0 || differenceFromWallToCurrentY == 0) {
+            return false;
+        }
+
+        if (differenceFromWallToCurrentX > 0 && differenceFromWallToCurrentY > 0) {
+            for (Point coordinate : deadEndTilesBottomRight) {
+                boolean tileFound = false;
+                if (coordinate.getX() >= 0 && coordinate.getY() >= 0 && coordinate.getX() <= gameRepository.getWidth() && coordinate.getY() <= gameRepository.getHeight()) {
+                    Tile currentTile = mapRepository.findTileByCoordinates((int) coordinate.getX(), (int) coordinate.getY());
+                    for (Map.Entry<Integer, HashMap<Integer, Tile>> rowEntry : vision.entrySet()) {
+                        for (Map.Entry<Integer, Tile> colEntry : rowEntry.getValue().entrySet()) {
+                            if (colEntry.getValue() == currentTile) {
+                                tileFound = true;
+                                break;
+                            }
+                        }
+                    }
+                    for (Map.Entry<Integer, HashMap<Integer, Tile>> rowEntry : getKnowledge().getRegion().entrySet()) {
+                        for (Map.Entry<Integer, Tile> colEntry : rowEntry.getValue().entrySet()) {
+                            if (colEntry.getValue() == currentTile) {
+                                tileFound = true;
+                                break;
+                            }
+                        }
+                    }
+
+                    boolean wallFound = false;
+                    if (tileFound) {
+                        for (Item item : currentTile.getItems()) {
+                            if (item instanceof Wall) {
+                                wallFound = true;
+                                break;
+                            }
+                        }
+                        if (wallFound) {
+                            continue;
+                        } else {return false;}
+                    } else {return false;}
+                }
+            }
+        }
+
+        else if (differenceFromWallToCurrentX < 0 && differenceFromWallToCurrentY > 0) {
             for (Point coordinate : deadEndTilesBottomLeft) {
                 boolean tileFound = false;
                 if (coordinate.getX() >= 0 && coordinate.getY() >= 0 && coordinate.getX() <= gameRepository.getWidth() && coordinate.getY() <= gameRepository.getHeight()) {
@@ -376,45 +424,7 @@ public abstract class Agent {
             }
         }
 
-        else if (differenceFromWallToCurrentX <= 0 && differenceFromWallToCurrentY > 0) {
-            for (Point coordinate : deadEndTilesBottomLeft) {
-                boolean tileFound = false;
-                if (coordinate.getX() >= 0 && coordinate.getY() >= 0 && coordinate.getX() <= gameRepository.getWidth() && coordinate.getY() <= gameRepository.getHeight()) {
-                    Tile currentTile = mapRepository.findTileByCoordinates((int) coordinate.getX(), (int) coordinate.getY());
-                    for (Map.Entry<Integer, HashMap<Integer, Tile>> rowEntry : vision.entrySet()) {
-                        for (Map.Entry<Integer, Tile> colEntry : rowEntry.getValue().entrySet()) {
-                            if (colEntry.getValue() == currentTile) {
-                                tileFound = true;
-                                break;
-                            }
-                        }
-                    }
-                    for (Map.Entry<Integer, HashMap<Integer, Tile>> rowEntry : getKnowledge().getRegion().entrySet()) {
-                        for (Map.Entry<Integer, Tile> colEntry : rowEntry.getValue().entrySet()) {
-                            if (colEntry.getValue() == currentTile) {
-                                tileFound = true;
-                                break;
-                            }
-                        }
-                    }
-
-                    boolean wallFound = false;
-                    if (tileFound) {
-                        for (Item item : currentTile.getItems()) {
-                            if (item instanceof Wall) {
-                                wallFound = true;
-                                break;
-                            }
-                        }
-                        if (wallFound) {
-                            continue;
-                        } else {return false;}
-                    } else {return false;}
-                }
-            }
-        }
-
-        else if (differenceFromWallToCurrentX >= 0 && differenceFromWallToCurrentY < 0) {
+        else if (differenceFromWallToCurrentX > 0 && differenceFromWallToCurrentY < 0) {
             for (Point coordinate : deadEndTilesTopRight) {
                 boolean tileFound = false;
                 if (coordinate.getX() >= 0 && coordinate.getY() >= 0 && coordinate.getX() <= gameRepository.getWidth() && coordinate.getY() <= gameRepository.getHeight()) {
@@ -452,7 +462,7 @@ public abstract class Agent {
             }
         }
 
-        else if (differenceFromWallToCurrentX < 0 && differenceFromWallToCurrentY <= 0) {
+        else if (differenceFromWallToCurrentX < 0 && differenceFromWallToCurrentY < 0) {
             for (Point coordinate : deadEndTilesTopLeft) {
                 boolean tileFound = false;
                 if (coordinate.getX() >= 0 && coordinate.getY() >= 0 && coordinate.getX() <= gameRepository.getWidth() && coordinate.getY() <= gameRepository.getHeight()) {

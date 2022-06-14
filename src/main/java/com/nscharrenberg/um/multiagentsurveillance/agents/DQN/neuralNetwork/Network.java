@@ -1,6 +1,7 @@
 package com.nscharrenberg.um.multiagentsurveillance.agents.DQN.neuralNetwork;
 
 import com.nscharrenberg.um.multiagentsurveillance.agents.DQN.CNN.ConvLayer;
+import com.nscharrenberg.um.multiagentsurveillance.agents.DQN.DQN_Params;
 import com.nscharrenberg.um.multiagentsurveillance.agents.DQN.FCN.ActivationLayer;
 import com.nscharrenberg.um.multiagentsurveillance.agents.DQN.FCN.DenseLayer;
 
@@ -15,10 +16,10 @@ public class Network {
     private ConvLayer[] convLayers;
     private DenseLayer[] denseLayers;
     private ActivationLayer activationLayer;
-    private double learningRate = 0.001;
-    private int kernelSize = 3;
-    private int outputLength = 3;
-    private int c1Filters = 8, c2Filters = 16, c3Filters = 8;
+    private final double learningRate = DQN_Params.learningRate.valueDbl;
+    private final int       c1Filters = DQN_Params.c1Filters.valueInt,
+                            c2Filters = DQN_Params.c2Filters.valueInt,
+                            c3Filters = DQN_Params.c3Filters.valueInt;
     private int conv3Length;
 
     private double[] networkOutput;
@@ -42,8 +43,8 @@ public class Network {
 
 
         denseLayers = new DenseLayer[]{
-            new DenseLayer(numNeurons, numNeurons, learningRate),
-            new DenseLayer(numNeurons, outputLength, learningRate)
+            new DenseLayer(numNeurons, (numNeurons /= 4), learningRate),
+            new DenseLayer(numNeurons, DQN_Params.outputLength.valueInt, learningRate)
         };
 
         activationLayer = new ActivationLayer(numNeurons);
@@ -187,7 +188,7 @@ public class Network {
     }
 
     private int outDim(int length){
-        return length - kernelSize + 1;
+        return length - DQN_Params.kernelSize.valueInt + 1;
     }
 
     public ConvLayer[] getConvLayers() {

@@ -52,10 +52,7 @@ public class DenseLayer {
             bias[i] -= learningRate * dEdY[i];
         }
 
-
-        double[] dEdX = dEdX(dEdY, getLayerWeights());
-
-        return dEdX;
+        return dEdX(dEdY, getLayerWeights());
     }
 
     private double[] dEdX(double[] dEdY, double[][] layerWeights){

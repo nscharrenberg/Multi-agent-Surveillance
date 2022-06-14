@@ -63,7 +63,7 @@ public class DQNView extends StackPane {
     private Stack<Network> networks = new Stack<>();
     private DQN_Agent[] intruders;
     private final int batchSize = 128;
-    private final int numEpisodes = 1000;
+    private final int numEpisodes = 1;
 
     public static HashMap<String, Color> getMapColours(){
         HashMap<String, Color> out = new HashMap<>();
@@ -245,7 +245,6 @@ public class DQNView extends StackPane {
         newSave();
         for (int i = 0; i < intruders.length; i++) {
             intruders[i].saveNetwork(i);
-//            intruders[i].loadNetwork(i);
         }
     }
 
@@ -255,7 +254,7 @@ public class DQNView extends StackPane {
 
         double[][][] state, nextState;
         Experience experience;
-        boolean done, escaped;
+        boolean done;
         Action action;
         double reward;
 
@@ -311,19 +310,17 @@ public class DQNView extends StackPane {
 
                     if (!done) {
                         nextState = agent.updateState();
-                        reward = agent.calculateReward(nextState, action);                         // TODO: Check if final state is reached
+                        reward = agent.calculateReward(nextState, action);
                         experience = new Experience(state, action, reward, nextState, done);
                         agent.getTrainingData().push(experience);
 
                         // Preform training on a batch of experiences
-                        if (agent.getTrainingData().hasBatch(batchSize) && false) {
+                        if (agent.getTrainingData().hasBatch(batchSize)) {
                             System.out.println("Batch Training");
                             agent.trainAgent(agent.getTrainingData().randomSample(batchSize));
                             agent.getTrainingData().clearBatch();
                         }
-                        // Preform a single step of back propagation
-                        // This might need to be done with a certain probability, or it might be too slow
-                        // Who knows though
+
                         else agent.trainAgent(experience);
                     } else System.out.println("Endeded");
                 }
@@ -349,7 +346,7 @@ public class DQNView extends StackPane {
         double reward;
         double[][][] nextState = state.clone();
 
-        reward = caught(intruder) ? agent.calculateEndReward(false) : agent.calculateEndReward(true);
+        reward = agent.calculateEndReward(escaped(intruder));
 
         Experience experience = new Experience(state, action, reward, nextState, true);
         agent.getTrainingData().push(experience);

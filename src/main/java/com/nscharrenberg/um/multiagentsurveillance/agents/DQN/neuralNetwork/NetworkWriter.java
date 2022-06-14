@@ -32,6 +32,7 @@ public class NetworkWriter {
             }
 
             writer.close();
+            outputFile.close();
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -56,6 +57,8 @@ public class NetworkWriter {
                     denseInd = readDenseLayer(network, denseInd, reader);
             }
 
+            reader.close();
+            file.close();
 
         } catch (IOException e) {
             e.printStackTrace();

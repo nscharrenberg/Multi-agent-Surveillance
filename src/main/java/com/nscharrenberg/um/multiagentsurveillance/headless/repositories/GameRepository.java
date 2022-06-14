@@ -14,17 +14,18 @@ import com.nscharrenberg.um.multiagentsurveillance.headless.models.Player.Guard;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Player.Intruder;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Player.Player;
 import com.nscharrenberg.um.multiagentsurveillance.headless.utils.files.Importer;
+import com.nscharrenberg.um.multiagentsurveillance.headless.utils.files.MapImporter;
 import com.nscharrenberg.um.multiagentsurveillance.headless.utils.files.TiledMapImporter;
 
 import java.io.File;
 import java.io.IOException;
 
 public class GameRepository implements IGameRepository {
-    //private static String MAP_PATH = "src/test/resources/maps/maze3.json";
-    private static String MAP_PATH = "src/test/resources/maps/deadEndMaze.json";
+    //private static String MAP_PATH = "src/test/resources/maps/maze2.json";
+    //private static String MAP_PATH = "src/test/resources/maps/deadEndMaze.json";
     //private static String MAP_PATH = "src/test/resources/RLtrainingMaps/trainingExampleMap.txt";
     //private static String MAP_PATH = "src/test/resources/RLtrainingMaps/ChasingTestMap.txt";
-    //private static String MAP_PATH = "src/test/resources/maps/rust.txt";
+    private static String MAP_PATH = "src/test/resources/maps/rust.txt";
     private IMapRepository mapRepository;
     private IPlayerRepository playerRepository;
 
@@ -102,7 +103,7 @@ public class GameRepository implements IGameRepository {
     public void importMap() {
         File file = new File(MAP_PATH);
         String path = file.getAbsolutePath();
-        Importer importer = new TiledMapImporter(this, mapRepository, playerRepository);
+        Importer importer = new MapImporter(this, mapRepository, playerRepository);
 
         setRunning(true);
 

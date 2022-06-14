@@ -34,7 +34,7 @@ public class DQN_Agent extends Agent {
     private final int yOffset = 6;
     private Network policyNetwork, targetNetwork;
     private final Random random = new Random();
-    private final double gamma = 0.999;
+    private final double gamma = 0.99;
     private TrainingData trainingData;
     private double minTargetDistance = Double.POSITIVE_INFINITY;
 
@@ -83,7 +83,9 @@ public class DQN_Agent extends Agent {
         // Exploration V Exploitation
         if (strategy.explorationRate(episodeNum) > random.nextDouble()) {
         //if (0.5 > random.nextDouble()){
-            action = randomAction();
+            //action = randomAction();
+            action = explorationAgent.decide();
+            action.setPrediction(actionIndex(action));
 //            System.out.println(strategy.explorationRate(episodeNum));
             // This is a terrible fix :(
             while (action.equals(player.getDirection()) && collisionForward()) {
@@ -202,7 +204,7 @@ public class DQN_Agent extends Agent {
         ArrayList<Double> rewards = batch.rewards;
         ArrayList<Action> actions = batch.actions;
 
-        double[] predictedQV, targetQV, loss = new double[0];
+        double[] predictedQV, targetQV;
 
         for (int i = 0; i < states.size(); i++) {
             predictedQV = policyNetwork.forwardPropagate(states.get(i));
@@ -215,8 +217,6 @@ public class DQN_Agent extends Agent {
     private double[] targetQValues(double[][][] state, double[] qValues, Action action, double reward) throws Exception {
 
         double[] temp = targetNetwork.forwardPropagate(state);
-
-
 
         if (action.getPrediction()<0)
             throw new Exception("Illegal Action");
@@ -231,12 +231,12 @@ public class DQN_Agent extends Agent {
     }
 
     public double calculateEndReward(boolean escaped) {
-        int reward = 1;
+        int reward = 10;
         return escaped ?  reward : -reward;
     }
 
 
-    public double calculateReward(double[][][] state) throws Exception {
+    public double calculateReward(double[][][] state, Action action) throws Exception {
 
         // Delta Sound Proximity & Delta Vision Proximity
         double dSP, dVP;
@@ -261,6 +261,9 @@ public class DQN_Agent extends Agent {
         TileArea targetArea = mapRepository.getTargetArea();
 
         if (targetArea.within(player.getTile().getX(), player.getTile().getY()))
+            reward += 1;
+
+        if (action.getPrediction() == 0)
             reward += 1;
 
         return dSP + dVP + reward;

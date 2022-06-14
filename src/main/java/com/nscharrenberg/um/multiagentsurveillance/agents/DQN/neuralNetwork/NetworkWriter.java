@@ -9,10 +9,11 @@ public class NetworkWriter {
 
     private static final String PATH = "src/main/resources/network_weights/";
     private static final String split = ",";
+    private static int saveNum = 0;
 
     public static void writeNetwork(ArrayList<String[][]> convLayer, ArrayList<String[]> denseLayer, String network){
 
-        File csvFile = new File(PATH + network + ".csv");
+        File csvFile = new File(PATH + saveNum + "." + network + ".csv");
 
         try {
             FileWriter outputFile = new FileWriter(csvFile);
@@ -165,5 +166,9 @@ public class NetworkWriter {
 
     private static String filterID(int number){
         return "filter" + number + split;
+    }
+
+    public static void newSave(){
+        saveNum++;
     }
 }

@@ -15,10 +15,10 @@ public class Network {
     private ConvLayer[] convLayers;
     private DenseLayer[] denseLayers;
     private ActivationLayer activationLayer;
-    private int kernelSize = 3;
     private double learningRate = 0.001;
+    private int kernelSize = 3;
     private int outputLength = 3;
-    private int c1Filters = 16, c2Filters = 64, c3Filters = 16;
+    private int c1Filters = 8, c2Filters = 16, c3Filters = 8;
     private int conv3Length;
 
     private double[] networkOutput;
@@ -27,7 +27,6 @@ public class Network {
 
 
     public void initLayers(int channels, int inputLength){
-
 
         int input2Length = outDim(inputLength);
         int input3Length = outDim(input2Length);

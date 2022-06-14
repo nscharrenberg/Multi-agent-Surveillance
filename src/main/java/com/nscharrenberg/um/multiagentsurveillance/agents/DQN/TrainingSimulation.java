@@ -211,7 +211,7 @@ public class TrainingSimulation {
 
                     if (!done) {
                         nextState = agent.updateState();
-                        reward = agent.calculateReward(nextState);                         // TODO: Check if final state is reached
+                        reward = agent.calculateReward(nextState, action);                         // TODO: Check if final state is reached
                         experience = new Experience(state, action, reward, nextState, done);
                         agent.getTrainingData().push(experience);
 

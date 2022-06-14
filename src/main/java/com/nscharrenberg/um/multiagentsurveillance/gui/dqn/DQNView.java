@@ -39,6 +39,8 @@ import java.text.DecimalFormat;
 import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 
+import static com.nscharrenberg.um.multiagentsurveillance.agents.DQN.neuralNetwork.NetworkWriter.newSave;
+
 public class DQNView extends StackPane {
     private static final int DELAY = -1;
     protected static Color BASIC_TILE_COLOR = Color.LIGHTGREY;
@@ -61,7 +63,7 @@ public class DQNView extends StackPane {
     private Stack<Network> networks = new Stack<>();
     private DQN_Agent[] intruders;
     private final int batchSize = 128;
-    private final int numEpisodes = 10;
+    private final int numEpisodes = 1000;
 
     public static HashMap<String, Color> getMapColours(){
         HashMap<String, Color> out = new HashMap<>();
@@ -232,13 +234,21 @@ public class DQNView extends StackPane {
             gameRepository.setRunning(true);
 
             runGame(episode);
+
+            if (episode % 100 == 0) saveProgress();
         }
 
+        saveProgress();
+    }
+
+    private void saveProgress(){
+        newSave();
         for (int i = 0; i < intruders.length; i++) {
             intruders[i].saveNetwork(i);
-            intruders[i].loadNetwork(i);
+//            intruders[i].loadNetwork(i);
         }
     }
+
 
 
     private void runGame(int episode) {
@@ -301,7 +311,7 @@ public class DQNView extends StackPane {
 
                     if (!done) {
                         nextState = agent.updateState();
-                        reward = agent.calculateReward(nextState);                         // TODO: Check if final state is reached
+                        reward = agent.calculateReward(nextState, action);                         // TODO: Check if final state is reached
                         experience = new Experience(state, action, reward, nextState, done);
                         agent.getTrainingData().push(experience);
 

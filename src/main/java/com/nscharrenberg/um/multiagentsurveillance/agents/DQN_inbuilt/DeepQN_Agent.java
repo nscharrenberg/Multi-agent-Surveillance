@@ -33,8 +33,8 @@ public class DeepQN_Agent extends Agent implements Encodable {
     private final int observationSize;
     private final CalculateDistance distance = new ManhattanDistance();
     private final Geometrics gm = new Geometrics();
-    private final double maxDistance;
-    private String policyName = "src/test/resources/bins/retrain.bin";
+    private final double maxBoardDistance;
+    private String policyName;
     private DQNPolicy<DeepQN_Agent> policy;
 
 
@@ -53,7 +53,7 @@ public class DeepQN_Agent extends Agent implements Encodable {
         List<Tile> vision = characterVision.getConeVision(new Tile(0, 0));
 
         this.observationSize = (vision.size()-1) + 12;
-        this.maxDistance = distance.compute(new Tile(gameRepository.getWidth(), gameRepository.getHeight()), new Tile(0, 0));
+        this.maxBoardDistance = distance.compute(new Tile(gameRepository.getWidth(), gameRepository.getHeight()), new Tile(0, 0));
 
         if(policyName != null){
             try {
@@ -98,8 +98,8 @@ public class DeepQN_Agent extends Agent implements Encodable {
 
         double distanceToTarget = intruder.getDistanceToTarget();
 
-        if(distanceToTarget > maxDistance)
-            distanceToTarget = maxDistance;
+        if(distanceToTarget > maxBoardDistance)
+            distanceToTarget = maxBoardDistance;
 
         observation[4] = distanceToTarget;
 
@@ -131,79 +131,76 @@ public class DeepQN_Agent extends Agent implements Encodable {
 
         Tile approxTargetTile = intruder.getTarget();
 
-        if(approxTargetTile == null){
-            for (int j = i; j < observationSize; j++) {
-                observation[j] = maxDistance;
-                i = j;
+
+        int visionLength = Double.valueOf(gameRepository.getDistanceViewing()).intValue();
+
+        TileArea board = mapRepository.getBoard();
+        Tile position = player.getTile();
+
+        CharacterVision characterVision = new CharacterVision(visionLength, player.getDirection(), player);
+        List<Tile> vision = characterVision.getConeVision(player.getTile());
+
+        boolean validtile = true;
+        for(Tile tile : vision){
+
+            if(i == 47){
+                System.out.println("GG");
             }
-            i++;
+            if(tile.getX() < 0 || tile.getY() < 0){
+                i++;
+                continue;
+            } else if(tile.getX() > board.width() || tile.getY() > board.height()){
+                i++;
+                continue;
+            } else if(tile.getX() == position.getX() && tile.getY() == position.getY())
+                continue;
 
-        } else {
-            int visionLength = Double.valueOf(gameRepository.getDistanceViewing()).intValue();
-
-            TileArea board = mapRepository.getBoard();
-            Tile position = player.getTile();
-
-            CharacterVision characterVision = new CharacterVision(visionLength, player.getDirection(), player);
-            List<Tile> vision = characterVision.getConeVision(player.getTile());
-
-            boolean validtile = true;
-            for(Tile tile : vision){
-
-                if(i == 47){
-                    System.out.println("GG");
+            for (Tile it : gm.getIntersectingTiles(position, tile)) {
+                if (characterVision.unobstructedTile(board, it)) {
+                    validtile = false;
+                    break;
                 }
-                if(tile.getX() < 0 || tile.getY() < 0){
-                    observation[i++] = -7;
-                    continue;
-                } else if(tile.getX() > board.width() || tile.getY() > board.height()){
-                    observation[i++] = -7;
-                    continue;
-                } else if(tile.getX() == position.getX() && tile.getY() == position.getY())
-                    continue;
+            }
 
-                for (Tile it : gm.getIntersectingTiles(position, tile)) {
-                    if (characterVision.unobstructedTile(board, it)) {
-                        validtile = false;
-                        break;
-                    }
+            if(validtile) {
+                Optional<Tile> tileAddOpt = board.getByCoordinates(tile.getX(), tile.getY());
+
+                if (tileAddOpt.isEmpty()) {
+                    i++;
+                    continue;
+                }
+                Tile tileBoard = tileAddOpt.get();
+
+                if(tileBoard.isWall()){
+                    observation[i++] = -1;
+                    continue;
+                }else if(tileBoard.hasGuard()){
+                    observation[i++] = -2;
+                    continue;
+                } else if(tileBoard.isTeleport()){
+                    observation[i++] = -3;
+                    continue;
+                } else if(tileBoard.hasIntruder()){
+                    observation[i++] = -4;
+                    continue;
+                } else if(mapRepository.getTargetArea().within(tileBoard.getX(), tileBoard.getY())){
+                    observation[i++] = 100;
+                    continue;
                 }
 
-                if(validtile) {
-                    Optional<Tile> tileAddOpt = board.getByCoordinates(tile.getX(), tile.getY());
-
-                    if (tileAddOpt.isEmpty()) {
-                        observation[i++] = -7;
-                        continue;
-                    }
-                    Tile tileBoard = tileAddOpt.get();
-
-                    if(tileBoard.isWall()){
-                        observation[i++] = -1;
-                        continue;
-                    }else if(tileBoard.hasGuard()){
-                        observation[i++] = -2;
-                        continue;
-                    } else if(tileBoard.isTeleport()){
-                        observation[i++] = -3;
-                        continue;
-                    } else if(tileBoard.hasIntruder()){
-                        observation[i++] = -4;
-                        continue;
-                    } else if(mapRepository.getTargetArea().within(tileBoard.getX(), tileBoard.getY())){
-                        observation[i++] = 100;
-                        continue;
-                    }
-
-                    observation[i++] = maxDistance - distance.compute(tileBoard, approxTargetTile);
-
+                if(approxTargetTile != null) {
+                    observation[i++] = maxBoardDistance - distance.compute(tileBoard, approxTargetTile);
                 } else {
-
-                    observation[i++] = -6;
-                    validtile = true;
+                    observation[i++] = maxBoardDistance;
                 }
+
+            } else {
+
+                i++;
+                validtile = true;
             }
         }
+
 
         if(i != observationSize){
             throw new RuntimeException("Observation is not full");

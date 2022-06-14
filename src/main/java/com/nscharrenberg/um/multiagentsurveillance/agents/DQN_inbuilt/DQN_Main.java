@@ -5,11 +5,11 @@ import com.nscharrenberg.um.multiagentsurveillance.headless.models.Map.Tile;
 import com.nscharrenberg.um.multiagentsurveillance.headless.utils.Vision.CharacterVision;
 import org.deeplearning4j.rl4j.learning.configuration.QLearningConfiguration;
 import org.deeplearning4j.rl4j.learning.sync.qlearning.discrete.QLearningDiscreteDense;
-import org.deeplearning4j.rl4j.network.dqn.IDQN;
-import org.deeplearning4j.rl4j.policy.DQNPolicy;
+import org.deeplearning4j.rl4j.network.configuration.DQNDenseNetworkConfiguration;
 import org.deeplearning4j.rl4j.util.DataManager;
 import org.deeplearning4j.rl4j.util.DataManagerTrainingListener;
 import org.deeplearning4j.rl4j.util.IDataManager;
+import org.nd4j.linalg.learning.config.Nadam;
 
 import java.io.IOException;
 import java.util.List;
@@ -20,8 +20,8 @@ public class DQN_Main {
 
         QLearningConfiguration qConfig = QLearningConfiguration.builder()
                 .seed(1L)
-                .maxEpochStep(50)
-                .maxStep(100000)
+                .maxEpochStep(3000)
+                .maxStep(102000)
                 .updateStart(0)
                 .rewardFactor(1.0)
                 .gamma(0.999)
@@ -30,18 +30,17 @@ public class DQN_Main {
                 .minEpsilon(0.1f)
                 .epsilonNbStep(1000)
                 .expRepMaxSize(100000)
-                .doubleDQN(true)
                 .build();
 
 
-//        DQNDenseNetworkConfiguration conf = DQNDenseNetworkConfiguration.builder()
-//                .updater(new Nadam(Math.pow(10, -3.5)))
-//                .numHiddenNodes(50)
-//                .numLayers(4)
-//                .build();
+        DQNDenseNetworkConfiguration conf = DQNDenseNetworkConfiguration.builder()
+                .updater(new Nadam(Math.pow(10, -3.5)))
+                .numHiddenNodes(16)
+                .numLayers(4)
+                .build();
 
-        DQNPolicy<DeepQN_Agent> p = DQNPolicy.load("src/test/resources/bins/retrain.bin");
-        IDQN conf = (IDQN) p.getNeuralNet();
+//        DQNPolicy<DeepQN_Agent> p = DQNPolicy.load("src/test/resources/bins/nw.bin");
+//        IDQN conf = (IDQN) p.getNeuralNet();
 
 
 

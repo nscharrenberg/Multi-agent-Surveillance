@@ -29,8 +29,11 @@ public class MDP_API implements MDP<DeepQN_Agent, Integer, DiscreteSpace> {
     private final int observationSize;
     private DeepQN_Agent agent;
     private final CalculateDistance distance = new ManhattanDistance();
+
     private final IPathFinding pathFinding = new AStar();
-    private double maxDistance;
+
+    private double maxBoardDistance;
+    private double minTargetDistance;
     private boolean flag = false;
     private int point = 0;
     private int samePosition = 0;
@@ -88,7 +91,9 @@ public class MDP_API implements MDP<DeepQN_Agent, Integer, DiscreteSpace> {
 
         this.agent = deepQN_agent;
 
-        this.maxDistance = distance.compute(new Tile(gameRepositoryDup.getWidth(), gameRepositoryDup.getHeight()), new Tile(0, 0));
+        this.maxBoardDistance = distance.compute(new Tile(gameRepositoryDup.getWidth(), gameRepositoryDup.getHeight()), new Tile(0, 0));
+
+        this.minTargetDistance = distance.compute(agent.getMapRepository().getTargetCenter(), agent.getPlayer().getTile());
 
         return this.agent;
     }
@@ -109,17 +114,17 @@ public class MDP_API implements MDP<DeepQN_Agent, Integer, DiscreteSpace> {
 
         Tile tileBefore = intruder.getTile();
 
-        double distanceTargetBefore = 0.0;
-
-        if(tileBefore != null) {
-            Optional<QueueNode> pathBefore =  pathFinding.execute(agent.getMapRepository().getBoard(), agent.getPlayer(), agent.getMapRepository().getTargetCenter());
-            if(pathBefore.isPresent())
-                distanceTargetBefore = pathBefore.get().getDistance();
-        }
+//        double distanceTargetBefore = 0.0;
+//
+//        if(tileBefore != null) {
+//            Optional<QueueNode> pathBefore =  pathFinding.execute(agent.getMapRepository().getBoard(), agent.getPlayer(), agent.getMapRepository().getTargetCenter());
+//            if(pathBefore.isPresent())
+//                distanceTargetBefore = pathBefore.get().getDistance();
+//        }
 
         if(point % 500 == 0){
-            if(tileBefore != null){
-                System.out.println(distanceTargetBefore);
+            if(tileBefore != null) {
+                System.out.println(minTargetDistance);
             }
         }
 
@@ -142,25 +147,32 @@ public class MDP_API implements MDP<DeepQN_Agent, Integer, DiscreteSpace> {
 
         double reward = 0;
 
-        if(distanceTargetAfter != 0.0 && distanceTargetBefore != 0.0) {
-            if (distanceTargetBefore > distanceTargetAfter) {
-                reward += 0.5;
-            } else if (distanceTargetBefore < distanceTargetAfter) {
-                reward -= 0.5;
-            }
+//        if(distanceTargetAfter != 0.0 && distanceTargetBefore != 0.0) {
+//            if (distanceTargetBefore > distanceTargetAfter) {
+//                reward += 0.5;
+//            } else if (distanceTargetBefore < distanceTargetAfter) {
+//                reward -= 0.5;
+//            }
+//        }
+
+        if(distanceTargetAfter < minTargetDistance){
+            minTargetDistance = distanceTargetAfter;
+            reward += 0.5;
+        } else {
+            reward -= 0.5;
         }
 
         if(tileBefore != null && tileAfter != null) {
-            if (tileBefore.getX() != tileAfter.getX() || tileBefore.getY() != tileAfter.getY()) {
-                samePosition = 0;
-            }else if (tileBefore.getX() == tileAfter.getX() && tileBefore.getY() == tileAfter.getY()) {
-                samePosition++;
-
-                if(samePosition >= 5){
-                    agent.gameRepository().setRunning(false);
-                    samePosition = 0;
-                }
-            }
+//            if (tileBefore.getX() != tileAfter.getX() || tileBefore.getY() != tileAfter.getY()) {
+//                samePosition = 0;
+//            }else if (tileBefore.getX() == tileAfter.getX() && tileBefore.getY() == tileAfter.getY()) {
+//                samePosition++;
+//
+//                if(samePosition >= 5){
+//                    agent.gameRepository().setRunning(false);
+//                    samePosition = 0;
+//                }
+//            }
 
 
             Action direction = Action.values()[integer];
@@ -171,13 +183,13 @@ public class MDP_API implements MDP<DeepQN_Agent, Integer, DiscreteSpace> {
             if (nextPositionOpt.isPresent()) {
                 Tile nextPosition = nextPositionOpt.get();
                 if(nextPosition.isCollision()) {
-                    reward -= 1;
-                    agent.gameRepository().setRunning(false);
+                    reward -= 0.5;
+//                    agent.gameRepository().setRunning(false);
                 } else if(nextPosition.hasGuard())
                     reward -= 3;
             }
 
-            if (agent.getMapRepository().getTargetArea().within(intruder.getTile().getX(), intruder.getTile().getY())) {
+            if (agent.getMapRepository().getTargetArea().within(tileAfter.getX(), tileAfter.getY())) {
                 reward += 3;
                 flag = true;
             } else {

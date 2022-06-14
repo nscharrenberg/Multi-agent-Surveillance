@@ -16,6 +16,8 @@ module com.nscharrenberg.um.multiagentsurveillance {
     opens com.nscharrenberg.um.multiagentsurveillance.gui.canvas to javafx.fxml;
     exports com.nscharrenberg.um.multiagentsurveillance.gui.dqn;
     opens com.nscharrenberg.um.multiagentsurveillance.gui.dqn to javafx.fxml;
+    exports com.nscharrenberg.um.multiagentsurveillance.gui.training.simulation;
+    opens com.nscharrenberg.um.multiagentsurveillance.gui.training.simulation to javafx.fxml;
     exports com.nscharrenberg.um.multiagentsurveillance.headless.repositories;
     opens com.nscharrenberg.um.multiagentsurveillance.headless.repositories to cloning;
     exports com.nscharrenberg.um.multiagentsurveillance.headless.models;

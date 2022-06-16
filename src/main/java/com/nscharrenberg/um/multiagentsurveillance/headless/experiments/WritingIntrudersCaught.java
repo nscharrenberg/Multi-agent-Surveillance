@@ -10,7 +10,6 @@ public class WritingIntrudersCaught {
     public static void main(String[] args) throws IOException {
         double[] all_values = new double[50];
         File file = new File("src/main/resources/files/RLAgent_vs_Evader_50_Maze1.csv");
-        System.out.println(file.getAbsolutePath());
         BufferedReader reader = new BufferedReader(new FileReader(file));
         String data;
         int counter = 0;

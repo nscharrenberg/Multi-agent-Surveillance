@@ -111,22 +111,6 @@ public class ConvLayer {
         return channels;
     }
 
-    public Filter[] getFilters() {
-        return filters;
-    }
-
-    public void setFilters(Filter[] filters) {
-        this.filters = filters;
-    }
-
-    public double[][][] getOutput() {
-        return output;
-    }
-
-    public void setOutput(double[][][] output) {
-        this.output = output;
-    }
-
     public int getLength() {
         return length;
     }

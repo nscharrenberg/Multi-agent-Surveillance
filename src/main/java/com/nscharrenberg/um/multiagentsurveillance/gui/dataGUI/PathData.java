@@ -32,7 +32,7 @@ public class PathData {
     }
 
     private void importMap() {
-        File file = new File("src/test/resources/maps/rust.txt");
+        File file = new File("src/test/resources/maps/wack.txt");
         String path = file.getAbsolutePath();
         MapImporter importer = new MapImporter();
 

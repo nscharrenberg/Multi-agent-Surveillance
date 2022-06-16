@@ -144,8 +144,8 @@ public class TrainingSimulation {
         }
 
         for (int i = 0; i < intruders.length; i++) {
-            intruders[i].saveNetwork(i);
-            intruders[i].loadNetwork(i);
+            //intruders[i].saveNetwork(i);
+            //intruders[i].loadNetwork(i);
         }
     }
 

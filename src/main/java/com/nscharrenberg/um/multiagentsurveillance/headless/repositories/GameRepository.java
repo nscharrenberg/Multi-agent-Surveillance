@@ -25,7 +25,7 @@ public class GameRepository implements IGameRepository {
     //private static String MAP_PATH = "src/test/resources/maps/deadEndMaze.json";
     //private static String MAP_PATH = "src/test/resources/RLtrainingMaps/trainingExampleMap.txt";
     //private static String MAP_PATH = "src/test/resources/RLtrainingMaps/ChasingTestMap.txt";
-    private static String MAP_PATH = "src/test/resources/maps/rust.txt";
+    private static String MAP_PATH = "src/test/resources/maps/wack.txt";
     private IMapRepository mapRepository;
     private IPlayerRepository playerRepository;
 

@@ -105,17 +105,21 @@ public class DenseLayer {
 
     public String[] saveDenseLayer(){
         double[][] lW = getLayerWeights();
-        String[] out = new String[numNeurons + 1];
+        String[] out = new String[numNeurons * 2 + 2];
+        int layerInd = 0;
 
-        for (int i = 0; i < numNeurons; i++) {
-            out[i] = "neuron" + i + ",";
+        for (int i = 0; i < (numNeurons * 2) - 1; i++) {
+            out[i] = "neuron" + layerInd + ",";
+            out[++i] = "";
             for (int j = 0; j < numOutputs; j++)
-                out[i] += lW[i][j] + ",";
+                out[i] += lW[layerInd][j] + ",";
+            layerInd++;
         }
 
-        out[numNeurons] = "bias,";
+        out[numNeurons * 2] = "bias,";
+        out[(numNeurons * 2) + 1] = "";
         for (int i = 0; i < numOutputs; i++)
-            out[numNeurons] += bias[i] + ",";
+            out[(numNeurons * 2) + 1] += bias[i] + ",";
 
         return out;
     }

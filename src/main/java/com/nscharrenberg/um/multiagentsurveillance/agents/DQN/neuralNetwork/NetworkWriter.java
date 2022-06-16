@@ -1,5 +1,7 @@
 package com.nscharrenberg.um.multiagentsurveillance.agents.DQN.neuralNetwork;
 
+import com.nscharrenberg.um.multiagentsurveillance.agents.DQN.DQN_Params;
+
 import java.io.*;
 import java.util.ArrayList;
 import java.io.IOException;
@@ -11,13 +13,15 @@ public class NetworkWriter {
     private static final String split = ",";
     private static int saveNum = 0;
 
-    public static void writeNetwork(ArrayList<String[][]> convLayer, ArrayList<String[]> denseLayer, String network){
+    public static void writeNetwork(ArrayList<String[][]> convLayer, ArrayList<String[]> denseLayer, String network, int episodeNum){
 
-        File csvFile = new File(PATH + saveNum + "." + network + ".csv");
+        File csvFile = new File(PATH + saveNum + "." + network + DQN_Params.version.valueStr + ".csv");
 
         try {
             FileWriter outputFile = new FileWriter(csvFile);
             PrintWriter writer = new PrintWriter(outputFile);
+
+            writer.println("episode," + episodeNum);
 
             int conv = 0;
             for (String[][] layer : convLayer) {
@@ -40,20 +44,19 @@ public class NetworkWriter {
 
     }
 
-    public static void readNetwork(int networkNumber, Network network) throws Exception {
+    public static void readNetwork(int networkNumber, int saveNum, Network network) throws Exception {
         int convInd = 0, denseInd = 0;
         String line;
         try {
-            FileReader file = new FileReader(PATH + networkNumber + ".csv");
+            FileReader file = new FileReader(PATH + saveNum + "." +  networkNumber + DQN_Params.version.valueStr + ".csv");
             BufferedReader reader = new BufferedReader(file);
 
             while ((line = reader.readLine()) != null){
-                String[] test = line.split(split);
 
-                if (test[0].equals(convID(convInd)))
+                if (line.equals(convID(convInd)))
                     convInd = readConvLayer(network, convInd, reader);
 
-                if (test[0].equals(denseID(denseInd)))
+                if (line.equals(denseID(denseInd)))
                     denseInd = readDenseLayer(network, denseInd, reader);
             }
 
@@ -96,19 +99,19 @@ public class NetworkWriter {
 
         while (biasInd < numFilters) {
             line = reader.readLine();
-            splitLine = line.split(split);
 
-            if (splitLine[0].equals(filterID(filterInd))){
-                while (channelInd++ < numChannels) {
+            if (line.equals(filterID(filterInd))){
+                while (channelInd < numChannels) {
                     line = reader.readLine();
                     splitLine = line.split(split);
-                    layerWeights[filterInd++][channelInd] = Arrays.stream(splitLine).mapToDouble(Double::parseDouble).toArray();
+                    layerWeights[filterInd][channelInd++] = Arrays.stream(splitLine).mapToDouble(Double::parseDouble).toArray();
                 }
+                filterInd++;
                 channelInd = 0;
                 continue;
             }
 
-            if (splitLine[0].equals(biasID(biasInd))){
+            if (line.equals(biasID(biasInd))){
                 line = reader.readLine();
                 splitLine = line.split(split);
                 layerBias[biasInd++] = Arrays.stream(splitLine).mapToDouble(Double::parseDouble).toArray();
@@ -131,16 +134,17 @@ public class NetworkWriter {
         double[][] layerWeights = new double[numNeurons][numOutputs];
         double[] layerBias = new double[numOutputs];
         
-        while (neuronInd < numNeurons) {
+        while (neuronInd < numNeurons + 1) {
             line = reader.readLine();
-            splitLine = line.split(split);
 
-            if (splitLine[0].equals(neuronID(neuronInd))) {
-                while (neuronInd++ < numNeurons)
-                    layerWeights[neuronInd] = Arrays.stream(splitLine).mapToDouble(Double::parseDouble).toArray();
+            if (line.equals(neuronID(neuronInd))) {
+                splitLine = reader.readLine().split(split);
+                layerWeights[neuronInd++] = Arrays.stream(splitLine).mapToDouble(Double::parseDouble).toArray();
+                continue;
             }
 
-            if (splitLine[0].equals("bias,")) {
+            if (line.equals("bias,")) {
+                splitLine = reader.readLine().split(split);
                 layerBias = Arrays.stream(splitLine).mapToDouble(Double::parseDouble).toArray();
                 break;
             }

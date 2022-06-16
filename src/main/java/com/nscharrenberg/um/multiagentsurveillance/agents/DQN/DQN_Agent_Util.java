@@ -1,6 +1,7 @@
 package com.nscharrenberg.um.multiagentsurveillance.agents.DQN;
 
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Action;
+import com.nscharrenberg.um.multiagentsurveillance.headless.models.Player.Intruder;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Player.Player;
 
 import java.util.Random;
@@ -162,6 +163,38 @@ public class DQN_Agent_Util {
             return 3;
 
         throw new Exception("");
+    }
+
+
+    public static int xDirectionTarget(Action direction){
+        if (direction.equals(Action.UP) || direction.equals(Action.DOWN))
+            return xOffset;
+        if (direction.equals(Action.LEFT))
+            return 0;
+        return 2 * xOffset;
+    }
+
+    public static int yDirectionTarget(Action direction){
+        if (direction.equals(Action.LEFT) || direction.equals(Action.RIGHT))
+            return yOffset;
+        if (direction.equals(Action.UP))
+            return 0;
+        return 2 * yOffset;
+    }
+
+
+    public static boolean endState(Intruder intruder){
+        return escaped(intruder) || caught(intruder);
+    }
+
+
+    public static boolean escaped(Intruder intruder){
+        return intruder.getAgent().getPlayerRepository().getEscapedIntruders().contains(intruder);
+    }
+
+
+    public static boolean caught(Intruder intruder){
+        return intruder.getAgent().getPlayerRepository().getCaughtIntruders().contains(intruder);
     }
 
 }

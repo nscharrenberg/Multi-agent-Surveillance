@@ -3,6 +3,7 @@ package com.nscharrenberg.um.multiagentsurveillance.agents.DQN.training;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Action;
 
 import java.util.*;
+import java.util.concurrent.ThreadLocalRandom;
 
 public class TrainingData {
 
@@ -54,11 +55,12 @@ public class TrainingData {
 
         Iterator<Integer> iterator = indexSet.iterator();
 
-        while (iterator.hasNext())
+        while (iterator.hasNext()) {
             randomSample.push(experiences.get(iterator.next()));
+        }
 
-        experiences.removeAll(randomSample.experiences);
-        count -= batchSize;
+        if (ThreadLocalRandom.current().nextDouble() < 0.5)
+            clearBatch();
 
         return randomSample;
     }

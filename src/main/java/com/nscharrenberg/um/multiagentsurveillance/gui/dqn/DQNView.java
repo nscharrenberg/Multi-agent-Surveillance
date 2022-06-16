@@ -39,6 +39,7 @@ import java.text.DecimalFormat;
 import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 
+import static com.nscharrenberg.um.multiagentsurveillance.agents.DQN.DQN_Agent_Util.endState;
 import static com.nscharrenberg.um.multiagentsurveillance.agents.DQN.neuralNetwork.NetworkWriter.newSave;
 
 public class DQNView extends StackPane {
@@ -63,7 +64,7 @@ public class DQNView extends StackPane {
     private Stack<Network> networks = new Stack<>();
     private DQN_Agent[] intruders;
     private final int batchSize = 128;
-    private final int numEpisodes = 1;
+    private final int numEpisodes = 1000;
 
     public static HashMap<String, Color> getMapColours(){
         HashMap<String, Color> out = new HashMap<>();
@@ -213,19 +214,16 @@ public class DQNView extends StackPane {
         this.gameRepository = Factory.getGameRepository();
         this.playerRepository = Factory.getPlayerRepository();
         gameRepository.importMap();
-//        playerRepository.getGuards().clear();
-//        mapRepository.buildEmptyBoard();
-//        gameRepository.importMap();
-
-
     }
 
     private void gameLoop() throws Exception {
 
         setupDQNAgents();
+        loadNetwork(0);
 
         for (int episode = 1; episode <= numEpisodes ; episode++) {
 
+            System.out.println("Episode number = " + episode);
             reset();
 
             setupGuards();
@@ -235,19 +233,23 @@ public class DQNView extends StackPane {
 
             runGame(episode);
 
-            if (episode % 100 == 0) saveProgress();
+            //if (episode % 10 == 0)
+            saveProgress(episode);
         }
-
-        saveProgress();
     }
 
-    private void saveProgress(){
-        newSave();
+    private void saveProgress(int episode){
+        //newSave();
         for (int i = 0; i < intruders.length; i++) {
-            intruders[i].saveNetwork(i);
+            intruders[i].newGame(i, episode);
         }
     }
 
+    private void loadNetwork(int saveNumber) throws Exception {
+        for (int i = 0; i < intruders.length; i++) {
+            intruders[i].loadNetwork(i, saveNumber);
+        }
+    }
 
 
     private void runGame(int episode) {
@@ -302,7 +304,7 @@ public class DQNView extends StackPane {
                     agent.execute(action);
 
                     if (endState(intruder)) {
-                        endTrain(agent, intruder, state, action);
+                        agent.endTrain(state, action);
                         continue;
                     }
 
@@ -316,13 +318,13 @@ public class DQNView extends StackPane {
 
                         // Preform training on a batch of experiences
                         if (agent.getTrainingData().hasBatch(batchSize)) {
-                            System.out.println("Batch Training");
+//                            System.out.println("Batch Training");
                             agent.trainAgent(agent.getTrainingData().randomSample(batchSize));
-                            agent.getTrainingData().clearBatch();
+                            //agent.getTrainingData().clearBatch();
                         }
 
                         else agent.trainAgent(experience);
-                    } else System.out.println("Endeded");
+                    }
                 }
             } catch (Exception e) {
                 e.printStackTrace();
@@ -339,31 +341,6 @@ public class DQNView extends StackPane {
                 }
             }
         }
-    }
-
-    private void endTrain(DQN_Agent agent, Intruder intruder, double[][][] state, Action action) throws Exception {
-
-        double reward;
-        double[][][] nextState = state.clone();
-
-        reward = agent.calculateEndReward(escaped(intruder));
-
-        Experience experience = new Experience(state, action, reward, nextState, true);
-        agent.getTrainingData().push(experience);
-
-        agent.trainAgent(experience);
-    }
-
-    private boolean endState(Intruder intruder){
-        return escaped(intruder) || caught(intruder);
-    }
-
-    private boolean escaped(Intruder intruder){
-        return playerRepository.getEscapedIntruders().contains(intruder);
-    }
-
-    private boolean caught(Intruder intruder){
-        return playerRepository.getCaughtIntruders().contains(intruder);
     }
 
     private void drawText(String text) {

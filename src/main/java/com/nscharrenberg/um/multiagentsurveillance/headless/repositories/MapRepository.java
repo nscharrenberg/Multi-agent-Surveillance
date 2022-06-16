@@ -128,10 +128,10 @@ public class MapRepository implements IMapRepository {
         targetArea = found;
 
         if(!targetArea.isEmpty()) {
-            System.out.println(x1);
-            System.out.println(y1);
-            System.out.println(x2);
-            System.out.println(y2);
+//            System.out.println(x1);
+//            System.out.println(y1);
+//            System.out.println(x2);
+//            System.out.println(y2);
             Point A = new Point(x1, y1);
             Point B = new Point(x2, y2);
             Point C = new Point(x1, y2);

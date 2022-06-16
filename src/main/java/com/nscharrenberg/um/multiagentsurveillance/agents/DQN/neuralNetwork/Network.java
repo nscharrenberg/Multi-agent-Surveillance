@@ -54,7 +54,7 @@ public class Network {
     /**
      * Function controls forward propagation through the network
      * @param state - tensor of the current state of the agent
-     * @return - networks prediction value vector
+     * @return - networks prediction vector
      */
     public double[] forwardPropagate(double[][][] state){
 
@@ -137,7 +137,7 @@ public class Network {
     }
 
 
-    public void saveNetwork(int networkNum){
+    public void saveNetwork(int networkNum, int episodeNum){
 
         String name = Integer.toString(networkNum);
 
@@ -150,11 +150,11 @@ public class Network {
         dLayers.add(denseLayers[0].saveDenseLayer());
         dLayers.add(denseLayers[1].saveDenseLayer());
 
-        writeNetwork(cLayers, dLayers, name);
+        writeNetwork(cLayers, dLayers, name, episodeNum);
     }
 
-    public void loadNetwork(int networkNum) throws Exception {
-        readNetwork(networkNum, this);
+    public void loadNetwork(int networkNum, int saveNum) throws Exception {
+        readNetwork(networkNum, saveNum, this);
     }
 
     private Network(ConvLayer[] convLayers, DenseLayer[] denseLayers, ActivationLayer activationLayer) {
@@ -191,24 +191,8 @@ public class Network {
         return length - DQN_Params.kernelSize.valueInt + 1;
     }
 
-    public ConvLayer[] getConvLayers() {
-        return convLayers;
-    }
-
-    public void setConvLayers(ConvLayer[] convLayers) {
-        this.convLayers = convLayers;
-    }
-
     public DenseLayer[] getDenseLayers() {
         return denseLayers;
-    }
-
-    public void setDenseLayers(DenseLayer[] denseLayers) {
-        this.denseLayers = denseLayers;
-    }
-
-    public ActivationLayer getActivationLayer() {
-        return activationLayer;
     }
 
 }

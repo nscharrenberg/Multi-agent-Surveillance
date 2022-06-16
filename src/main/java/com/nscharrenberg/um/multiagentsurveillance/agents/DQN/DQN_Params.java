@@ -12,7 +12,8 @@ public enum DQN_Params {
     outputLength(4),
     c1Filters(8),
     c2Filters(16),
-    c3Filters(8);
+    c3Filters(8),
+    version("V1.0");
 
     DQN_Params(int valueInt) {
         this.valueInt = valueInt;
@@ -22,6 +23,9 @@ public enum DQN_Params {
         this.valueDbl = valueDbl;
     }
 
+    DQN_Params(String valueStr) { this.valueStr = valueStr; }
+
     public int valueInt;
     public double valueDbl;
+    public String valueStr;
 }

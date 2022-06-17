@@ -2,121 +2,87 @@
 src/test/resources/maps/maze3.json
 Guard amount: 2.0
 Intruder amount: 4.0
-Intruders caught: 4.0
-Intruders Escaped: 0.0
-Exploration %: 63.26742935180664
+Intruders caught: 3.0
+Intruders Escaped: 1.0
+Exploration %: 69.40686798095703
 Agent parameters  
 SoundWave: 0.5
-MarkerDeadEnd: -0.85
+MarkerDeadEnd: 0.85
 MarkerTarget: 0.6
 MarkerGuard: -0.45
-MarkerIntruder: 0.9
+MarkerIntruder: -0.9
 MarkerTeleporter: 0.2
 MarkerShaded: -0.3
-Game duration: 1.655204891152E12
-Game steps: 194.0
+Game duration: 1.655218182839E12
+Game steps: 171.0
+
+src/test/resources/maps/maze3.json
+Guard amount: 2.0
+Intruder amount: 4.0
+Intruders caught: 4.0
+Intruders Escaped: 0.0
+Exploration %: 75.75442504882812
+Agent parameters  
+SoundWave: 0.5
+MarkerDeadEnd: 0.85
+MarkerTarget: 0.6
+MarkerGuard: -0.45
+MarkerIntruder: -0.9
+MarkerTeleporter: 0.2
+MarkerShaded: -0.3
+Game duration: 1.655218191734E12
+Game steps: 269.0
 
 src/test/resources/maps/maze3.json
 Guard amount: 2.0
 Intruder amount: 4.0
 Intruders caught: 3.0
 Intruders Escaped: 1.0
-Exploration %: 74.8178939819336
+Exploration %: 72.0083236694336
 Agent parameters  
 SoundWave: 0.5
-MarkerDeadEnd: -0.85
+MarkerDeadEnd: 0.85
 MarkerTarget: 0.6
 MarkerGuard: -0.45
-MarkerIntruder: 0.9
+MarkerIntruder: -0.9
 MarkerTeleporter: 0.2
 MarkerShaded: -0.3
-Game duration: 1.655204899612E12
-Game steps: 244.0
+Game duration: 1.655218197431E12
+Game steps: 171.0
 
 src/test/resources/maps/maze3.json
 Guard amount: 2.0
 Intruder amount: 4.0
 Intruders caught: 4.0
 Intruders Escaped: 0.0
-Exploration %: 100.0
+Exploration %: 57.85639953613281
 Agent parameters  
 SoundWave: 0.5
-MarkerDeadEnd: -0.85
+MarkerDeadEnd: 0.85
 MarkerTarget: 0.6
 MarkerGuard: -0.45
-MarkerIntruder: 0.9
+MarkerIntruder: -0.9
 MarkerTeleporter: 0.2
 MarkerShaded: -0.3
-Game duration: 1.655204904061E12
-Game steps: 133.0
+Game duration: 1.65521820249E12
+Game steps: 159.0
 
 src/test/resources/maps/maze3.json
 Guard amount: 2.0
 Intruder amount: 4.0
 Intruders caught: 3.0
 Intruders Escaped: 1.0
-Exploration %: 80.3329849243164
+Exploration %: 80.43704986572266
 Agent parameters  
 SoundWave: 0.5
-MarkerDeadEnd: -0.85
+MarkerDeadEnd: 0.85
 MarkerTarget: 0.6
 MarkerGuard: -0.45
-MarkerIntruder: 0.9
+MarkerIntruder: -0.9
 MarkerTeleporter: 0.2
 MarkerShaded: -0.3
-Game duration: 1.655204912325E12
-Game steps: 249.0
-
-src/test/resources/maps/maze3.json
-Guard amount: 2.0
-Intruder amount: 4.0
-Intruders caught: 4.0
-Intruders Escaped: 0.0
-Exploration %: 81.16545104980469
-Agent parameters  
-SoundWave: 0.5
-MarkerDeadEnd: -0.85
-MarkerTarget: 0.6
-MarkerGuard: -0.45
-MarkerIntruder: 0.9
-MarkerTeleporter: 0.2
-MarkerShaded: -0.3
-Game duration: 1.65520492182E12
-Game steps: 284.0
-
-src/test/resources/maps/maze3.json
-Guard amount: 2.0
-Intruder amount: 4.0
-Intruders caught: 3.0
-Intruders Escaped: 1.0
-Exploration %: 100.0
-Agent parameters  
-SoundWave: 0.5
-MarkerDeadEnd: -0.85
-MarkerTarget: 0.6
-MarkerGuard: -0.45
-MarkerIntruder: 0.9
-MarkerTeleporter: 0.2
-MarkerShaded: -0.3
-Game duration: 1.655204930852E12
-Game steps: 272.0
-
-src/test/resources/maps/maze3.json
-Guard amount: 2.0
-Intruder amount: 4.0
-Intruders caught: 4.0
-Intruders Escaped: 0.0
-Exploration %: 72.21643829345703
-Agent parameters  
-SoundWave: 0.5
-MarkerDeadEnd: -0.85
-MarkerTarget: 0.6
-MarkerGuard: -0.45
-MarkerIntruder: 0.9
-MarkerTeleporter: 0.2
-MarkerShaded: -0.3
-Game duration: 1.655204937992E12
-Game steps: 218.0
+Game duration: 1.655218209856E12
+Game steps: 224.0
 
 src/test/resources/maps/maze3.json
 Guard amount: 2.0
@@ -126,48 +92,167 @@ Intruders Escaped: 0.0
 Exploration %: 78.25182342529297
 Agent parameters  
 SoundWave: 0.5
-MarkerDeadEnd: -0.85
+MarkerDeadEnd: 0.85
 MarkerTarget: 0.6
 MarkerGuard: -0.45
-MarkerIntruder: 0.9
+MarkerIntruder: -0.9
 MarkerTeleporter: 0.2
 MarkerShaded: -0.3
-Game duration: 1.655204945683E12
-Game steps: 232.0
+Game duration: 1.655218218988E12
+Game steps: 279.0
+
+src/test/resources/maps/maze3.json
+Guard amount: 2.0
+Intruder amount: 4.0
+Intruders caught: 3.0
+Intruders Escaped: 1.0
+Exploration %: 100.0
+Agent parameters  
+SoundWave: 0.5
+MarkerDeadEnd: 0.85
+MarkerTarget: 0.6
+MarkerGuard: -0.45
+MarkerIntruder: -0.9
+MarkerTeleporter: 0.2
+MarkerShaded: -0.3
+Game duration: 1.655218228515E12
+Game steps: 290.0
 
 src/test/resources/maps/maze3.json
 Guard amount: 2.0
 Intruder amount: 4.0
 Intruders caught: 4.0
 Intruders Escaped: 0.0
-Exploration %: 81.68574523925781
+Exploration %: 76.48283386230469
 Agent parameters  
 SoundWave: 0.5
-MarkerDeadEnd: -0.85
+MarkerDeadEnd: 0.85
 MarkerTarget: 0.6
 MarkerGuard: -0.45
-MarkerIntruder: 0.9
+MarkerIntruder: -0.9
 MarkerTeleporter: 0.2
 MarkerShaded: -0.3
-Game duration: 1.655204960889E12
-Game steps: 434.0
+Game duration: 1.65521823943E12
+Game steps: 324.0
 
 src/test/resources/maps/maze3.json
 Guard amount: 2.0
 Intruder amount: 4.0
 Intruders caught: 4.0
 Intruders Escaped: 0.0
-Exploration %: 72.32049560546875
+Exploration %: 78.25182342529297
 Agent parameters  
 SoundWave: 0.5
-MarkerDeadEnd: -0.85
+MarkerDeadEnd: 0.85
 MarkerTarget: 0.6
 MarkerGuard: -0.45
-MarkerIntruder: 0.9
+MarkerIntruder: -0.9
 MarkerTeleporter: 0.2
 MarkerShaded: -0.3
-Game duration: 1.655204968121E12
-Game steps: 218.0
+Game duration: 1.65521825049E12
+Game steps: 338.0
+
+src/test/resources/maps/maze3.json
+Guard amount: 2.0
+Intruder amount: 4.0
+Intruders caught: 4.0
+Intruders Escaped: 0.0
+Exploration %: 81.47763061523438
+Agent parameters  
+SoundWave: 0.5
+MarkerDeadEnd: 0.85
+MarkerTarget: 0.6
+MarkerGuard: -0.45
+MarkerIntruder: -0.9
+MarkerTeleporter: 0.2
+MarkerShaded: -0.3
+Game duration: 1.655218266141E12
+Game steps: 461.0
+
+src/test/resources/maps/maze3.json
+Guard amount: 2.0
+Intruder amount: 4.0
+Intruders caught: 3.0
+Intruders Escaped: 1.0
+Exploration %: 100.0
+Agent parameters  
+SoundWave: 0.5
+MarkerDeadEnd: 0.85
+MarkerTarget: 0.6
+MarkerGuard: -0.45
+MarkerIntruder: -0.9
+MarkerTeleporter: 0.2
+MarkerShaded: -0.3
+Game duration: 1.655218271908E12
+Game steps: 180.0
+
+src/test/resources/maps/maze3.json
+Guard amount: 2.0
+Intruder amount: 4.0
+Intruders caught: 4.0
+Intruders Escaped: 0.0
+Exploration %: 64.82830810546875
+Agent parameters  
+SoundWave: 0.5
+MarkerDeadEnd: 0.85
+MarkerTarget: 0.6
+MarkerGuard: -0.45
+MarkerIntruder: -0.9
+MarkerTeleporter: 0.2
+MarkerShaded: -0.3
+Game duration: 1.655218276708E12
+Game steps: 148.0
+
+src/test/resources/maps/maze3.json
+Guard amount: 2.0
+Intruder amount: 4.0
+Intruders caught: 4.0
+Intruders Escaped: 0.0
+Exploration %: 70.34339141845703
+Agent parameters  
+SoundWave: 0.5
+MarkerDeadEnd: 0.85
+MarkerTarget: 0.6
+MarkerGuard: -0.45
+MarkerIntruder: -0.9
+MarkerTeleporter: 0.2
+MarkerShaded: -0.3
+Game duration: 1.655218284391E12
+Game steps: 235.0
+
+src/test/resources/maps/maze3.json
+Guard amount: 2.0
+Intruder amount: 4.0
+Intruders caught: 3.0
+Intruders Escaped: 1.0
+Exploration %: 78.56399536132812
+Agent parameters  
+SoundWave: 0.5
+MarkerDeadEnd: 0.85
+MarkerTarget: 0.6
+MarkerGuard: -0.45
+MarkerIntruder: -0.9
+MarkerTeleporter: 0.2
+MarkerShaded: -0.3
+Game duration: 1.655218294055E12
+Game steps: 293.0
+
+src/test/resources/maps/maze3.json
+Guard amount: 2.0
+Intruder amount: 4.0
+Intruders caught: 4.0
+Intruders Escaped: 0.0
+Exploration %: 89.17794036865234
+Agent parameters  
+SoundWave: 0.5
+MarkerDeadEnd: 0.85
+MarkerTarget: 0.6
+MarkerGuard: -0.45
+MarkerIntruder: -0.9
+MarkerTeleporter: 0.2
+MarkerShaded: -0.3
+Game duration: 1.655218307433E12
+Game steps: 391.0
 
 src/test/resources/maps/maze3.json
 Guard amount: 2.0
@@ -177,150 +262,201 @@ Intruders Escaped: 0.0
 Exploration %: 100.0
 Agent parameters  
 SoundWave: 0.5
-MarkerDeadEnd: -0.85
+MarkerDeadEnd: 0.85
 MarkerTarget: 0.6
 MarkerGuard: -0.45
-MarkerIntruder: 0.9
+MarkerIntruder: -0.9
 MarkerTeleporter: 0.2
 MarkerShaded: -0.3
-Game duration: 1.655204973666E12
-Game steps: 170.0
-
-src/test/resources/maps/maze3.json
-Guard amount: 2.0
-Intruder amount: 4.0
-Intruders caught: 3.0
-Intruders Escaped: 1.0
-Exploration %: 77.107177734375
-Agent parameters  
-SoundWave: 0.5
-MarkerDeadEnd: -0.85
-MarkerTarget: 0.6
-MarkerGuard: -0.45
-MarkerIntruder: 0.9
-MarkerTeleporter: 0.2
-MarkerShaded: -0.3
-Game duration: 1.655204981109E12
-Game steps: 224.0
+Game duration: 1.655218315494E12
+Game steps: 245.0
 
 src/test/resources/maps/maze3.json
 Guard amount: 2.0
 Intruder amount: 4.0
 Intruders caught: 4.0
 Intruders Escaped: 0.0
-Exploration %: 73.15296173095703
+Exploration %: 76.06659698486328
 Agent parameters  
 SoundWave: 0.5
-MarkerDeadEnd: -0.85
+MarkerDeadEnd: 0.85
 MarkerTarget: 0.6
 MarkerGuard: -0.45
-MarkerIntruder: 0.9
+MarkerIntruder: -0.9
 MarkerTeleporter: 0.2
 MarkerShaded: -0.3
-Game duration: 1.655204988101E12
-Game steps: 204.0
+Game duration: 1.655218323094E12
+Game steps: 225.0
 
 src/test/resources/maps/maze3.json
 Guard amount: 2.0
 Intruder amount: 4.0
-Intruders caught: 3.0
-Intruders Escaped: 1.0
-Exploration %: 84.49531555175781
+Intruders caught: 2.0
+Intruders Escaped: 2.0
+Exploration %: 68.78251647949219
 Agent parameters  
 SoundWave: 0.5
-MarkerDeadEnd: -0.85
+MarkerDeadEnd: 0.85
 MarkerTarget: 0.6
 MarkerGuard: -0.45
-MarkerIntruder: 0.9
+MarkerIntruder: -0.9
 MarkerTeleporter: 0.2
 MarkerShaded: -0.3
-Game duration: 1.655204998767E12
-Game steps: 323.0
+Game duration: 1.655218351168E12
+Game steps: 811.0
 
 src/test/resources/maps/maze3.json
 Guard amount: 2.0
 Intruder amount: 4.0
-Intruders caught: 3.0
-Intruders Escaped: 1.0
-Exploration %: 81.06139373779297
-Agent parameters  
-SoundWave: 0.5
-MarkerDeadEnd: -0.85
-MarkerTarget: 0.6
-MarkerGuard: -0.45
-MarkerIntruder: 0.9
-MarkerTeleporter: 0.2
-MarkerShaded: -0.3
-Game duration: 1.655205007302E12
-Game steps: 255.0
-
-src/test/resources/maps/maze3.json
-Guard amount: 2.0
-Intruder amount: 4.0
-Intruders caught: 3.0
-Intruders Escaped: 1.0
-Exploration %: 68.36627960205078
-Agent parameters  
-SoundWave: 0.5
-MarkerDeadEnd: -0.85
-MarkerTarget: 0.6
-MarkerGuard: -0.45
-MarkerIntruder: 0.9
-MarkerTeleporter: 0.2
-MarkerShaded: -0.3
-Game duration: 1.65520501349E12
-Game steps: 191.0
-
-src/test/resources/maps/maze3.json
-Guard amount: 2.0
-Intruder amount: 4.0
-Intruders caught: 4.0
-Intruders Escaped: 0.0
-Exploration %: 78.35588073730469
-Agent parameters  
-SoundWave: 0.5
-MarkerDeadEnd: -0.85
-MarkerTarget: 0.6
-MarkerGuard: -0.45
-MarkerIntruder: 0.9
-MarkerTeleporter: 0.2
-MarkerShaded: -0.3
-Game duration: 1.655205023052E12
-Game steps: 280.0
-
-src/test/resources/maps/maze3.json
-Guard amount: 2.0
-Intruder amount: 4.0
-Intruders caught: 4.0
-Intruders Escaped: 0.0
-Exploration %: 100.0
-Agent parameters  
-SoundWave: 0.5
-MarkerDeadEnd: -0.85
-MarkerTarget: 0.6
-MarkerGuard: -0.45
-MarkerIntruder: 0.9
-MarkerTeleporter: 0.2
-MarkerShaded: -0.3
-Game duration: 1.65520503007E12
-Game steps: 213.0
-
-src/test/resources/maps/maze3.json
-Guard amount: 2.0
-Intruder amount: 4.0
-Intruders caught: 3.0
-Intruders Escaped: 1.0
+Intruders caught: 2.0
+Intruders Escaped: 2.0
 Exploration %: 77.31529235839844
 Agent parameters  
 SoundWave: 0.5
-MarkerDeadEnd: -0.85
+MarkerDeadEnd: 0.85
 MarkerTarget: 0.6
 MarkerGuard: -0.45
-MarkerIntruder: 0.9
+MarkerIntruder: -0.9
 MarkerTeleporter: 0.2
 MarkerShaded: -0.3
-Game duration: 1.655205037001E12
-Game steps: 209.0
+Game duration: 1.655218360324E12
+Game steps: 273.0
+
+src/test/resources/maps/maze3.json
+Guard amount: 2.0
+Intruder amount: 4.0
+Intruders caught: 3.0
+Intruders Escaped: 1.0
+Exploration %: 75.96253967285156
+Agent parameters  
+SoundWave: 0.5
+MarkerDeadEnd: 0.85
+MarkerTarget: 0.6
+MarkerGuard: -0.45
+MarkerIntruder: -0.9
+MarkerTeleporter: 0.2
+MarkerShaded: -0.3
+Game duration: 1.655218368693E12
+Game steps: 252.0
+
+src/test/resources/maps/maze3.json
+Guard amount: 2.0
+Intruder amount: 4.0
+Intruders caught: 4.0
+Intruders Escaped: 0.0
+Exploration %: 78.25182342529297
+Agent parameters  
+SoundWave: 0.5
+MarkerDeadEnd: 0.85
+MarkerTarget: 0.6
+MarkerGuard: -0.45
+MarkerIntruder: -0.9
+MarkerTeleporter: 0.2
+MarkerShaded: -0.3
+Game duration: 1.655218376325E12
+Game steps: 236.0
+
+src/test/resources/maps/maze3.json
+Guard amount: 2.0
+Intruder amount: 4.0
+Intruders caught: 4.0
+Intruders Escaped: 0.0
+Exploration %: 78.25182342529297
+Agent parameters  
+SoundWave: 0.5
+MarkerDeadEnd: 0.85
+MarkerTarget: 0.6
+MarkerGuard: -0.45
+MarkerIntruder: -0.9
+MarkerTeleporter: 0.2
+MarkerShaded: -0.3
+Game duration: 1.655218384551E12
+Game steps: 256.0
+
+src/test/resources/maps/maze3.json
+Guard amount: 2.0
+Intruder amount: 4.0
+Intruders caught: 3.0
+Intruders Escaped: 1.0
+Exploration %: 77.00312042236328
+Agent parameters  
+SoundWave: 0.5
+MarkerDeadEnd: 0.85
+MarkerTarget: 0.6
+MarkerGuard: -0.45
+MarkerIntruder: -0.9
+MarkerTeleporter: 0.2
+MarkerShaded: -0.3
+Game duration: 1.655218392117E12
+Game steps: 228.0
+
+src/test/resources/maps/maze3.json
+Guard amount: 2.0
+Intruder amount: 4.0
+Intruders caught: 4.0
+Intruders Escaped: 0.0
+Exploration %: 66.18106079101562
+Agent parameters  
+SoundWave: 0.5
+MarkerDeadEnd: 0.85
+MarkerTarget: 0.6
+MarkerGuard: -0.45
+MarkerIntruder: -0.9
+MarkerTeleporter: 0.2
+MarkerShaded: -0.3
+Game duration: 1.655218400797E12
+Game steps: 259.0
+
+src/test/resources/maps/maze3.json
+Guard amount: 2.0
+Intruder amount: 4.0
+Intruders caught: 4.0
+Intruders Escaped: 0.0
+Exploration %: 78.25182342529297
+Agent parameters  
+SoundWave: 0.5
+MarkerDeadEnd: 0.85
+MarkerTarget: 0.6
+MarkerGuard: -0.45
+MarkerIntruder: -0.9
+MarkerTeleporter: 0.2
+MarkerShaded: -0.3
+Game duration: 1.655218410037E12
+Game steps: 275.0
+
+src/test/resources/maps/maze3.json
+Guard amount: 2.0
+Intruder amount: 4.0
+Intruders caught: 3.0
+Intruders Escaped: 1.0
+Exploration %: 76.69094848632812
+Agent parameters  
+SoundWave: 0.5
+MarkerDeadEnd: 0.85
+MarkerTarget: 0.6
+MarkerGuard: -0.45
+MarkerIntruder: -0.9
+MarkerTeleporter: 0.2
+MarkerShaded: -0.3
+Game duration: 1.655218416886E12
+Game steps: 208.0
+
+src/test/resources/maps/maze3.json
+Guard amount: 2.0
+Intruder amount: 4.0
+Intruders caught: 4.0
+Intruders Escaped: 0.0
+Exploration %: 89.38605499267578
+Agent parameters  
+SoundWave: 0.5
+MarkerDeadEnd: 0.85
+MarkerTarget: 0.6
+MarkerGuard: -0.45
+MarkerIntruder: -0.9
+MarkerTeleporter: 0.2
+MarkerShaded: -0.3
+Game duration: 1.655218431322E12
+Game steps: 433.0
 
 src/test/resources/maps/maze3.json
 Guard amount: 2.0
@@ -330,116 +466,99 @@ Intruders Escaped: 1.0
 Exploration %: 77.62747192382812
 Agent parameters  
 SoundWave: 0.5
-MarkerDeadEnd: -0.85
+MarkerDeadEnd: 0.85
 MarkerTarget: 0.6
 MarkerGuard: -0.45
-MarkerIntruder: 0.9
+MarkerIntruder: -0.9
 MarkerTeleporter: 0.2
 MarkerShaded: -0.3
-Game duration: 1.655205043901E12
-Game steps: 208.0
+Game duration: 1.65521843886E12
+Game steps: 230.0
 
 src/test/resources/maps/maze3.json
 Guard amount: 2.0
 Intruder amount: 4.0
 Intruders caught: 4.0
 Intruders Escaped: 0.0
-Exploration %: 100.0
+Exploration %: 64.7242431640625
 Agent parameters  
 SoundWave: 0.5
-MarkerDeadEnd: -0.85
+MarkerDeadEnd: 0.85
 MarkerTarget: 0.6
 MarkerGuard: -0.45
-MarkerIntruder: 0.9
+MarkerIntruder: -0.9
 MarkerTeleporter: 0.2
 MarkerShaded: -0.3
-Game duration: 1.655205050786E12
-Game steps: 208.0
+Game duration: 1.655218444678E12
+Game steps: 178.0
 
 src/test/resources/maps/maze3.json
 Guard amount: 2.0
 Intruder amount: 4.0
 Intruders caught: 4.0
 Intruders Escaped: 0.0
-Exploration %: 77.52340698242188
+Exploration %: 43.912593841552734
 Agent parameters  
 SoundWave: 0.5
-MarkerDeadEnd: -0.85
+MarkerDeadEnd: 0.85
 MarkerTarget: 0.6
 MarkerGuard: -0.45
-MarkerIntruder: 0.9
+MarkerIntruder: -0.9
 MarkerTeleporter: 0.2
 MarkerShaded: -0.3
-Game duration: 1.655205059418E12
-Game steps: 261.0
+Game duration: 1.655218446665E12
+Game steps: 62.0
 
 src/test/resources/maps/maze3.json
 Guard amount: 2.0
 Intruder amount: 4.0
 Intruders caught: 4.0
 Intruders Escaped: 0.0
-Exploration %: 55.04682540893555
+Exploration %: 93.6524429321289
 Agent parameters  
 SoundWave: 0.5
-MarkerDeadEnd: -0.85
+MarkerDeadEnd: 0.85
 MarkerTarget: 0.6
 MarkerGuard: -0.45
-MarkerIntruder: 0.9
+MarkerIntruder: -0.9
 MarkerTeleporter: 0.2
 MarkerShaded: -0.3
-Game duration: 1.655205062542E12
-Game steps: 96.0
+Game duration: 1.655218467656E12
+Game steps: 634.0
 
 src/test/resources/maps/maze3.json
 Guard amount: 2.0
 Intruder amount: 4.0
 Intruders caught: 3.0
 Intruders Escaped: 1.0
-Exploration %: 78.14776611328125
+Exploration %: 78.04370880126953
 Agent parameters  
 SoundWave: 0.5
-MarkerDeadEnd: -0.85
+MarkerDeadEnd: 0.85
 MarkerTarget: 0.6
 MarkerGuard: -0.45
-MarkerIntruder: 0.9
+MarkerIntruder: -0.9
 MarkerTeleporter: 0.2
 MarkerShaded: -0.3
-Game duration: 1.655205070175E12
-Game steps: 229.0
+Game duration: 1.655218474986E12
+Game steps: 223.0
 
 src/test/resources/maps/maze3.json
 Guard amount: 2.0
 Intruder amount: 4.0
 Intruders caught: 4.0
 Intruders Escaped: 0.0
-Exploration %: 78.25182342529297
+Exploration %: 72.42455291748047
 Agent parameters  
 SoundWave: 0.5
-MarkerDeadEnd: -0.85
+MarkerDeadEnd: 0.85
 MarkerTarget: 0.6
 MarkerGuard: -0.45
-MarkerIntruder: 0.9
+MarkerIntruder: -0.9
 MarkerTeleporter: 0.2
 MarkerShaded: -0.3
-Game duration: 1.655205077871E12
-Game steps: 234.0
-
-src/test/resources/maps/maze3.json
-Guard amount: 2.0
-Intruder amount: 4.0
-Intruders caught: 4.0
-Intruders Escaped: 0.0
-Exploration %: 72.84078979492188
-Agent parameters  
-SoundWave: 0.5
-MarkerDeadEnd: -0.85
-MarkerTarget: 0.6
-MarkerGuard: -0.45
-MarkerIntruder: 0.9
-MarkerTeleporter: 0.2
-MarkerShaded: -0.3
-Game duration: 1.655205082588E12
-Game steps: 142.0
+Game duration: 1.655218482623E12
+Game steps: 232.0
 
 src/test/resources/maps/maze3.json
 Guard amount: 2.0
@@ -449,133 +568,48 @@ Intruders Escaped: 0.0
 Exploration %: 100.0
 Agent parameters  
 SoundWave: 0.5
-MarkerDeadEnd: -0.85
+MarkerDeadEnd: 0.85
 MarkerTarget: 0.6
 MarkerGuard: -0.45
-MarkerIntruder: 0.9
+MarkerIntruder: -0.9
 MarkerTeleporter: 0.2
 MarkerShaded: -0.3
-Game duration: 1.65520509244E12
-Game steps: 284.0
+Game duration: 1.655218491939E12
+Game steps: 280.0
 
 src/test/resources/maps/maze3.json
 Guard amount: 2.0
 Intruder amount: 4.0
 Intruders caught: 4.0
 Intruders Escaped: 0.0
-Exploration %: 78.25182342529297
+Exploration %: 76.89906311035156
 Agent parameters  
 SoundWave: 0.5
-MarkerDeadEnd: -0.85
+MarkerDeadEnd: 0.85
 MarkerTarget: 0.6
 MarkerGuard: -0.45
-MarkerIntruder: 0.9
+MarkerIntruder: -0.9
 MarkerTeleporter: 0.2
 MarkerShaded: -0.3
-Game duration: 1.655205100609E12
-Game steps: 250.0
+Game duration: 1.655218499762E12
+Game steps: 237.0
 
 src/test/resources/maps/maze3.json
 Guard amount: 2.0
 Intruder amount: 4.0
 Intruders caught: 4.0
 Intruders Escaped: 0.0
-Exploration %: 89.0738754272461
+Exploration %: 76.5868911743164
 Agent parameters  
 SoundWave: 0.5
-MarkerDeadEnd: -0.85
+MarkerDeadEnd: 0.85
 MarkerTarget: 0.6
 MarkerGuard: -0.45
-MarkerIntruder: 0.9
+MarkerIntruder: -0.9
 MarkerTeleporter: 0.2
 MarkerShaded: -0.3
-Game duration: 1.655205114255E12
-Game steps: 414.0
-
-src/test/resources/maps/maze3.json
-Guard amount: 2.0
-Intruder amount: 4.0
-Intruders caught: 4.0
-Intruders Escaped: 0.0
-Exploration %: 75.234130859375
-Agent parameters  
-SoundWave: 0.5
-MarkerDeadEnd: -0.85
-MarkerTarget: 0.6
-MarkerGuard: -0.45
-MarkerIntruder: 0.9
-MarkerTeleporter: 0.2
-MarkerShaded: -0.3
-Game duration: 1.655205122556E12
-Game steps: 244.0
-
-src/test/resources/maps/maze3.json
-Guard amount: 2.0
-Intruder amount: 4.0
-Intruders caught: 3.0
-Intruders Escaped: 1.0
-Exploration %: 100.0
-Agent parameters  
-SoundWave: 0.5
-MarkerDeadEnd: -0.85
-MarkerTarget: 0.6
-MarkerGuard: -0.45
-MarkerIntruder: 0.9
-MarkerTeleporter: 0.2
-MarkerShaded: -0.3
-Game duration: 1.655205131042E12
-Game steps: 254.0
-
-src/test/resources/maps/maze3.json
-Guard amount: 2.0
-Intruder amount: 4.0
-Intruders caught: 4.0
-Intruders Escaped: 0.0
-Exploration %: 63.891780853271484
-Agent parameters  
-SoundWave: 0.5
-MarkerDeadEnd: -0.85
-MarkerTarget: 0.6
-MarkerGuard: -0.45
-MarkerIntruder: 0.9
-MarkerTeleporter: 0.2
-MarkerShaded: -0.3
-Game duration: 1.65520513623E12
-Game steps: 158.0
-
-src/test/resources/maps/maze3.json
-Guard amount: 2.0
-Intruder amount: 4.0
-Intruders caught: 4.0
-Intruders Escaped: 0.0
-Exploration %: 90.63475799560547
-Agent parameters  
-SoundWave: 0.5
-MarkerDeadEnd: -0.85
-MarkerTarget: 0.6
-MarkerGuard: -0.45
-MarkerIntruder: 0.9
-MarkerTeleporter: 0.2
-MarkerShaded: -0.3
-Game duration: 1.655205148289E12
-Game steps: 363.0
-
-src/test/resources/maps/maze3.json
-Guard amount: 2.0
-Intruder amount: 4.0
-Intruders caught: 4.0
-Intruders Escaped: 0.0
-Exploration %: 70.7596206665039
-Agent parameters  
-SoundWave: 0.5
-MarkerDeadEnd: -0.85
-MarkerTarget: 0.6
-MarkerGuard: -0.45
-MarkerIntruder: 0.9
-MarkerTeleporter: 0.2
-MarkerShaded: -0.3
-Game duration: 1.655205154229E12
-Game steps: 183.0
+Game duration: 1.655218509399E12
+Game steps: 289.0
 
 src/test/resources/maps/maze3.json
 Guard amount: 2.0
@@ -585,150 +619,14 @@ Intruders Escaped: 0.0
 Exploration %: 88.5535888671875
 Agent parameters  
 SoundWave: 0.5
-MarkerDeadEnd: -0.85
+MarkerDeadEnd: 0.85
 MarkerTarget: 0.6
 MarkerGuard: -0.45
-MarkerIntruder: 0.9
+MarkerIntruder: -0.9
 MarkerTeleporter: 0.2
 MarkerShaded: -0.3
-Game duration: 1.655205164927E12
-Game steps: 318.0
-
-src/test/resources/maps/maze3.json
-Guard amount: 2.0
-Intruder amount: 4.0
-Intruders caught: 4.0
-Intruders Escaped: 0.0
-Exploration %: 78.25182342529297
-Agent parameters  
-SoundWave: 0.5
-MarkerDeadEnd: -0.85
-MarkerTarget: 0.6
-MarkerGuard: -0.45
-MarkerIntruder: 0.9
-MarkerTeleporter: 0.2
-MarkerShaded: -0.3
-Game duration: 1.655205172845E12
-Game steps: 237.0
-
-src/test/resources/maps/maze3.json
-Guard amount: 2.0
-Intruder amount: 4.0
-Intruders caught: 3.0
-Intruders Escaped: 1.0
-Exploration %: 100.0
-Agent parameters  
-SoundWave: 0.5
-MarkerDeadEnd: -0.85
-MarkerTarget: 0.6
-MarkerGuard: -0.45
-MarkerIntruder: 0.9
-MarkerTeleporter: 0.2
-MarkerShaded: -0.3
-Game duration: 1.655205179711E12
-Game steps: 209.0
-
-src/test/resources/maps/maze3.json
-Guard amount: 2.0
-Intruder amount: 4.0
-Intruders caught: 4.0
-Intruders Escaped: 0.0
-Exploration %: 93.44432830810547
-Agent parameters  
-SoundWave: 0.5
-MarkerDeadEnd: -0.85
-MarkerTarget: 0.6
-MarkerGuard: -0.45
-MarkerIntruder: 0.9
-MarkerTeleporter: 0.2
-MarkerShaded: -0.3
-Game duration: 1.655205191439E12
-Game steps: 359.0
-
-src/test/resources/maps/maze3.json
-Guard amount: 2.0
-Intruder amount: 4.0
-Intruders caught: 4.0
-Intruders Escaped: 0.0
-Exploration %: 75.6503677368164
-Agent parameters  
-SoundWave: 0.5
-MarkerDeadEnd: -0.85
-MarkerTarget: 0.6
-MarkerGuard: -0.45
-MarkerIntruder: 0.9
-MarkerTeleporter: 0.2
-MarkerShaded: -0.3
-Game duration: 1.655205200627E12
-Game steps: 284.0
-
-src/test/resources/maps/maze3.json
-Guard amount: 2.0
-Intruder amount: 4.0
-Intruders caught: 3.0
-Intruders Escaped: 1.0
-Exploration %: 71.488037109375
-Agent parameters  
-SoundWave: 0.5
-MarkerDeadEnd: -0.85
-MarkerTarget: 0.6
-MarkerGuard: -0.45
-MarkerIntruder: 0.9
-MarkerTeleporter: 0.2
-MarkerShaded: -0.3
-Game duration: 1.655205209092E12
-Game steps: 259.0
-
-src/test/resources/maps/maze3.json
-Guard amount: 2.0
-Intruder amount: 4.0
-Intruders caught: 4.0
-Intruders Escaped: 0.0
-Exploration %: 70.86368560791016
-Agent parameters  
-SoundWave: 0.5
-MarkerDeadEnd: -0.85
-MarkerTarget: 0.6
-MarkerGuard: -0.45
-MarkerIntruder: 0.9
-MarkerTeleporter: 0.2
-MarkerShaded: -0.3
-Game duration: 1.655205214965E12
-Game steps: 180.0
-
-src/test/resources/maps/maze3.json
-Guard amount: 2.0
-Intruder amount: 4.0
-Intruders caught: 4.0
-Intruders Escaped: 0.0
-Exploration %: 54.94276809692383
-Agent parameters  
-SoundWave: 0.5
-MarkerDeadEnd: -0.85
-MarkerTarget: 0.6
-MarkerGuard: -0.45
-MarkerIntruder: 0.9
-MarkerTeleporter: 0.2
-MarkerShaded: -0.3
-Game duration: 1.65520521781E12
-Game steps: 87.0
-
-src/test/resources/maps/maze3.json
-Guard amount: 2.0
-Intruder amount: 4.0
-Intruders caught: 3.0
-Intruders Escaped: 1.0
-Exploration %: 76.5868911743164
-Agent parameters  
-SoundWave: 0.5
-MarkerDeadEnd: -0.85
-MarkerTarget: 0.6
-MarkerGuard: -0.45
-MarkerIntruder: 0.9
-MarkerTeleporter: 0.2
-MarkerShaded: -0.3
-Game duration: 1.655205228648E12
-Game steps: 322.0
+Game duration: 1.655218520552E12
+Game steps: 333.0
 
 src/test/resources/maps/maze3.json
 Guard amount: 2.0
@@ -738,130 +636,232 @@ Intruders Escaped: 0.0
 Exploration %: 74.71383666992188
 Agent parameters  
 SoundWave: 0.5
-MarkerDeadEnd: -0.85
+MarkerDeadEnd: 0.85
 MarkerTarget: 0.6
 MarkerGuard: -0.45
-MarkerIntruder: 0.9
+MarkerIntruder: -0.9
 MarkerTeleporter: 0.2
 MarkerShaded: -0.3
-Game duration: 1.655205235845E12
-Game steps: 216.0
+Game duration: 1.655218527636E12
+Game steps: 212.0
 
 src/test/resources/maps/maze3.json
 Guard amount: 2.0
 Intruder amount: 4.0
 Intruders caught: 4.0
 Intruders Escaped: 0.0
-Exploration %: 67.74193572998047
+Exploration %: 93.6524429321289
 Agent parameters  
 SoundWave: 0.5
-MarkerDeadEnd: -0.85
+MarkerDeadEnd: 0.85
 MarkerTarget: 0.6
 MarkerGuard: -0.45
-MarkerIntruder: 0.9
+MarkerIntruder: -0.9
 MarkerTeleporter: 0.2
 MarkerShaded: -0.3
-Game duration: 1.655205242426E12
-Game steps: 201.0
-
-src/test/resources/maps/maze3.json
-Guard amount: 2.0
-Intruder amount: 4.0
-Intruders caught: 4.0
-Intruders Escaped: 0.0
-Exploration %: 78.25182342529297
-Agent parameters  
-SoundWave: 0.5
-MarkerDeadEnd: -0.85
-MarkerTarget: 0.6
-MarkerGuard: -0.45
-MarkerIntruder: 0.9
-MarkerTeleporter: 0.2
-MarkerShaded: -0.3
-Game duration: 1.655205251695E12
-Game steps: 275.0
-
-src/test/resources/maps/maze3.json
-Guard amount: 2.0
-Intruder amount: 4.0
-Intruders caught: 4.0
-Intruders Escaped: 0.0
-Exploration %: 90.8428726196289
-Agent parameters  
-SoundWave: 0.5
-MarkerDeadEnd: -0.85
-MarkerTarget: 0.6
-MarkerGuard: -0.45
-MarkerIntruder: 0.9
-MarkerTeleporter: 0.2
-MarkerShaded: -0.3
-Game duration: 1.65520526718E12
-Game steps: 467.0
+Game duration: 1.655218546318E12
+Game steps: 559.0
 
 src/test/resources/maps/maze3.json
 Guard amount: 2.0
 Intruder amount: 4.0
 Intruders caught: 3.0
 Intruders Escaped: 1.0
-Exploration %: 87.92924499511719
+Exploration %: 100.0
 Agent parameters  
 SoundWave: 0.5
-MarkerDeadEnd: -0.85
+MarkerDeadEnd: 0.85
 MarkerTarget: 0.6
 MarkerGuard: -0.45
-MarkerIntruder: 0.9
+MarkerIntruder: -0.9
 MarkerTeleporter: 0.2
 MarkerShaded: -0.3
-Game duration: 1.655205277782E12
-Game steps: 317.0
+Game duration: 1.655218552655E12
+Game steps: 195.0
+
+src/test/resources/maps/maze3.json
+Guard amount: 2.0
+Intruder amount: 4.0
+Intruders caught: 3.0
+Intruders Escaped: 1.0
+Exploration %: 100.0
+Agent parameters  
+SoundWave: 0.5
+MarkerDeadEnd: 0.85
+MarkerTarget: 0.6
+MarkerGuard: -0.45
+MarkerIntruder: -0.9
+MarkerTeleporter: 0.2
+MarkerShaded: -0.3
+Game duration: 1.655218562468E12
+Game steps: 290.0
 
 src/test/resources/maps/maze3.json
 Guard amount: 2.0
 Intruder amount: 4.0
 Intruders caught: 4.0
 Intruders Escaped: 0.0
-Exploration %: 90.8428726196289
+Exploration %: 65.03642272949219
 Agent parameters  
 SoundWave: 0.5
-MarkerDeadEnd: -0.85
+MarkerDeadEnd: 0.85
 MarkerTarget: 0.6
 MarkerGuard: -0.45
-MarkerIntruder: 0.9
+MarkerIntruder: -0.9
 MarkerTeleporter: 0.2
 MarkerShaded: -0.3
-Game duration: 1.655205296111E12
-Game steps: 531.0
+Game duration: 1.655218567681E12
+Game steps: 160.0
+
+src/test/resources/maps/maze3.json
+Guard amount: 2.0
+Intruder amount: 4.0
+Intruders caught: 4.0
+Intruders Escaped: 0.0
+Exploration %: 88.44953155517578
+Agent parameters  
+SoundWave: 0.5
+MarkerDeadEnd: 0.85
+MarkerTarget: 0.6
+MarkerGuard: -0.45
+MarkerIntruder: -0.9
+MarkerTeleporter: 0.2
+MarkerShaded: -0.3
+Game duration: 1.655218579802E12
+Game steps: 363.0
 
 src/test/resources/maps/maze3.json
 Guard amount: 2.0
 Intruder amount: 4.0
 Intruders caught: 3.0
 Intruders Escaped: 1.0
-Exploration %: 75.96253967285156
+Exploration %: 77.62747192382812
 Agent parameters  
 SoundWave: 0.5
-MarkerDeadEnd: -0.85
+MarkerDeadEnd: 0.85
 MarkerTarget: 0.6
 MarkerGuard: -0.45
-MarkerIntruder: 0.9
+MarkerIntruder: -0.9
 MarkerTeleporter: 0.2
 MarkerShaded: -0.3
-Game duration: 1.655205305507E12
-Game steps: 278.0
+Game duration: 1.655218587302E12
+Game steps: 229.0
+
+src/test/resources/maps/maze3.json
+Guard amount: 2.0
+Intruder amount: 4.0
+Intruders caught: 4.0
+Intruders Escaped: 0.0
+Exploration %: 72.11238098144531
+Agent parameters  
+SoundWave: 0.5
+MarkerDeadEnd: 0.85
+MarkerTarget: 0.6
+MarkerGuard: -0.45
+MarkerIntruder: -0.9
+MarkerTeleporter: 0.2
+MarkerShaded: -0.3
+Game duration: 1.655218595748E12
+Game steps: 253.0
 
 src/test/resources/maps/maze3.json
 Guard amount: 2.0
 Intruder amount: 4.0
 Intruders caught: 3.0
 Intruders Escaped: 1.0
-Exploration %: 75.96253967285156
+Exploration %: 84.49531555175781
 Agent parameters  
 SoundWave: 0.5
-MarkerDeadEnd: -0.85
+MarkerDeadEnd: 0.85
 MarkerTarget: 0.6
 MarkerGuard: -0.45
-MarkerIntruder: 0.9
+MarkerIntruder: -0.9
 MarkerTeleporter: 0.2
 MarkerShaded: -0.3
-Game duration: 1.655205305695E12
-Game steps: 278.0
+Game duration: 1.655218605E12
+Game steps: 279.0
+
+src/test/resources/maps/maze3.json
+Guard amount: 2.0
+Intruder amount: 4.0
+Intruders caught: 3.0
+Intruders Escaped: 1.0
+Exploration %: 77.21123504638672
+Agent parameters  
+SoundWave: 0.5
+MarkerDeadEnd: 0.85
+MarkerTarget: 0.6
+MarkerGuard: -0.45
+MarkerIntruder: -0.9
+MarkerTeleporter: 0.2
+MarkerShaded: -0.3
+Game duration: 1.655218612053E12
+Game steps: 214.0
+
+src/test/resources/maps/maze3.json
+Guard amount: 2.0
+Intruder amount: 4.0
+Intruders caught: 4.0
+Intruders Escaped: 0.0
+Exploration %: 71.69615173339844
+Agent parameters  
+SoundWave: 0.5
+MarkerDeadEnd: 0.85
+MarkerTarget: 0.6
+MarkerGuard: -0.45
+MarkerIntruder: -0.9
+MarkerTeleporter: 0.2
+MarkerShaded: -0.3
+Game duration: 1.65521862066E12
+Game steps: 261.0
+
+src/test/resources/maps/maze3.json
+Guard amount: 2.0
+Intruder amount: 4.0
+Intruders caught: 4.0
+Intruders Escaped: 0.0
+Exploration %: 64.41207122802734
+Agent parameters  
+SoundWave: 0.5
+MarkerDeadEnd: 0.85
+MarkerTarget: 0.6
+MarkerGuard: -0.45
+MarkerIntruder: -0.9
+MarkerTeleporter: 0.2
+MarkerShaded: -0.3
+Game duration: 1.655218625516E12
+Game steps: 146.0
+
+src/test/resources/maps/maze3.json
+Guard amount: 2.0
+Intruder amount: 4.0
+Intruders caught: 3.0
+Intruders Escaped: 1.0
+Exploration %: 74.92195129394531
+Agent parameters  
+SoundWave: 0.5
+MarkerDeadEnd: 0.85
+MarkerTarget: 0.6
+MarkerGuard: -0.45
+MarkerIntruder: -0.9
+MarkerTeleporter: 0.2
+MarkerShaded: -0.3
+Game duration: 1.655218631375E12
+Game steps: 178.0
+
+src/test/resources/maps/maze3.json
+Guard amount: 2.0
+Intruder amount: 4.0
+Intruders caught: 3.0
+Intruders Escaped: 1.0
+Exploration %: 74.92195129394531
+Agent parameters  
+SoundWave: 0.5
+MarkerDeadEnd: 0.85
+MarkerTarget: 0.6
+MarkerGuard: -0.45
+MarkerIntruder: -0.9
+MarkerTeleporter: 0.2
+MarkerShaded: -0.3
+Game duration: 1.655218631513E12
+Game steps: 178.0

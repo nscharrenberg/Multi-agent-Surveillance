@@ -74,11 +74,11 @@ public class Network {
     }
 
 
-    public void backwardPropagate(double[] target, double[] predicted){
+    public void backwardPropagate(double target, double predicted, int prediction){
 
         double[][][] inputGradient;
 
-        double[] dEdY = dEdY(target, predicted);
+        double[] dEdY = dEdY(target, predicted, prediction);
 
         dEdY = denseLayers[1].backward(dEdY);
         dEdY = activationLayer.backward(dEdY);
@@ -91,13 +91,11 @@ public class Network {
         convLayers[0].backward(inputGradient);
     }
 
-    private double[] dEdY(double[] target, double[] predicted){
-        assert target.length == predicted.length : "dEdY: Vectors length differs";
+    private double[] dEdY(double target, double predicted, int prediction){
 
-        double[] dEdY = new double[target.length];
+        double[] dEdY = new double[DQN_Params.outputLength.valueInt];
 
-        for (int i = 0; i < dEdY.length; i++)
-            dEdY[i] = (predicted[i] - target[i]);
+        dEdY[prediction] = predicted - target;
 
         return dEdY;
     }

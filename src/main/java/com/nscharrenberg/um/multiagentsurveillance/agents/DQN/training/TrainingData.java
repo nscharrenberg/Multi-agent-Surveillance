@@ -59,9 +59,6 @@ public class TrainingData {
             randomSample.push(experiences.get(iterator.next()));
         }
 
-        if (ThreadLocalRandom.current().nextDouble() < 0.5)
-            clearBatch();
-
         return randomSample;
     }
 

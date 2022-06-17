@@ -219,7 +219,8 @@ public class DQNView extends StackPane {
     private void gameLoop() throws Exception {
 
         setupDQNAgents();
-        loadNetwork(0);
+        //loadNetwork(0);
+        saveProgress(0);
 
         for (int episode = 1; episode <= numEpisodes ; episode++) {
 
@@ -292,6 +293,7 @@ public class DQNView extends StackPane {
             try {
 
                 for (Iterator<Intruder> itr = playerRepository.getIntruders().iterator(); itr.hasNext(); ) {
+
                     if (!gameRepository.isRunning()) {
                         break;
                     }
@@ -305,6 +307,9 @@ public class DQNView extends StackPane {
 
                     if (endState(intruder)) {
                         agent.endTrain(state, action);
+                        if (agent.getTrainingData().hasBatch(batchSize)) {
+                            agent.trainAgent(agent.getTrainingData().randomSample(batchSize));
+                        }
                         continue;
                     }
 
@@ -315,15 +320,7 @@ public class DQNView extends StackPane {
                         reward = agent.calculateReward(nextState, action);
                         experience = new Experience(state, action, reward, nextState, done);
                         agent.getTrainingData().push(experience);
-
-                        // Preform training on a batch of experiences
-                        if (agent.getTrainingData().hasBatch(batchSize)) {
-//                            System.out.println("Batch Training");
-                            agent.trainAgent(agent.getTrainingData().randomSample(batchSize));
-                            //agent.getTrainingData().clearBatch();
-                        }
-
-                        else agent.trainAgent(experience);
+                        agent.trainAgent(experience);
                     }
                 }
             } catch (Exception e) {

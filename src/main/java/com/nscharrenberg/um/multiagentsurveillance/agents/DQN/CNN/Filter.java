@@ -40,6 +40,7 @@ public class Filter {
     }
 
     /**
+     * 
      * @param input - gamestate matrix
      * @return the output from this filter
      */

@@ -91,9 +91,9 @@ public class EvaderAgent extends ProbabilisticAgent {
             return super.decide();
         }
 
-        if (mapRepository.getTargetArea().within(player.getTile().getX(), player.getTile().getY())) {
+/*        if (mapRepository.getTargetArea().within(player.getTile().getX(), player.getTile().getY())) {
             return Action.PLACE_MARKER_TARGET;
-        }
+        }*/
 
         return super.decide();
     }

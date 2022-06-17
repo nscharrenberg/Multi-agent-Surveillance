@@ -38,4 +38,25 @@ public enum Action {
 
         return AdvancedAngle.UP;
     }
+
+
+    public static Action negateAction(Action action) throws Exception {
+
+
+        switch (action){
+            case UP -> {
+                return DOWN;
+            }
+            case DOWN -> {
+                return UP;
+            }
+            case LEFT -> {
+                return RIGHT;
+            }
+            case RIGHT -> {
+                return LEFT;
+            }
+            default -> throw new Exception("Action can't be negated");
+        }
+    }
 }

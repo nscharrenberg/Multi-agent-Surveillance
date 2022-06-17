@@ -33,7 +33,7 @@ public class DQN_Agent_Util {
     }
 
 
-    public static Action actionPrediction(int prediction) throws Exception {
+    public static Action predictionToAction(int prediction) throws Exception {
         switch (prediction){
             case 0 -> {
                 return Action.UP;
@@ -47,12 +47,12 @@ public class DQN_Agent_Util {
             case 3 -> {
                 return Action.RIGHT;
             }
-            default -> throw new Exception("Illegal Prediction");
+            default -> throw new Exception("Illegal Prediction: " + prediction);
         }
     }
 
 
-    public static int predictionAction(Action action) throws Exception {
+    public static int actionToPrediction(Action action) throws Exception {
         switch (action) {
             case UP -> {
                 return 0;

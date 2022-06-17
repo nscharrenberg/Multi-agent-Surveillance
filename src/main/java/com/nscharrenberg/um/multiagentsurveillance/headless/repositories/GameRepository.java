@@ -49,7 +49,7 @@ public class GameRepository implements IGameRepository {
     private double distanceSoundWaiting = 1;
     private double distanceSoundYelling = 15;
 
-    private double distanceViewing = 4;
+    private double distanceViewing = 6;
 
     private boolean canPlaceMarkers = true;
 

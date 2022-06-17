@@ -34,9 +34,10 @@ public class DeepQN_Agent extends Agent implements Encodable {
     private final CalculateDistance distance = new ManhattanDistance();
     private final Geometrics gm = new Geometrics();
     private final double maxBoardDistance;
-    private String policyName;
-//    private String policyName = "src/test/resources/bins/test8.bin";
+//    private String policyName;
+    private String policyName = "src/test/resources/bins/test11.bin";
     private DQNPolicy<DeepQN_Agent> policy;
+
 
 
     public DeepQN_Agent(Player player) {
@@ -48,12 +49,13 @@ public class DeepQN_Agent extends Agent implements Encodable {
         super(player, mapRepository, gameRepository, playerRepository);
 
 
+
         //TODO CHECK
         int visionLength = Double.valueOf(gameRepository.getDistanceViewing()).intValue();
         CharacterVision characterVision = new CharacterVision(visionLength, Action.UP, null);
         List<Tile> vision = characterVision.getConeVision(new Tile(0, 0));
 
-        this.observationSize = (vision.size()-1) + 12;
+        this.observationSize = (vision.size()) + 12;
         this.maxBoardDistance = distance.compute(new Tile(gameRepository.getWidth(), gameRepository.getHeight()), new Tile(0, 0));
 
         if(policyName != null){
@@ -144,17 +146,13 @@ public class DeepQN_Agent extends Agent implements Encodable {
         boolean validtile = true;
         for(Tile tile : vision){
 
-            if(i == 47){
-                System.out.println("GG");
-            }
             if(tile.getX() < 0 || tile.getY() < 0){
                 i++;
                 continue;
             } else if(tile.getX() > board.width() || tile.getY() > board.height()){
                 i++;
                 continue;
-            } else if(tile.getX() == position.getX() && tile.getY() == position.getY())
-                continue;
+            }
 
             for (Tile it : gm.getIntersectingTiles(position, tile)) {
                 if (characterVision.unobstructedTile(board, it)) {

@@ -154,7 +154,7 @@ public class MDP_API implements MDP<DeepQN_Agent, Integer, DiscreteSpace> {
         if(distanceTargetAfter < minTargetDistance && distanceTargetAfter != 0.0){
             System.out.println(distanceTargetAfter);
             minTargetDistance = distanceTargetAfter;
-            reward = 1;
+            reward = 10;
         } else if (distanceTargetAfter == minTargetDistance){
             reward = 0;
         } else if(distanceTargetAfter > minTargetDistance){
@@ -183,15 +183,17 @@ public class MDP_API implements MDP<DeepQN_Agent, Integer, DiscreteSpace> {
             if (nextPositionOpt.isPresent()) {
                 Tile nextPosition = nextPositionOpt.get();
                 if(nextPosition.isCollision()) {
-//                    reward = -1;
+                    reward = -1;
 //                    agent.gameRepository().setRunning(false);
-                } else if(nextPosition.hasGuard())
-                    reward -= 3;
+                } else if(nextPosition.hasGuard()){
+                    //                    reward -= 3;
+                }
             }
 
             if (agent.getMapRepository().getTargetArea().within(tileAfter.getX(), tileAfter.getY())) {
-//                reward = 1;
-                flag = true;
+//                agent.gameRepository().setRunning(false);
+                reward = 100;
+//                flag = true;
             } else {
 //                if(flag){
 //                    reward -= 1; //Good was 1
@@ -202,23 +204,23 @@ public class MDP_API implements MDP<DeepQN_Agent, Integer, DiscreteSpace> {
         }
 
 
-        if(!agent.gameRepository().isRunning()){
-            List<Intruder> listEscapeIntruders = agent.getPlayerRepository().getEscapedIntruders();
-
-            boolean escaped = false;
-            for(Intruder escapeIntruder : listEscapeIntruders){
-                if(escapeIntruder.equals(intruder)){
-                    escaped = true;
-                    break;
-                }
-            }
-
-            if(escaped){
-                reward = 10;
-            } else {
-//                reward = -15;
-            }
-        }
+//        if(!agent.gameRepository().isRunning()){
+//            List<Intruder> listEscapeIntruders = agent.getPlayerRepository().getEscapedIntruders();
+//
+//            boolean escaped = false;
+//            for(Intruder escapeIntruder : listEscapeIntruders){
+//                if(escapeIntruder.equals(intruder)){
+//                    escaped = true;
+//                    break;
+//                }
+//            }
+//
+//            if(escaped){
+////                reward = 100;
+//            } else {
+////                reward = -15;
+//            }
+//        }
 
         point++;
 

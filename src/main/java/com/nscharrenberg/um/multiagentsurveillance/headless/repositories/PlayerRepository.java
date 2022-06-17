@@ -386,16 +386,16 @@ public class PlayerRepository implements IPlayerRepository {
     @Override
     public void move(Player player, Action direction) throws CollisionException, InvalidTileException, ItemNotOnTileException, ItemAlreadyOnTileException, BoardNotBuildException {
         if(player instanceof Guard guard){
-            basicMove(guard, direction);
             if(guard.isHunting()) {
                 guard.setRepresentedSoundRange(gameRepository.getDistanceSoundYelling());
             }
 
             capture(guard);
+            basicMove(guard, direction);
         } else if(player instanceof Intruder intruder){
             updateTargetInfo(intruder);
+//            escape(intruder);
             basicMove(intruder, direction);
-            escape(intruder);
         } else {
             throw new RuntimeException("Wrong player class");
         }

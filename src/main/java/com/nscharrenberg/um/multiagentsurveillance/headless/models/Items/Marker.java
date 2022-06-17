@@ -5,7 +5,7 @@ import com.nscharrenberg.um.multiagentsurveillance.headless.models.Map.Tile;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Player.Player;
 
 public class Marker extends Item {
-    private static final int RANGE = 5;
+    private static final int RANGE = 3;
     private final int DURATION = 10;
 
     private MarkerType type;
@@ -25,7 +25,7 @@ public class Marker extends Item {
 
     public Marker(MarkerType type, Tile tile, Player player, int duration) {
         super(tile);
-        this.currentDuration = 10000;
+        this.currentDuration = 10;
         this.type = type;
         this.tile = tile;
         this.player = player;

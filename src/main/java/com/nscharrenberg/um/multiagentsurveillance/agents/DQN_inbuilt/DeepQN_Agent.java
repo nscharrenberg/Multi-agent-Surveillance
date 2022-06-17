@@ -35,6 +35,7 @@ public class DeepQN_Agent extends Agent implements Encodable {
     private final Geometrics gm = new Geometrics();
     private final double maxBoardDistance;
     private String policyName;
+//    private String policyName = "src/test/resources/bins/test8.bin";
     private DQNPolicy<DeepQN_Agent> policy;
 
 

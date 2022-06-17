@@ -5,7 +5,7 @@ import java.io.IOException;
 public class DQN_TrainerLaunch {
 
     public static void main(String[] args) throws IOException {
-        String text = "wq";
+        String text = "test9";
 
 
         new DQN_Main(text + ".bin");

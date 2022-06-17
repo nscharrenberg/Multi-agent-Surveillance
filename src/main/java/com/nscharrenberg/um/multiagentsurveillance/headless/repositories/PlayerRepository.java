@@ -1,5 +1,6 @@
 package com.nscharrenberg.um.multiagentsurveillance.headless.repositories;
 
+import com.nscharrenberg.um.multiagentsurveillance.agents.AudioAgent.AudioAgent;
 import com.nscharrenberg.um.multiagentsurveillance.agents.DQN.DQN_Agent;
 import com.nscharrenberg.um.multiagentsurveillance.agents.DQN_inbuilt.DeepQN_Agent;
 import com.nscharrenberg.um.multiagentsurveillance.agents.ReinforcementLearningAgent.RLAgent;
@@ -55,8 +56,9 @@ public class PlayerRepository implements IPlayerRepository {
     private List<Agent> agents;
 
     public static final Class<? extends Agent> guardType = PursuerAgent.class;
-//    public static final Class<? extends Agent> intruderType = EvaderAgent.class;
-    public static final Class<? extends Agent> intruderType = DeepQN_Agent.class;
+    public static final Class<? extends Agent> intruderType = EvaderAgent.class;
+//    public static final Class<? extends Agent> intruderType = DeepQN_Agent.class;
+//    public static final Class<? extends Agent> intruderType = AudioAgent.class;
 
 //    private static final Class<? extends Agent> guardType = RLAgent.class;
     //private static final Class<? extends Agent> guardType = SBOAgent.class;
@@ -353,6 +355,8 @@ public class PlayerRepository implements IPlayerRepository {
             agent = new RLAgent(player, mapRepository, gameRepository, this);
         } else if(agentClass.equals(DeepQN_Agent.class)){
             agent = new DeepQN_Agent(player, mapRepository, gameRepository, this);
+        } else if(agentClass.equals(AudioAgent.class)){
+            agent = new AudioAgent(player, mapRepository, gameRepository, this);
         }
 
         if (agent == null) {

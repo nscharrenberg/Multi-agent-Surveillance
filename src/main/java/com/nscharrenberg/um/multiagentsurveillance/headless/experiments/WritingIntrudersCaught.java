@@ -8,8 +8,8 @@ public class WritingIntrudersCaught {
     public static final int NUMBER_OF_GAMES = 50;
 
     public static void main(String[] args) throws IOException {
-        double[] all_values = new double[50];
-        File file = new File("src/main/resources/files/RLAgent_vs_Evader_50_Maze1.csv");
+        double[] all_values = new double[200];
+        File file = new File("src\\main\\java\\com\\nscharrenberg\\um\\multiagentsurveillance\\agents\\ReinforcementLearningAgent\\Rloutput.csv");
         BufferedReader reader = new BufferedReader(new FileReader(file));
         String data;
         int counter = 0;

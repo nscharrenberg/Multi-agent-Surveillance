@@ -313,7 +313,7 @@ public class RLView extends StackPane {
             exp.addValue(tp.name() + ": ", tp.getPriority());
         }
 
-        exp.addValue("Game duration: ", playerRepository.getStopWatch().getDurationInMillis());
+        //exp.addValue("Game duration: ", playerRepository.getStopWatch().getDurationInMillis());
         exp.addValue("Game steps: ", this.timesteps);
         exp.parseValues();
     }

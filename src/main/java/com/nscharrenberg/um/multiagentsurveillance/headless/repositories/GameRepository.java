@@ -170,6 +170,11 @@ public class GameRepository implements IGameRepository {
     }
 
     @Override
+    public String getMap() {
+        return MAP_PATH;
+    }
+
+    @Override
     public String getName() {
         return name;
     }

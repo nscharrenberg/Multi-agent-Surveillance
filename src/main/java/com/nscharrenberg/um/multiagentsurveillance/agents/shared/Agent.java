@@ -7,7 +7,6 @@ import com.nscharrenberg.um.multiagentsurveillance.headless.contracts.repositori
 import com.nscharrenberg.um.multiagentsurveillance.headless.contracts.repositories.IPlayerRepository;
 import com.nscharrenberg.um.multiagentsurveillance.headless.exceptions.BoardNotBuildException;
 import com.nscharrenberg.um.multiagentsurveillance.headless.exceptions.InvalidTileException;
-import com.nscharrenberg.um.multiagentsurveillance.headless.exceptions.ItemNotOnTileException;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Action;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Items.Collision.Wall;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Items.Item;
@@ -210,6 +209,10 @@ public abstract class Agent {
     }
 
     public Action markerCheck() throws InvalidTileException, BoardNotBuildException {
+        if (!gameRepository.isCanPlaceMarkers()) {
+            return null;
+        }
+
         HashMap<Integer, HashMap<Integer, Tile>> vision = player.getVision().getRegion();
 
         for (Map.Entry<Integer, HashMap<Integer, Tile>> rowEntry : vision.entrySet()) {

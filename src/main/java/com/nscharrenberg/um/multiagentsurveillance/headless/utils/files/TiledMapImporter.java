@@ -15,10 +15,7 @@ import com.nscharrenberg.um.multiagentsurveillance.headless.utils.AngleConverter
 
 import java.io.FileReader;
 import java.io.IOException;
-import java.security.Key;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 import java.util.Map;
 
 public class TiledMapImporter extends Importer{
@@ -94,6 +91,22 @@ public class TiledMapImporter extends Importer{
             gameRepository.setSpringSpeedIntruders((Double) value);
         } else if (id.equals(FileItems.TIME_STEP.getKey())) {
             gameRepository.setTimeStep((Double) value);
+        } else if (id.equals(FileItems.DISTANCE_SOUND_YELLING.getKey())) {
+            gameRepository.setDistanceSoundYelling((Double) value);
+        } else if (id.equals(FileItems.DISTANCE_SOUND_WALKING.getKey())) {
+            gameRepository.setDistanceSoundWalking((Double) value);
+        } else if (id.equals(FileItems.DISTANCE_SOUND_WAITING.getKey())) {
+            gameRepository.setDistanceSoundWaiting((Double) value);
+        } else if (id.equals(FileItems.DISTANCE_SOUND_SPRINTING.getKey())) {
+            gameRepository.setDistanceSoundSprinting((Double) value);
+        } else if (id.equals(FileItems.DISTANCE_SOUND_ROTATING.getKey())) {
+            gameRepository.setDistanceSoundRotating((Double) value);
+        } else if (id.equals(FileItems.DISTANCE_VIEWING.getKey())) {
+            gameRepository.setDistanceViewing((Double) value);
+        } else if (id.equals(FileItems.MARKERS_ENABLED.getKey())) {
+            gameRepository.setCanPlaceMarkers((Boolean) value);
+        } else if (id.equals(FileItems.HEAR_THROUGH_WALLS_ENABLED.getKey())) {
+            gameRepository.setCanHearThroughWalls((Boolean) value);
         } else {
             initCheck();
         }

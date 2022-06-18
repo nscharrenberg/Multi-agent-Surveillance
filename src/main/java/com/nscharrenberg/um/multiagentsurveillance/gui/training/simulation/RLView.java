@@ -52,7 +52,7 @@ import java.util.concurrent.ThreadLocalRandom;
 import static com.nscharrenberg.um.multiagentsurveillance.gui.canvas.CanvasApp.MANUAL_PLAYER;
 
 public class RLView extends StackPane {
-    private static final int DELAY = 30;
+    private static final int DELAY = -1;
     protected static Color BASIC_TILE_COLOR = Color.LIGHTGREY;
     protected static Color WALL_TILE_COLOR = Color.DARKBLUE.darker().darker();
     protected static Color TELEPORT_INPUT_TILE_COLOR = Color.PURPLE;
@@ -63,6 +63,7 @@ public class RLView extends StackPane {
     protected static Color VISION_COLOR = Color.YELLOW;
     protected static Color KNOWLEDGE_COLOR = Color.LIGHTBLUE;
     protected static Color TARGET_COLOR = Color.TEAL;
+    protected int currentEpisode = 0;
     
     private IGameRepository gameRepository;
     private IPlayerRepository playerRepository;
@@ -95,7 +96,7 @@ public class RLView extends StackPane {
     private int screenHeight;
 
     private int timesteps;
-    private final int numEpisodes = 50;
+    private final int numEpisodes = 10000;
 
     private Canvas canvas;
     private GraphicsContext graphicsContext;
@@ -220,6 +221,8 @@ public class RLView extends StackPane {
             runGame(episode);
 
             exportEndData();
+
+            currentEpisode++;
         }
 
     }
@@ -274,7 +277,7 @@ public class RLView extends StackPane {
     private void gameFinished() {
         gameRepository.stopGame();
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle("Game is Finished");
+        alert.setTitle("Game is Finished"  + " - Episode " + currentEpisode);
 
         if (gameRepository.getGameMode().equals(GameMode.EXPLORATION)) {
             alert.setHeaderText("Map is explored!");
@@ -419,11 +422,11 @@ public class RLView extends StackPane {
         DecimalFormat decimalFormat = new DecimalFormat("##.00");
 
         if (playerRepository.getExplorationPercentage() >= 100) {
-            stage.setTitle("Map Explored. Game Finished!");
+            stage.setTitle("Map Explored. Game Finished!" + " - Episode " + currentEpisode);
         } else if (!gameRepository.isRunning()) {
-            stage.setTitle("Game Stopped at an exploration rate of " + decimalFormat.format(playerRepository.getExplorationPercentage()) + "% - " + gameRepository.getGameMode().getName() + " - " + gameRepository.getGameState().getMessage());
+            stage.setTitle("Game Stopped at an exploration rate of " + decimalFormat.format(playerRepository.getExplorationPercentage()) + "% - " + gameRepository.getGameMode().getName() + " - " + gameRepository.getGameState().getMessage() + " - Episode " + currentEpisode);
         } else {
-            stage.setTitle("Exploration Percentage: " + decimalFormat.format(playerRepository.getExplorationPercentage()) + "% - " + gameRepository.getGameMode().getName()+ " - " + gameRepository.getGameState().getMessage());
+            stage.setTitle("Exploration Percentage: " + decimalFormat.format(playerRepository.getExplorationPercentage()) + "% - " + gameRepository.getGameMode().getName()+ " - " + gameRepository.getGameState().getMessage() + " - Episode " + currentEpisode);
         }
 
         if (gameRepository.getGameMode().equals(GameMode.EXPLORATION)) {

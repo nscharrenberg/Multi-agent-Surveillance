@@ -91,11 +91,11 @@ public class GameRepository implements IGameRepository {
 
     @Override
     public void stopGame() {
-        try {
-            playerRepository.getStopWatch().stop();
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
-        }
+//        try {
+//            playerRepository.getStopWatch().stop();
+//        } catch (Exception e) {
+//            System.out.println(e.getMessage());
+//        }
     }
 
     @Override

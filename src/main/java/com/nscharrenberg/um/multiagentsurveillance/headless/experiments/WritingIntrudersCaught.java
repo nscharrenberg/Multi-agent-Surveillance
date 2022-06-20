@@ -5,11 +5,11 @@ import java.util.*;
 
 public class WritingIntrudersCaught {
 
-    public static final int NUMBER_OF_GAMES = 50;
+    public static final int NUMBER_OF_GAMES = 1000;
 
     public static void main(String[] args) throws IOException {
-        double[] all_values = new double[200];
-        File file = new File("src\\main\\java\\com\\nscharrenberg\\um\\multiagentsurveillance\\agents\\ReinforcementLearningAgent\\Rloutput.csv");
+        double[] all_values = new double[NUMBER_OF_GAMES];
+        File file = new File("src/main/resources/files/RLAgent_vs_Evader_50_standard.csv");
         BufferedReader reader = new BufferedReader(new FileReader(file));
         String data;
         int counter = 0;
@@ -34,7 +34,7 @@ public class WritingIntrudersCaught {
             }
         }
 
-        FileWriter writer = new FileWriter("src/main/resources/results/Intruders_caught_RLAgent_vs_Evader_50_Maze1.txt");
+        FileWriter writer = new FileWriter("src/main/resources/results/Intruders_caught_RLAgent_vs_Evader_50_standard.txt");
         for (Map.Entry<Double, Double> entry : map.entrySet()) {
             String s = Integer.toString(entry.getKey().intValue()) + " " + Integer.toString(entry.getValue().intValue());
             writer.write(s);

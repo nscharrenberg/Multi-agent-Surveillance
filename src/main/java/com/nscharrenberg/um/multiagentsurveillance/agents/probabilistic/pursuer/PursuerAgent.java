@@ -40,7 +40,7 @@ public class PursuerAgent extends ProbabilisticAgent {
 
                 System.out.println(queueNodeOpt);
                 System.out.println(huntingSteps);
-                gameRepository.setRunning(false);
+                //gameRepository.setRunning(false);
 
                 return huntingSteps.poll();
             }

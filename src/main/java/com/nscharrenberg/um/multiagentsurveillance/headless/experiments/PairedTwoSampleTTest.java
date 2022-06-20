@@ -7,12 +7,12 @@ public class PairedTwoSampleTTest {
     // We will use a significance level of 0.05 resulting in a confidence interval of 95%.
     public static final double SIGNIFICANCE_LEVEL = 0.05;
 
-    public static final int SAMPLE_SIZE_STANDARD = 9;
-    public static final int SAMPLE_SIZE_NEW = 9;
+    public static final int SAMPLE_SIZE_STANDARD = 1000;
+    public static final int SAMPLE_SIZE_NEW = 1000;
 
     public static void main(String[] args) throws IOException {
         double[] intruders_caught_standard = new double[SAMPLE_SIZE_STANDARD];
-        File file = new File("src/main/resources/files/Test1.txt");
+        File file = new File("src/main/resources/files/RLAgent_vs_Evader_50_standard.csv");
         BufferedReader reader = new BufferedReader(new FileReader(file));
         String data;
         int counter = 0;
@@ -30,7 +30,7 @@ public class PairedTwoSampleTTest {
         double sample_standard_deviation_standard = sample_standard_deviation(intruders_caught_standard, sample_mean_standard, sample_size_standard);
 
         double[] intruders_caught_new = new double[SAMPLE_SIZE_NEW];
-        File file2 = new File("src/main/resources/files/Test2.txt");
+        File file2 = new File("src/main/resources/files/RLAgent_vs_Evader_50_markerRangeToFive.csv");
         BufferedReader reader2 = new BufferedReader(new FileReader(file2));
         String data2;
         int counter2 = 0;

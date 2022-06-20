@@ -15,7 +15,7 @@ public class Export {
     private List<List<String>> values = new ArrayList<>();
 
     public Export(){
-        this.file = new File("src/main/java/com/nscharrenberg/um/multiagentsurveillance/agents/ReinforcementLearningAgent/Rloutput.csv");
+        this.file = new File("src/main/resources/files/Pursuer_vs_Evader_50_standard.csv");
         try{
             this.writer = new FileWriter(file, true);
             writer.append("\n");

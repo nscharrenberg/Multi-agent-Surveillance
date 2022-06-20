@@ -95,7 +95,7 @@ public class RLView extends StackPane {
     private int screenHeight;
 
     private int timesteps;
-    private final int numEpisodes = 50;
+    private final int numEpisodes = 897;
 
     private Canvas canvas;
     private GraphicsContext graphicsContext;
@@ -284,7 +284,7 @@ public class RLView extends StackPane {
             int caughtCount = playerRepository.getCaughtIntruders().size();
             int escapeCount = playerRepository.getEscapedIntruders().size();
 
-            exportEndData();
+            //exportEndData();
 
             alert.setContentText("Intruders Caught: " + caughtCount + "\nIntruders Escaped: " + escapeCount);
         }

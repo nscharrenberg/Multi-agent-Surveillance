@@ -38,10 +38,6 @@ public class PursuerAgent extends ProbabilisticAgent {
             if (queueNodeOpt.isPresent()) {
                 huntingSteps = queueNodeOpt.get().getMoves();
 
-                System.out.println(queueNodeOpt);
-                System.out.println(huntingSteps);
-                //gameRepository.setRunning(false);
-
                 return huntingSteps.poll();
             }
         } else if(heardSomeone && !ignoreSounds) {

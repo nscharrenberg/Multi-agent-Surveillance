@@ -287,7 +287,7 @@ public class RLView extends StackPane {
             int caughtCount = playerRepository.getCaughtIntruders().size();
             int escapeCount = playerRepository.getEscapedIntruders().size();
 
-            exportEndData();
+            //exportEndData();
 
             alert.setContentText("Intruders Caught: " + caughtCount + "\nIntruders Escaped: " + escapeCount);
         }

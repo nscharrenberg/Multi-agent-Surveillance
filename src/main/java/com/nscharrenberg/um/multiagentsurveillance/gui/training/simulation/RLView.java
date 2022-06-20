@@ -96,7 +96,7 @@ public class RLView extends StackPane {
     private int screenHeight;
 
     private int timesteps;
-    private final int numEpisodes = 10000;
+    private final int numEpisodes = 1000;
 
     private Canvas canvas;
     private GraphicsContext graphicsContext;

@@ -6,6 +6,7 @@ module com.nscharrenberg.um.multiagentsurveillance {
     requires java.datatransfer;
     requires java.desktop;
     requires java.base;
+    requires commons.math3;
 
     opens com.nscharrenberg.um.multiagentsurveillance to javafx.fxml, cloning;
     exports com.nscharrenberg.um.multiagentsurveillance;

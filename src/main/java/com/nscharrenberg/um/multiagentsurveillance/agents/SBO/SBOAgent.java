@@ -18,7 +18,10 @@ import com.nscharrenberg.um.multiagentsurveillance.headless.models.Items.SoundWa
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Map.Tile;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Map.TileArea;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Player.Player;
+import com.nscharrenberg.um.multiagentsurveillance.headless.utils.RandomUtil;
 
+import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
 import java.util.*;
 
 public class SBOAgent extends Agent {
@@ -26,14 +29,24 @@ public class SBOAgent extends Agent {
     private final RLmodel rlmodel = new RLmodel();
     private final IPathFinding PFA = new AStar();
     private Tile goal = this.player.getTile();
-    private final Random random = new Random();
+    private final SecureRandom random;
 
     public SBOAgent(Player agent) {
         super(agent);
+        try {
+            this.random = RandomUtil.seeded();
+        } catch (NoSuchAlgorithmException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public SBOAgent(Player agent, IMapRepository mapRepository, IGameRepository gameRepository, IPlayerRepository playerRepository) {
         super(agent, mapRepository, gameRepository, playerRepository);
+        try {
+            this.random = RandomUtil.seeded();
+        } catch (NoSuchAlgorithmException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override

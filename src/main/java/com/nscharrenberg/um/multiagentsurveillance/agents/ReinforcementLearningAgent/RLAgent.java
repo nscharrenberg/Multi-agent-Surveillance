@@ -29,6 +29,7 @@ import com.nscharrenberg.um.multiagentsurveillance.headless.models.Player.Guard;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Player.Intruder;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Player.Player;
 import com.nscharrenberg.um.multiagentsurveillance.headless.utils.BoardUtils;
+import com.nscharrenberg.um.multiagentsurveillance.headless.utils.RandomUtil;
 
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
@@ -52,7 +53,7 @@ public class RLAgent extends Agent {
     public RLAgent(Player player) {
         super(player);
         try {
-            this.random = SecureRandom.getInstanceStrong();
+            this.random = RandomUtil.seeded();
         } catch (NoSuchAlgorithmException e) {
             e.printStackTrace();
         }
@@ -61,7 +62,7 @@ public class RLAgent extends Agent {
     public RLAgent(Player player, IMapRepository mapRepository, IGameRepository gameRepository, IPlayerRepository playerRepository) {
         super(player, mapRepository, gameRepository, playerRepository);
         try {
-            this.random = SecureRandom.getInstanceStrong();
+            this.random = RandomUtil.seeded();
         } catch (NoSuchAlgorithmException e) {
             e.printStackTrace();
         }
@@ -70,7 +71,7 @@ public class RLAgent extends Agent {
     public RLAgent(Player player, Area<Tile> knowledge, Queue<Action> plannedMoves, IMapRepository mapRepository, IGameRepository gameRepository, IPlayerRepository playerRepository) {
         super(player, knowledge, plannedMoves, mapRepository, gameRepository, playerRepository);
         try {
-            this.random = SecureRandom.getInstanceStrong();
+            this.random = RandomUtil.seeded();
         } catch (NoSuchAlgorithmException e) {
             e.printStackTrace();
         }

@@ -31,6 +31,7 @@ import com.nscharrenberg.um.multiagentsurveillance.headless.models.Player.Intrud
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Player.Player;
 import com.nscharrenberg.um.multiagentsurveillance.headless.utils.AreaEffects.DistanceEffects;
 import com.nscharrenberg.um.multiagentsurveillance.headless.utils.BoardUtils;
+import com.nscharrenberg.um.multiagentsurveillance.headless.utils.RandomUtil;
 import com.nscharrenberg.um.multiagentsurveillance.headless.utils.StopWatch;
 import com.nscharrenberg.um.multiagentsurveillance.headless.utils.Vision.CharacterVision;
 import com.nscharrenberg.um.multiagentsurveillance.headless.utils.Vision.Geometrics;
@@ -88,7 +89,7 @@ public class PlayerRepository implements IPlayerRepository {
         this.escapedIntruders = new ArrayList<>();
 
         try {
-            this.random = SecureRandom.getInstanceStrong();
+            this.random = RandomUtil.seeded();
         } catch (NoSuchAlgorithmException e) {
             System.out.println("Error while generating Random Class");
         }
@@ -109,7 +110,7 @@ public class PlayerRepository implements IPlayerRepository {
         this.escapedIntruders = new ArrayList<>();
 
         try {
-            this.random = SecureRandom.getInstanceStrong();
+            this.random = RandomUtil.seeded();
         } catch (NoSuchAlgorithmException e) {
             System.out.println("Error while generating Random Class");
         }

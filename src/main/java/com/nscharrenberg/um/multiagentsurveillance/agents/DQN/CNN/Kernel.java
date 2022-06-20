@@ -1,4 +1,8 @@
 package com.nscharrenberg.um.multiagentsurveillance.agents.DQN.CNN;
+import com.nscharrenberg.um.multiagentsurveillance.headless.utils.RandomUtil;
+
+import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
 import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -8,9 +12,14 @@ import static com.nscharrenberg.um.multiagentsurveillance.agents.DQN.CNN.Filter.
 public class Kernel {
     private int size = 3;
     private double[][] weights;
-    private transient Random random = ThreadLocalRandom.current();
+    private transient SecureRandom random;
 
     public Kernel(double initWeight){
+        try {
+            this.random = RandomUtil.seeded();
+        } catch (NoSuchAlgorithmException e) {
+            throw new RuntimeException(e);
+        }
         double scale = Math.pow(10, -initWeight);
         weights = new double[size][size];
 
@@ -22,7 +31,11 @@ public class Kernel {
     }
 
     public Kernel() {
-
+        try {
+            this.random = RandomUtil.seeded();
+        } catch (NoSuchAlgorithmException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public double[][] getWeights(){
@@ -63,9 +76,5 @@ public class Kernel {
 
     public Random getRandom() {
         return random;
-    }
-
-    public void setRandom(Random random) {
-        this.random = random;
     }
 }

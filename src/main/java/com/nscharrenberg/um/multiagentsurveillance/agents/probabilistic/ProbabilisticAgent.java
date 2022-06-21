@@ -19,6 +19,7 @@ public abstract class ProbabilisticAgent extends YamauchiAgent {
 
     public State currentState = State.NORMAL;
     public Tile closestKnownAgent;
+    public Tile target = null;
     public Sound closestSound;
     public boolean ignoreSounds = false;
 
@@ -76,6 +77,8 @@ public abstract class ProbabilisticAgent extends YamauchiAgent {
                     } else {
                         ignoreSounds = true;
                     }
+                } else if(mapRepository.getTargetArea().within(tile.getX(), tile.getY())){
+                    target = tile;
                 }
             }
         }

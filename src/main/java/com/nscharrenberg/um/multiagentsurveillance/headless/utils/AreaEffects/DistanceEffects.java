@@ -60,4 +60,7 @@ public class DistanceEffects {
 
         }
     }
+
+    public static void areaEffects(Agent agent, List<Agent> agentList) {
+    }
 }

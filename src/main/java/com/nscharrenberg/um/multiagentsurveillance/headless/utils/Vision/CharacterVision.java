@@ -1,9 +1,8 @@
 package com.nscharrenberg.um.multiagentsurveillance.headless.utils.Vision;
 
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Action;
-import com.nscharrenberg.um.multiagentsurveillance.headless.models.Items.Collision.Collision;
-import com.nscharrenberg.um.multiagentsurveillance.headless.models.Items.Item;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Items.Collision.Wall;
+import com.nscharrenberg.um.multiagentsurveillance.headless.models.Items.Item;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Map.ShadowTile;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Map.Tile;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Map.TileArea;
@@ -33,7 +32,7 @@ public class CharacterVision{
     }
 
     // Basic method for line vision + adjacent tiles
-    private ArrayList<Tile> getBasicVision(TileArea board, Tile position) {
+    public ArrayList<Tile> getBasicVision(TileArea board, Tile position) {
         ArrayList<Tile> vision = new ArrayList<Tile>();
         int px = position.getX();
         int py = position.getY();

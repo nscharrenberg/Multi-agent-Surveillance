@@ -91,11 +91,11 @@ public class GameRepository implements IGameRepository {
 
     @Override
     public void stopGame() {
-        try {
-            playerRepository.getStopWatch().stop();
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
-        }
+//        try {
+//            playerRepository.getStopWatch().stop();
+//        } catch (Exception e) {
+//            System.out.println(e.getMessage());
+//        }
     }
 
     @Override
@@ -167,6 +167,11 @@ public class GameRepository implements IGameRepository {
         if (getGameMode().equals(GameMode.GUARD_INTRUDER_ALL) || getGameMode().equals(GameMode.GUARD_INTRUDER_ONE)) {
             setupAgents(Intruder.class);
         }
+    }
+
+    @Override
+    public String getMap() {
+        return MAP_PATH;
     }
 
     @Override

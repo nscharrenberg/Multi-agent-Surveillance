@@ -5,7 +5,7 @@ public enum TypePriority {
     MarkerDeadEnd(-0.85),
     MarkerTarget(0.60),
     MarkerGuard(-0.45),
-    MarkerIntruder(0.92),
+    MarkerIntruder(0.90),
     MarkerTeleporter(0.20),
     MarkerShaded(-0.30);
 

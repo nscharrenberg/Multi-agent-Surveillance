@@ -29,6 +29,7 @@ import com.nscharrenberg.um.multiagentsurveillance.headless.models.Player.Guard;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Player.Intruder;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Player.Player;
 import com.nscharrenberg.um.multiagentsurveillance.headless.utils.BoardUtils;
+import com.nscharrenberg.um.multiagentsurveillance.headless.utils.RandomUtil;
 
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
@@ -41,6 +42,7 @@ public class RLAgent extends Agent {
     private RLmodel rlmodel = new RLmodel();
     private Tile goal = this.player.getTile();
     private Tile previous = this.player.getTile();
+    private int stepcounter = 0;
     private final int[][] visited = new int[mapRepository.getBoard().width()][mapRepository.getBoard().height()];
     private final IPathFinding pathFindingAlgorithm = new AStar();
     private final IWeightComparatorGuard weightDetectorGuard = new MinDistanceUnknownAreaComparator();
@@ -51,7 +53,7 @@ public class RLAgent extends Agent {
     public RLAgent(Player player) {
         super(player);
         try {
-            this.random = SecureRandom.getInstanceStrong();
+            this.random = RandomUtil.seeded();
         } catch (NoSuchAlgorithmException e) {
             e.printStackTrace();
         }
@@ -60,7 +62,7 @@ public class RLAgent extends Agent {
     public RLAgent(Player player, IMapRepository mapRepository, IGameRepository gameRepository, IPlayerRepository playerRepository) {
         super(player, mapRepository, gameRepository, playerRepository);
         try {
-            this.random = SecureRandom.getInstanceStrong();
+            this.random = RandomUtil.seeded();
         } catch (NoSuchAlgorithmException e) {
             e.printStackTrace();
         }
@@ -69,7 +71,7 @@ public class RLAgent extends Agent {
     public RLAgent(Player player, Area<Tile> knowledge, Queue<Action> plannedMoves, IMapRepository mapRepository, IGameRepository gameRepository, IPlayerRepository playerRepository) {
         super(player, knowledge, plannedMoves, mapRepository, gameRepository, playerRepository);
         try {
-            this.random = SecureRandom.getInstanceStrong();
+            this.random = RandomUtil.seeded();
         } catch (NoSuchAlgorithmException e) {
             e.printStackTrace();
         }
@@ -93,6 +95,13 @@ public class RLAgent extends Agent {
 
     @Override
     public Action decide() throws InvalidTileException, BoardNotBuildException{
+
+        this.stepcounter++;
+
+        Action markerChecked = player.getAgent().markerCheck();
+        if (markerChecked != null) {
+            return markerChecked;
+        }
 
         // Store visited tiles
         if(!previous.equals(player.getTile())) {
@@ -122,10 +131,10 @@ public class RLAgent extends Agent {
         }
 
         // Check the agents vision
-        //ScanVision();
+        ScanVision();
 
         // Continue
-        if (!plannedMoves.isEmpty() && visited[player.getTile().getX()][player.getTile().getY()] <= 3) {
+        if (!plannedMoves.isEmpty() && visited[player.getTile().getX()][player.getTile().getY()] <= 5) {
             return plannedMoves.poll();
         }
 
@@ -188,6 +197,10 @@ public class RLAgent extends Agent {
                 }
             }
         }
+    }
+
+    public int getStepcounter() {
+        return this.stepcounter;
     }
 
     private Optional<Frontier> pickBestFrontier() {

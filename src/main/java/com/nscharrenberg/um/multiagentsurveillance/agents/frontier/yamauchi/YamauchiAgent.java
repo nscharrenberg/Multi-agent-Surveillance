@@ -1,7 +1,5 @@
 package com.nscharrenberg.um.multiagentsurveillance.agents.frontier.yamauchi;
 
-import com.nscharrenberg.um.multiagentsurveillance.agents.ReinforcementLearningAgent.Parameter;
-import com.nscharrenberg.um.multiagentsurveillance.agents.ReinforcementLearningAgent.RLmodel;
 import com.nscharrenberg.um.multiagentsurveillance.agents.frontier.yamauchi.comparator.guard.IWeightComparatorGuard;
 import com.nscharrenberg.um.multiagentsurveillance.agents.frontier.yamauchi.comparator.guard.MinDistanceUnknownAreaComparator;
 import com.nscharrenberg.um.multiagentsurveillance.agents.frontier.yamauchi.comparator.intruder.CloseToTarget;
@@ -19,14 +17,13 @@ import com.nscharrenberg.um.multiagentsurveillance.headless.exceptions.*;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Action;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Items.Collision.Collision;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Items.Item;
-import com.nscharrenberg.um.multiagentsurveillance.headless.models.Items.MarkerSmell;
-import com.nscharrenberg.um.multiagentsurveillance.headless.models.Items.SoundWave;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Map.Area;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Map.Tile;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Player.Guard;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Player.Intruder;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Player.Player;
 import com.nscharrenberg.um.multiagentsurveillance.headless.utils.BoardUtils;
+import com.nscharrenberg.um.multiagentsurveillance.headless.utils.RandomUtil;
 
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
@@ -45,25 +42,25 @@ public class YamauchiAgent extends Agent {
     public YamauchiAgent(Player player) {
         super(player);
         try {
-            this.random = SecureRandom.getInstanceStrong();
+            this.random = RandomUtil.seeded();
         } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
+            throw new RuntimeException(e);
         }
     }
 
     public YamauchiAgent(Player player, IMapRepository mapRepository, IGameRepository gameRepository, IPlayerRepository playerRepository) {
         super(player, mapRepository, gameRepository, playerRepository);
         try {
-            this.random = SecureRandom.getInstanceStrong();
+            this.random = RandomUtil.seeded();
         } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
+            throw new RuntimeException(e);
         }
     }
 
     public YamauchiAgent(Player player, Area<Tile> knowledge, Queue<Action> plannedMoves, IMapRepository mapRepository, IGameRepository gameRepository, IPlayerRepository playerRepository) {
         super(player, knowledge, plannedMoves, mapRepository, gameRepository, playerRepository);
         try {
-            this.random = SecureRandom.getInstanceStrong();
+            this.random = RandomUtil.seeded();
         } catch (NoSuchAlgorithmException e) {
             e.printStackTrace();
         }
@@ -258,7 +255,7 @@ public class YamauchiAgent extends Agent {
     private boolean detectFrontierByRegion(){
         int x = player.getTile().getX();
         int y = player.getTile().getY();
-        int RANGE = 20;
+        int RANGE = Double.valueOf(gameRepository.getDistanceViewing()).intValue() + 3;
         HashMap<Integer, HashMap<Integer, Tile>> region = knowledge.subset(x - RANGE, y - RANGE, x + RANGE, y + RANGE);
 
         frontiers.clear();

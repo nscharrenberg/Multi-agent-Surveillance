@@ -1,6 +1,7 @@
 package com.nscharrenberg.um.multiagentsurveillance.gui.canvas;
 
 import com.nscharrenberg.um.multiagentsurveillance.agents.ReinforcementLearningAgent.Export;
+import com.nscharrenberg.um.multiagentsurveillance.agents.ReinforcementLearningAgent.RLAgent;
 import com.nscharrenberg.um.multiagentsurveillance.agents.ReinforcementLearningAgent.TypePriority;
 import com.nscharrenberg.um.multiagentsurveillance.agents.shared.Agent;
 import com.nscharrenberg.um.multiagentsurveillance.headless.contracts.repositories.IGameRepository;
@@ -89,6 +90,8 @@ public class GameView extends StackPane {
     private int screenWidth;
     private int screenHeight;
 
+    private int timesteps;
+
     private Canvas canvas;
     private GraphicsContext graphicsContext;
 
@@ -122,6 +125,8 @@ public class GameView extends StackPane {
 
         int tileWidth = screenWidth / WIDTH;
         int tileHeight = screenHeight / HEIGHT;
+
+        this.timesteps = 0;
 
         GSSD = Math.min(tileWidth, tileHeight);
 
@@ -188,6 +193,8 @@ public class GameView extends StackPane {
             int caughtCount = playerRepository.getCaughtIntruders().size();
             int escapeCount = playerRepository.getEscapedIntruders().size();
 
+            exportEndData();
+
             alert.setContentText("Intruders Caught: " + caughtCount + "\nIntruders Escaped: " + escapeCount);
         }
 
@@ -203,15 +210,20 @@ public class GameView extends StackPane {
     private void exportEndData() {
         // Export data to csv
         Export exp = new Export();
-        exp.addValue("Game: ", 0);
+        exp.addHeader(gameRepository.getMap());
         exp.addValue("Intruders caught: ", playerRepository.getCaughtIntruders().size());
         exp.addValue("Intruders Escaped: ", playerRepository.getEscapedIntruders().size());
-        exp.addValue("Time: ", 0);
-        exp.addValue("Time: ", 0);
+        for (Agent a : playerRepository.getAgents()) {
+            exp.addValue(a.getPlayer().getId() + " - Knowledge size: ", a.getKnowledge().size());
+        }
+
+        exp.addHeader("Agent parameters: ");
         for (TypePriority tp: TypePriority.values()) {
             exp.addValue(tp.name() + ": ", tp.getPriority());
         }
-        exp.addValue("Duration: ", 0); //extract from stopwatch
+
+        exp.addValue("Game duration in ms: ", playerRepository.getStopWatch().getDurationInMillis());
+        exp.addValue("Game steps: ", this.timesteps);
         exp.parseValues();
     }
 
@@ -219,6 +231,7 @@ public class GameView extends StackPane {
         if(!MANUAL_PLAYER) {
             gameRepository.setRunning(true);
             while (gameRepository.isRunning()) {
+                timesteps++;
                 try {
                     mapRepository.checkMarkers();
                 } catch (BoardNotBuildException | InvalidTileException | ItemNotOnTileException e) {
@@ -254,6 +267,10 @@ public class GameView extends StackPane {
         }
 
 
+    }
+
+    private int getTotalTimeSteps() {
+        return this.timesteps;
     }
 
     private void drawText(String text) {

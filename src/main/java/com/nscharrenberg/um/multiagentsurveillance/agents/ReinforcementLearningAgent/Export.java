@@ -15,7 +15,7 @@ public class Export {
     private List<List<String>> values = new ArrayList<>();
 
     public Export(){
-        this.file = new File("src/main/java/com/nscharrenberg/um/multiagentsurveillance/agents/ReinforcementLearningAgent/Rloutput.csv");
+        this.file = new File("src/main/resources/files/Pursuer_vs_Evader_50_markerRangeToFive.csv");
         try{
             this.writer = new FileWriter(file, true);
             writer.append("\n");
@@ -28,6 +28,8 @@ public class Export {
     public void addValue(String name, double value){
         values.add(Arrays.asList(name, String.valueOf(value)));
     }
+
+    public void addHeader(String header) { values.add(List.of(header)); }
 
     public void parseValues(){
         try{

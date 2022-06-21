@@ -58,41 +58,21 @@ public class DQN_Agent extends Agent {
 
     public DQN_Agent(){
         super(null, Factory.getMapRepository(), Factory.getGameRepository(), Factory.getPlayerRepository());
-        try {
-            this.random = RandomUtil.seeded();
-        } catch (NoSuchAlgorithmException e) {
-            throw new RuntimeException(e);
-        }
         initAgent();
     }
 
     public DQN_Agent(Player player) {
         super(player, Factory.getMapRepository(), Factory.getGameRepository(), Factory.getPlayerRepository());
-        try {
-            this.random = RandomUtil.seeded();
-        } catch (NoSuchAlgorithmException e) {
-            throw new RuntimeException(e);
-        }
         initAgent();
     }
 
     public DQN_Agent(IMapRepository mapRepository, IGameRepository gameRepository, IPlayerRepository playerRepository){
         super(null, mapRepository, gameRepository, playerRepository);
-        try {
-            this.random = RandomUtil.seeded();
-        } catch (NoSuchAlgorithmException e) {
-            throw new RuntimeException(e);
-        }
         initAgent();
     }
 
     public DQN_Agent(Player player, IMapRepository mapRepository, IGameRepository gameRepository, IPlayerRepository playerRepository) {
         super(player, mapRepository, gameRepository, playerRepository);
-        try {
-            this.random = RandomUtil.seeded();
-        } catch (NoSuchAlgorithmException e) {
-            throw new RuntimeException(e);
-        }
         initAgent();
     }
 

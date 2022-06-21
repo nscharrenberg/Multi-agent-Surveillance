@@ -84,6 +84,18 @@ Make sure to also redo step 2 of the steps above.
 
 **Note:** Experiment screens have to be changed in `com.nscharrenberg.um.multiagentsurveillance.gui.dataGUI.DataHelper` X and Y values can be changed to any of the properties mentioned in the comments of this file.
 
+**Note:** Change the agents that are being used in `com.nscharrenberg.um.multiagentsurveillance.headless.repositories.PlayerRepository` on the `intruderType` and `guardType`.
+
+You can choose between:
+- `RandomAgent.class`
+- `YamauchiAgent.class`
+- `EvaderAgent.class` (Intruder)
+- `PursuerAgent.class` (Guard)
+- `SBOAgent.class`
+- `RLAgent.class` (Guard)
+- `DQN_Agent.class` (Intruder)
+- `DeepQN_Agent.class` (Intruder)
+
 ## Roadmap
 
 See the [open issues](https://github.com/nscharrenberg/Multi-agent-Surveillance/issues) for a list of proposed features (and known issues).

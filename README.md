@@ -84,6 +84,8 @@ Make sure to also redo step 2 of the steps above.
 
 **Note:** Experiment screens have to be changed in `com.nscharrenberg.um.multiagentsurveillance.gui.dataGUI.DataHelper` X and Y values can be changed to any of the properties mentioned in the comments of this file.
 
+**Note:** Statistical Analysis Experiment data can be generated from `com.nscharrenberg.um.multiagentsurveillance.gui.training.simulation.RLApp`
+
 **Note:** Change the agents that are being used in `com.nscharrenberg.um.multiagentsurveillance.headless.repositories.PlayerRepository` on the `intruderType` and `guardType`.
 
 You can choose between:

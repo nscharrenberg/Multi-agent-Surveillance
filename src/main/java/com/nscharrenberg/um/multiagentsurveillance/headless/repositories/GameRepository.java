@@ -20,8 +20,8 @@ import java.io.File;
 import java.io.IOException;
 
 public class GameRepository implements IGameRepository {
-    private static String MAP_PATH = "src/test/resources/maps/trainMap2.json";
-//    private static String MAP_PATH = "src/test/resources/maps/deadEndMaze.json";
+    //private static String MAP_PATH = "src/test/resources/maps/maze3.json";
+    private static String MAP_PATH = "src/test/resources/maps/CaptainJack.json";
     //private static String MAP_PATH = "src/test/resources/RLtrainingMaps/trainingExampleMap.txt";
     //private static String MAP_PATH = "src/test/resources/RLtrainingMaps/ChasingTestMap.txt";
     //private static String MAP_PATH = "src/test/resources/maps/rust.txt";
@@ -130,10 +130,10 @@ public class GameRepository implements IGameRepository {
     @Override
     public Action getTargetGameAngle(Player player){
         if(player instanceof Intruder) {
-            return AngleTilesCalculator.computeAngle(player.getTile(), mapRepository.getTargetCenter());
-        } else {
-            throw new RuntimeException("Wrong player");
+            return AngleTilesCalculator.computeAngle(mapRepository.getTargetCenter(), player.getTile());
         }
+
+        return null;
     }
 
     @Override

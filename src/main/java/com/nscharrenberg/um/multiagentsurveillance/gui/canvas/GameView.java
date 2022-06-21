@@ -47,7 +47,7 @@ import java.util.Map;
 import static com.nscharrenberg.um.multiagentsurveillance.gui.canvas.CanvasApp.MANUAL_PLAYER;
 
 public class GameView extends StackPane {
-    private static final int DELAY = 50;
+    private static final int DELAY = 10;
     protected static Color BASIC_TILE_COLOR = Color.LIGHTGREY;
     protected static Color WALL_TILE_COLOR = Color.DARKBLUE.darker().darker();
     protected static Color TELEPORT_INPUT_TILE_COLOR = Color.PURPLE;

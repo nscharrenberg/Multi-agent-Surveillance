@@ -15998,3 +15998,54 @@ MarkerIntruder: 0.9
 MarkerTeleporter: 0.2
 MarkerShaded: -0.3
 Game steps: 193.0
+
+src/test/resources/maps/CaptainJack.json
+Intruders caught: 0.0
+Intruders Escaped: 6.0
+772bf62f-42ac-43f4-b7ee-b8a450992453 - Knowledge size: 885.0
+e9b2557e-0aae-4282-a310-2ad49fc4d50a - Knowledge size: 924.0
+fc3cd367-b36e-4b7b-b976-481afd23bfe3 - Knowledge size: 955.0
+Agent parameters: 
+SoundWave: 0.5
+MarkerDeadEnd: -0.85
+MarkerTarget: 0.6
+MarkerGuard: -0.45
+MarkerIntruder: 0.9
+MarkerTeleporter: 0.2
+MarkerShaded: -0.3
+Game duration in ms: 1.655844513715E12
+Game steps: 261.0
+
+src/test/resources/maps/CaptainJack.json
+Intruders caught: 3.0
+Intruders Escaped: 3.0
+a3ce064a-3031-4e84-92e2-fd66ea787af3 - Knowledge size: 1049.0
+e5fa52da-81b7-479e-9e00-9b4224ba76f6 - Knowledge size: 1150.0
+61e20209-348a-4527-9246-9ec9a350c842 - Knowledge size: 898.0
+Agent parameters: 
+SoundWave: 0.5
+MarkerDeadEnd: -0.85
+MarkerTarget: 0.6
+MarkerGuard: -0.45
+MarkerIntruder: 0.9
+MarkerTeleporter: 0.2
+MarkerShaded: -0.3
+Game duration in ms: 1.655844613641E12
+Game steps: 256.0
+
+src/test/resources/maps/CaptainJack.json
+Intruders caught: 5.0
+Intruders Escaped: 1.0
+6b2ea94c-7029-41ea-96d0-5f93237a9cae - Knowledge size: 776.0
+1bc5c917-c748-4927-a9c0-1823f90e11b8 - Knowledge size: 545.0
+133ffd30-393a-4a58-81b1-608f6b1350b9 - Knowledge size: 936.0
+Agent parameters: 
+SoundWave: 0.5
+MarkerDeadEnd: -0.85
+MarkerTarget: 0.6
+MarkerGuard: -0.45
+MarkerIntruder: 0.9
+MarkerTeleporter: 0.2
+MarkerShaded: -0.3
+Game duration in ms: 1.655844654187E12
+Game steps: 176.0

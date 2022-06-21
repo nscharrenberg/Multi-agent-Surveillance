@@ -5,7 +5,7 @@
   "numGuards": 3,
   "numIntruders": 6,
   "baseSpeedGuard": 5,
-  "distanceViewing": 10,
+  "distanceViewing": 6,
   "numberMarkers": 5,
   "smellingDistance": 5,
   "wallTexture": [649, 525],

@@ -66,8 +66,17 @@ public class EvaderAgent extends ProbabilisticAgent {
 
     @Override
     public Action decide() throws InvalidTileException, BoardNotBuildException {
+
         boolean foundSomeone = checkVision(this);
         boolean heardSomeone = checkSounds(this);
+
+        if(target != null) {
+            Optional<QueueNode> queueNodeOpt = pathFindingAlgorithm.execute(knowledge, player, target);
+
+            if (queueNodeOpt.isPresent()) {
+                return queueNodeOpt.get().getMoves().peek();
+            }
+        }
 
         if (currentState.equals(State.FLEE) && (foundSomeone || heardSomeone)) {
             if (fleeCounter < MAX_FLEE_STEPS) {

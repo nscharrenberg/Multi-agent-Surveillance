@@ -20,6 +20,7 @@ import com.nscharrenberg.um.multiagentsurveillance.headless.models.Angle.Advance
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.GameMode;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.GameState;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Items.Collision.Collision;
+import com.nscharrenberg.um.multiagentsurveillance.headless.models.Items.Collision.Wall;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Items.Item;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Items.Marker;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Items.Teleporter;
@@ -31,6 +32,7 @@ import com.nscharrenberg.um.multiagentsurveillance.headless.models.Player.Intrud
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Player.Player;
 import com.nscharrenberg.um.multiagentsurveillance.headless.utils.AreaEffects.DistanceEffects;
 import com.nscharrenberg.um.multiagentsurveillance.headless.utils.BoardUtils;
+import com.nscharrenberg.um.multiagentsurveillance.headless.utils.RandomUtil;
 import com.nscharrenberg.um.multiagentsurveillance.headless.utils.StopWatch;
 import com.nscharrenberg.um.multiagentsurveillance.headless.utils.Vision.CharacterVision;
 import com.nscharrenberg.um.multiagentsurveillance.headless.utils.Vision.Geometrics;
@@ -38,6 +40,8 @@ import com.nscharrenberg.um.multiagentsurveillance.headless.utils.Vision.Geometr
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.util.*;
+
+import static com.nscharrenberg.um.multiagentsurveillance.headless.utils.AreaEffects.SoundEffectHelper.*;
 
 public class PlayerRepository implements IPlayerRepository {
     private IMapRepository mapRepository;
@@ -55,7 +59,7 @@ public class PlayerRepository implements IPlayerRepository {
     private List<Agent> agents;
 
     //public static final Class<? extends Agent> guardType = PursuerAgent.class;
-    public static final Class<? extends Agent> intruderType = YamauchiAgent.class;
+    public static final Class<? extends Agent> intruderType = EvaderAgent.class;
 
     private static final Class<? extends Agent> guardType = RLAgent.class;
     //private static final Class<? extends Agent> guardType = SBOAgent.class;
@@ -65,6 +69,7 @@ public class PlayerRepository implements IPlayerRepository {
 
     private double captureRange = 2.0;
     private int timeStepsToEscape = 3;
+    private int timesteps = 0;
 
     private HashMap<String, Integer> intrudersAboutToEscape;
     private List<Intruder> caughtIntruders;
@@ -85,7 +90,7 @@ public class PlayerRepository implements IPlayerRepository {
         this.escapedIntruders = new ArrayList<>();
 
         try {
-            this.random = SecureRandom.getInstanceStrong();
+            this.random = RandomUtil.seeded();
         } catch (NoSuchAlgorithmException e) {
             System.out.println("Error while generating Random Class");
         }
@@ -106,7 +111,7 @@ public class PlayerRepository implements IPlayerRepository {
         this.escapedIntruders = new ArrayList<>();
 
         try {
-            this.random = SecureRandom.getInstanceStrong();
+            this.random = RandomUtil.seeded();
         } catch (NoSuchAlgorithmException e) {
             System.out.println("Error while generating Random Class");
         }
@@ -261,7 +266,7 @@ public class PlayerRepository implements IPlayerRepository {
         player.setAgent(agent);
         agent.addKnowledge(player.getTile());
 
-        int visionLength = Double.valueOf(gameRepository.getDistanceViewing()).intValue();
+        int visionLength = 6;
 
         if(player.getTile() instanceof ShadowTile)
             visionLength /= 2;
@@ -319,10 +324,10 @@ public class PlayerRepository implements IPlayerRepository {
         Map.Entry<Map.Entry<Integer, Integer>, Map.Entry<Integer, Integer>> bounds = playerSpawnArea.bounds();
 
         while (!tileAssigned) {
-            int rowIndex = random.nextInt(bounds.getKey().getKey(), bounds.getKey().getValue());
+            int rowIndex = random.nextInt(bounds.getKey().getKey(), bounds.getKey().getValue()+1);
             HashMap<Integer, Tile> row = spawnArea.get(rowIndex);
 
-            int colIndex = random.nextInt(bounds.getValue().getKey(), bounds.getValue().getValue());
+            int colIndex = random.nextInt(bounds.getValue().getKey(), bounds.getValue().getValue()+1);
             Tile tile = row.get(colIndex);
 
             boolean spawned = spawn(playerClass, tile);
@@ -360,7 +365,7 @@ public class PlayerRepository implements IPlayerRepository {
         player.setAgent(agent);
         agent.addKnowledge(player.getTile());
 
-        int visionLength = Double.valueOf(gameRepository.getDistanceViewing()).intValue();
+        int visionLength = 6;
 
         if(player.getTile() instanceof ShadowTile)
             visionLength /= 2;
@@ -381,7 +386,7 @@ public class PlayerRepository implements IPlayerRepository {
         if(player instanceof Guard guard){
             basicMove(guard, direction);
             if(guard.isHunting()) {
-                guard.setRepresentedSoundRange(gameRepository.getDistanceSoundYelling());
+                guard.setRepresentedSoundRange(YELL);
             }
 
             capture(guard);
@@ -409,7 +414,7 @@ public class PlayerRepository implements IPlayerRepository {
     public void basicMove(Player player, Action direction) throws CollisionException, InvalidTileException, ItemNotOnTileException, ItemAlreadyOnTileException, BoardNotBuildException {
         Action currentDirection = player.getDirection();
         Tile currentTilePlayer = player.getTile();
-        int visionLength = Double.valueOf(gameRepository.getDistanceViewing()).intValue();
+        int visionLength = 6;
 
         if(currentTilePlayer instanceof ShadowTile)
             visionLength /= 2;
@@ -433,7 +438,7 @@ public class PlayerRepository implements IPlayerRepository {
                 player.setVision(new TileArea(vision));
 
                 //Set the represented sound range
-                player.setRepresentedSoundRange(gameRepository.getDistanceSoundRotating());
+                player.setRepresentedSoundRange(ROTATE);
             }
 
             return;
@@ -528,7 +533,7 @@ public class PlayerRepository implements IPlayerRepository {
                 player.setVision(new TileArea(vision2));
 
                 //Set the represented sound range
-                player.setRepresentedSoundRange(gameRepository.getDistanceSoundWaiting());
+                player.setRepresentedSoundRange(WAIT);
             }
 
             return;
@@ -553,7 +558,7 @@ public class PlayerRepository implements IPlayerRepository {
             player.setVision(new TileArea(vision));
 
             //Set the represented sound range
-            player.setRepresentedSoundRange(gameRepository.getDistanceSoundWalking());
+            player.setRepresentedSoundRange(WALK);
 
         }
     }
@@ -616,17 +621,12 @@ public class PlayerRepository implements IPlayerRepository {
                 double distance = manhattanDistance.compute(guard.getTile(), intruder.getTile());
 
                 if (distance <= captureRange) {
-                    Geometrics geo = new Geometrics();
-                    for (Tile tile : geo.getIntersectingTiles(guard.getTile(), intruder.getTile())) {
-                        Optional<Tile> actualTileOpt = mapRepository.getBoard().getByCoordinates(tile.getX(), tile.getY());
 
-                        if (actualTileOpt.isEmpty()) {
-                            continue;
-                        }
-
-                        if (actualTileOpt.get().isWall()) {
+                    Geometrics gm = new Geometrics();
+                    for (Tile t:gm.getIntersectingTiles(guard.getTile(), intruder.getTile())) {
+                        Optional<Tile> ct = mapRepository.getBoard().getByCoordinates(t.getX(), t.getY());
+                        if(ct.get().getItems().get(0) instanceof Wall)
                             return;
-                        }
                     }
 
                     System.out.println("Intruder " + intruder.getId() + " has been Caught");
@@ -725,7 +725,7 @@ public class PlayerRepository implements IPlayerRepository {
     @Override
     public void updateSounds(List<Agent> agentList) {
         for(Agent agent : agentList){
-            DistanceEffects.areaEffects(agent, agentList, gameRepository.isCanHearThroughWalls(), mapRepository.getBoard());
+            DistanceEffects.areaEffects(agent, agentList);
         }
     }
 

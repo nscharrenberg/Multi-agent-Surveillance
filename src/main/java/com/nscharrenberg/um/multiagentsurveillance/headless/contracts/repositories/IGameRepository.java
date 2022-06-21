@@ -15,6 +15,8 @@ public interface IGameRepository {
 
     void setupAgents();
 
+    String getMap();
+
     String getName();
 
     void setName(String name);

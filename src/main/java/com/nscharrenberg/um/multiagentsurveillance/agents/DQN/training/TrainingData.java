@@ -1,7 +1,10 @@
 package com.nscharrenberg.um.multiagentsurveillance.agents.DQN.training;
 
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Action;
+import com.nscharrenberg.um.multiagentsurveillance.headless.utils.RandomUtil;
 
+import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
 import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -14,7 +17,11 @@ public class TrainingData {
     public TrainingData(int capacity) {
         this.capacity = capacity;
         this.count = 0;
-        this.random = new Random();
+        try {
+            this.random = RandomUtil.seeded();
+        } catch (NoSuchAlgorithmException e) {
+            throw new RuntimeException(e);
+        }
         init();
     }
 
@@ -22,7 +29,11 @@ public class TrainingData {
     public TrainingData() {
         this.capacity = 0;
         this.count = 0;
-        this.random = new Random();
+        try {
+            this.random = RandomUtil.seeded();
+        } catch (NoSuchAlgorithmException e) {
+            throw new RuntimeException(e);
+        }
         init();
     }
 

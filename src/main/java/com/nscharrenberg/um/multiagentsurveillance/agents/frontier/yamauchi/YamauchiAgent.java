@@ -1,7 +1,5 @@
 package com.nscharrenberg.um.multiagentsurveillance.agents.frontier.yamauchi;
 
-import com.nscharrenberg.um.multiagentsurveillance.agents.ReinforcementLearningAgent.Parameter;
-import com.nscharrenberg.um.multiagentsurveillance.agents.ReinforcementLearningAgent.RLmodel;
 import com.nscharrenberg.um.multiagentsurveillance.agents.frontier.yamauchi.comparator.guard.IWeightComparatorGuard;
 import com.nscharrenberg.um.multiagentsurveillance.agents.frontier.yamauchi.comparator.guard.MinDistanceUnknownAreaComparator;
 import com.nscharrenberg.um.multiagentsurveillance.agents.frontier.yamauchi.comparator.intruder.CloseToTarget;
@@ -19,8 +17,6 @@ import com.nscharrenberg.um.multiagentsurveillance.headless.exceptions.*;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Action;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Items.Collision.Collision;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Items.Item;
-import com.nscharrenberg.um.multiagentsurveillance.headless.models.Items.MarkerSmell;
-import com.nscharrenberg.um.multiagentsurveillance.headless.models.Items.SoundWave;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Map.Area;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Map.Tile;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Player.Guard;

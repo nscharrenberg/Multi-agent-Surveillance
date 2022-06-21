@@ -1,68 +1,72 @@
 package com.nscharrenberg.um.multiagentsurveillance.headless.models.Player;
 
 import com.nscharrenberg.um.multiagentsurveillance.agents.shared.Agent;
-import com.nscharrenberg.um.multiagentsurveillance.headless.models.Angle.Angle;
-import com.nscharrenberg.um.multiagentsurveillance.headless.models.Map.Area;
+import com.nscharrenberg.um.multiagentsurveillance.headless.models.Action;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Items.Collision.Collision;
+import com.nscharrenberg.um.multiagentsurveillance.headless.models.Map.Area;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Map.Tile;
-import com.nscharrenberg.um.multiagentsurveillance.headless.utils.AreaEffects.AudioEffect.Audio;
-import com.nscharrenberg.um.multiagentsurveillance.headless.utils.AreaEffects.AudioEffect.AudioEffect;
-import com.nscharrenberg.um.multiagentsurveillance.headless.utils.AreaEffects.AudioEffect.IAudioEffect;
+import com.nscharrenberg.um.multiagentsurveillance.headless.utils.AreaEffects.AudioEffect.Sound;
+import com.nscharrenberg.um.multiagentsurveillance.headless.utils.AreaEffects.AudioEffect.SoundEffect;
+import com.nscharrenberg.um.multiagentsurveillance.headless.utils.AreaEffects.AudioEffect.ISoundEffect;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.UUID;
 
 public abstract class Player extends Collision {
-    private Angle direction;
+    private final String id;
+    private Action direction;
     private double speed;
     private Area<Tile> vision;
     private Agent agent;
-    private final List<Audio> audioEffects;
-    private IAudioEffect representedSound;
+    private final List<Sound> soundEffects;
+    private ISoundEffect representedSound;
 
     // TODO: Keep track of the state the player is in (moving, standing still, climbing, on_target)
 
-    public Player(Tile tile, Angle direction, double speed) {
+    public Player(Tile tile, Action direction, double speed) {
         super(tile);
+        this.id = UUID.randomUUID().toString();
         this.direction = direction;
         this.speed = speed;
         this.agent = null;
-        this.audioEffects = new ArrayList<>();
-        this.representedSound = new AudioEffect(0);
+        this.soundEffects = new ArrayList<>();
+        this.representedSound = new SoundEffect(0);
     }
 
-    public Player(Tile tile, Angle direction, double speed, Area<Tile> observation) {
+    public Player(Tile tile, Action direction, double speed, Area<Tile> observation) {
         super(tile);
         this.direction = direction;
         this.speed = speed;
         this.vision = observation;
         this.agent = null;
-        this.audioEffects = new ArrayList<>();
-        this.representedSound = new AudioEffect(0);
+        this.soundEffects = new ArrayList<>();
+        this.representedSound = new SoundEffect(0);
+        this.id = UUID.randomUUID().toString();
     }
 
-    public List<Audio> getAudioEffects() {
-        return audioEffects;
+    public List<Sound> getSoundEffects() {
+        return soundEffects;
     }
 
     public void setRepresentedSoundRange(double range) {
         representedSound.setRange(range);
     }
 
-    public IAudioEffect getRepresentedSound() {
+    public ISoundEffect getRepresentedSound() {
         return representedSound;
     }
 
-    public void setRepresentedSound(IAudioEffect representedSound) {
+    public void setRepresentedSound(ISoundEffect representedSound) {
         this.representedSound = representedSound;
     }
 
-    public Angle getDirection() {
+    public Action getDirection() {
         return direction;
     }
 
-    public void setDirection(Angle direction) {
+    public void setDirection(Action direction) {
         this.direction = direction;
     }
 
@@ -101,5 +105,9 @@ public abstract class Player extends Collision {
 
     public void setAgent(Agent agent) {
         this.agent = agent;
+    }
+
+    public String getId() {
+        return id;
     }
 }

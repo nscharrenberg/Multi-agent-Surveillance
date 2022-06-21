@@ -1,19 +1,30 @@
 package com.nscharrenberg.um.multiagentsurveillance.headless.repositories;
 
+import com.nscharrenberg.um.multiagentsurveillance.agents.shared.algorithms.angleCalculator.AngleTilesCalculator;
+import com.nscharrenberg.um.multiagentsurveillance.agents.shared.algorithms.angleCalculator.ComputeDoubleAngleTiles;
+import com.nscharrenberg.um.multiagentsurveillance.agents.DQN.DQN_Agent;
 import com.nscharrenberg.um.multiagentsurveillance.headless.Factory;
 import com.nscharrenberg.um.multiagentsurveillance.headless.contracts.repositories.IGameRepository;
 import com.nscharrenberg.um.multiagentsurveillance.headless.contracts.repositories.IMapRepository;
 import com.nscharrenberg.um.multiagentsurveillance.headless.contracts.repositories.IPlayerRepository;
+import com.nscharrenberg.um.multiagentsurveillance.headless.models.Action;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.GameMode;
+import com.nscharrenberg.um.multiagentsurveillance.headless.models.GameState;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Player.Guard;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Player.Intruder;
-import com.nscharrenberg.um.multiagentsurveillance.headless.utils.files.MapImporter;
+import com.nscharrenberg.um.multiagentsurveillance.headless.models.Player.Player;
+import com.nscharrenberg.um.multiagentsurveillance.headless.utils.files.Importer;
+import com.nscharrenberg.um.multiagentsurveillance.headless.utils.files.TiledMapImporter;
 
 import java.io.File;
 import java.io.IOException;
 
 public class GameRepository implements IGameRepository {
-    private static String MAP_PATH = "src/test/resources/maps/rust.txt";
+    //private static String MAP_PATH = "src/test/resources/maps/maze3.json";
+    private static String MAP_PATH = "src/test/resources/maps/CaptainJack.json";
+    //private static String MAP_PATH = "src/test/resources/RLtrainingMaps/trainingExampleMap.txt";
+    //private static String MAP_PATH = "src/test/resources/RLtrainingMaps/ChasingTestMap.txt";
+    //private static String MAP_PATH = "src/test/resources/maps/rust.txt";
     private IMapRepository mapRepository;
     private IPlayerRepository playerRepository;
 
@@ -29,6 +40,19 @@ public class GameRepository implements IGameRepository {
     private double baseSpeedGuards;
     private double timeStep;
     private boolean isRunning = false;
+    private GameState gameState = GameState.NO_RESULT;
+
+    private double distanceSoundSprinting = 10;
+    private double distanceSoundWalking = 4;
+    private double distanceSoundRotating = 2;
+    private double distanceSoundWaiting = 1;
+    private double distanceSoundYelling = 15;
+
+    private double distanceViewing = 4;
+
+    private boolean canPlaceMarkers = true;
+
+    private boolean canHearThroughWalls = false;
 
     public GameRepository() {
         this.mapRepository = Factory.getMapRepository();
@@ -38,6 +62,18 @@ public class GameRepository implements IGameRepository {
     public GameRepository(IMapRepository mapRepository, IPlayerRepository playerRepository) {
         this.mapRepository = mapRepository;
         this.playerRepository = playerRepository;
+    }
+
+    public void startGame(DQN_Agent[] guards, DQN_Agent[] intruders) {
+        importMap();
+
+        if (gameMode == null) {
+            setGameMode(GameMode.EXPLORATION);
+        }
+
+        setupAgents(guards, intruders);
+
+//        playerRepository.getStopWatch().start();
     }
 
     @Override
@@ -55,39 +91,87 @@ public class GameRepository implements IGameRepository {
 
     @Override
     public void stopGame() {
-        try {
-            playerRepository.getStopWatch().stop();
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
-        }
+//        try {
+//            playerRepository.getStopWatch().stop();
+//        } catch (Exception e) {
+//            System.out.println(e.getMessage());
+//        }
     }
 
-    private void importMap() {
+    @Override
+    public void importMap() {
         File file = new File(MAP_PATH);
         String path = file.getAbsolutePath();
-        MapImporter importer = new MapImporter();
+        Importer importer = new TiledMapImporter(this, mapRepository, playerRepository);
 
-        Factory.getGameRepository().setRunning(true);
+        setRunning(true);
 
         try {
             importer.load(path);
-            Factory.getPlayerRepository().calculateInaccessibleTiles();
+            playerRepository.calculateInaccessibleTiles();
         } catch (IOException e) {
             e.printStackTrace();
 //            Factory.getGameRepository().setRunning(false);
         }
     }
 
-    private void setupAgents() {
-        for (int i = 0; i < Factory.getGameRepository().getGuardCount(); i++) {
-            Factory.getPlayerRepository().spawn(Guard.class);
+    private void setupAgents(DQN_Agent[] guards, DQN_Agent[] intruders) {
+        for (int i = 0; i < guards.length; i++) {
+            Factory.getPlayerRepository().spawn(Guard.class, guards[i]);
         }
 
-        if (Factory.getGameRepository().getGameMode().equals(GameMode.GUARD_INTRUDER)) {
-            for (int i = 0; i < Factory.getGameRepository().getIntruderCount(); i++) {
-                Factory.getPlayerRepository().spawn(Intruder.class);
+        if (getGameMode().equals(GameMode.GUARD_INTRUDER_ALL) || getGameMode().equals(GameMode.GUARD_INTRUDER_ONE)) {
+            for (int i = 0; i < intruders.length; i++) {
+                playerRepository.spawn(Intruder.class, intruders[i]);
             }
         }
+    }
+
+    @Override
+    public Action getTargetGameAngle(Player player){
+        if(player instanceof Intruder) {
+            return AngleTilesCalculator.computeAngle(mapRepository.getTargetCenter(), player.getTile());
+        }
+
+        return null;
+    }
+
+    @Override
+    public double getTargetRealAngle(Player player){
+        if(player instanceof Intruder) {
+            return ComputeDoubleAngleTiles.computeAngle(mapRepository.getTargetCenter(), player.getTile());
+        }
+
+        return 0.0;
+    }
+
+    @Override
+    public void setupAgents(Class<? extends Player> playerClass) {
+        if (playerClass.equals(Guard.class)) {
+            for (int i = 0; i < getGuardCount(); i++) {
+                playerRepository.spawn(Guard.class);
+            }
+
+            return;
+        }
+
+        for (int i = 0; i < getIntruderCount(); i++) {
+            playerRepository.spawn(Intruder.class);
+        }
+    }
+
+    @Override
+    public void setupAgents() {
+        setupAgents(Guard.class);
+
+        if (getGameMode().equals(GameMode.GUARD_INTRUDER_ALL) || getGameMode().equals(GameMode.GUARD_INTRUDER_ONE)) {
+            setupAgents(Intruder.class);
+        }
+    }
+
+    @Override
+    public String getMap() {
+        return MAP_PATH;
     }
 
     @Override
@@ -208,5 +292,115 @@ public class GameRepository implements IGameRepository {
     @Override
     public void setRunning(boolean running) {
         isRunning = running;
+    }
+
+    @Override
+    public GameState getGameState() {
+        return gameState;
+    }
+
+    @Override
+    public void setGameState(GameState gameState) {
+        this.gameState = gameState;
+    }
+
+    @Override
+    public IMapRepository getMapRepository() {
+        return mapRepository;
+    }
+
+    @Override
+    public void setMapRepository(IMapRepository mapRepository) {
+        this.mapRepository = mapRepository;
+    }
+
+    @Override
+    public IPlayerRepository getPlayerRepository() {
+        return playerRepository;
+    }
+
+    @Override
+    public void setPlayerRepository(IPlayerRepository playerRepository) {
+        this.playerRepository = playerRepository;
+    }
+
+    @Override
+    public double getDistanceSoundSprinting() {
+        return distanceSoundSprinting;
+    }
+
+    @Override
+    public void setDistanceSoundSprinting(double distanceSoundSprinting) {
+        this.distanceSoundSprinting = distanceSoundSprinting;
+    }
+
+    @Override
+    public double getDistanceSoundWalking() {
+        return distanceSoundWalking;
+    }
+
+    @Override
+    public void setDistanceSoundWalking(double distanceSoundWalking) {
+        this.distanceSoundWalking = distanceSoundWalking;
+    }
+
+    @Override
+    public double getDistanceSoundRotating() {
+        return distanceSoundRotating;
+    }
+
+    @Override
+    public void setDistanceSoundRotating(double distanceSoundRotating) {
+        this.distanceSoundRotating = distanceSoundRotating;
+    }
+
+    @Override
+    public double getDistanceSoundWaiting() {
+        return distanceSoundWaiting;
+    }
+
+    @Override
+    public void setDistanceSoundWaiting(double distanceSoundWaiting) {
+        this.distanceSoundWaiting = distanceSoundWaiting;
+    }
+
+    @Override
+    public double getDistanceSoundYelling() {
+        return distanceSoundYelling;
+    }
+
+    @Override
+    public void setDistanceSoundYelling(double distanceSoundYelling) {
+        this.distanceSoundYelling = distanceSoundYelling;
+    }
+
+    @Override
+    public double getDistanceViewing() {
+        return distanceViewing;
+    }
+
+    @Override
+    public void setDistanceViewing(double distanceViewing) {
+        this.distanceViewing = distanceViewing;
+    }
+
+    @Override
+    public boolean isCanPlaceMarkers() {
+        return canPlaceMarkers;
+    }
+
+    @Override
+    public void setCanPlaceMarkers(boolean canPlaceMarkers) {
+        this.canPlaceMarkers = canPlaceMarkers;
+    }
+
+    @Override
+    public boolean isCanHearThroughWalls() {
+        return canHearThroughWalls;
+    }
+
+    @Override
+    public void setCanHearThroughWalls(boolean canHearThroughWalls) {
+        this.canHearThroughWalls = canHearThroughWalls;
     }
 }

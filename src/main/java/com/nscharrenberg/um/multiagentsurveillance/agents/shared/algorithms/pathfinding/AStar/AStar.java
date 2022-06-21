@@ -7,13 +7,15 @@ import com.nscharrenberg.um.multiagentsurveillance.agents.shared.algorithms.stru
 import com.nscharrenberg.um.multiagentsurveillance.agents.shared.algorithms.structures.FibonacciHeap.Node;
 import com.nscharrenberg.um.multiagentsurveillance.agents.shared.utils.QueueNode;
 import com.nscharrenberg.um.multiagentsurveillance.agents.shared.utils.TreeNode;
-import com.nscharrenberg.um.multiagentsurveillance.headless.models.Angle.Angle;
+import com.nscharrenberg.um.multiagentsurveillance.headless.models.Action;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Map.Area;
-import com.nscharrenberg.um.multiagentsurveillance.headless.models.Player.Player;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Map.Tile;
+import com.nscharrenberg.um.multiagentsurveillance.headless.models.Player.Player;
 import com.nscharrenberg.um.multiagentsurveillance.headless.utils.BoardUtils;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.Optional;
 
 public class AStar implements IPathFinding {
 
@@ -27,25 +29,8 @@ public class AStar implements IPathFinding {
 
         HashMap<Integer, HashMap<Integer, Boolean>> visited = new HashMap<>();
 
-        // Set all cells in knowledge to not visited
-        for (Map.Entry<Integer, HashMap<Integer, Tile>> rowEntry : board.getRegion().entrySet()) {
-            if (!visited.containsKey(rowEntry.getKey())) {
-                visited.put(rowEntry.getKey(), new HashMap<>());
-            }
-
-            for (Map.Entry<Integer, Tile> colEntry : rowEntry.getValue().entrySet()) {
-                visited.get(rowEntry.getKey()).put(colEntry.getKey(), Boolean.FALSE);
-            }
-        }
-
-        if (visited.isEmpty()) {
-            return Optional.empty();
-        }
-
         // Current tile always explored
-        if (!visited.containsKey(player.getTile().getX())) {
-            visited.put(player.getTile().getX(), new HashMap<>());
-        }
+        visited.put(player.getTile().getX(), new HashMap<>());
         visited.get(player.getTile().getX()).put(player.getTile().getY(), Boolean.TRUE);
 
         Fibonacci heap = new Fibonacci();
@@ -55,24 +40,31 @@ public class AStar implements IPathFinding {
         board.add(player.getTile());
 
         while (!tree.getTile().equals(target)) {
-            for (Angle angle : Angle.values()) {
-                Optional<Tile> nextTileOpt = BoardUtils.nextPosition(board, tree.getTile(), angle);
+            for (Action action : Action.values()) {
+                Optional<Tile> nextTileOpt = BoardUtils.nextPosition(board, tree.getTile(), action);
 
+                if (nextTileOpt.isPresent() && !nextTileOpt.get().isCollision() ) {
 
-                if (nextTileOpt.isPresent() && !nextTileOpt.get().isCollision() && visited.get(nextTileOpt.get().getX()).get(nextTileOpt.get().getY()).equals(Boolean.FALSE)) {
                     if (!target.isTeleport() && nextTileOpt.get().isTeleport()) {
                         continue;
+                    }
+
+                    if(visited.containsKey(nextTileOpt.get().getX())) {
+                        if (visited.get(nextTileOpt.get().getX()).containsKey(nextTileOpt.get().getY()))
+                            continue;
+                    } else {
+                        visited.put(nextTileOpt.get().getX(), new HashMap<>());
                     }
 
                     visited.get(nextTileOpt.get().getX()).put(nextTileOpt.get().getY(), Boolean.TRUE);
 
                     int distance = (int) calculateDistance.compute(nextTileOpt.get(), target);
 
-                    TreeNode childNode = new TreeNode(nextTileOpt.get(), angle, tree);
+                    TreeNode childNode = new TreeNode(nextTileOpt.get(), action, tree);
 
 
                     if (!tree.getEntrancePosition().equals(childNode.getEntrancePosition())) {
-                        TreeNode additionalChildNode = new TreeNode(nextTileOpt.get(), angle, childNode);
+                        TreeNode additionalChildNode = new TreeNode(nextTileOpt.get(), action, childNode);
 
                         heap.insert(new Node(distance+0.5, additionalChildNode));
                     } else {
@@ -94,7 +86,7 @@ public class AStar implements IPathFinding {
 
 
 
-        LinkedList<Angle> sequenceMoves = new LinkedList<>();
+        LinkedList<Action> sequenceMoves = new LinkedList<>();
 
         TreeNode lastMove = tree;
 

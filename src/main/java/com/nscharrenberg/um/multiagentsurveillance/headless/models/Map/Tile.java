@@ -3,8 +3,11 @@ package com.nscharrenberg.um.multiagentsurveillance.headless.models.Map;
 import com.nscharrenberg.um.multiagentsurveillance.headless.exceptions.ItemAlreadyOnTileException;
 import com.nscharrenberg.um.multiagentsurveillance.headless.exceptions.ItemNotOnTileException;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Items.Collision.Collision;
+import com.nscharrenberg.um.multiagentsurveillance.headless.models.Items.Collision.Wall;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Items.Item;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Items.Teleporter;
+import com.nscharrenberg.um.multiagentsurveillance.headless.models.Player.Guard;
+import com.nscharrenberg.um.multiagentsurveillance.headless.models.Player.Intruder;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -107,6 +110,53 @@ public class Tile {
         }
 
         items.add(item);
+    }
+
+    /**
+     * Checks if this tile has a guard on it.
+     * @return true or false whether there is a guard on this tile
+     */
+    public boolean hasGuard() {
+        boolean containsGuard = false;
+
+        for (Item item : items) {
+            if (item instanceof Guard) {
+                containsGuard = true;
+                break;
+            }
+        }
+
+        return containsGuard;
+    }
+
+    public boolean isWall() {
+        boolean containsWall = false;
+
+        for (Item item : items) {
+            if (item instanceof Wall) {
+                containsWall = true;
+                break;
+            }
+        }
+
+        return containsWall;
+    }
+
+    /**
+     * Checks if this tile has an intruder on it.
+     * @return true or false whether there is an intruder on this tile.
+     */
+    public boolean hasIntruder() {
+        boolean containsIntruder = false;
+
+        for (Item item : items) {
+            if (item instanceof Intruder) {
+                containsIntruder = true;
+                break;
+            }
+        }
+
+        return containsIntruder;
     }
 
     /**

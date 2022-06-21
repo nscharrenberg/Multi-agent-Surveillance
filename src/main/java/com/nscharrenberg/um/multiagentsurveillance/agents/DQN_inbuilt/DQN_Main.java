@@ -1,8 +1,8 @@
 package com.nscharrenberg.um.multiagentsurveillance.agents.DQN_inbuilt;
 
+import com.nscharrenberg.um.multiagentsurveillance.agents.shared.algorithms.Vision.ConeVisionCalculator;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Action;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Map.Tile;
-import com.nscharrenberg.um.multiagentsurveillance.headless.utils.Vision.CharacterVision;
 import org.deeplearning4j.rl4j.learning.configuration.QLearningConfiguration;
 import org.deeplearning4j.rl4j.learning.sync.qlearning.discrete.QLearningDiscreteDense;
 import org.deeplearning4j.rl4j.network.dqn.IDQN;
@@ -47,9 +47,7 @@ public class DQN_Main {
         System.out.println(conf.toString());
 
 
-        //TODO CHECK
-        CharacterVision characterVision = new CharacterVision(5, Action.UP, null);
-        List<Tile> vision = characterVision.getConeVision(new Tile(0,0));
+        List<Tile> vision = ConeVisionCalculator.getConeVision(new Tile(0,0), 6, Action.UP);
 
         int observationSize = (vision.size()) + 12;
 

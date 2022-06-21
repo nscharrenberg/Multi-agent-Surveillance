@@ -1,6 +1,8 @@
 package com.nscharrenberg.um.multiagentsurveillance.agents.DQN_inbuilt;
 
 import com.nscharrenberg.um.multiagentsurveillance.agents.shared.Agent;
+import com.nscharrenberg.um.multiagentsurveillance.agents.shared.algorithms.Vision.ConeVisionCalculator;
+import com.nscharrenberg.um.multiagentsurveillance.agents.shared.algorithms.Vision.UnobstructedTile;
 import com.nscharrenberg.um.multiagentsurveillance.agents.shared.algorithms.distanceCalculator.CalculateDistance;
 import com.nscharrenberg.um.multiagentsurveillance.agents.shared.algorithms.distanceCalculator.ManhattanDistance;
 import com.nscharrenberg.um.multiagentsurveillance.headless.contracts.repositories.IGameRepository;
@@ -14,7 +16,6 @@ import com.nscharrenberg.um.multiagentsurveillance.headless.models.Map.TileArea;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Player.Intruder;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Player.Player;
 import com.nscharrenberg.um.multiagentsurveillance.headless.utils.AreaEffects.AudioEffect.Sound;
-import com.nscharrenberg.um.multiagentsurveillance.headless.utils.Vision.CharacterVision;
 import com.nscharrenberg.um.multiagentsurveillance.headless.utils.Vision.Geometrics;
 import com.rits.cloning.Cloner;
 import org.deeplearning4j.rl4j.observation.Observation;
@@ -52,8 +53,8 @@ public class DeepQN_Agent extends Agent implements Encodable {
 
         //TODO CHECK
         int visionLength = Double.valueOf(gameRepository.getDistanceViewing()).intValue();
-        CharacterVision characterVision = new CharacterVision(visionLength, Action.UP, null);
-        List<Tile> vision = characterVision.getConeVision(new Tile(0, 0));
+
+        List<Tile> vision = ConeVisionCalculator.getConeVision(new Tile(0,0), visionLength, Action.UP);
 
         this.observationSize = (vision.size()) + 12;
         this.maxBoardDistance = distance.compute(new Tile(gameRepository.getWidth(), gameRepository.getHeight()), new Tile(0, 0));
@@ -140,8 +141,7 @@ public class DeepQN_Agent extends Agent implements Encodable {
         TileArea board = mapRepository.getBoard();
         Tile position = player.getTile();
 
-        CharacterVision characterVision = new CharacterVision(visionLength, player.getDirection(), player);
-        List<Tile> vision = characterVision.getConeVision(player.getTile());
+        List<Tile> vision = ConeVisionCalculator.getConeVision(new Tile(0,0), visionLength, Action.UP);
 
         boolean validtile = true;
         for(Tile tile : vision){
@@ -155,7 +155,7 @@ public class DeepQN_Agent extends Agent implements Encodable {
             }
 
             for (Tile it : gm.getIntersectingTiles(position, tile)) {
-                if (characterVision.unobstructedTile(board, it)) {
+                if (UnobstructedTile.isUnobstructedTile(board, it, player.getTile(), player.getDirection())) {
                     validtile = false;
                     break;
                 }

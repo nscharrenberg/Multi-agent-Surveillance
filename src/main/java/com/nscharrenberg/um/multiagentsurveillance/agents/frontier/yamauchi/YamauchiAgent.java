@@ -254,7 +254,7 @@ public class YamauchiAgent extends Agent {
     private boolean detectFrontierByRegion(){
         int x = player.getTile().getX();
         int y = player.getTile().getY();
-        int RANGE = Double.valueOf(gameRepository.getDistanceViewing()).intValue() + 2;
+        int RANGE = 20;
         HashMap<Integer, HashMap<Integer, Tile>> region = knowledge.subset(x - RANGE, y - RANGE, x + RANGE, y + RANGE);
 
         frontiers.clear();

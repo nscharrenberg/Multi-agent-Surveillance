@@ -95,7 +95,7 @@ public class DQN_Agent extends Agent {
 
         Action action;
         // Exploration V Exploitation
-        if (strategy.explorationRate(episodeNum) > random.nextDouble() && true) {
+        if (strategy.explorationRate(episodeNum) > random.nextDouble()) {
             action = explorationAgent.decide();
 
             // This is a terrible fix :(
@@ -234,7 +234,7 @@ public class DQN_Agent extends Agent {
 
         Action direction = player.getDirection();
 
-        dSP = -soundProximity(state) / 100;
+        //dSP = -soundProximity(state) / 100;
 
         dVP = -visionProximity(state) / 10;
 
@@ -278,7 +278,7 @@ public class DQN_Agent extends Agent {
 /*        if (action.equals(explorationAgent.decide()))
             reward += 0.01;*/
 
-        reward = (dSP + dVP + reward);
+        reward = (dVP + reward);
 
         return reward;
     }
@@ -389,23 +389,7 @@ public class DQN_Agent extends Agent {
     // TODO: Track move number
     @Override
     public Action decide() throws Exception {
-
-        int move = predictMove();
-
-        Action currentDirection = player.getDirection();
-        Action action;
-
-        // TODO: Add option to drop makers
-
-        switch (move){
-            case 0 -> action = currentDirection;
-            case 1 -> action = turnRight(currentDirection);
-            case 2 -> action = turnLeft(currentDirection);
-            default -> throw new Exception("Invalid Move Selected");
-        }
-
-
-        return action;
+        return predictAction(updateState());
     }
 
     private int predictMove() throws Exception {
@@ -427,6 +411,18 @@ public class DQN_Agent extends Agent {
         policyNetwork.loadNetwork(index, saveNumber);
     }
 
+    public void setNetwork(Network policyNetwork, Network targetNetwork){
+        this.policyNetwork = policyNetwork;
+        this.targetNetwork = targetNetwork;
+    }
+
+    public Network getPolicyNetwork(){
+        return policyNetwork;
+    }
+
+    public Network getTargetNetwork(){
+        return targetNetwork;
+    }
 
     public IGameRepository getGameRepository() {
         return gameRepository;

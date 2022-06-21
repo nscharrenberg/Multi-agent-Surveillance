@@ -5,6 +5,7 @@ import com.nscharrenberg.um.multiagentsurveillance.agents.DQN.DQN_Params;
 import com.nscharrenberg.um.multiagentsurveillance.agents.DQN.neuralNetwork.Network;
 import com.nscharrenberg.um.multiagentsurveillance.agents.DQN.training.Experience;
 import com.nscharrenberg.um.multiagentsurveillance.agents.DQN.training.TrainingData;
+import com.nscharrenberg.um.multiagentsurveillance.agents.ReinforcementLearningAgent.Export;
 import com.nscharrenberg.um.multiagentsurveillance.agents.shared.Agent;
 import com.nscharrenberg.um.multiagentsurveillance.headless.Factory;
 import com.nscharrenberg.um.multiagentsurveillance.headless.contracts.repositories.IGameRepository;
@@ -65,7 +66,7 @@ public class DQNView extends StackPane {
     private Stack<Network> networks = new Stack<>();
     private DQN_Agent[] intruders;
     private final int batchSize = 128;
-    private final int numEpisodes = 2000;
+    private final int numEpisodes = 1639;
 
     public static HashMap<String, Color> getMapColours(){
         HashMap<String, Color> out = new HashMap<>();
@@ -223,8 +224,9 @@ public class DQNView extends StackPane {
         loadNetwork(0);
         saveProgress(0);
 
-        for (int episode = 449; episode <= numEpisodes ; episode++) {
 
+        for (int episode = 1069; episode <= numEpisodes ; episode++) {
+            //linkNetworks();
             System.out.println("Episode number = " + episode);
             reset();
 
@@ -235,21 +237,32 @@ public class DQNView extends StackPane {
 
             runGame(episode);
 
-            //if (episode % 10 == 0)
+            if (episode >= 500)
+                exportEndData();
+
             saveProgress(episode);
+            //linkNetworks();
+        }
+    }
+
+    private void linkNetworks(){
+
+        Network policyNetwork = intruders[0].getPolicyNetwork().clone();
+        Network targetNetwork = intruders[0].getTargetNetwork().clone();
+
+        for (DQN_Agent agent : intruders) {
+            agent.setNetwork(policyNetwork, targetNetwork);
         }
     }
 
     private void saveProgress(int episode){
         //newSave();
-        for (int i = 0; i < intruders.length; i++) {
-            intruders[i].newGame(i, episode);
-        }
+        intruders[0].newGame(0, episode);
     }
 
     private void loadNetwork(int saveNumber) throws Exception {
         for (int i = 0; i < intruders.length; i++) {
-            intruders[i].loadNetwork(i, saveNumber);
+            intruders[i].loadNetwork(0, saveNumber);
         }
     }
 
@@ -355,6 +368,18 @@ public class DQNView extends StackPane {
             }
         }
     }
+
+
+    private void exportEndData() {
+        Export exp = new Export();
+        exp.addHeader(gameRepository.getMap());
+        exp.addValue("Guard amount: ", gameRepository.getGuardCount());
+        exp.addValue("Intruder amount: ", gameRepository.getIntruderCount());
+        exp.addValue("Intruders caught: ", playerRepository.getCaughtIntruders().size());
+        exp.addValue("Intruders Escaped: ", playerRepository.getEscapedIntruders().size());
+        exp.parseValues();
+    }
+
 
     private ArrayList<Intruder> caughtIntruders;
 

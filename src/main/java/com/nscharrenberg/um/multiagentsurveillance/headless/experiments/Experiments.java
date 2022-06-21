@@ -15,8 +15,8 @@ public class Experiments {
 
 
     public static void main(String[] args) throws IOException {
-        String input = "src/main/resources/files/RLAgent_vs_Evader_50_noMarkers.csv";
-        String output = "src/main/resources/results/Intruders_caught_RLAgent_vs_Evader_markerRangeToFive.txt";
+        String input = "src/main/resources/files/DQN_Agent_vs_RL_Agent.csv";
+        String output = "src/main/resources/results/DQN_output.txt";
         runsTest(input);
         intrudersHistogram(input, output);
         chiSquareTest(output);

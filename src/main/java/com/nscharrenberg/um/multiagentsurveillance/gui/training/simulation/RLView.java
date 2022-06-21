@@ -69,6 +69,8 @@ public class RLView extends StackPane {
     private IPlayerRepository playerRepository;
     private IMapRepository mapRepository;
 
+    DQN_Agent[] intruders;
+
     public static HashMap<String, Color> getMapColours(){
         HashMap<String, Color> out = new HashMap<>();
 
@@ -187,14 +189,27 @@ public class RLView extends StackPane {
     }
 
 
-//    private void setupDQNAgents() {
-//        intruders = new DQN_Agent[gameRepository.getIntruderCount()];
-//
-//        for (int i = 0; i < gameRepository.getIntruderCount(); i++) {
-//            intruders[i] = new DQN_Agent(mapRepository, gameRepository, playerRepository);
-//            intruders[i].setTrainingData(new TrainingData());
-//        }
-//    }
+    private void setupDQNAgents() {
+        intruders = new DQN_Agent[gameRepository.getIntruderCount()];
+
+        for (int i = 0; i < gameRepository.getIntruderCount(); i++) {
+            intruders[i] = new DQN_Agent(mapRepository, gameRepository, playerRepository);
+            intruders[i].setTrainingData(new TrainingData());
+        }
+    }
+
+    private void loadNetwork(int saveNumber) throws Exception {
+        for (int i = 0; i < intruders.length; i++) {
+            intruders[i].loadNetwork(0, saveNumber);
+        }
+    }
+
+    private void saveProgress(int episode){
+        //newSave();
+        for (int i = 0; i < intruders.length; i++) {
+            intruders[i].newGame(i, episode);
+        }
+    }
 
     private void reset(){
 
@@ -207,7 +222,11 @@ public class RLView extends StackPane {
         timesteps = 0;
     }
 
-    private void gameLoop() {
+    private void gameLoop() throws Exception {
+
+        setupDQNAgents();
+        loadNetwork(0);
+        saveProgress(0);
 
         for (int episode = 1; episode <= numEpisodes ; episode++) {
 
@@ -233,6 +252,23 @@ public class RLView extends StackPane {
 
     private void setupIntruders() {
         gameRepository.setupAgents(Intruder.class);
+
+        int index = 0;
+        if (playerRepository.getIntruders().size() != intruders.length) {
+            throw new IllegalStateException("The 2 known intruder lists are not of the same size");
+        }
+
+        for (Iterator<Intruder> itr = playerRepository.getIntruders().iterator(); itr.hasNext();) {
+            Intruder intruder = itr.next();
+
+            intruders[index].initRepositories();
+            playerRepository.getAgents().remove(intruder.getAgent());
+            intruder.setAgent(intruders[index]);
+            intruders[index].setPlayer(intruder);
+            playerRepository.getAgents().add(intruder.getAgent());
+
+            index++;
+        }
     }
 
     private void runGame(int episode) {

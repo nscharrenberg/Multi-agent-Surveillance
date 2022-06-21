@@ -152,6 +152,7 @@ public class TrainingSimulation {
 
     private void runGame(int episode) {
 
+        int moveNumber = 0;
         double[][][] state, nextState;
         Experience experience;
         boolean done, escaped;
@@ -202,7 +203,7 @@ public class TrainingSimulation {
                     agent.execute(action);
 
                     if (endState(intruder)) {
-                        endTrain(agent, intruder, state, action);
+                        endTrain(agent, intruder, state, action, moveNumber);
                         continue;
                     }
 
@@ -244,12 +245,12 @@ public class TrainingSimulation {
         }
     }
 
-    private void endTrain(DQN_Agent agent, Intruder intruder, double[][][] state, Action action) throws Exception {
+    private void endTrain(DQN_Agent agent, Intruder intruder, double[][][] state, Action action, int moveNumber) throws Exception {
 
         double reward;
         double[][][] nextState = new double[state.length][state[0].length][state[0].length];
 
-        reward = caught(intruder) ? agent.calculateEndReward(false) : agent.calculateEndReward(true);
+        reward = caught(intruder) ? agent.calculateEndReward(false, moveNumber) : agent.calculateEndReward(true, moveNumber);
 
         Experience experience = new Experience(state, action, reward, nextState, true);
         agent.getTrainingData().push(experience);

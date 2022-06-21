@@ -4,7 +4,7 @@ public class DenseLayer {
 
     private Neuron[] neurons;
     private int numOutputs, numNeurons;
-    private double[] bias, inputs, outputs;
+    private double[] bias, inputs;
     private double learningRate;
 
     public DenseLayer(int numNeurons, int numOutputs, double learningRate){
@@ -15,7 +15,12 @@ public class DenseLayer {
         initNeurons(learningRate);
     }
 
-    public DenseLayer() {
+    public DenseLayer(Neuron[] neurons, double[] bias, int numNeurons, int numOutputs, double learningRate){
+        this.numOutputs = numOutputs;
+        this.numNeurons = numNeurons;
+        this.learningRate = learningRate;
+        this.neurons = neurons;
+        this.bias = bias;
     }
 
     private void initNeurons(double learningRate){
@@ -36,7 +41,7 @@ public class DenseLayer {
             out[i] += bias[i];
         }
 
-        this.outputs = out;
+        //this.outputs = out;
         return out;
     }
 
@@ -137,6 +142,16 @@ public class DenseLayer {
         for (int i = 0; i < numOutputs; i++) {
             bias[i] = nBias[i];
         }
+    }
+
+    public DenseLayer clone(){
+        Neuron[] neuronsClone = new Neuron[neurons.length];
+
+        for (int i = 0; i < neurons.length; i++) {
+            neuronsClone[i] = neurons[i].clone();
+        }
+
+        return new DenseLayer(neuronsClone, bias.clone(), numNeurons, numOutputs, learningRate);
     }
 
     public Neuron[] getNeurons() {

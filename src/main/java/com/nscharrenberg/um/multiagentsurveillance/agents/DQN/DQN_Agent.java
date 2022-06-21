@@ -4,8 +4,10 @@ import com.nscharrenberg.um.multiagentsurveillance.agents.DQN.neuralNetwork.Netw
 import com.nscharrenberg.um.multiagentsurveillance.agents.DQN.training.EpsilonGreedy;
 import com.nscharrenberg.um.multiagentsurveillance.agents.DQN.training.Experience;
 import com.nscharrenberg.um.multiagentsurveillance.agents.DQN.training.TrainingData;
-import com.nscharrenberg.um.multiagentsurveillance.agents.random.RandomAgent;
+import com.nscharrenberg.um.multiagentsurveillance.agents.frontier.yamauchi.YamauchiAgent;
 import com.nscharrenberg.um.multiagentsurveillance.agents.shared.Agent;
+import com.nscharrenberg.um.multiagentsurveillance.agents.shared.algorithms.pathfinding.AStar.AStar;
+import com.nscharrenberg.um.multiagentsurveillance.agents.shared.utils.QueueNode;
 import com.nscharrenberg.um.multiagentsurveillance.headless.Factory;
 import com.nscharrenberg.um.multiagentsurveillance.headless.contracts.repositories.IGameRepository;
 import com.nscharrenberg.um.multiagentsurveillance.headless.contracts.repositories.IMapRepository;
@@ -14,6 +16,7 @@ import com.nscharrenberg.um.multiagentsurveillance.headless.exceptions.*;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Action;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Items.Collision.Wall;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Items.Item;
+import com.nscharrenberg.um.multiagentsurveillance.headless.models.Map.ShadowTile;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Map.Tile;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Map.TileArea;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Player.Guard;
@@ -24,6 +27,7 @@ import com.nscharrenberg.um.multiagentsurveillance.headless.utils.AreaEffects.Au
 import java.util.*;
 
 import static com.nscharrenberg.um.multiagentsurveillance.agents.DQN.DQN_Agent_Util.*;
+import static com.nscharrenberg.um.multiagentsurveillance.agents.DQN.DQN_Params.batchSize;
 
 public class DQN_Agent extends Agent {
 
@@ -34,17 +38,19 @@ public class DQN_Agent extends Agent {
     private final int targetUpdate = DQN_Params.targetUpdate.valueInt;
     private final double gamma = DQN_Params.gamma.valueDbl;
     private final Random random = new Random();
-    private final Agent explorationAgent = new RandomAgent(player);
+    private final Agent explorationAgent = new YamauchiAgent(player);
     private EpsilonGreedy strategy;
     private Network policyNetwork, targetNetwork;
     private TrainingData trainingData;
     private double minTargetDistance = Double.POSITIVE_INFINITY;
     private int updateCount = 0;
+    Queue<Action> queue;
 
     public void newGame(int networkNum, int episode){
         policyNetwork.saveNetwork(networkNum, episode);
         updateCount = 0;
         minTargetDistance = Double.POSITIVE_INFINITY;
+        knowledgeSize = 0;
     }
 
     public DQN_Agent(){
@@ -83,10 +89,10 @@ public class DQN_Agent extends Agent {
 
     public Action selectAction(int episodeNum, double[][][] state) throws Exception {
 
-        Action action;
 
+        Action action;
         // Exploration V Exploitation
-        if (strategy.explorationRate(episodeNum) > random.nextDouble()) {
+        if (strategy.explorationRate(episodeNum) > random.nextDouble() && true) {
             action = explorationAgent.decide();
 
             // This is a terrible fix :(
@@ -102,6 +108,8 @@ public class DQN_Agent extends Agent {
     }
 
 
+    private boolean colliding = false;
+
     private Action predictAction(double[][][] state) throws Exception {
 
         double[] qValues = policyNetwork.forwardPropagate(state);
@@ -109,31 +117,50 @@ public class DQN_Agent extends Agent {
         int prediction = argmax(qValues);
 
         if (predictionToAction(prediction).equals(player.getDirection()) && collisionForward()){
+            if (colliding){
+                colliding = false;
+                return explorationAgent.decide();
+            }
+            colliding = true;
             System.out.println("DQN trying to collide");
-            trainAgentCollision(qValues[prediction]);
+            trainAgentCollision(qValues);
             return predictAction(state);
         }
 
+        colliding = false;
         System.out.println(predictionToAction(prediction));
-        System.out.println("QValues = [ " + qValues[0] + " " + qValues[1] + " " + qValues[2] + " " + qValues[3] + " ]");
+        System.out.println(Arrays.toString(qValues));
 
 
         return predictionToAction(prediction);
     }
 
-    public void trainAgentCollision(double predictedQV) throws Exception {
+    public void trainAgentCollision(double[] predictedQV) throws Exception {
 
-        double targetQV = predictedQV - 0.1;
+        Action[] checkList = {Action.UP, Action.DOWN, Action.LEFT, Action.RIGHT};
+        double targetQV;
 
-        policyNetwork.backwardPropagate(targetQV, predictedQV, actionToPrediction(player.getDirection()));
+        for (Action check : checkList) {
+            if (!check.equals(player.getDirection()) && !collisionForward(check)) {
+                targetQV = predictedQV[actionToPrediction(check)] + 0.005;
+                policyNetwork.backwardPropagate(targetQV, predictedQV[actionToPrediction(check)], actionToPrediction(player.getDirection()));
+            }
+        }
     }
 
-    public void endTrain(double[][][] state, Action action) throws Exception {
+    public void trainAgentEndCaught(int moveNumber) throws Exception {
+        Experience experience = trainingData.getLastExperience();
+
+        trainAgentEnd(new Experience(experience.nextState, experience.action, calculateEndReward(false, moveNumber), null, true));
+        targetNetwork = policyNetwork.clone();
+    }
+
+    public void endTrain(double[][][] state, Action action, int moveNumber) throws Exception {
 
         double reward;
         double[][][] nextState = state.clone();
 
-        reward = calculateEndReward(escaped((Intruder) this.player));
+        reward = calculateEndReward(escaped((Intruder) this.player), moveNumber);
 
         Experience experience = new Experience(state, action, reward, nextState, true);
         trainingData.push(experience);
@@ -151,7 +178,14 @@ public class DQN_Agent extends Agent {
         targetQV = predictedQV * gamma +  experience.getReward();
         policyNetwork.backwardPropagate(targetQV, predictedQV, prediction);
 
-        targetNetwork = policyNetwork.clone();
+        if (escaped((Intruder) player)) {
+            System.out.println("Updating Target Network");
+            targetNetwork = policyNetwork.clone();
+        }
+
+        if (trainingData.hasBatch(batchSize.valueInt)) {
+            trainAgent(getTrainingData().randomSample(batchSize.valueInt));
+        }
     }
 
 
@@ -164,10 +198,6 @@ public class DQN_Agent extends Agent {
         targetQV = targetQValues(experience.nextState, experience.reward);
         policyNetwork.backwardPropagate(targetQV, predictedQV, prediction);
 
-        if (updateCount++ == targetUpdate) {
-            targetNetwork = policyNetwork.clone();
-            updateCount = 0;
-        }
     }
 
     public void trainAgent(TrainingData batch) throws Exception {
@@ -185,16 +215,19 @@ public class DQN_Agent extends Agent {
         return (target[argmax(target)] * gamma) + reward;
     }
 
-    public double calculateEndReward(boolean escaped) {
+    public double calculateEndReward(boolean escaped, int moveNumber) {
+        if (moveNumber < 0.1 * DQN_Params.maxMoves.valueInt && escaped)
+            return 2;
         int reward = 1;
         return escaped ? reward : -reward;
     }
 
+    private int knowledgeSize = 0;
 
     public double calculateReward(double[][][] state, Action action) throws Exception {
 
         // Delta Sound Proximity & Delta Vision Proximity
-        double dSP, dVP;
+        double dSP, dVP, reward = 0;;
 
         Action direction = player.getDirection();
 
@@ -203,25 +236,44 @@ public class DQN_Agent extends Agent {
         dVP = -visionProximity(state) / 10;
 
         Intruder intruder = (Intruder) this.player;
-        double reward = 0;
-
-        if (direction.equals(Action.negateAction(gameRepository.getTargetGameAngle(player))))
-            reward = 0.01;
-
         double targetDistance = intruder.getDistanceToTarget();
-
-        if (targetDistance < minTargetDistance){
-            minTargetDistance = targetDistance;
-            reward += 0.1;
-        }
-
         TileArea targetArea = mapRepository.getTargetArea();
 
         if (targetArea.within(player.getTile().getX(), player.getTile().getY()))
-            reward += 0.1;
-
-        if (action.equals(player.getDirection()))
             reward += 0.01;
+
+        /*     if (isDeadEnd(player))
+        reward -= 0.03;
+
+        if (player.getTile() instanceof ShadowTile) {
+        reward -= 0.03;
+        System.out.println("Shadow Time");
+        }
+
+        if (targetDistance < minTargetDistance){
+        minTargetDistance = targetDistance;
+        reward += 0.01;
+        }
+
+        if (knowledgeSize < getKnowledge().size()){
+        knowledgeSize = getKnowledge().size();
+        reward += 0.01;
+        }
+
+        if (direction.equals(Action.negateAction(gameRepository.getTargetGameAngle(player))))
+        reward += 0.005;
+
+*/
+        if (updateCount++ > 2) {
+            AStar aStar = new AStar();
+            queue = aStar.execute(mapRepository.getBoard(), player, mapRepository.getTargetCenter()).get().getMoves();
+            if (queue.poll().equals(action))
+                reward += 0.01;
+        }
+
+
+/*        if (action.equals(explorationAgent.decide()))
+            reward += 0.01;*/
 
         reward = (dSP + dVP + reward);
 
@@ -235,8 +287,8 @@ public class DQN_Agent extends Agent {
         List<Sound> SoundList = player.getSoundEffects();
         TileArea targetArea = mapRepository.getTargetArea();
         Intruder intruder = (Intruder) this.player;
-        Action direction = player.getDirection();
         List<Item> items;
+        Tile tile;
 
         int     xP = player.getTile().getX(),
                 yP = player.getTile().getY(),
@@ -256,11 +308,19 @@ public class DQN_Agent extends Agent {
                 if (targetArea.within(xT, yT))
                     state[1][VIX][VIY] = 1;
 
-                items = colEntry.getValue().getItems();
+
+                tile = colEntry.getValue();
+                items = tile.getItems();
+
+                if (tile instanceof ShadowTile) {
+                    state[0][VIX][VIY] = -0.5;
+                }
 
                 for (Item item : items) {
                     if (item instanceof Guard)
                         state[0][VIX][VIY] = -1;
+                    if (item instanceof Intruder)
+                        state[0][VIX][VIY] = 1;
                     if (item instanceof Intruder)
                         state[0][VIX][VIY] = 1;
                     if (item instanceof Wall)
@@ -269,9 +329,11 @@ public class DQN_Agent extends Agent {
             }
         }
 
-        // TODO: THIS SHIZ KRZY FR FR
-        if (direction.equals(Action.negateAction(gameRepository.getTargetGameAngle(intruder))))
-            state[2][xDirectionTarget(direction)][yDirectionTarget(direction)] = 1;
+        double targetDistance = intruder.getDistanceToTarget();
+        Action targetDirection = Action.negateAction(gameRepository.getTargetGameAngle(player));
+
+        if (targetDistance < 100)
+            state[2][xDirectionTarget(targetDirection)][yDirectionTarget(targetDirection)] = targetDistance;
 
         int dx, dy;
         for (Sound sound : SoundList) {
@@ -285,8 +347,11 @@ public class DQN_Agent extends Agent {
     }
 
     public boolean collisionForward() throws Exception {
-
         Action direction = player.getDirection();
+        return collisionForward(direction);
+    }
+
+    public boolean collisionForward(Action direction) throws Exception {
 
         int x = player.getTile().getX();
         int y = player.getTile().getY();
@@ -343,6 +408,11 @@ public class DQN_Agent extends Agent {
     private int predictMove() throws Exception {
         double[] qValues = policyNetwork.forwardPropagate(updateState());
         return argmax(qValues);
+    }
+
+
+    public void resetToTargetNet(){
+        policyNetwork = targetNetwork.clone();
     }
 
 

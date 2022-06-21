@@ -15,7 +15,10 @@ public class Neuron {
         initWeights();
     }
 
-    public Neuron() {
+    public Neuron(double[] weights, int numOutputs, double learningRate){
+        this.weights = weights;
+        this.numOutputs = numOutputs;
+        this.learningRate = learningRate;
     }
 
     public double[] getWeights() { return weights; }
@@ -49,4 +52,7 @@ public class Neuron {
         this.weights = weights;
     }
 
+    public Neuron clone(){
+        return new Neuron(this.weights.clone(), numOutputs, learningRate);
+    }
 }

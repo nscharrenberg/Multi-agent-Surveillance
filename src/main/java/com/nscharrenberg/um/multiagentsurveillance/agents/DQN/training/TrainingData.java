@@ -18,6 +18,7 @@ public class TrainingData {
         init();
     }
 
+
     public TrainingData() {
         this.capacity = 0;
         this.count = 0;
@@ -25,15 +26,18 @@ public class TrainingData {
         init();
     }
 
+
     public void clearBatch(){
         experiences.clear();
         count = 0;
     }
 
+
     private void init(){
         capacity = capacity == 0 ? 10000 : capacity;
         experiences = new ArrayList<>(capacity);
     }
+
 
     public void push(Experience experience) {
 
@@ -44,6 +48,7 @@ public class TrainingData {
 
         experiences.add(experience);
     }
+
 
     public TrainingData randomSample(int batchSize) {
 
@@ -64,6 +69,10 @@ public class TrainingData {
 
     public boolean hasBatch(int batchSize) {
         return count >= batchSize;
+    }
+
+    public Experience getLastExperience(){
+        return experiences.get(count-1);
     }
 
     private void popClear() {

@@ -36,8 +36,16 @@ public class Filter {
         }
     }
 
-    public Filter() {
+
+    public Filter(Kernel[] kernels, double[][] bias, int channels, int inputLength, double learningRate) {
+        this.channels = channels;
+        this.inputLength = inputLength;
+        this.learningRate = learningRate;
+        this.outputSize = inputLength - kernelSize + 1;
+        this.kernels = kernels;
+        this.bias = bias;
     }
+
 
     /**
      * 
@@ -250,6 +258,19 @@ public class Filter {
             for (int j = 0; j < outputSize; j++)
                 bias[i][j] = nBias[ind++];
     }
+
+
+    public Filter clone(){
+
+        Kernel[] kernelsClone = new Kernel[kernels.length];
+
+        for (int i = 0; i < kernels.length; i++) {
+            kernelsClone[i] = kernels[i].clone();
+        }
+
+        return new Filter(kernelsClone, bias.clone(), channels, inputLength, learningRate);
+    }
+
 
     public int getChannels() {
         return channels;

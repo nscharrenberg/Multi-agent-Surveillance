@@ -1,6 +1,7 @@
 package com.nscharrenberg.um.multiagentsurveillance.gui.dqn;
 
 import com.nscharrenberg.um.multiagentsurveillance.agents.DQN.DQN_Agent;
+import com.nscharrenberg.um.multiagentsurveillance.agents.DQN.DQN_Params;
 import com.nscharrenberg.um.multiagentsurveillance.agents.DQN.neuralNetwork.Network;
 import com.nscharrenberg.um.multiagentsurveillance.agents.DQN.training.Experience;
 import com.nscharrenberg.um.multiagentsurveillance.agents.DQN.training.TrainingData;
@@ -64,7 +65,7 @@ public class DQNView extends StackPane {
     private Stack<Network> networks = new Stack<>();
     private DQN_Agent[] intruders;
     private final int batchSize = 128;
-    private final int numEpisodes = 1000;
+    private final int numEpisodes = 2000;
 
     public static HashMap<String, Color> getMapColours(){
         HashMap<String, Color> out = new HashMap<>();
@@ -219,10 +220,10 @@ public class DQNView extends StackPane {
     private void gameLoop() throws Exception {
 
         setupDQNAgents();
-        //loadNetwork(0);
+        loadNetwork(0);
         saveProgress(0);
 
-        for (int episode = 1; episode <= numEpisodes ; episode++) {
+        for (int episode = 449; episode <= numEpisodes ; episode++) {
 
             System.out.println("Episode number = " + episode);
             reset();
@@ -253,6 +254,13 @@ public class DQNView extends StackPane {
     }
 
 
+    private void resetToTargetNet(){
+        for (DQN_Agent intruder : intruders) {
+            intruder.resetToTargetNet();
+        }
+    }
+
+
     private void runGame(int episode) {
 
         double[][][] state, nextState;
@@ -260,12 +268,21 @@ public class DQNView extends StackPane {
         boolean done;
         Action action;
         double reward;
+        int moveNumber = 0;
+        caughtIntruders = new ArrayList<>();
 
         while (gameRepository.isRunning()) {
             try {
                 mapRepository.checkMarkers();
             } catch (BoardNotBuildException | InvalidTileException | ItemNotOnTileException e) {
             }
+
+            if (moveNumber++ > DQN_Params.maxMoves.valueInt){
+                resetToTargetNet();
+                gameRepository.setRunning(false);
+                break;
+            }
+
             playerRepository.updateSounds(playerRepository.getAgents());
 
             try {
@@ -292,6 +309,8 @@ public class DQNView extends StackPane {
 
             try {
 
+                intruderCaught(moveNumber);
+
                 for (Iterator<Intruder> itr = playerRepository.getIntruders().iterator(); itr.hasNext(); ) {
 
                     if (!gameRepository.isRunning()) {
@@ -306,10 +325,7 @@ public class DQNView extends StackPane {
                     agent.execute(action);
 
                     if (endState(intruder)) {
-                        agent.endTrain(state, action);
-                        if (agent.getTrainingData().hasBatch(batchSize)) {
-                            agent.trainAgent(agent.getTrainingData().randomSample(batchSize));
-                        }
+                        agent.endTrain(state, action, moveNumber);
                         continue;
                     }
 
@@ -339,6 +355,23 @@ public class DQNView extends StackPane {
             }
         }
     }
+
+    private ArrayList<Intruder> caughtIntruders;
+
+    private void intruderCaught(int moveNumber) throws Exception {
+
+        DQN_Agent agent;
+        for (Intruder intruder : playerRepository.getCaughtIntruders()) {
+            if (caughtIntruders.contains(intruder))
+                continue;
+
+            caughtIntruders.add(intruder);
+            agent = (DQN_Agent) intruder.getAgent();
+            agent.trainAgentEndCaught(moveNumber);
+        }
+
+    }
+
 
     private void drawText(String text) {
         graphicsContext.setFill(Color.BLACK);

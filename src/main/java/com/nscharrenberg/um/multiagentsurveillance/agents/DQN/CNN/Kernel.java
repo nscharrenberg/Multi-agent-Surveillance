@@ -19,6 +19,12 @@ public class Kernel {
                 weights[i][j] = scale * (random.nextInt(3) - 1);
     }
 
+
+    public Kernel(double[][] weights){
+        this.weights = weights;
+    }
+
+
     public double[][] getWeights(){
         return weights;
     }
@@ -50,4 +56,10 @@ public class Kernel {
             for (int j = 0; j < size; j++)
                 weights[i][j] = nWeights[ind++];
     }
+
+
+    public Kernel clone(){
+        return new Kernel(weights.clone());
+    }
+
 }

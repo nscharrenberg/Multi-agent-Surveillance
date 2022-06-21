@@ -2,7 +2,7 @@ package com.nscharrenberg.um.multiagentsurveillance.agents.DQN.training;
 
 public class EpsilonGreedy {
 
-    private double start = 1, end = 0.1, decay = 0.001;
+    private double start = 1.0, end = 0.0, decay = 0.0015;
 
     public EpsilonGreedy(double start, double end, double decay){
         this.start = start;

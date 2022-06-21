@@ -1,9 +1,18 @@
 package com.nscharrenberg.um.multiagentsurveillance.agents.DQN;
 
+import com.nscharrenberg.um.multiagentsurveillance.agents.shared.Agent;
+import com.nscharrenberg.um.multiagentsurveillance.headless.exceptions.BoardNotBuildException;
+import com.nscharrenberg.um.multiagentsurveillance.headless.exceptions.InvalidTileException;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Action;
+import com.nscharrenberg.um.multiagentsurveillance.headless.models.Items.Collision.Wall;
+import com.nscharrenberg.um.multiagentsurveillance.headless.models.Items.Item;
+import com.nscharrenberg.um.multiagentsurveillance.headless.models.Items.Marker;
+import com.nscharrenberg.um.multiagentsurveillance.headless.models.Map.Tile;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Player.Intruder;
 import com.nscharrenberg.um.multiagentsurveillance.headless.models.Player.Player;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Random;
 
 public class DQN_Agent_Util {
@@ -11,6 +20,7 @@ public class DQN_Agent_Util {
     private static final Random random = new Random();
     private static final int xOffset = DQN_Params.xOffset.valueInt;
     private static final int yOffset = DQN_Params.yOffset.valueInt;
+    private static final double guardValue = -1;
 
 
     public static int argmax(double[] input){
@@ -134,11 +144,11 @@ public class DQN_Agent_Util {
     public static double visionProximity(double[][][] state) {
         int dx, dy;
         double proximity = 0;
-        int length = DQN_Params.values().length;
+        int length = DQN_Params.inputLength.valueInt;
 
         for (int i = 0; i < length; i++) {
             for (int j = 0; j < length; j++) {
-                if (state[0][i][j] == 1){
+                if (state[0][i][j] == guardValue){
                     dx = i - xOffset;
                     dy = j - yOffset;
                     proximity += Math.sqrt(dx*dx + dy*dy);
@@ -195,6 +205,26 @@ public class DQN_Agent_Util {
 
     public static boolean caught(Intruder intruder){
         return intruder.getAgent().getPlayerRepository().getCaughtIntruders().contains(intruder);
+    }
+
+    public static boolean isDeadEnd(Player player) throws InvalidTileException, BoardNotBuildException {
+
+        HashMap<Integer, HashMap<Integer, Tile>> vision = player.getVision().getRegion();
+        Agent agent = player.getAgent();
+
+        for (Map.Entry<Integer, HashMap<Integer, Tile>> rowEntry : vision.entrySet()) {
+            for (Map.Entry<Integer, Tile> colEntry : rowEntry.getValue().entrySet()) {
+                for (Item item : colEntry.getValue().getItems()) {
+                    if (item instanceof Wall) {
+                        if (agent.checkForDeadEnd(player, vision, colEntry.getValue())) {
+                            System.out.println("Dead End");
+                            return true;
+                        }
+                    }
+                }
+            }
+        }
+        return false;
     }
 
 }

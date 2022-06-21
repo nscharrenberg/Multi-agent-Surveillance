@@ -6,14 +6,16 @@ public enum DQN_Params {
     inputLength(13),
     inputChannels(3),
     targetUpdate(10),
-    gamma(0.99),
+    gamma(0.69),
     learningRate(0.001),
     kernelSize(3),
     outputLength(4),
     c1Filters(8),
     c2Filters(16),
     c3Filters(8),
-    version("V1.0");
+    version("V1.0"),
+    maxMoves(2000),
+    batchSize(256);
 
     DQN_Params(int valueInt) {
         this.valueInt = valueInt;

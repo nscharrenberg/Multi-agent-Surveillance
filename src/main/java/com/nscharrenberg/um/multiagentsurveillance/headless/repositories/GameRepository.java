@@ -22,10 +22,9 @@ import java.io.IOException;
 
 public class GameRepository implements IGameRepository {
     //private static String MAP_PATH = "src/test/resources/maps/maze3.json";
-    private static String MAP_PATH = "src/test/resources/maps/CaptainJack.json";
+    private static String MAP_PATH = "src/test/resources/maps/ax.json";
     //private static String MAP_PATH = "src/test/resources/RLtrainingMaps/trainingExampleMap.txt";
     //private static String MAP_PATH = "src/test/resources/RLtrainingMaps/ChasingTestMap.txt";
-    private static String MAP_PATH = "src/test/resources/maps/wack.txt";
     private IMapRepository mapRepository;
     private IPlayerRepository playerRepository;
 
@@ -103,7 +102,7 @@ public class GameRepository implements IGameRepository {
     public void importMap() {
         File file = new File(MAP_PATH);
         String path = file.getAbsolutePath();
-        Importer importer = new MapImporter(this, mapRepository, playerRepository);
+        Importer importer = new TiledMapImporter(this, mapRepository, playerRepository);
 
         setRunning(true);
 

@@ -15,6 +15,7 @@ public class ConvLayer {
         this.inputLength = inputLength;
         this.numFilters = numFilters;
         this.channels = channels;
+        this.length = inputLength - kernelSize + 1;
         filters = new Filter[numFilters];
 
         for (int i = 0; i < numFilters; i++) {
@@ -22,11 +23,17 @@ public class ConvLayer {
         }
     }
 
-    public ConvLayer() {
+    public ConvLayer(Filter[] filters, int channels, int inputLength, int numFilters){
+        this.inputLength = inputLength;
+        this.numFilters = numFilters;
+        this.channels = channels;
+        this.length = inputLength - kernelSize + 1;
+        this.filters = filters;
     }
 
+
     public double[][][] forward(double[][][] input) {
-        this.length = inputLength - kernelSize + 1;
+
         double[][][] out = new double[numFilters][length][length];
 
         for (int i = 0; i < numFilters; i++)
@@ -98,10 +105,21 @@ public class ConvLayer {
             filters[i].loadFilter(weights[i], bias[i]);
     }
 
+
+    public ConvLayer clone(){
+        Filter[] filtersClone = new Filter[filters.length];
+
+        for (int i = 0; i < filters.length; i++) {
+            filtersClone[i] = filters[i].clone();
+        }
+
+        return new ConvLayer(filtersClone, channels, inputLength, numFilters);
+    }
+
+
     public int getKernelSize(){
         return kernelSize * kernelSize;
     }
-
 
     public int getNumFilters() {
         return numFilters;

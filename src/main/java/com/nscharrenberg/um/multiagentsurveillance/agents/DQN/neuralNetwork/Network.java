@@ -155,10 +155,11 @@ public class Network {
         readNetwork(networkNum, saveNum, this);
     }
 
-    private Network(ConvLayer[] convLayers, DenseLayer[] denseLayers, ActivationLayer activationLayer) {
+    private Network(ConvLayer[] convLayers, DenseLayer[] denseLayers, ActivationLayer activationLayer, int conv3Length) {
         this.convLayers = convLayers;
         this.denseLayers = denseLayers;
         this.activationLayer = activationLayer;
+        this.conv3Length = conv3Length;
     }
 
     public int getFilterNumber(int layer){
@@ -182,7 +183,17 @@ public class Network {
     }
 
     public Network clone(){
-        return new Network(convLayers.clone(), denseLayers.clone(), activationLayer);
+
+        ConvLayer[] convClone = new ConvLayer[convLayers.length];
+        DenseLayer[] denseClone = new DenseLayer[denseLayers.length];
+
+        for (int i = 0; i < convLayers.length; i++) {
+            convClone[i] = convLayers[i].clone();
+            if (i < denseLayers.length)
+                denseClone[i] = denseLayers[i].clone();
+        }
+
+        return new Network(convClone, denseClone, activationLayer, conv3Length);
     }
 
     private int outDim(int length){
